@@ -52,6 +52,7 @@ class CreatePeopleTables extends Migration
             $table->unsignedInteger('person_id')->nullable()->index();
             $table->timestamp('seen_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('person_id')
                 ->references('id')
@@ -69,6 +70,7 @@ class CreatePeopleTables extends Migration
             $table->unsignedInteger('customer_id')->nullable()->index();
             $table->timestamp('seen_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('person_id')
                 ->references('id')
