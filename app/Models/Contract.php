@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $serial
  * @property string $number
  * @property int $branch_id
- * @property int customer_id
+ * @property int|null $customer_id
  * @property string $status [pending|signed|terminated]
  * @property \App\Models\Customer $customer
  * @property \Carbon\Carbon $signed_at

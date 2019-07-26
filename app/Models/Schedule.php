@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Schedule
+ *
  * @package App
  * @property int $id
  * @property int $branch_id

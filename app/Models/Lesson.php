@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Lesson
+ *
  * @package App\Models
  * @property int $id
  * @property string $name
@@ -47,6 +48,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Lesson withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Lesson withoutTrashed()
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereBranchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereCanceledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereClassroomId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereClosedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereControllerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereCourseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereEndsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereInstructorId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereScheduleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereStartsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereUpdatedAt($value)
  */
 class Lesson extends Model
 {
