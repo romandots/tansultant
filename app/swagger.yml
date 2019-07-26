@@ -1,0 +1,673 @@
+openapi: 3.0.0
+info:
+  description: ''
+  version: 1.0.0
+  title: DC API
+tags:
+  - name: OAuth
+    description: OAuth аутентификация
+  - name: People
+    description: Люди
+  - name: Users
+    description: Пользователи
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  schemas:
+    Filters:
+      type: object
+
+    AccessToken:
+      type: object
+      required:
+        - id
+        - user_id
+        - client_id
+        - name
+        - revoked
+        - created_at
+        - expires_at
+      properties:
+        id:
+          type: string
+          readOnly: true
+          description: Идентификатор токена
+        user_id:
+          type: integer
+          readOnly: true
+          description: ID пользователя, которому принадлежит токен
+        client_id:
+          type: integer
+          readOnly: true
+          description: ID клиента (сервиса), которому принадлежит токен
+        name:
+          type: string
+          description: Имя токена (задается пользователем при создании)
+        revoked:
+          type: boolean
+          readOnly: true
+          description: Отозван ли токен?
+        created_at:
+          type: string
+          format: 'date-time'
+          readOnly: true
+          description: Дата создания токена
+        expires_at:
+          type: string
+          format: 'date-time'
+          readOnly: true
+          description: Дата истечения токена
+
+    OAuthSuccess:
+      type: object
+      required:
+        - token_type
+        - expires_in
+        - access_token
+        - refresh_token
+      properties:
+        token_type:
+          type: string
+          enum:
+            - Bearer
+          description: Тип токена
+        expires_in:
+          type: integer
+          description: Срок годности токена
+        access_token:
+          type: string
+          description: Токен
+        refresh_token:
+          type: string
+          description: Рефреш токен
+
+    BaseException:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Сообщение об ошибке
+        data:
+          type: object
+          description: Дополнительные параметры
+
+    OAuthException:
+      allOf:
+        - $ref: '#/components/schemas/BaseException'
+        - properties:
+            message:
+              type: string
+              enum:
+                - invalid_client
+                - invalid_credentials
+                - unsupported_grant_type
+              description: Код ошибки
+            data:
+              properties:
+                "description":
+                  type: string
+                  description: Описание ошибки
+                hint:
+                  type: string
+                  nullable: true
+                  description: Подсказка как исправить ошибку
+
+    ValidationException:
+      allOf:
+        - $ref: '#/components/schemas/BaseException'
+        - properties:
+            data:
+              description: Ключ - имя поля, значение - правило валидации
+              additionalProperties:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - name
+                  properties:
+                    name:
+                      type: string
+                      description: Имя правила
+                    params:
+                      type: array
+                      items:
+                        type: string
+                      description: Параметры правила
+
+    PatchUserRequest:
+      type: object
+      properties:
+        password:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        birth_date:
+          type: string
+          nullable: true
+        picture:
+          type: string
+          format: binary
+          nullable: true
+        allow_email_notifications:
+          type: boolean
+          nullable: true
+        allow_telegram_notifications:
+          type: boolean
+          nullable: true
+        telegram_username:
+          type: string
+          nullable: true
+
+    Department:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID
+        name:
+          type: string
+          description: Название
+        parent_id:
+          type: integer
+          nullable: true
+          description: ID родительского отдела
+        supervisor_id:
+          type: integer
+          description: ID руководителя отдела
+        supervisor:
+          $ref: '#/components/schemas/User'
+        parent:
+          $ref: '#/components/schemas/Department'
+        subdepartments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
+          description: Подотделы
+
+    DepartmentExtended:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID
+        name:
+          type: string
+          description: Название
+        parent_id:
+          type: integer
+          nullable: true
+          description: ID родительского отдела
+        supervisor_id:
+          type: integer
+          description: ID руководителя отдела
+        supervisor:
+          $ref: '#/components/schemas/User'
+        parent:
+          $ref: '#/components/schemas/Department'
+        subdepartments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
+          description: Подотделы
+        employees:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        role:
+          type: string
+        title:
+          type: string
+        is_system_role:
+          type: boolean
+          default: false
+
+    RoleExtended:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        is_system_role:
+          type: boolean
+          default: false
+        users:
+          type: array
+          nullable: true
+          items:
+            $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          nullable: true
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        patronymic:
+          type: string
+          nullable: true
+        screen_name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        birth_date:
+          type: string
+          format: date
+        picture:
+          type: string
+          format: url
+        department_id:
+          type: integer
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        is_supervisor:
+          type: boolean
+          default: false
+        allow_email_notifications:
+          type: boolean
+          default: true
+        allow_telegram_notifications:
+          type: boolean
+          default: false
+        telegram_username:
+          type: string
+          nullable: true
+
+    UserExtended:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        patronymic:
+          type: string
+        screen_name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        birth_date:
+          type: string
+          format: date
+        picture:
+          type: string
+          format: url
+        department_id:
+          type: integer
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        is_supervisor:
+          type: boolean
+          default: false
+        allow_email_notifications:
+          type: boolean
+          default: true
+        department:
+          $ref: '#/components/schemas/Department'
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+
+  # Responses
+
+  responses:
+    Department:
+      description: Полная запись отдела
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DepartmentExtended'
+
+    Departments:
+      description: Коллекция отделов
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Department'
+
+    Role:
+      description: Полная запись роли
+      content:
+        application/json:
+          schema:
+            type: object
+            items:
+              $ref: '#/components/schemas/RoleExtended'
+
+    Roles:
+      description: Коллекция ролей
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Role'
+
+    User:
+      description: Запись пользователя
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/UserExtended'
+
+    Users:
+      description: Коллекция пользователей
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+
+    UnauthenticatedResponse:
+      description: Пользотель не авторизован (не залогинен)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseException'
+
+    ForbiddenResponse:
+      description: У пользователя нет прав на данную операцию
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseException'
+
+    NotFoundResponse:
+      description: Сущность не найдена
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseException'
+
+    ValidationFailedResponse:
+      description: Ошибка валидации
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationException'
+
+    PersonalAccessTokenCreatedResponse:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/AccessToken'
+              meta:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: Созданный токен
+
+
+paths:
+
+  # OAuth
+
+  /oauth/token:
+    post:
+      summary: Получить OAuth (Bearer) токен
+      operationId: getOauthToken
+      tags:
+        - OAuth
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - grant_type
+                - client_id
+                - client_secret
+                - username
+                - password
+              properties:
+                grant_type:
+                  type: string
+                  enum:
+                    - password
+                  description: Тип авторизации
+                client_id:
+                  type: integer
+                  description: ID сервиса, который выполняет авторизацию (для grant_type password обычно это 2)
+                client_secret:
+                  type: string
+                  description: Секрет клиента, который выполняет авторизацию
+                username:
+                  type: string
+                  description: email пользователя (для grant_type=password)
+                password:
+                  type: string
+                  description: Пароль пользователя (для grant_type=password)
+      responses:
+        200:
+          description: Успешный вход
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthSuccess'
+        400:
+          description: Некорректный формат данных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthException'
+        401:
+          description: Авторизация не выполнена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthException'
+
+  /oauth/personal-access-tokens:
+    get:
+      summary: Получить список персональных токенов
+      operationId: getPersonalAccessTokens
+      tags:
+        - OAuth
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AccessToken'
+        401:
+          $ref: '#/components/responses/UnauthenticatedResponse'
+        403:
+          $ref: '#/components/responses/ForbiddenResponse'
+    post:
+      summary: Создать персональный токен
+      operationId: issuePersonalToken
+      tags:
+        - OAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessToken'
+      responses:
+        201:
+          $ref: '#/components/responses/PersonalAccessTokenCreatedResponse'
+        401:
+          $ref: '#/components/responses/UnauthenticatedResponse'
+        403:
+          $ref: '#/components/responses/ForbiddenResponse'
+        422:
+          $ref: '#/components/responses/ValidationFailedResponse'
+
+  /oauth/personal-access-tokens/{token_id}:
+    delete:
+      summary: Отозвать персональный токен
+      operationId: revokePersonalToken
+      tags:
+        - OAuth
+      parameters:
+        - name: token_id
+          required: true
+          in: path
+          schema:
+            type: string
+          description: ID персонального токена
+      responses:
+        200:
+          description: Токен успешно отозван
+        401:
+          $ref: '#/components/responses/UnauthenticatedResponse'
+        403:
+          $ref: '#/components/responses/ForbiddenResponse'
+        404:
+          $ref: '#/components/responses/NotFoundResponse'
+
+  # API
+
+  /api/user:
+    get:
+      tags:
+        - user
+      summary: Данные текущего пользователя
+      description: Возвращает информацию о пользователе
+      operationId: getUser
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+        401:
+          $ref: '#/components/responses/UnauthenticatedResponse'
+    post:
+      tags:
+        - Users
+      summary: Обновить данные текущего пользователя
+      description: Редактирует данные клиента
+      operationId: patchUser
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchUserRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+        401:
+          $ref: '#/components/responses/UnauthenticatedResponse'
+
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: Список пользователей
+      description: Возвращает всех пользователей
+      operationId: listUsers
+      parameters:
+        - name: filter
+          in: query
+          required: false
+          description: Фильтр, где ключами явлюятся системные имена полей, а значениями - их значения
+          schema:
+            $ref: '#/components/schemas/Filters'
+      responses:
+        200:
+          $ref: '#/components/responses/Users'
+
+  /api/users/{userId}:
+    get:
+      tags:
+        - Users
+      summary: Данные пользователя
+      description: Возвращает информацию о пользователе
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID пользователя
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/User'
+        401:
+          $ref: '#/components/responses/UnauthenticatedResponse'
+        403:
+          $ref: '#/components/responses/ForbiddenResponse'
+        404:
+          $ref: '#/components/responses/NotFoundResponse'
+    post:
+      tags:
+        - Users
+      summary: Создание пользователя
+      description: Создает нового о пользователя
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+#            $ref: '#/components/schemas/StoreUserRequest'
+      responses:
+        201:
+          $ref: '#/components/responses/User'
+        401:
+          $ref: '#/components/responses/UnauthenticatedResponse'
+        403:
+          $ref: '#/components/responses/ForbiddenResponse'
+        404:
+          $ref: '#/components/responses/NotFoundResponse'

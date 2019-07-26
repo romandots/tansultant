@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Illuminate\Support\Str;
 
@@ -74,6 +75,19 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'schema' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
+        'pgsql_test' => [
+            'driver' => 'pgsql',
+            'host' => env('DB_HOST_TEST', env('DB_HOST', '127.0.0.1')),
+            'port' => env('DB_PORT_TEST', env('DB_PORT', '5432')),
+            'database' => env('DB_DATABASE_TEST', env('DB_DATABASE', 'forge')),
+            'username' => env('DB_USERNAME_TEST', env('DB_USERNAME', 'forge')),
+            'password' => env('DB_PASSWORD_TEST', env('DB_PASSWORD', '')),
+            'charset' => 'utf8',
+            'prefix' => '',
             'schema' => 'public',
             'sslmode' => 'prefer',
         ],
