@@ -39,8 +39,8 @@ class CourseResource extends JsonResource
             'instructor' => $this->whenLoaded('instructor', function () {
                 return new InstructorResource($this->instructor);
             }),
-            'starts_at' => $this->starts_at ? $this->starts_at->toDateTimeString() : null,
-            'ends_at' => $this->ends_at ? $this->ends_at->toDateTimeString() : null,
+            'starts_at' => $this->starts_at ? $this->starts_at->toDateString() : null,
+            'ends_at' => $this->ends_at ? $this->ends_at->toDateString() : null,
         ];
     }
 }
