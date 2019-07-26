@@ -288,20 +288,30 @@ class ScheduleOnDateTest extends TestCase
         return [
             [
                 [],
-            ]
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function provideValidData(): array
-    {
-        return [
-            [
-                [],
-                []
             ],
+            [
+                [
+                    'date' => 'not date at all'
+                ],
+            ],
+            [
+                [
+                    'date' => '2019-09-01',
+                    'branch_id' => 'string'
+                ],
+            ],
+            [
+                [
+                    'date' => '2019-09-01',
+                    'classroom_id' => 'string'
+                ],
+            ],
+            [
+                [
+                    'date' => '2019-09-01',
+                    'course_id' => 'string'
+                ],
+            ]
         ];
     }
 }
