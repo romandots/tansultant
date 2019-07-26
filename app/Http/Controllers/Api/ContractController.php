@@ -13,7 +13,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ContractResource;
 use App\Repository\ContractRepository;
+use App\Repository\CustomerRepository;
 use App\Services\Contract\ContractService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class ContractController
@@ -32,47 +34,64 @@ class ContractController extends Controller
     private $contractService;
 
     /**
+     * @var CustomerRepository
+     */
+    private $customerRepository;
+
+    /**
      * ContractController constructor.
      * @param ContractService $contractService
      * @param ContractRepository $contractRepository
+     * @param CustomerRepository $customerRepository
      */
-    public function __construct(ContractService $contractService, ContractRepository $contractRepository)
-    {
+    public function __construct(
+        ContractService $contractService,
+        ContractRepository $contractRepository,
+        CustomerRepository $customerRepository
+    ) {
         $this->contractService = $contractService;
         $this->contractRepository = $contractRepository;
+        $this->customerRepository = $customerRepository;
     }
 
     /**
-     * @param int $id
+     * @param int $customerId
      * @return ContractResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(int $id): ContractResource
+    public function show(int $customerId): ContractResource
     {
-        $contract = $this->contractRepository->find($id);
+        $contract = $this->contractRepository->findByCustomerId($customerId);
         $contract->load('customer');
 
         return new ContractResource($contract);
     }
 
-
     /**
-     * @param int $id
+     * @param int $customerId
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \App\Services\Contract\Exceptions\ContractAlreadySignedException
      */
-    public function sign(int $id): void
+    public function sign(int $customerId): void
     {
-        $this->contractService->sign($id);
+        $customer = $this->customerRepository->find($customerId);
+        if (null === $customer->contract) {
+            throw new NotFoundHttpException('contract_not_found');
+        }
+        $this->contractService->sign($customer->contract);
     }
 
     /**
-     * @param int $id
+     * @param int $customerId
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \App\Services\Contract\Exceptions\ContractAlreadyTerminatedException
      */
-    public function terminate(int $id): void
+    public function terminate(int $customerId): void
     {
-        $this->contractService->terminate($id);
+        $customer = $this->customerRepository->find($customerId);
+        if (null === $customer->contract) {
+            throw new NotFoundHttpException('contract_not_found');
+        }
+        $this->contractService->terminate($customer->contract);
     }
 }

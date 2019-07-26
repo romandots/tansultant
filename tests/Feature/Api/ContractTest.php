@@ -22,7 +22,7 @@ class ContractTest extends \Tests\TestCase
 {
     use WithFaker, CreatesFakeUser, CreatesFakePerson, CreatesFakeCustomer, CreatesFakeContract;
 
-    protected const URL = '/api/contracts';
+    protected const URL = '/api/customers/%d/contract';
     protected const JSON_STRUCTURE = [
         'data' => [
             'serial',
@@ -63,8 +63,9 @@ class ContractTest extends \Tests\TestCase
     {
         $me = $this->createFakeUser();
         $contract = $this->createFakeContract();
+        $customer = $contract->customer;
 
-        $url = self::URL . '/' . $contract->id;
+        $url = \sprintf(self::URL, $customer->id);
 
         $this
             ->get($url)
@@ -91,10 +92,9 @@ class ContractTest extends \Tests\TestCase
             'terminated_at' => null
         ]);
 
-        $url = self::URL . '/' . $contract->id;
-
         $customer = $contract->customer;
         $person = $customer->person;
+        $url = \sprintf(self::URL, $customer->id);
 
         $this
             ->actingAs($this->me, 'api')
@@ -141,8 +141,9 @@ class ContractTest extends \Tests\TestCase
     {
         $me = $this->createFakeUser();
         $contract = $this->createFakeContract();
+        $customer = $contract->customer;
 
-        $url = self::URL . '/' . $contract->id;
+        $url = \sprintf(self::URL, $customer->id);
 
         $this
             ->post($url)
@@ -161,8 +162,9 @@ class ContractTest extends \Tests\TestCase
             'signed_at' => null,
             'terminated_at' => null
         ]);
+        $customer = $contract->customer;
 
-        $url = self::URL . '/' . $contract->id;
+        $url = \sprintf(self::URL, $customer->id);
 
         $this
             ->actingAs($this->me, 'api')
@@ -182,8 +184,9 @@ class ContractTest extends \Tests\TestCase
     {
         $me = $this->createFakeUser();
         $contract = $this->createFakeContract();
+        $customer = $contract->customer;
 
-        $url = self::URL . '/' . $contract->id;
+        $url = \sprintf(self::URL, $customer->id);
 
         $this
             ->delete($url)
@@ -202,8 +205,9 @@ class ContractTest extends \Tests\TestCase
             'signed_at' => null,
             'terminated_at' => null
         ]);
+        $customer = $contract->customer;
 
-        $url = self::URL . '/' . $contract->id;
+        $url = \sprintf(self::URL, $customer->id);
 
         $this
             ->actingAs($this->me, 'api')

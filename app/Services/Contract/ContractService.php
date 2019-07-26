@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Services\Contract;
 
+use App\Models\Contract;
 use App\Repository\ContractRepository;
 
 /**
@@ -33,14 +34,12 @@ class ContractService
     }
 
     /**
-     * @param int $id
+     * @param Contract $contract
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws Exceptions\ContractAlreadySignedException
      */
-    public function sign(int $id): void
+    public function sign(Contract $contract): void
     {
-        $contract = $this->contractRepository->find($id);
-
         if (null !== $contract->terminated_at) {
             throw new Exceptions\ContractAlreadyTerminatedException();
         }
@@ -53,14 +52,12 @@ class ContractService
     }
 
     /**
-     * @param int $id
+     * @param Contract $contract
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws Exceptions\ContractAlreadyTerminatedException
      */
-    public function terminate(int $id): void
+    public function terminate(Contract $contract): void
     {
-        $contract = $this->contractRepository->find($id);
-
         if (null !== $contract->terminated_at) {
             throw new Exceptions\ContractAlreadyTerminatedException();
         }

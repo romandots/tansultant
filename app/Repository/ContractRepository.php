@@ -32,6 +32,16 @@ class ContractRepository
 
     /**
      * @param int $customerId
+     * @return Contract|null
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function findByCustomerId(int $customerId): ?Contract
+    {
+        return Contract::query()->where('customer_id', $customerId)->firstOrFail();
+    }
+
+    /**
+     * @param int $customerId
      * @param int|null $branchId
      * @param string|null $serial
      * @return Contract

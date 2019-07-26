@@ -47,6 +47,11 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Instructor whereSeenAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Instructor whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Instructor whereUpdatedAt($value)
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Instructor onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Instructor withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Instructor withoutTrashed()
  */
 class Instructor extends Model
 {
