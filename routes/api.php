@@ -127,6 +127,8 @@ Route::group([
     });
 
     Route::group(['prefix' => 'lessons'], static function () {
+        Route::get('date', 'LessonController@onDate')
+            ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::READ_LESSONS);
         Route::post('/', 'LessonController@store')
             ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::CREATE_LESSONS);
         Route::patch('{id}', 'LessonController@update')

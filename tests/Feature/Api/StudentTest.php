@@ -269,9 +269,12 @@ class StudentTest extends \Tests\TestCase
 
     public function testUpdate(): void
     {
-        $data = ['card_number' => 1234];
+        $oldCardNumber = $this->faker->numerify('#####');
+        $newCardNumber = $this->faker->numerify('#####');
 
-        $student = $this->createFakeStudent(['card_number' => 9999]);
+        $data = ['card_number' => $oldCardNumber];
+
+        $student = $this->createFakeStudent(['card_number' => $newCardNumber]);
         $person = $student->person;
 
         $url = self::URL . '/' . $student->id;
@@ -283,7 +286,7 @@ class StudentTest extends \Tests\TestCase
             ->assertJsonStructure(self::JSON_STRUCTURE)
             ->assertJson([
                 'data' => [
-                    'card_number' => 1234,
+                    'card_number' => $oldCardNumber,
                     'id' => $student->id,
                     'name' => $student->name,
                     'person' => [

@@ -91,6 +91,11 @@ class PermissionsTableSeeder extends Seeder
         $descriptions = \App\Services\Permissions\SchedulesPermissions::getInitialDescriptions();
 
         $this->createPermissions($permissions, $descriptions);
+
+        $permissions = \App\Services\Permissions\LessonsPermissions::getAllNames();
+        $descriptions = \App\Services\Permissions\LessonsPermissions::getInitialDescriptions();
+
+        $this->createPermissions($permissions, $descriptions);
     }
 
     /**
