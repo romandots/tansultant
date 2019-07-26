@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -48,7 +49,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class Student extends Model
 {
-    use HasRoles;
+    use HasRoles, SoftDeletes;
 
     public const TABLE = 'students';
 

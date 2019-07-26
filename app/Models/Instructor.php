@@ -52,6 +52,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static bool|null restore()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Instructor withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Instructor withoutTrashed()
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Instructor whereDeletedAt($value)
  */
 class Instructor extends Model
 {

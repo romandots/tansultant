@@ -11,11 +11,11 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
  * Class Customer
- *
  * @package App\Models
  * @property int $id
  * @property string $name
@@ -42,7 +42,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class Customer extends Model
 {
-    use HasRoles;
+    use HasRoles, SoftDeletes;
 
     public const TABLE = 'customers';
 
