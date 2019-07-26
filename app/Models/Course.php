@@ -84,6 +84,6 @@ class Course extends Model
      */
     public function instructor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Instructor::class);
+        return $this->belongsTo(Instructor::class)->with('person');
     }
 }
