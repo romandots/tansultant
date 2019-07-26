@@ -85,7 +85,7 @@ class StoreCustomerRequest extends FormRequest
     /**
      * @return DTO\Person
      */
-    public function getDto(): DTO\Person
+    public function getPersonDto(): DTO\Person
     {
         $validated = $this->validated();
         $dto = new \App\Http\Requests\Api\DTO\Person;
