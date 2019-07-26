@@ -412,6 +412,9 @@ class InstructorTest extends \Tests\TestCase
             ->assertOk();
 
         $this->assertDatabaseHas(\App\Models\Person::TABLE, ['id' => $person->id]);
-        $this->assertDatabaseMissing(\App\Models\Instructor::TABLE, ['id' => $instructor->id]);
+        $this->assertDatabaseMissing(\App\Models\Instructor::TABLE, [
+            'id' => $instructor->id,
+            'deleted_at' => null
+        ]);
     }
 }
