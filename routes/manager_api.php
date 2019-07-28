@@ -137,7 +137,7 @@ Route::group(['prefix' => 'lessons'], static function () {
 });
 
 Route::group(['prefix' => 'visits'], static function () {
-    Route::post('/', 'VisitController@store')
+    Route::post('/', 'VisitController@createLessonVisit')
         ->middleware('permission:' . VisitsPermissions::MANAGE_VISITS . '|' . VisitsPermissions::CREATE_VISITS);
     Route::delete('{id}', 'VisitController@destroy')
         ->middleware('permission:' . VisitsPermissions::MANAGE_VISITS . '|' . VisitsPermissions::DELETE_VISITS);

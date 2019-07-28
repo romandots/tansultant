@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreLessonVisitRequest;
 use App\Http\Resources\VisitResource;
 use App\Repository\VisitRepository;
+use App\Services\Visit\VisitService;
 
 /**
  * Class VisitController
@@ -26,21 +27,30 @@ class VisitController extends Controller
     private $repository;
 
     /**
+     * @var VisitService
+     */
+    private $service;
+
+    /**
      * VisitController constructor.
      * @param VisitRepository $repository
+     * @param VisitService $service
      */
-    public function __construct(VisitRepository $repository)
+    public function __construct(VisitRepository $repository, VisitService $service)
     {
         $this->repository = $repository;
+        $this->service = $service;
     }
 
     /**
      * @param StoreLessonVisitRequest $request
      * @return VisitResource
+     * @throws \App\Services\Account\Exceptions\InsufficientFundsAccountServiceException
      */
-    public function store(StoreLessonVisitRequest $request): VisitResource
+    public function createLessonVisit(StoreLessonVisitRequest $request): VisitResource
     {
-        $visit = $this->repository->createFromDto($request->getDto(), $request->user());
+        $visit = $this->service->createLessonVisit($request->getDto(), $request->user());
+        $visit->load('event', 'student', 'manager', 'payment');
 
         return new VisitResource($visit);
     }
@@ -53,6 +63,7 @@ class VisitController extends Controller
     public function show(int $id): VisitResource
     {
         $visit = $this->repository->find($id);
+        $visit->load('event', 'student', 'manager');
 
         return new VisitResource($visit);
     }
