@@ -33,6 +33,7 @@ class CreateLessonsTable extends Migration
             $table->unsignedInteger('classroom_id')->nullable()->index();
             $table->unsignedInteger('instructor_id')->nullable()->index();
             $table->unsignedInteger('controller_id')->nullable()->index();
+            $table->uuid('payment_id')->nullable()->index();
             $table->enum('type', Lesson::TYPES)->default(Lesson::TYPE_LESSON);
             $table->enum('status', Lesson::STATUSES)->default(Lesson::STATUS_BOOKED);
             $table->timestamp('starts_at')->index();

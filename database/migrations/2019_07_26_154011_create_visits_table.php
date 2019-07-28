@@ -8,9 +8,9 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Class CreateVisitsTable
@@ -19,7 +19,6 @@ class CreateVisitsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
      * @return void
      */
     public function up(): void
@@ -32,8 +31,8 @@ class CreateVisitsTable extends Migration
                 ->default(\App\Models\Lesson::class);
             $table->unsignedInteger('event_id');
             $table->enum('payment_type', \App\Models\Visit::PAYMENT_TYPES)
-                ->default('App\Models\Payment');
-            $table->unsignedInteger('payment_id');
+                ->default(App\Models\Payment::class);
+            $table->uuid('payment_id')->nullable()->index();
             $table->timestamps();
 
             $table->index(['event_id', 'event_type'], 'morph_visits_event_id');
@@ -53,7 +52,6 @@ class CreateVisitsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
      * @return void
      */
     public function down(): void
