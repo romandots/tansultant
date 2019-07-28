@@ -10,11 +10,11 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Http\Requests\Api\DTO\Visit as VisitDto;
+use App\Http\Requests\Api\DTO\LessonVisit as VisitDto;
 use App\Models\Lesson;
 use App\Models\Student;
-use App\Models\Visit;
 use App\Models\User;
+use App\Models\Visit;
 
 /**
  * Class VisitRepository
@@ -36,18 +36,22 @@ class VisitRepository
 
     /**
      * @param VisitDto $dto
-     * @param User $user
+     * @param User|null $user
      * @return Visit
      */
-    public function createFromDto(VisitDto $dto, User $user): Visit
+    public function createLessonVisitFromDto(VisitDto $dto, ?User $user = null): Visit
     {
         $visit = new Visit;
-        $visit->manager_id = $user->id;
         $visit->student_id = $dto->student_id;
-        $visit->event_id = $dto->event_id;
-        $visit->event_type = $dto->event_type;
-        $visit->payment_id = $dto->payment_id;
-        $visit->payment_type = $dto->payment_type;
+        $visit->event_id = $dto->lesson_id;
+        $visit->event_type = Lesson::class;
+        $visit->payment_id = null;
+        $visit->payment_type = null;
+
+        if (null !== $user) {
+            $visit->manager_id = $user->id;
+        }
+
         $visit->save();
 
         return $visit;
