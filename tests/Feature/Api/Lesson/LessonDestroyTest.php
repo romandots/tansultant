@@ -29,7 +29,7 @@ class LessonDestroyTest extends TestCase
     use CreatesFakeUser, CreatesFakeLesson, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse,
         CreatesFakePerson;
 
-    protected const URL = '/api/lessons';
+    protected const URL = '/lessons';
 
     /**
      * @var Lesson

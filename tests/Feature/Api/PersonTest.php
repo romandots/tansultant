@@ -19,7 +19,7 @@ class PersonTest extends \Tests\TestCase
 {
     use WithFaker, CreatesFakeUser, CreatesFakePerson;
 
-    protected const URL = '/api/people';
+    protected const URL = '/people';
     protected const JSON_STRUCTURE = [
         'data' => [
             'id',

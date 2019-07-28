@@ -29,7 +29,7 @@ class LessonOnDateTest extends TestCase
 {
     use CreatesFakeUser, CreatesFakeLesson, CreatesFakeInstructor, CreatesFakeCourse, CreatesFakePerson, WithFaker;
 
-    protected const URL = '/api/lessons/date';
+    protected const URL = '/lessons/date';
     public const JSON_STRUCTURE = [
         'data' => [
             [

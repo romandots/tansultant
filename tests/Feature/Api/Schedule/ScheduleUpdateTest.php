@@ -28,7 +28,7 @@ class ScheduleUpdateTest extends TestCase
 {
     use CreatesFakeUser, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse, CreatesFakePerson, WithFaker;
 
-    protected const URL = '/api/schedules';
+    protected const URL = '/schedules';
 
     private const JSON_STRUCTURE = [
         'data' => [

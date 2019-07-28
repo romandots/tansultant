@@ -20,7 +20,7 @@ class StudentTest extends \Tests\TestCase
 {
     use WithFaker, CreatesFakePerson, CreatesFakeStudent, CreatesFakeUser;
 
-    protected const URL = '/api/students';
+    protected const URL = '/students';
 
     protected const JSON_STRUCTURE = [
         'data' => [
@@ -346,7 +346,10 @@ class StudentTest extends \Tests\TestCase
             ->assertOk();
 
         $this->assertDatabaseHas(\App\Models\Person::TABLE, ['id' => $person->id]);
-        $this->assertDatabaseMissing(\App\Models\Student::TABLE, ['id' => $student->id]);
+        $this->assertDatabaseMissing(\App\Models\Student::TABLE, [
+            'id' => $student->id,
+            'deleted_at' => null
+        ]);
     }
 
     /**

@@ -28,7 +28,7 @@ class ScheduleStoreTest extends TestCase
 {
     use CreatesFakeUser, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakePerson, CreatesFakeCourse, WithFaker;
 
-    protected const URL = '/api/schedules';
+    protected const URL = '/schedules';
 
     private const JSON_STRUCTURE = [
         'data' => [

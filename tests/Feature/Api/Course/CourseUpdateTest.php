@@ -28,7 +28,7 @@ class CourseUpdateTest extends TestCase
 {
     use CreatesFakeUser, CreatesFakeCourse, CreatesFakeInstructor, CreatesFakePerson, WithFaker;
 
-    protected const URL = '/api/courses';
+    protected const URL = '/courses';
 
     private const JSON_STRUCTURE = [
         'data' => [

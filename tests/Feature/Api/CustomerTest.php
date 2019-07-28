@@ -20,7 +20,7 @@ class CustomerTest extends \Tests\TestCase
 {
     use WithFaker, CreatesFakeUser, CreatesFakePerson, CreatesFakeCustomer;
 
-    protected const URL = '/api/customers';
+    protected const URL = '/customers';
 
     protected const JSON_STRUCTURE = [
         'data' => [
@@ -290,7 +290,9 @@ class CustomerTest extends \Tests\TestCase
             ->assertOk();
 
         $this->assertDatabaseHas(\App\Models\Person::TABLE, ['id' => $person->id]);
-        $this->assertDatabaseMissing(\App\Models\Customer::TABLE, ['id' => $customer->id]);
-        $this->assertDatabaseMissing(\App\Models\Contract::TABLE, ['customer_id' => $customer->id]);
+        $this->assertDatabaseMissing(\App\Models\Customer::TABLE, [
+            'id' => $customer->id,
+            'deleted_at' => null
+        ]);
     }
 }

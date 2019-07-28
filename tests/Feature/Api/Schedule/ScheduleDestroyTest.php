@@ -27,7 +27,7 @@ class ScheduleDestroyTest extends TestCase
 {
     use CreatesFakeUser, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse, CreatesFakePerson;
 
-    protected const URL = '/api/schedules';
+    protected const URL = '/schedules';
 
     /**
      * @var Schedule

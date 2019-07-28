@@ -29,7 +29,7 @@ class ScheduleOnDateTest extends TestCase
 {
     use CreatesFakeUser, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse, CreatesFakePerson, WithFaker;
 
-    protected const URL = '/api/schedules/date';
+    protected const URL = '/schedules/date';
     public const JSON_STRUCTURE = [
         'data' => [
             [

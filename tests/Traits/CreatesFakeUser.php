@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Tests\Traits;
 
 use App\Models\User;
+use App\Services\Permissions\UserRoles;
 
 /**
  * Trait CreatesFakeUser
@@ -32,6 +33,7 @@ trait CreatesFakeUser
 
         /** @var User $user */
         $user = \factory(\App\Models\User::class)->create($attributes);
+        $user->assignRole(UserRoles::MANAGER);
         $user->givePermissionTo($permissions);
 
         return $user;

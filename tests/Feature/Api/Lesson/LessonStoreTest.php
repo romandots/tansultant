@@ -28,7 +28,7 @@ class LessonStoreTest extends TestCase
 {
     use CreatesFakeUser, CreatesFakeLesson, CreatesFakeInstructor, CreatesFakePerson, CreatesFakeCourse, WithFaker;
 
-    protected const URL = '/api/lessons';
+    protected const URL = '/lessons';
 
     private const JSON_STRUCTURE = [
         'data' => [

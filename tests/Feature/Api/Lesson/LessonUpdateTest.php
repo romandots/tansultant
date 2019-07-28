@@ -31,7 +31,7 @@ class LessonUpdateTest extends TestCase
         CreatesFakePerson,
         WithFaker;
 
-    protected const URL = '/api/lessons';
+    protected const URL = '/lessons';
 
     private const JSON_STRUCTURE = [
         'data' => [

@@ -19,7 +19,7 @@ class UserTest extends \Tests\TestCase
 {
     use WithFaker, CreatesFakePerson, CreatesFakeUser;
 
-    protected const URL = '/api/users';
+    protected const URL = '/users';
 
     protected const JSON_STRUCTURE = [
         'data' => [
@@ -49,7 +49,7 @@ class UserTest extends \Tests\TestCase
 
     public function testMe(): void
     {
-        $url = '/api/user';
+        $url = '/user';
 
         $this
             ->actingAs($this->me, 'api')
@@ -409,7 +409,7 @@ class UserTest extends \Tests\TestCase
 
     public function testUpdatePasswordDenied(): void
     {
-        $url = '/api/user/password';
+        $url = '/user/password';
 
         $this
             ->patch($url, [
@@ -431,7 +431,7 @@ class UserTest extends \Tests\TestCase
             'new_password' => $newPassword,
         ];
 
-        $url = '/api/user/password';
+        $url = '/user/password';
 
         $this
             ->actingAs($user, 'api')
@@ -451,7 +451,7 @@ class UserTest extends \Tests\TestCase
     {
         $user = $this->createFakeUser(['password' => \Hash::make('123456')]);
 
-        $url = '/api/user/password';
+        $url = '/user/password';
 
         $this
             ->actingAs($user, 'api')
