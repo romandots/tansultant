@@ -14,7 +14,7 @@ namespace App\Http\Requests\Api\DTO;
  * Class LessonVisit
  * @package App\Http\Requests\Api\DTO
  */
-class Visit
+class LessonVisit
 {
     /**
      * @var int
@@ -24,20 +24,10 @@ class Visit
     /**
      * @var int
      */
-    public $event_id;
-
-    /**
-     * @var string
-     */
-    public $event_type;
-
-    /**
-     * @var string
-     */
-    public $payment_type;
+    public $lesson_id;
 
     /**
      * @var int|null
      */
-    public $payment_id;
+    public $promocode_id;
 }
