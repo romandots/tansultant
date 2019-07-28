@@ -28,11 +28,11 @@ class CreateVisitsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedInteger('student_id')->index();
             $table->unsignedInteger('manager_id')->nullable()->index();
-            $table->enum('event_type', \App\Models\Intent::EVENT_TYPES)
+            $table->enum('event_type', \App\Models\Visit::EVENT_TYPES)
                 ->default(\App\Models\Lesson::class);
             $table->unsignedInteger('event_id');
-            $table->enum('payment_type', \App\Models\Intent::STATUSES)
-                ->default(\App\Models\Intent::STATUS_EXPECTING);
+            $table->enum('payment_type', \App\Models\Visit::PAYMENT_TYPES)
+                ->default('App\Models\Payment');
             $table->unsignedInteger('payment_id');
             $table->timestamps();
 

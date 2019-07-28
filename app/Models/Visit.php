@@ -39,8 +39,8 @@ class Visit extends Model
     public const TABLE = 'visits';
 
     public const PAYMENT_TYPES = [
-        '\App\Models\Payment',
-        '\App\Models\Promocode',
+        'App\Models\Payment',
+        'App\Models\Promocode',
     ];
 
     public const EVENT_TYPES = [
