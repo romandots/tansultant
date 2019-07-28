@@ -12,13 +12,15 @@ namespace App\Http\Requests\Api;
 
 use App\Models\Lesson;
 use App\Models\Student;
-use App\Models\Visit;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * Class StoreLessonVisitRequest
  * @package App\Http\Requests\Api
+ * @property-read int $student_id
+ * @property-read int $lesson_id
+ * @property-read int $promocode_id
  */
 class StoreLessonVisitRequest extends FormRequest
 {
@@ -27,8 +29,6 @@ class StoreLessonVisitRequest extends FormRequest
      */
     public function rules(): array
     {
-        $paymentType = $this->get('payment_type');
-
         return [
             'student_id' => [
                 'required',
@@ -40,40 +40,25 @@ class StoreLessonVisitRequest extends FormRequest
                 'integer',
                 Rule::exists(Lesson::TABLE, 'id')
             ],
-            'payment_type' => [
-                'required',
-                'string',
-                Rule::in(Visit::PAYMENT_TYPES)
-            ],
-            'payment_id' => [
+            'promocode_id' => [
                 'nullable',
                 'integer',
-                Rule::exists($paymentType::TABLE, 'id')
+//                Rule::exists(\App\Models\Promocode::TABLE, 'id')
             ],
         ];
     }
 
-    // @todo conditional required for Promocode
-//    public function withValidator(Validator $validator): void
-//    {
-//        $validator->sometimes('payment_id', ['required'], function () {
-//            $this->payment_type === Promocode::class;
-//        });
-//    }
-
     /**
-     * @return DTO\Visit
+     * @return DTO\LessonVisit
      */
-    public function getDto(): DTO\Visit
+    public function getDto(): DTO\LessonVisit
     {
         $validated = $this->validated();
 
-        $dto = new DTO\Visit;
+        $dto = new DTO\LessonVisit;
         $dto->student_id = $validated['student_id'];
-        $dto->event_id = $validated['lesson_id'];
-        $dto->event_type = \App\Models\Lesson::class;
-        $dto->payment_type = $validated['payment_type'];
-        $dto->payment_id = $validated['payment_id'] ?? null;
+        $dto->lesson_id = $validated['lesson_id'];
+        $dto->promocode_id = $validated['promocode_id'] ?? null;
 
         return $dto;
     }
