@@ -35,7 +35,7 @@ class Intent extends Model
     public const TABLE = 'intents';
 
     public const EVENT_TYPES = [
-        Course::class,
+        Lesson::class,
         '\App\Models\Event'
     ];
 

@@ -44,7 +44,7 @@ class Visit extends Model
     ];
 
     public const EVENT_TYPES = [
-        Course::class,
+        Lesson::class,
         '\App\Models\Event'
     ];
 

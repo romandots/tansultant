@@ -30,7 +30,7 @@ class CreateIntentsTable extends Migration
             $table->unsignedInteger('manager_id')->nullable()->index();
             $table->unsignedInteger('event_id');
             $table->enum('event_type', \App\Models\Intent::EVENT_TYPES)
-                ->default(\App\Models\Course::class);
+                ->default(\App\Models\Lesson::class);
             $table->enum('status', \App\Models\Intent::STATUSES)
                 ->default(\App\Models\Intent::STATUS_EXPECTING)
                 ->index();
