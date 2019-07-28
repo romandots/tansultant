@@ -13,9 +13,7 @@ class Kernel extends HttpKernel
 {
     /**
      * The application's global HTTP middleware stack.
-     *
      * These middleware are run during every request to your application.
-     *
      * @var array
      */
     protected $middleware = [
@@ -28,7 +26,6 @@ class Kernel extends HttpKernel
 
     /**
      * The application's route middleware groups.
-     *
      * @var array
      */
     protected $middlewareGroups = [
@@ -42,19 +39,51 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
-        'api' => [
+        'public_api' => [
             'throttle:6000,1',
             'prefer_json:1',
-            \App\Http\Middleware\GetBearerTokenFromCookies::class
-//            'bindings',
+            \App\Http\Middleware\GetBearerTokenFromCookies::class,
+        ],
+
+        'manager_api' => [
+            'throttle:6000,1',
+            'prefer_json:1',
+            \App\Http\Middleware\GetBearerTokenFromCookies::class,
+            'auth:api',
+            'role:' . \App\Services\Permissions\UserRoles::ADMIN
+            . '|' . \App\Services\Permissions\UserRoles::MANAGER
+            . '|' . \App\Services\Permissions\UserRoles::OPERATOR
+            . '|' . \App\Services\Permissions\UserRoles::SUPERVISOR
+        ],
+
+        'student_api' => [
+            'throttle:6000,1',
+            'prefer_json:1',
+            \App\Http\Middleware\GetBearerTokenFromCookies::class,
+            'auth:api',
+            'role:' . \App\Services\Permissions\UserRoles::STUDENT
+        ],
+
+        'customer_api' => [
+            'throttle:6000,1',
+            'prefer_json:1',
+            \App\Http\Middleware\GetBearerTokenFromCookies::class,
+            'auth:api',
+            'role:' . \App\Services\Permissions\UserRoles::CUSTOMER
+        ],
+
+        'instructor_api' => [
+            'throttle:6000,1',
+            'prefer_json:1',
+            \App\Http\Middleware\GetBearerTokenFromCookies::class,
+            'auth:api',
+            'role:' . \App\Services\Permissions\UserRoles::INSTRUCTOR
         ],
     ];
 
     /**
      * The application's route middleware.
-     *
      * These middleware may be assigned to groups or used individually.
-     *
      * @var array
      */
     protected $routeMiddleware = [
@@ -70,13 +99,12 @@ class Kernel extends HttpKernel
         'prefer_json' => \App\Http\Middleware\PreferJson::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
     ];
 
     /**
      * The priority-sorted list of middleware.
-     *
      * This forces non-global middleware to always be in the given order.
-     *
      * @var array
      */
     protected $middlewarePriority = [
