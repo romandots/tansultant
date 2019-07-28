@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Api\ChangeLessonInstructorRequest;
 use App\Http\Requests\Api\LessonsOnDateRequest;
 use App\Http\Requests\Api\StoreLessonRequest;
 use App\Http\Requests\Api\StoreLessonRequest as UpdateLessonRequest;
@@ -60,11 +61,10 @@ class LessonController
     /**
      * @param StoreLessonRequest $request
      * @return LessonResource
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function store(StoreLessonRequest $request): LessonResource
     {
-        $lesson = $this->service->create($request->getDto());
+        $lesson = $this->service->createFromDto($request->getDto());
         $lesson->load('instructor', 'course', 'controller');
 
         return new LessonResource($lesson);
@@ -74,12 +74,25 @@ class LessonController
      * @param UpdateLessonRequest $request
      * @param int $id
      * @return LessonResource
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function update(UpdateLessonRequest $request, int $id): LessonResource
     {
         $lesson = $this->repository->find($id);
         $this->repository->update($lesson, $request->getDto());
+        $lesson->load('instructor', 'course', 'controller');
+
+        return new LessonResource($lesson);
+    }
+
+    /**
+     * @param ChangeLessonInstructorRequest $request
+     * @param int $id
+     * @return LessonResource
+     */
+    public function changeInstructor(ChangeLessonInstructorRequest $request, int $id): LessonResource
+    {
+        $lesson = $this->repository->find($id);
+        $this->repository->updateInstructor($lesson, $request->instructor_id);
         $lesson->load('instructor', 'course', 'controller');
 
         return new LessonResource($lesson);
@@ -105,5 +118,57 @@ class LessonController
         $lessons->load('instructor', 'course', 'controller');
 
         return LessonResource::collection($lessons);
+    }
+
+    /**
+     * @param int $id
+     * @return LessonResource
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function close(int $id): LessonResource
+    {
+        $lesson = $this->repository->find($id);
+        $this->service->close($lesson);
+
+        return new LessonResource($lesson);
+    }
+
+    /**
+     * @param int $id
+     * @return LessonResource
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function open(int $id): LessonResource
+    {
+        $lesson = $this->repository->find($id);
+        $this->service->open($lesson);
+
+        return new LessonResource($lesson);
+    }
+
+    /**
+     * @param int $id
+     * @return LessonResource
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function cancel(int $id): LessonResource
+    {
+        $lesson = $this->repository->find($id);
+        $this->service->cancel($lesson);
+
+        return new LessonResource($lesson);
+    }
+
+    /**
+     * @param int $id
+     * @return LessonResource
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function book(int $id): LessonResource
+    {
+        $lesson = $this->repository->find($id);
+        $this->repository->book($lesson);
+
+        return new LessonResource($lesson);
     }
 }

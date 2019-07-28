@@ -13,6 +13,7 @@ namespace App\Repository;
 use App\Http\Requests\Api\DTO\Lesson as LessonDto;
 use App\Http\Requests\Api\DTO\LessonsOnDate;
 use App\Models\Lesson;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -54,6 +55,16 @@ class LessonRepository
     public function update(Lesson $lesson, LessonDto $dto): void
     {
         $this->fill($lesson, $dto);
+        $lesson->save();
+    }
+
+    /**
+     * @param Lesson $lesson
+     * @param int $instructorId
+     */
+    public function updateInstructor(Lesson $lesson, int $instructorId): void
+    {
+        $lesson->instructor_id = $instructorId;
         $lesson->save();
     }
 
@@ -106,5 +117,45 @@ class LessonRepository
             ->distinct()
             ->orderBy('starts_at')
             ->get();
+    }
+
+    /**
+     * @param Lesson $lesson
+     */
+    public function close(Lesson $lesson): void
+    {
+        $lesson->status = Lesson::STATUS_CLOSED;
+        $lesson->closed_at = Carbon::now();
+        $lesson->save();
+    }
+
+    /**
+     * @param Lesson $lesson
+     */
+    public function open(Lesson $lesson): void
+    {
+        $lesson->status = Lesson::STATUS_PASSED;
+        $lesson->closed_at = null;
+        $lesson->save();
+    }
+
+    /**
+     * @param Lesson $lesson
+     */
+    public function cancel(Lesson $lesson): void
+    {
+        $lesson->status = Lesson::STATUS_CANCELED;
+        $lesson->canceled_at = Carbon::now();
+        $lesson->save();
+    }
+
+    /**
+     * @param Lesson $lesson
+     */
+    public function book(Lesson $lesson): void
+    {
+        $lesson->status = Lesson::STATUS_BOOKED;
+        $lesson->canceled_at = null;
+        $lesson->save();
     }
 }

@@ -21,6 +21,10 @@ class LessonsPermissions
     public const READ_LESSONS = 'read_lessons';
     public const UPDATE_LESSONS = 'update_lessons';
     public const DELETE_LESSONS = 'delete_lessons';
+    public const CANCEL_LESSONS = 'cancel_lessons';
+    public const CLOSE_LESSONS = 'close_lessons';
+    public const OPEN_LESSONS = 'open_lessons';
+    public const BOOK_LESSONS = 'book_lessons';
 
     /**
      * Get names of all defined permissions

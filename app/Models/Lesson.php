@@ -39,6 +39,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\Course $course
  * @property-read \App\Models\Instructor $instructor
  * @property-read \App\Models\Schedule $schedule
+ * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Intent[] $intents
+ * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Visit[] $visits
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newQuery()
@@ -135,5 +137,21 @@ class Lesson extends Model
     public function controller(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id')->with('person');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|Visit[]
+     */
+    public function visits(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Visit::class)->where('event_type', self::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|Intent[]
+     */
+    public function intents(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Intent::class)->where('event_type', self::class);
     }
 }
