@@ -46,6 +46,13 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Student whereSeenAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Student whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Student whereUpdatedAt($value)
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Student onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Student whereDeletedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Student withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Student withoutTrashed()
  */
 class Student extends Model
 {

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Intent
+ *
  * @package App\Models
  * @property int $id
  * @property int $event_id
@@ -29,6 +30,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Intent newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Intent query()
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Intent whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Intent whereEventId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Intent whereEventType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Intent whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Intent whereManagerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Intent whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Intent whereStudentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Intent whereUpdatedAt($value)
  */
 class Intent extends Model
 {

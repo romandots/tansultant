@@ -16,6 +16,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * Class Customer
+ *
  * @package App\Models
  * @property int $id
  * @property string $name
@@ -39,6 +40,13 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer wherePersonId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereSeenAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereUpdatedAt($value)
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereDeletedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer withoutTrashed()
  */
 class Customer extends Model
 {
