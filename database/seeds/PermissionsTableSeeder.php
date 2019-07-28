@@ -26,7 +26,8 @@ class PermissionsTableSeeder extends Seeder
         $this->runSystem();
         $this->runUsers();
         $this->runPeople();
-        $this->runCourses();
+        $this->runCoursesAndLessons();
+        $this->runVisitsAndIntents();
     }
 
     /**
@@ -80,7 +81,7 @@ class PermissionsTableSeeder extends Seeder
     /**
      * @throws ReflectionException
      */
-    private function runCourses(): void
+    private function runCoursesAndLessons(): void
     {
         $permissions = \App\Services\Permissions\CoursesPermissions::getAllNames();
         $descriptions = \App\Services\Permissions\CoursesPermissions::getInitialDescriptions();
@@ -94,6 +95,22 @@ class PermissionsTableSeeder extends Seeder
 
         $permissions = \App\Services\Permissions\LessonsPermissions::getAllNames();
         $descriptions = \App\Services\Permissions\LessonsPermissions::getInitialDescriptions();
+
+        $this->createPermissions($permissions, $descriptions);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function runVisitsAndIntents(): void
+    {
+        $permissions = \App\Services\Permissions\IntentsPermissions::getAllNames();
+        $descriptions = \App\Services\Permissions\IntentsPermissions::getInitialDescriptions();
+
+        $this->createPermissions($permissions, $descriptions);
+
+        $permissions = \App\Services\Permissions\VisitsPermissions::getAllNames();
+        $descriptions = \App\Services\Permissions\VisitsPermissions::getInitialDescriptions();
 
         $this->createPermissions($permissions, $descriptions);
     }
