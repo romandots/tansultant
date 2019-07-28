@@ -22,7 +22,7 @@ trait CreatesFakeLesson
      * @param array|null $attributes
      * @return Lesson
      */
-    public function createFakeLesson(?array $attributes = []): Lesson
+    private function createFakeLesson(?array $attributes = []): Lesson
     {
         return \factory(Lesson::class)->create($attributes);
     }
