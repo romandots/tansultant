@@ -20,6 +20,9 @@ class UserRoles
     public const MANAGER = 'manager';
     public const OPERATOR = 'operator';
     public const SUPERVISOR = 'supervisor';
+    public const STUDENT = 'student';
+    public const CUSTOMER = 'customer';
+    public const INSTRUCTOR = 'instructor';
 
     public const ADMIN_PERMISSIONS = [
         SystemPermissions::ACCESS_PANEL,
@@ -129,11 +132,20 @@ class UserRoles
         StudentsPermissions::UPDATE_STUDENTS,
     ];
 
+    public const STUDENT_PERMISSIONS = [];
+
+    public const CUSTOMER_PERMISSIONS = [];
+
+    public const INSTRUCTOR_PERMISSIONS = [];
+
     public const PERMISSIONS_MAP = [
         self::ADMIN => self::ADMIN_PERMISSIONS,
         self::MANAGER => self::MANAGER_PERMISSIONS,
         self::OPERATOR => self::OPERATOR_PERMISSIONS,
         self::SUPERVISOR => self::SUPERVISOR_PERMISSIONS,
+        self::STUDENT => self::STUDENT_PERMISSIONS,
+        self::CUSTOMER => self::CUSTOMER_PERMISSIONS,
+        self::INSTRUCTOR => self::INSTRUCTOR_PERMISSIONS,
     ];
 
     /**
