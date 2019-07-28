@@ -138,11 +138,9 @@ Route::group(['prefix' => 'lessons'], static function () {
         ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::READ_LESSONS);
 
     Route::post('{id}/cancel', 'LessonController@cancel')
-        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' .
-            LessonsPermissions::CANCEL_LESSONS);
+        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::CANCEL_LESSONS);
     Route::post('{id}/book', 'LessonController@book')
-        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' .
-            LessonsPermissions::BOOK_LESSONS);
+        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::BOOK_LESSONS);
     Route::post('{id}/close', 'LessonController@close')
         ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::CLOSE_LESSONS);
     Route::post('{id}/open', 'LessonController@open')
@@ -152,8 +150,6 @@ Route::group(['prefix' => 'lessons'], static function () {
 Route::group(['prefix' => 'visits'], static function () {
     Route::post('/', 'VisitController@store')
         ->middleware('permission:' . VisitsPermissions::MANAGE_VISITS . '|' . VisitsPermissions::CREATE_VISITS);
-    Route::patch('{id}', 'VisitController@update')
-        ->middleware('permission:' . VisitsPermissions::MANAGE_VISITS . '|' . VisitsPermissions::UPDATE_VISITS);
     Route::delete('{id}', 'VisitController@destroy')
         ->middleware('permission:' . VisitsPermissions::MANAGE_VISITS . '|' . VisitsPermissions::DELETE_VISITS);
     Route::get('{id}', 'VisitController@show')
@@ -163,8 +159,6 @@ Route::group(['prefix' => 'visits'], static function () {
 Route::group(['prefix' => 'intents'], static function () {
     Route::post('/', 'IntentController@store')
         ->middleware('permission:' . IntentsPermissions::MANAGE_INTENTS . '|' . IntentsPermissions::CREATE_INTENTS);
-    Route::patch('{id}', 'IntentController@update')
-        ->middleware('permission:' . IntentsPermissions::MANAGE_INTENTS . '|' . IntentsPermissions::UPDATE_INTENTS);
     Route::delete('{id}', 'IntentController@destroy')
         ->middleware('permission:' . IntentsPermissions::MANAGE_INTENTS . '|' . IntentsPermissions::DELETE_INTENTS);
     Route::get('{id}', 'IntentController@show')

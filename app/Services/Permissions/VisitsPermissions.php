@@ -19,7 +19,6 @@ class VisitsPermissions
     public const MANAGE_VISITS = 'manage_visits';
     public const CREATE_VISITS = 'create_visits';
     public const READ_VISITS = 'read_visits';
-    public const UPDATE_VISITS = 'update_visits';
     public const DELETE_VISITS = 'delete_visits';
 
     /**
@@ -46,7 +45,6 @@ class VisitsPermissions
             self::MANAGE_VISITS => 'Управлять посещениями',
             self::CREATE_VISITS => 'Создавать посещения',
             self::READ_VISITS => 'Просматривать посещения',
-            self::UPDATE_VISITS => 'Обновлять посещения',
             self::DELETE_VISITS => 'Удалять посещения',
         ];
     }

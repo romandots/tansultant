@@ -19,7 +19,6 @@ class IntentsPermissions
     public const MANAGE_INTENTS = 'manage_intents';
     public const CREATE_INTENTS = 'create_intents';
     public const READ_INTENTS = 'read_intents';
-    public const UPDATE_INTENTS = 'update_intents';
     public const DELETE_INTENTS = 'delete_intents';
 
     /**
@@ -46,7 +45,6 @@ class IntentsPermissions
             self::MANAGE_INTENTS => 'Управлять записями на урок',
             self::CREATE_INTENTS => 'Создавать записи на урок',
             self::READ_INTENTS => 'Просматривать записи на урок',
-            self::UPDATE_INTENTS => 'Обновлять записи на урок',
             self::DELETE_INTENTS => 'Удалять записи на урок',
         ];
     }
