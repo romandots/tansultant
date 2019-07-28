@@ -52,7 +52,6 @@ if (!function_exists('format_validation_errors')) {
     }
 }
 
-
 if (!function_exists('weekday')) {
     /**
      * @param \Carbon\Carbon $date
@@ -61,5 +60,19 @@ if (!function_exists('weekday')) {
     function weekday(\Carbon\Carbon $date): string
     {
         return \Carbon\Carbon::getDays()[$date->dayOfWeek];
+    }
+}
+
+if (!function_exists('base_classname')) {
+    /**
+     * @param object|string $object
+     * @return string
+     */
+    function base_classname($object): string {
+        if (\is_object($object)) {
+            $object = \get_class($object);
+        }
+
+        return \basename(\str_replace('\\', '/', $object));
     }
 }

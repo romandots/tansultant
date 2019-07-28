@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 /**
  * Class RouteServiceProvider
@@ -14,28 +14,13 @@ class RouteServiceProvider extends ServiceProvider
 {
     /**
      * This namespace is applied to your controller routes.
-     *
      * In addition, it is set as the URL generator's root namespace.
-     *
      * @var string
      */
     protected $namespace = 'App\Http\Controllers';
 
     /**
-     * Define your route model bindings, pattern filters, etc.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        //
-
-        parent::boot();
-    }
-
-    /**
      * Define the routes for the application.
-     *
      * @return void
      */
     public function map()
@@ -43,51 +28,45 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapApiRoutes();
 
         $this->mapWebRoutes();
-
-        //
     }
 
     /**
      * Define the "web" routes for the application.
-     *
      * These routes all receive session state, CSRF protection, etc.
-     *
      * @return void
      */
-    protected function mapWebRoutes()
+    protected function mapWebRoutes(): void
     {
         Route::middleware('web')
-             ->namespace($this->namespace)
-             ->group(base_path('routes/web.php'));
+            ->namespace($this->namespace)
+            ->group(base_path('routes/web.php'));
     }
 
     /**
      * Define the "api" routes for the application.
-     *
      * These routes are typically stateless.
-     *
      * @return void
      */
-    protected function mapApiRoutes()
+    protected function mapApiRoutes(): void
     {
-        Route::prefix('manager_api')
+        Route::prefix('')
             ->middleware('manager_api')
-            ->namespace($this->namespace.'\Api')
+            ->namespace($this->namespace . '\Api')
             ->group(base_path('routes/manager_api.php'));
 
         Route::prefix('student_api')
             ->middleware('student_api')
-            ->namespace($this->namespace.'\StudentApi')
+            ->namespace($this->namespace . '\StudentApi')
             ->group(base_path('routes/student_api.php'));
 
         Route::prefix('customer_api')
             ->middleware('customer_api')
-            ->namespace($this->namespace.'\CustomerApi')
+            ->namespace($this->namespace . '\CustomerApi')
             ->group(base_path('routes/customer_api.php'));
 
         Route::prefix('instructor_api')
             ->middleware('instructor_api')
-            ->namespace($this->namespace.'\InstructorApi')
+            ->namespace($this->namespace . '\InstructorApi')
             ->group(base_path('routes/instructor_api.php'));
     }
 }
