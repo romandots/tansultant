@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Lesson
- *
  * @package App\Models
  * @property int $id
  * @property string $name
@@ -23,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $schedule_id
  * @property int|null $instructor_id
  * @property int|null $controller_id
+ * @property int|null $payment_id
  * @property int $branch_id
  * @property int $classroom_id
  * @property string $type [lesson | event | rent]
@@ -34,13 +34,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property \Carbon\Carbon|null $deleted_at
- * @property string $
  * @property-read \App\Models\User $controller
  * @property-read \App\Models\Course $course
  * @property-read \App\Models\Instructor $instructor
  * @property-read \App\Models\Schedule $schedule
+ * @property-read Model $branch
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Intent[] $intents
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Visit[] $visits
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null $payment
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newQuery()
@@ -154,4 +155,21 @@ class Lesson extends Model
     {
         return $this->hasMany(Intent::class)->where('event_type', self::class);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null
+     */
+    public function payment(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Payment::class);
+    }
+
+//    /**
+//     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+//     * @todo
+//     */
+//    public function branch(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+//    {
+//        return;
+//    }
 }

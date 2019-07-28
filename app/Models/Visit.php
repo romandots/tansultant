@@ -27,11 +27,20 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Relations\MorphTo|\App\Models\Lesson $event
  * @property-read \App\Models\User $manager
- * @property-read \Illuminate\Database\Eloquent\Model $payment
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null $payment
  * @property-read \App\Models\Student $student
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit whereEventId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit whereEventType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit whereManagerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit wherePaymentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit wherePaymentType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit whereStudentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Visit extends Model
@@ -39,7 +48,7 @@ class Visit extends Model
     public const TABLE = 'visits';
 
     public const PAYMENT_TYPES = [
-        'App\Models\Payment',
+        Payment::class,
         'App\Models\Promocode',
     ];
 
@@ -75,10 +84,10 @@ class Visit extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|User|null
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null
      */
     public function payment(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(Payment::class);
     }
 }
