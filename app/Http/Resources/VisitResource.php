@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Http\Resources;
 
 use App\Models\Lesson;
+use App\Models\Payment;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -28,24 +29,29 @@ class VisitResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'student' => $this->whenLoaded('student', static function () {
+            'student' => $this->whenLoaded('student', function () {
                 return new StudentResource($this->student);
             }),
-            'manager' => $this->whenLoaded('manager', static function () {
+            'manager' => $this->whenLoaded('manager', function () {
                 return new UserResource($this->manager);
             }),
-            'lesson' => $this->whenLoaded('event', static function () {
+            'lesson' => $this->whenLoaded('event', function () {
                 return $this->event_type === Lesson::class
                     ? new LessonResource($this->event) : null;
             }),
             'event_type' => \base_classname($this->event_type),
             'payment_type' => \base_classname($this->payment_type),
-//            'payment' => $this->whenLoaded('payment', static function () {
-//                return new PaymentResource($this->payment);
+            'payment' => $this->whenLoaded('payment', static function () {
+                return Payment::class === $this->payment_type
+                    ? new PaymentResource($this->payment) : null;
+            }),
+//            'promocode' => $this->whenLoaded('payment', static function () {
+//                return Promocode::class === $this->payment_type
+//                    ? new PromocodeResource($this->payment) : null;
 //            }),
-//            'is_paid' => $this->whenLoaded('payment', static function () {
-//                return $this->payment->status === Payment::STATUS_PAID;
-//            }),
+            'is_paid' => $this->whenLoaded('payment', static function () {
+                return null !== $this->payment && $this->payment->status === Payment::STATUS_CONFIRMED;
+            }),
             'created_at' => $this->created_at->toDateTimeString()
         ];
     }
