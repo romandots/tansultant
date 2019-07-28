@@ -42,6 +42,7 @@ class IntentController extends Controller
     public function store(StoreLessonIntentRequest $request): IntentResource
     {
         $intent = $this->repository->createFromDto($request->getDto(), $request->user());
+        $intent->load('student', 'manager', 'event');
 
         return new IntentResource($intent);
     }
@@ -54,6 +55,7 @@ class IntentController extends Controller
     public function show(int $id): IntentResource
     {
         $intent = $this->repository->find($id);
+        $intent->load('student', 'manager', 'event');
 
         return new IntentResource($intent);
     }
