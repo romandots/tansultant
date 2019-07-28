@@ -29,13 +29,13 @@ class IntentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'student' => $this->whenLoaded('student', static function () {
+            'student' => $this->whenLoaded('student', function () {
                 return new StudentResource($this->student);
             }),
-            'manager' => $this->whenLoaded('manager', static function () {
+            'manager' => $this->whenLoaded('manager', function () {
                 return new UserResource($this->manager);
             }),
-            'lesson' => $this->whenLoaded('event', static function () {
+            'lesson' => $this->whenLoaded('event', function () {
                 return $this->event_type === Lesson::class
                     ? new LessonResource($this->event) : null;
             }),
