@@ -8,10 +8,10 @@
 
 declare(strict_types=1);
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
-
 use App\Models\Visit;
 use Faker\Generator as Faker;
+
+/* @var $factory \Illuminate\Database\Eloquent\Factory */
 
 $factory->define(Visit::class, static function (Faker $faker) {
     return [
@@ -19,7 +19,7 @@ $factory->define(Visit::class, static function (Faker $faker) {
         'manager_id' => null,
         'event_type' => \App\Models\Lesson::class,
         'event_id' => $faker->numerify('######'),
-        'payment_type' => 'App\Models\Payment',
-        'payment_id' => $faker->numerify('######'),
+        'payment_type' => \App\Models\Payment::class,
+        'payment_id' => $faker->uuid
     ];
 });
