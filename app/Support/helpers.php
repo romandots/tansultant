@@ -68,11 +68,23 @@ if (!function_exists('base_classname')) {
      * @param object|string $object
      * @return string
      */
-    function base_classname($object): string {
+    function base_classname($object): string
+    {
         if (\is_object($object)) {
             $object = \get_class($object);
         }
 
         return \basename(\str_replace('\\', '/', $object));
+    }
+}
+
+if (!function_exists('uuid')) {
+    /**
+     * @return string
+     * @throws Exception
+     */
+    function uuid(): string
+    {
+        return \Ramsey\Uuid\Uuid::uuid4()->toString();
     }
 }
