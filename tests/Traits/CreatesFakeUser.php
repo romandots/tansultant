@@ -31,10 +31,22 @@ trait CreatesFakeUser
             $attributes['person_id'] = $person->id;
         }
 
-        /** @var User $user */
         $user = \factory(\App\Models\User::class)->create($attributes);
-        $user->assignRole(UserRoles::MANAGER);
         $user->givePermissionTo($permissions);
+
+        return $user;
+    }
+
+    /**
+     * @param array|null $attributes
+     * @param array $permissions
+     * @return \App\Models\User
+     */
+    private function createFakeManagerUser(array $attributes = [], array $permissions = []): \App\Models\User
+    {
+        /** @var User $user */
+        $user = $this->createFakeUser($attributes, $permissions);
+        $user->assignRole(UserRoles::MANAGER);
 
         return $user;
     }

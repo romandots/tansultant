@@ -117,7 +117,7 @@ class VisitStoreTest extends TestCase
      */
     public function testValidationErrors(array $data): void
     {
-        $user = $this->createFakeUser([], [
+        $user = $this->createFakeManagerUser([], [
             VisitsPermissions::CREATE_VISITS
         ]);
 
@@ -129,7 +129,7 @@ class VisitStoreTest extends TestCase
 
     public function testSuccess(): void
     {
-        $user = $this->createFakeUser([], [
+        $user = $this->createFakeManagerUser([], [
             VisitsPermissions::CREATE_VISITS
         ]);
 

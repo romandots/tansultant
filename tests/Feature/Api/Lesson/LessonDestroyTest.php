@@ -75,7 +75,7 @@ class LessonDestroyTest extends TestCase
 
     public function testSuccess(): void
     {
-        $user = $this->createFakeUser([], [
+        $user = $this->createFakeManagerUser([], [
             LessonsPermissions::DELETE_LESSONS
         ]);
 

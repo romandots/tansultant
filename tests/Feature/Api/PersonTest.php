@@ -51,7 +51,7 @@ class PersonTest extends \Tests\TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->me = $this->createFakeUser([], [
+        $this->me = $this->createFakeManagerUser([], [
             PersonsPermissions::CREATE_PERSONS,
             PersonsPermissions::READ_PERSONS,
             PersonsPermissions::UPDATE_PERSONS,

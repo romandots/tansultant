@@ -44,7 +44,7 @@ class StudentTest extends \Tests\TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->me = $this->createFakeUser([], [
+        $this->me = $this->createFakeManagerUser([], [
             StudentsPermissions::CREATE_STUDENTS,
             StudentsPermissions::READ_STUDENTS,
             StudentsPermissions::UPDATE_STUDENTS,

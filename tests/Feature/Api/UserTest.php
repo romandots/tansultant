@@ -39,7 +39,7 @@ class UserTest extends \Tests\TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->me = $this->createFakeUser([], [
+        $this->me = $this->createFakeManagerUser([], [
             UsersPermissions::CREATE_USERS,
             UsersPermissions::READ_USERS,
             UsersPermissions::UPDATE_USERS,
@@ -424,7 +424,7 @@ class UserTest extends \Tests\TestCase
         $oldPassword = '123456';
         $newPassword = '654321';
 
-        $user = $this->createFakeUser(['password' => \Hash::make($oldPassword)]);
+        $user = $this->createFakeManagerUser(['password' => \Hash::make($oldPassword)]);
 
         $data = [
             'old_password' => $oldPassword,
@@ -449,7 +449,7 @@ class UserTest extends \Tests\TestCase
      */
     public function testInvalidUpdatePassword(array $data): void
     {
-        $user = $this->createFakeUser(['password' => \Hash::make('123456')]);
+        $user = $this->createFakeManagerUser(['password' => \Hash::make('123456')]);
 
         $url = '/user/password';
 

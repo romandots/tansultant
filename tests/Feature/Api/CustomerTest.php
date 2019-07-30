@@ -41,7 +41,7 @@ class CustomerTest extends \Tests\TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->me = $this->createFakeUser([], [
+        $this->me = $this->createFakeManagerUser([], [
             CustomersPermissions::CREATE_CUSTOMERS,
             CustomersPermissions::READ_CUSTOMERS,
             CustomersPermissions::UPDATE_CUSTOMERS,

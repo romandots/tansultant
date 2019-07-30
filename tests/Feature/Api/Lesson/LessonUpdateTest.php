@@ -76,7 +76,8 @@ class LessonUpdateTest extends TestCase
             'course_id' => $this->course->id,
             'instructor_id' => $instructor->id,
             'schedule_id' => null,
-            'controller_id' => null
+            'controller_id' => null,
+            'status' => Lesson::STATUS_BOOKED,
         ]);
         $this->url = self::URL . '/' . $this->lesson->id;
     }
@@ -104,7 +105,7 @@ class LessonUpdateTest extends TestCase
      */
     public function testValidationErrors(array $data): void
     {
-        $user = $this->createFakeUser([], [
+        $user = $this->createFakeManagerUser([], [
             LessonsPermissions::UPDATE_LESSONS
         ]);
 
@@ -116,7 +117,7 @@ class LessonUpdateTest extends TestCase
 
     public function testSuccess(): void
     {
-        $user = $this->createFakeUser([], [
+        $user = $this->createFakeManagerUser([], [
             LessonsPermissions::UPDATE_LESSONS
         ]);
 

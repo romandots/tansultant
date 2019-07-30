@@ -45,7 +45,7 @@ class InstructorTest extends \Tests\TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->me = $this->createFakeUser([], [
+        $this->me = $this->createFakeManagerUser([], [
             InstructorsPermissions::CREATE_INSTRUCTORS,
             InstructorsPermissions::READ_INSTRUCTORS,
             InstructorsPermissions::UPDATE_INSTRUCTORS,

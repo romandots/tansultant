@@ -99,7 +99,7 @@ class ScheduleOnDateTest extends TestCase
      */
     public function testValidationErrors(array $params): void
     {
-        $user = $this->createFakeUser([], [
+        $user = $this->createFakeManagerUser([], [
             SchedulesPermissions::READ_SCHEDULES
         ]);
 
@@ -111,7 +111,7 @@ class ScheduleOnDateTest extends TestCase
 
     public function testSuccess(): void
     {
-        $user = $this->createFakeUser([], [
+        $user = $this->createFakeManagerUser([], [
             SchedulesPermissions::READ_SCHEDULES
         ]);
 

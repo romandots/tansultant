@@ -85,7 +85,7 @@ class CourseStoreTest extends TestCase
      */
     public function testValidationErrors(array $data): void
     {
-        $user = $this->createFakeUser([], [
+        $user = $this->createFakeManagerUser([], [
             CoursesPermissions::CREATE_COURSES
         ]);
 
@@ -97,7 +97,7 @@ class CourseStoreTest extends TestCase
 
     public function testSuccess(): void
     {
-        $user = $this->createFakeUser([], [
+        $user = $this->createFakeManagerUser([], [
             CoursesPermissions::CREATE_COURSES
         ]);
 

@@ -86,7 +86,7 @@ class ScheduleShowTest extends TestCase
 
     public function testSuccess(): void
     {
-        $user = $this->createFakeUser([], [
+        $user = $this->createFakeManagerUser([], [
             SchedulesPermissions::READ_SCHEDULES
         ]);
 
