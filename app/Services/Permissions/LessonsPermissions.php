@@ -28,7 +28,6 @@ class LessonsPermissions
 
     /**
      * Get names of all defined permissions
-     *
      * @return string[]
      * @throws \ReflectionException
      */
@@ -41,7 +40,6 @@ class LessonsPermissions
 
     /**
      * Get all built-in permission descriptions
-     *
      * @return string[]
      */
     public static function getInitialDescriptions(): array
@@ -52,6 +50,10 @@ class LessonsPermissions
             self::READ_LESSONS => 'Просматривать уроки',
             self::UPDATE_LESSONS => 'Обновлять уроки',
             self::DELETE_LESSONS => 'Удалять уроки',
+            self::CANCEL_LESSONS => 'Отменять уроки',
+            self::CLOSE_LESSONS => 'Закрывать уроки',
+            self::OPEN_LESSONS => 'Отменять закрытие урока',
+            self::BOOK_LESSONS => 'Отменять отмену урока',
         ];
     }
 }
