@@ -12,9 +12,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Branch;
 
 /**
  * Class Account
+ *
  * @package App\Models
  * @property string $id
  * @property string $name
@@ -27,15 +29,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Bonus[] $bonuses
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Payment[] $payments
- * @property-read \Illuminate\Database\Eloquent\Relations\MorphTo|Instructor|Student $owner
+ * @property-read \Illuminate\Database\Eloquent\Relations\MorphTo|Instructor|Student|Branch $owner
  * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Account onlyTrashed()
  * @method static bool|null restore()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Account onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Account withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Account withoutTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereOwnerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereOwnerType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Account whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class Account extends Model
@@ -56,13 +67,13 @@ class Account extends Model
     public const OWNER_TYPES = [
         Student::class,
         Instructor::class,
-        'App\Models\Branch'
+        Branch::class
     ];
 
     protected $table = self::TABLE;
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo|Instructor|Student
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo|Instructor|Student|Branch
      */
     public function owner(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
