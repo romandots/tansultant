@@ -49,6 +49,31 @@ trait CreatesFakePayment
 
     /**
      * @param int|null $amount
+     * @param Account|null $fromAccount
+     * @param Account|null $toAccount
+     * @param array|null $attributes
+     * @return array
+     * @throws \Exception
+     */
+    private function createFakeTransaction(
+        ?int $amount = null,
+        ?Account $fromAccount = null,
+        ?Account $toAccount = null,
+        ?array $attributes = []
+    ):
+    array {
+        $payment = $this->createFakePayment(0 - $amount, $fromAccount, $attributes);
+        $attributes = $payment->toArray();
+        $attributes['id'] = \uuid();
+        $attributes['related_id'] = $payment->id;
+        $related = $this->createFakePayment($amount, $toAccount, $attributes);
+        $payment->related_id = $related->id;
+
+        return [$payment, $related];
+    }
+
+    /**
+     * @param int|null $amount
      * @param Account|null $account
      * @param array|null $attributes
      * @return Bonus

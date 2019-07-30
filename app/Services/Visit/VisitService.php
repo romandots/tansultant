@@ -121,4 +121,18 @@ class VisitService
             return $visit;
         });
     }
+
+    /**
+     * @param Visit $visit
+     * @throws \Exception
+     */
+    public function delete(Visit $visit): void
+    {
+        \DB::transaction(function () use ($visit) {
+            if (null !== $visit->payment) {
+                $this->paymentService->delete($visit->payment);
+            }
+            $this->repository->delete($visit);
+        });
+    }
 }
