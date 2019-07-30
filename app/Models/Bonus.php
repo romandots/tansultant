@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Bonus
+ *
  * @package App\Models
  * @property string $id
  * @property string $name
@@ -35,6 +36,20 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\Account $account
  * @property-read \App\Models\User|null $user
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereActivatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereCanceledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereExpiredAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus wherePromocodeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereUserId($value)
  */
 class Bonus extends Model
 {

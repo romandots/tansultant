@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Lesson
+ *
  * @package App\Models
  * @property int $id
  * @property string $name
@@ -37,8 +38,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\User $controller
  * @property-read \App\Models\Course $course
  * @property-read \App\Models\Instructor $instructor
- * @property-read \App\Models\Schedule $schedule
- * @property-read Model $branch
+ * @property-read \App\Models\Schedule|null $schedule
+ * @property-read \App\Models\Branch|null $branch
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Intent[] $intents
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Visit[] $visits
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null $payment
@@ -68,6 +69,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson wherePaymentId($value)
  */
 class Lesson extends Model
 {
@@ -164,12 +166,11 @@ class Lesson extends Model
         return $this->belongsTo(Payment::class);
     }
 
-//    /**
-//     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-//     * @todo
-//     */
-//    public function branch(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-//    {
-//        return;
-//    }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Branch|null
+     */
+    public function branch(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
 }

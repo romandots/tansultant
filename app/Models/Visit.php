@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Visit
+ *
  * @package App\Models
  * @property int $id
  * @property int $lesson_id

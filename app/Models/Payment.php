@@ -41,6 +41,23 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment query()
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereAccountId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereCanceledAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereConfirmedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereExternalId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereObjectId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereObjectType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereRelatedId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereTransferType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereUserId($value)
  */
 class Payment extends Model
 {
