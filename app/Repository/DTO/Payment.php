@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Payment\DTO;
+namespace App\Repository\DTO;
 
 /**
  * Class Payment
