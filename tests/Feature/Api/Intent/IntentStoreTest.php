@@ -1,0 +1,166 @@
+<?php
+/**
+ * File: IntentStoreTest.php
+ * Author: Roman Dots <ram.d.kreiz@gmail.com>
+ * Date: 2019-07-28
+ * Copyright (c) 2019
+ */
+
+declare(strict_types=1);
+
+namespace Tests\Feature\Api\Lesson;
+
+use App\Models\Lesson;
+use App\Services\Permissions\IntentsPermissions;
+use Tests\TestCase;
+use Tests\Traits\CreatesFakeCourse;
+use Tests\Traits\CreatesFakeInstructor;
+use Tests\Traits\CreatesFakeIntent;
+use Tests\Traits\CreatesFakeLesson;
+use Tests\Traits\CreatesFakePerson;
+use Tests\Traits\CreatesFakeSchedule;
+use Tests\Traits\CreatesFakeStudent;
+use Tests\Traits\CreatesFakeUser;
+
+/**
+ * Class LessonStoreTest
+ * @package Tests\Feature\Api\Lesson
+ */
+class IntentStoreTest extends TestCase
+{
+    use CreatesFakeUser, CreatesFakeLesson, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse,
+        CreatesFakePerson, CreatesFakeIntent, CreatesFakeStudent;
+
+    protected const URL = '/intents';
+
+    private const JSON_STRUCTURE = [
+        'data' => [
+            'id',
+            'student',
+            'manager',
+            'lesson',
+            'event_type',
+            'created_at',
+        ]
+    ];
+
+    /**
+     * @var Lesson
+     */
+    private $lesson;
+
+    /**
+     * @var string
+     */
+    private $url;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->url = self::URL;
+    }
+
+    public function testAccessDenied(): void
+    {
+        $this
+            ->post($this->url)
+            ->assertStatus(401);
+    }
+
+    public function testNoPermission(): void
+    {
+        $user = $this->createFakeUser();
+
+        $this
+            ->actingAs($user, 'api')
+            ->post($this->url)
+            ->assertStatus(403);
+    }
+
+    /**
+     * @param array $data
+     * @dataProvider provideInvalidData
+     */
+    public function testValidationErrors(array $data): void
+    {
+        $user = $this->createFakeManagerUser([], [
+            IntentsPermissions::CREATE_INTENTS
+        ]);
+
+        $this
+            ->actingAs($user, 'api')
+            ->post($this->url, $data)
+            ->assertStatus(422);
+    }
+
+    public function testSuccess(): void
+    {
+        $user = $this->createFakeManagerUser([], [
+            IntentsPermissions::CREATE_INTENTS
+        ]);
+
+        $instructor = $this->createFakeInstructor();
+        $course = $this->createFakeCourse(['instructor_id' => $instructor->id]);
+        $schedule = $this->createFakeSchedule(['course_id' => $course->id]);
+        $lesson = $this->createFakeLesson([
+            'course_id' => $course->id,
+            'instructor_id' => $instructor->id,
+            'schedule_id' => $schedule->id,
+            'controller_id' => null
+        ]);
+        $student = $this->createFakeStudent();
+
+        $data = [
+            'student_id' => $student->id,
+            'lesson_id' => $lesson->id,
+        ];
+
+        $this
+            ->actingAs($user, 'api')
+            ->post($this->url, $data)
+            ->assertStatus(201)
+            ->assertJsonStructure(self::JSON_STRUCTURE)
+            ->assertJson([
+                'data' => [
+                    'lesson' => [
+                        'id' => $lesson->id
+                    ],
+                    'student' => [
+                        'id' => $student->id
+                    ],
+                    'event_type' => 'Lesson',
+                ]
+            ]);
+    }
+
+    /**
+     * @return array
+     */
+    public function provideInvalidData(): array
+    {
+        return [
+            [
+                [
+                    'student_id' => 'text value',
+                    'lesson_id' => 1,
+                ]
+            ],
+            [
+                [
+                    'student_id' => 1,
+                    'lesson_id' => 'text value',
+                ]
+            ],
+            [
+                [
+                    'lesson_id' => 1,
+                ]
+            ],
+            [
+                [
+                    'student_id' => 1,
+                ]
+            ],
+        ];
+    }
+}
