@@ -57,6 +57,10 @@ class PaymentService
      */
     public function createVisitPayment(int $price, Visit $visit, Student $student, ?User $user = null): Payment
     {
+        $studentAccount = $this->accountService->getStudentAccount($student);
+        $this->accountService->checkFunds($studentAccount, $price);
+        $savingsAccount = $this->accountService->getSavingsAccount($visit->event->branch);
+
         $dto = new \App\Repository\DTO\Payment;
         $dto->type = Payment::TYPE_AUTOMATIC;
         $dto->amount = $price;
@@ -64,11 +68,6 @@ class PaymentService
         $dto->object_type = Visit::class;
         $dto->object_id = $visit->id;
         $dto->user_id = $user ? $user->id : null;
-
-        $studentAccount = $this->accountService->getStudentAccount($student);
-        $savingsAccount = $this->accountService->getSavingsAccount($visit->event->branch);
-
-        $this->accountService->checkFunds($studentAccount, $price);
 
         [$outgoing, $incoming] = $this->repository->createInternalTransaction($dto, $studentAccount, $savingsAccount);
 
@@ -85,6 +84,9 @@ class PaymentService
      */
     public function createLessonPayment(int $price, Lesson $lesson, Instructor $instructor, ?User $user = null): Payment
     {
+        $savingsAccount = $this->accountService->getSavingsAccount($lesson->branch);
+        $instructorAccount = $this->accountService->getInstructorAccount($instructor);
+
         $dto = new \App\Repository\DTO\Payment;
         $dto->type = Payment::TYPE_AUTOMATIC;
         $dto->amount = $price;
@@ -92,9 +94,6 @@ class PaymentService
         $dto->object_type = Lesson::class;
         $dto->object_id = $lesson->id;
         $dto->user_id = $user ? $user->id : null;
-
-        $savingsAccount = $this->accountService->getSavingsAccount($lesson->branch);
-        $instructorAccount = $this->accountService->getInstructorAccount($instructor);
 
         [$outgoing, $incoming] = $this->repository->createInternalTransaction($dto, $savingsAccount,
             $instructorAccount);

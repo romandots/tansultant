@@ -41,7 +41,7 @@ class VisitResource extends JsonResource
             }),
             'event_type' => \base_classname($this->event_type),
             'payment_type' => \base_classname($this->payment_type),
-            'payment' => $this->whenLoaded('payment', static function () {
+            'payment' => $this->whenLoaded('payment', function () {
                 return Payment::class === $this->payment_type
                     ? new PaymentResource($this->payment) : null;
             }),
@@ -49,7 +49,7 @@ class VisitResource extends JsonResource
 //                return Promocode::class === $this->payment_type
 //                    ? new PromocodeResource($this->payment) : null;
 //            }),
-            'is_paid' => $this->whenLoaded('payment', static function () {
+            'is_paid' => $this->whenLoaded('payment', function () {
                 return null !== $this->payment && $this->payment->status === Payment::STATUS_CONFIRMED;
             }),
             'created_at' => $this->created_at->toDateTimeString()
