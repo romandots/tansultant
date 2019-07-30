@@ -26,7 +26,6 @@ class CreateMoneyTables extends Migration
         Schema::create('accounts', static function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->integer('amount');
             $table->enum('type', \App\Models\Account::TYPES)->index();
             $table->enum('owner_type', \App\Models\Account::OWNER_TYPES)->index();
             $table->unsignedInteger('owner_id')->index();

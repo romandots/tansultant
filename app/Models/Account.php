@@ -20,7 +20,6 @@ use App\Models\Branch;
  * @package App\Models
  * @property string $id
  * @property string $name
- * @property int $amount
  * @property string $type [personal|savings|operational]
  * @property string $owner_type [App\Models\Student|App\Models\Instructor|App\Models\Branch]
  * @property int $owner_id
