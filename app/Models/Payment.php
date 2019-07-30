@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Payment
@@ -40,7 +41,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment query()
- * @mixin \Eloquent
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereCanceledAt($value)
@@ -58,9 +58,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Payment whereUserId($value)
+ * @mixin \Eloquent
  */
 class Payment extends Model
 {
+    use SoftDeletes, UsesUuid;
+
     public const TABLE = 'payments';
 
     public const TYPE_MANUAL = 'manual';

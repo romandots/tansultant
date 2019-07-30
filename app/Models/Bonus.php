@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Bonus
@@ -22,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $type [code|reward]
  * @property string $status [pending | expired | activated | canceled]
  * @property string $account_id
- * @property int|null $promocode_id
+ * @property string|null $promocode_id
  * @property int $user_id
  * @property \Carbon\Carbon|null $activated_at
  * @property \Carbon\Carbon|null $canceled_at
@@ -35,7 +36,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus query()
  * @property-read \App\Models\Account $account
  * @property-read \App\Models\User|null $user
- * @mixin \Eloquent
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereAccountId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereActivatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereAmount($value)
@@ -50,9 +50,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Bonus whereUserId($value)
+ * @mixin \Eloquent
  */
 class Bonus extends Model
 {
+    use SoftDeletes, UsesUuid;
+
     public const TABLE = 'bonuses';
 
     public const TYPE_CODE = 'code';

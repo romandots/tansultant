@@ -12,11 +12,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Branch;
 
 /**
  * Class Account
- *
  * @package App\Models
  * @property string $id
  * @property string $name
@@ -50,7 +48,7 @@ use App\Models\Branch;
  */
 class Account extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, UsesUuid;
 
     public const TABLE = 'accounts';
 

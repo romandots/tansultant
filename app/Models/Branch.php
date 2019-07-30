@@ -66,7 +66,7 @@ class Branch extends Model
     ];
 
     protected $casts = [
-        'address' => 'object'
+        'address' => 'array'
     ];
 
     protected $table = self::TABLE;
