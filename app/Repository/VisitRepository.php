@@ -12,6 +12,7 @@ namespace App\Repository;
 
 use App\Http\Requests\Api\DTO\LessonVisit as VisitDto;
 use App\Models\Lesson;
+use App\Models\Payment;
 use App\Models\Student;
 use App\Models\User;
 use App\Models\Visit;
@@ -45,8 +46,8 @@ class VisitRepository
         $visit->student_id = $dto->student_id;
         $visit->event_id = $dto->lesson_id;
         $visit->event_type = Lesson::class;
+        $visit->payment_type = Payment::class;
         $visit->payment_id = null;
-        $visit->payment_type = null;
 
         if (null !== $user) {
             $visit->manager_id = $user->id;
