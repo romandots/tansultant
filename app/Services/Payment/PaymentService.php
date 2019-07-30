@@ -100,4 +100,30 @@ class PaymentService
 
         return $outgoing;
     }
+
+    /**
+     * In case of related transactions delete both
+     *
+     * @param Payment $payment
+     * @throws \Exception
+     */
+    public function delete(Payment $payment): void
+    {
+        if (null === $payment->related_payment) {
+            $this->repository->delete($payment);
+        } else {
+            \DB::transaction(function () use ($payment) {
+                $related = $payment->related_payment;
+
+                $related->related_id = null;
+                $payment->related_id = null;
+
+                $related->save();
+                $payment->save();
+
+                $this->repository->delete($related);
+                $this->repository->delete($payment);
+            });
+        }
+    }
 }

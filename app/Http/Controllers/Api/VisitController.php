@@ -76,6 +76,6 @@ class VisitController extends Controller
     public function destroy(int $id): void
     {
         $visit = $this->repository->find($id);
-        $this->repository->delete($visit);
+        $this->service->delete($visit);
     }
 }

@@ -155,4 +155,53 @@ class PaymentServiceTest extends TestCase
         $this->assertNotNull($relatedPayment->confirmed_at);
         $this->assertEquals($lessonPayment->id, $relatedPayment->related_id);
     }
+
+    public function testDelete(): void
+    {
+        $price = 100;
+        $branchId = $this->createFakeBranch()->id;
+        $lesson = $this->createFakeLesson(['branch_id' => $branchId]);
+        $user = $this->createFakeUser();
+        $instructor = $this->createFakeInstructor();
+        $instructorAccount = $this->createFakeAccount([
+            'type' => Account::TYPE_PERSONAL,
+            'owner_type' => Instructor::class,
+            'owner_id' => $instructor->id
+        ]);
+
+        $savingsAccount = $this->createFakeAccount([
+            'type' => Account::TYPE_SAVINGS,
+            'owner_type' => Branch::class,
+            'owner_id' => $branchId
+        ]);
+
+        $payment = $this->createFakePayment(100);
+        $related = $this->createFakePayment(100);
+
+        $payment->related_id = $related->id;
+        $related->related_id = $payment->id;
+
+        $payment->save();
+        $related->save();
+
+        $this->assertDatabaseHas(Payment::TABLE, [
+            'id' => $payment->id,
+            'deleted_at' => null
+        ]);
+        $this->assertDatabaseHas(Payment::TABLE, [
+            'id' => $related->id,
+            'deleted_at' => null
+        ]);
+
+        $this->service->delete($payment);
+
+        $this->assertDatabaseMissing(Payment::TABLE, [
+            'id' => $payment->id,
+            'deleted_at' => null
+        ]);
+        $this->assertDatabaseMissing(Payment::TABLE, [
+            'id' => $related->id,
+            'deleted_at' => null
+        ]);
+    }
 }

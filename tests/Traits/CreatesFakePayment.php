@@ -26,14 +26,22 @@ trait CreatesFakePayment
      * @param array|null $attributes
      * @return Payment
      */
-    private function createFakePayment(?int $amount, ?Account $account, ?array $attributes = []): Payment
+    private function createFakePayment(?int $amount = null, ?Account $account = null, ?array $attributes = []): Payment
     {
         if (null !== $amount) {
             $attributes['amount'] = $amount;
         }
 
-        if(null !== $account) {
+        if (null !== $account) {
             $attributes['account_id'] = $account->id;
+        }
+
+        if (!isset($attributes['account_id'])) {
+            $attributes['account_id'] = $this->createFakeAccount()->id;
+        }
+
+        if (!isset($attributes['user_id'])) {
+            $attributes['user_id'] = $this->createFakeUser()->id;
         }
 
         return \factory(Payment::class)->create($attributes);
@@ -51,7 +59,7 @@ trait CreatesFakePayment
             $attributes['amount'] = $amount;
         }
 
-        if(null !== $account) {
+        if (null !== $account) {
             $attributes['account_id'] = $account->id;
         }
 

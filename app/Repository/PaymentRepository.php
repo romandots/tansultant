@@ -79,4 +79,13 @@ class PaymentRepository
             return [$firstPayment, $secondPayment];
         });
     }
+
+    /**
+     * @param Payment $payment
+     * @throws \Exception
+     */
+    public function delete(Payment $payment): void
+    {
+        $payment->delete();
+    }
 }
