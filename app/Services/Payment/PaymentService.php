@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Services\Payment;
 
-use App\Models\Account;
 use App\Models\Instructor;
 use App\Models\Lesson;
 use App\Models\Payment;
@@ -54,10 +53,11 @@ class PaymentService
      * @param User|null $user
      * @return Payment
      * @throws \App\Services\Account\Exceptions\InsufficientFundsAccountServiceException
+     * @throws \Exception
      */
     public function createVisitPayment(int $price, Visit $visit, Student $student, ?User $user = null): Payment
     {
-        $dto = new DTO\Payment;
+        $dto = new \App\Repository\DTO\Payment;
         $dto->type = Payment::TYPE_AUTOMATIC;
         $dto->amount = $price;
         $dto->name = \trans('payment.name_presets.visit', ['lesson' => $visit->event->name]);
@@ -66,14 +66,13 @@ class PaymentService
         $dto->user_id = $user ? $user->id : null;
 
         $studentAccount = $this->accountService->getStudentAccount($student);
-        $savingsAccount = $this->accountService->getSavingsAccount($visit->event->branch_id);
+        $savingsAccount = $this->accountService->getSavingsAccount($visit->event->branch);
 
         $this->accountService->checkFunds($studentAccount, $price);
 
-        [$studentPayment, $branchPayment] = $this->createInternalTransaction($dto, $studentAccount,
-            $savingsAccount);
+        [$outgoing, $incoming] = $this->repository->createInternalTransaction($dto, $studentAccount, $savingsAccount);
 
-        return $branchPayment;
+        return $incoming;
     }
 
     /**
@@ -82,11 +81,11 @@ class PaymentService
      * @param Instructor $instructor
      * @param User|null $user
      * @return Payment
-     * @throws \App\Services\Account\Exceptions\InsufficientFundsAccountServiceException
+     * @throws \Exception
      */
     public function createLessonPayment(int $price, Lesson $lesson, Instructor $instructor, ?User $user = null): Payment
     {
-        $dto = new DTO\Payment;
+        $dto = new \App\Repository\DTO\Payment;
         $dto->type = Payment::TYPE_AUTOMATIC;
         $dto->amount = $price;
         $dto->name = \trans('payment.name_presets.lesson', ['lesson' => $lesson->name]);
@@ -97,44 +96,9 @@ class PaymentService
         $savingsAccount = $this->accountService->getSavingsAccount($lesson->branch);
         $instructorAccount = $this->accountService->getInstructorAccount($instructor);
 
-        $this->accountService->checkFunds($savingsAccount, $price);
+        [$outgoing, $incoming] = $this->repository->createInternalTransaction($dto, $savingsAccount,
+            $instructorAccount);
 
-        [$outgoing, $incoming] = $this->createInternalTransaction($dto, $savingsAccount, $instructorAccount);
-
-        return $incoming;
-    }
-
-    /**
-     * @param DTO\Payment $dto
-     * @param Account $fromAccount
-     * @param Account $toAccount
-     * @return array [$fromAccountPayment, $toAccountPayment]
-     */
-    public function createInternalTransaction(DTO\Payment $dto, Account $fromAccount, Account $toAccount): array
-    {
-        $dto->transfer_type = Payment::TRANSFER_TYPE_INTERNAL;
-        $dto->status = Payment::STATUS_CONFIRMED;
-
-        $firstDto = clone $dto;
-        $secondDto = clone $dto;
-
-        $firstDto->account_id = $fromAccount->id;
-        $firstDto->amount = 0 - $dto->amount;
-
-        $secondDto->account_id = $toAccount->id;
-        $secondDto->amount = $dto->amount;
-
-        return \DB::transaction(function () use ($secondDto, $firstDto) {
-            $firstPayment = $this->repository->create($firstDto);
-            $secondPayment = $this->repository->create($secondDto);
-
-            $firstPayment->related_id = $secondPayment->id;
-            $secondPayment->related_id = $firstPayment->id;
-
-            $firstPayment->save();
-            $secondPayment->save();
-
-            return [$firstPayment, $secondPayment];
-        });
+        return $outgoing;
     }
 }

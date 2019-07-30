@@ -12,6 +12,7 @@ namespace App\Repository;
 
 use App\Models\Account;
 use App\Models\Payment;
+use Carbon\Carbon;
 
 /**
  * Class PaymentRepository
@@ -39,6 +40,7 @@ class PaymentRepository
         $payment->confirmed_at = $dto->confirmed_at;
         $payment->amount = $dto->amount;
         $payment->name = $dto->name;
+        $payment->save();
 
         return $payment;
     }
@@ -53,6 +55,7 @@ class PaymentRepository
     {
         $dto->transfer_type = Payment::TRANSFER_TYPE_INTERNAL;
         $dto->status = Payment::STATUS_CONFIRMED;
+        $dto->confirmed_at = Carbon::now();
 
         $firstDto = clone $dto;
         $secondDto = clone $dto;

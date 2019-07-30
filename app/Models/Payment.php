@@ -131,7 +131,7 @@ class Payment extends Model
      */
     public function related_payment(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(self::class);
+        return $this->belongsTo(self::class, 'related_id');
     }
 
     /**
