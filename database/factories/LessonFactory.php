@@ -12,7 +12,7 @@ $factory->define(\App\Models\Lesson::class, static function (Faker $faker) {
         'name' => $faker->name,
         'branch_id' => $faker->randomNumber(),
         'course_id' => $faker->randomNumber(),
-        'schedule_id' => $faker->randomNumber(),
+        'schedule_id' => null,
         'classroom_id' => $faker->randomNumber(),
         'instructor_id' => $faker->randomNumber(),
         'controller_id' => null,
