@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\Lesson;
 
 use App\Models\Account;
+use App\Models\Lesson;
 use App\Models\Student;
 use App\Models\Visit;
 use App\Services\Permissions\VisitsPermissions;
@@ -153,6 +154,12 @@ class VisitStoreTest extends TestCase
                     'event_type' => 'Lesson',
                 ]
             ]);
+
+        $this->assertDatabaseHas(Visit::TABLE, [
+            'student_id' => $this->student->id,
+            'event_id' => $this->lesson->id,
+            'event_type' => Lesson::class
+        ]);
     }
 
     /**
