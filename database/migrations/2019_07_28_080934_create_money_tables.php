@@ -99,7 +99,7 @@ class CreateMoneyTables extends Migration
                 ->default(\App\Models\Bonus::STATUS_PENDING)
                 ->index();
             $table->uuid('account_id')->index();
-            $table->uuid('promocode_id]')->nullable()->index();
+            $table->uuid('promocode_id')->nullable()->index();
             $table->unsignedInteger('user_id')->nullable()->index();
             $table->timestamp('expired_at')->nullable();
             $table->timestamp('activated_at')->nullable();
