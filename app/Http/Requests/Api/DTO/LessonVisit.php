@@ -27,7 +27,7 @@ class LessonVisit
     public $lesson_id;
 
     /**
-     * @var int|null
+     * @var string|null
      */
     public $promocode_id;
 }

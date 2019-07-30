@@ -99,24 +99,26 @@ class VisitService
      */
     public function createLessonVisit(LessonVisit $dto, ?User $user = null): Visit
     {
-        $lesson = $this->lessonRepository->find($dto->lesson_id);
-        $student = $this->studentRepository->find($dto->student_id);
-        $price = $this->priceService->calculateLessonVisitPrice($lesson, $student);
-
-        \DB::transaction(function () use ($price, $student, $user, $dto) {
+        return \DB::transaction(function () use ($user, $dto) {
             // Create visit
             $visit = $this->repository->createLessonVisitFromDto($dto, $user);
 
             // Create payment
             if (null === $dto->promocode_id) {
+                $lesson = $this->lessonRepository->find($dto->lesson_id);
+                $student = $this->studentRepository->find($dto->student_id);
+                $price = $this->priceService->calculateLessonVisitPrice($lesson, $student);
                 $payment = $this->paymentService->createVisitPayment($price, $visit, $student, $user);
                 $visit->payment_id = $payment->id;
                 $visit->payment_type = Payment::class;
             } else {
+                // $this->promocodeRepository->find($dto->promocode_id);
+                $visit->payment_id = $dto->promocode_id;
                 $visit->payment_type = 'App\Models\Promocode';
             }
-
             $visit->save();
+
+            return $visit;
         });
     }
 }

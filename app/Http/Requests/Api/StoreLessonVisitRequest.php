@@ -42,7 +42,8 @@ class StoreLessonVisitRequest extends FormRequest
             ],
             'promocode_id' => [
                 'nullable',
-                'integer',
+                'string',
+                'uuid',
 //                Rule::exists(\App\Models\Promocode::TABLE, 'id')
             ],
         ];
