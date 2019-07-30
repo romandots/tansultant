@@ -18,6 +18,7 @@ use App\Models\Payment;
 use App\Models\Student;
 use App\Services\Account\AccountService;
 use App\Services\Account\Exceptions\InsufficientFundsAccountServiceException;
+use Carbon\Carbon;
 use Tests\TestCase;
 use Tests\Traits\CreatesFakeAccount;
 use Tests\Traits\CreatesFakeInstructor;
@@ -179,6 +180,11 @@ class AccountServiceTest extends TestCase
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
+            'status' => Payment::STATUS_CONFIRMED,
+            'deleted_at' => Carbon::now()
+        ]);
+        $this->createFakePayment(100, $account, [
+            'user_id' => $user->id,
             'status' => Payment::STATUS_PENDING
         ]);
         $this->createFakePayment(100, $account, [
@@ -226,11 +232,16 @@ class AccountServiceTest extends TestCase
         $anotherAccount = $this->createFakeAccount();
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_CONFIRMED
+            'status' => Payment::STATUS_PENDING
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_PENDING
+            'status' => Payment::STATUS_PENDING,
+            'deleted_at' => Carbon::now()
+        ]);
+        $this->createFakePayment(100, $account, [
+            'user_id' => $user->id,
+            'status' => Payment::STATUS_CONFIRMED
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
@@ -278,6 +289,11 @@ class AccountServiceTest extends TestCase
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
             'status' => Payment::STATUS_CONFIRMED
+        ]);
+        $this->createFakePayment(100, $account, [
+            'user_id' => $user->id,
+            'status' => Payment::STATUS_CONFIRMED,
+            'deleted_at' => Carbon::now()
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
