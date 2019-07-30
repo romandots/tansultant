@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\Account;
+use App\Models\Branch;
 use App\Models\Instructor;
 use App\Models\Student;
 
@@ -29,7 +30,7 @@ class AccountRepository
     {
         return Account::query()
             ->where('type', Account::TYPE_PERSONAL)
-            ->where('owner', Instructor::class)
+            ->where('owner_type', Instructor::class)
             ->where('owner_id', $ownerId)
             ->firstOrFail();
     }
@@ -43,7 +44,7 @@ class AccountRepository
     {
         return Account::query()
             ->where('type', Account::TYPE_PERSONAL)
-            ->where('owner', Student::class)
+            ->where('owner_type', Student::class)
             ->where('owner_id', $ownerId)
             ->firstOrFail();
     }
@@ -56,7 +57,7 @@ class AccountRepository
     {
         return Account::query()
             ->where('type', Account::TYPE_SAVINGS)
-            ->where('owner', 'App\Models\Branch')
+            ->where('owner_type', Branch::class)
             ->where('owner_id', $ownerId)
             ->firstOrFail();
     }
@@ -69,68 +70,89 @@ class AccountRepository
     {
         return Account::query()
             ->where('type', Account::TYPE_OPERATIONAL)
-            ->where('owner', 'App\Models\Branch')
+            ->where('owner_type', Branch::class)
             ->where('owner_id', $ownerId)
             ->firstOrFail();
     }
 
     /**
+     * @param string $name
+     * @param string $type
+     * @param string $ownerType
+     * @param int $ownerId
+     * @return Account
+     * @throws \Exception
+     */
+    private function create(string $name, string $type, string $ownerType, int $ownerId): Account
+    {
+        $account = new Account;
+        $account->id = \uuid();
+        $account->name = $name;
+        $account->type = $type;
+        $account->owner_id = $ownerId;
+        $account->owner_type = $ownerType;
+        $account->save();
+
+        return $account;
+    }
+
+    /**
      * @param Student $student
      * @return Account
+     * @throws \Exception
      */
     public function createStudentPersonalAccount(Student $student): Account
     {
-        $account = new Account;
-        $account->name = \trans('account.name_presets.student', ['student' => $student->name]);
-        $account->type = Account::TYPE_PERSONAL;
-        $account->owner_id = $student->id;
-        $account->owner_type = Student::class;
+        $name = \trans('account.name_presets.student', ['student' => $student->name]);
+        $type = Account::TYPE_PERSONAL;
+        $ownerId = $student->id;
+        $ownerType = Student::class;
 
-        return $account;
+        return $this->create($name, $type, $ownerType, $ownerId);
     }
 
     /**
      * @param Instructor $instructor
      * @return Account
+     * @throws \Exception
      */
     public function createInstructorPersonalAccount(Instructor $instructor): Account
     {
-        $account = new Account;
-        $account->name = \trans('account.name_presets.instructor', ['instructor' => $instructor->name]);
-        $account->type = Account::TYPE_PERSONAL;
-        $account->owner_id = $instructor->id;
-        $account->owner_type = Instructor::class;
+        $name = \trans('account.name_presets.instructor', ['instructor' => $instructor->name]);
+        $type = Account::TYPE_PERSONAL;
+        $ownerId = $instructor->id;
+        $ownerType = Instructor::class;
 
-        return $account;
+        return $this->create($name, $type, $ownerType, $ownerId);
     }
 
     /**
      * @param object $branch
      * @return Account
+     * @throws \Exception
      */
     public function createBranchSavingsAccount($branch): Account
     {
-        $account = new Account;
-        $account->name = \trans('account.name_presets.branch_savings', ['branch' => $branch->name]);
-        $account->type = Account::TYPE_SAVINGS;
-        $account->owner_id = $branch->id;
-        $account->owner_type = 'App\Models\Branch';
+        $name = \trans('account.name_presets.branch_savings', ['branch' => $branch->name]);
+        $type = Account::TYPE_SAVINGS;
+        $ownerId = $branch->id;
+        $ownerType = Branch::class;
 
-        return $account;
+        return $this->create($name, $type, $ownerType, $ownerId);
     }
 
     /**
      * @param object $branch
      * @return Account
+     * @throws \Exception
      */
     public function createBranchOperationalAccount($branch): Account
     {
-        $account = new Account;
-        $account->name = \trans('account.name_presets.branch_operational', ['branch' => $branch->name]);
-        $account->type = Account::TYPE_OPERATIONAL;
-        $account->owner_id = $branch->id;
-        $account->owner_type = 'App\Models\Branch';
+        $name = \trans('account.name_presets.branch_operational', ['branch' => $branch->name]);
+        $type = Account::TYPE_OPERATIONAL;
+        $ownerId = $branch->id;
+        $ownerType = Branch::class;
 
-        return $account;
+        return $this->create($name, $type, $ownerType, $ownerId);
     }
 }

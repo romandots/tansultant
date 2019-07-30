@@ -11,7 +11,10 @@ declare(strict_types=1);
 namespace App\Services\Account;
 
 use App\Models\Account;
+use App\Models\Bonus;
+use App\Models\Branch;
 use App\Models\Instructor;
+use App\Models\Payment;
 use App\Models\Student;
 use App\Repository\AccountRepository;
 
@@ -38,6 +41,7 @@ class AccountService
     /**
      * @param Student $student
      * @return Account
+     * @throws \Exception
      */
     public function getStudentAccount(Student $student): Account
     {
@@ -51,6 +55,7 @@ class AccountService
     /**
      * @param Instructor $instructor
      * @return Account
+     * @throws \Exception
      */
     public function getInstructorAccount(Instructor $instructor): Account
     {
@@ -62,10 +67,11 @@ class AccountService
     }
 
     /**
-     * @param object $branch
+     * @param Branch $branch
      * @return Account
+     * @throws \Exception
      */
-    public function getOperationalAccount($branch): Account
+    public function getOperationalAccount(Branch $branch): Account
     {
         try {
             return $this->repository->findBranchOperationalAccountByOwnerId($branch->id);
@@ -75,10 +81,11 @@ class AccountService
     }
 
     /**
-     * @param object $branch
+     * @param Branch $branch
      * @return Account
+     * @throws \Exception
      */
-    public function getSavingsAccount($branch): Account
+    public function getSavingsAccount(Branch $branch): Account
     {
         try {
             return $this->repository->findBranchSavingsAccountByOwnerId($branch->id);
@@ -106,7 +113,9 @@ class AccountService
      */
     public function getAmount(Account $account): int
     {
-        return $account->payments->sum('amount');
+        return $account->payments
+            ->where('status', Payment::STATUS_CONFIRMED)
+            ->sum('amount');
     }
 
     /**
@@ -115,7 +124,9 @@ class AccountService
      */
     public function getBonusAmount(Account $account): int
     {
-        return $account->bonuses->sum('amount');
+        return $account->bonuses
+            ->where('status', Bonus::STATUS_PENDING)
+            ->sum('amount');
     }
 
     /**
@@ -124,6 +135,6 @@ class AccountService
      */
     public function getTotalAmount(Account $account): int
     {
-        return $account->payments->sum('amount') + $account->bonuses->sum('amount');
+        return $this->getAmount($account) + $this->getBonusAmount($account);
     }
 }

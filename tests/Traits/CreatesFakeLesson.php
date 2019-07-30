@@ -24,6 +24,8 @@ trait CreatesFakeLesson
      */
     private function createFakeLesson(?array $attributes = []): Lesson
     {
+        $attributes['course_id'] = $attributes['course_id'] ?? $this->createFakeCourse()->id;
+        $attributes['instructor_id'] = $attributes['instructor_id'] ?? $this->createFakeInstructor()->id;
         return \factory(Lesson::class)->create($attributes);
     }
 }
