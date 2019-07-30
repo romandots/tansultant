@@ -323,49 +323,7 @@ class AccountServiceTest extends TestCase
 
     public function testCheckFunds(): void
     {
-        $user = $this->createFakeUser();
-        $account = $this->createFakeAccount();
-        $anotherAccount = $this->createFakeAccount();
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => Payment::STATUS_CONFIRMED
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => Payment::STATUS_PENDING
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => Payment::STATUS_CANCELED
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => Payment::STATUS_EXPIRED
-        ]);
-        $this->createFakePayment(100, $anotherAccount, [
-            'user_id' => $user->id,
-            'status' => Payment::STATUS_CONFIRMED
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => Bonus::STATUS_ACTIVATED
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => Bonus::STATUS_PENDING
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => Bonus::STATUS_CANCELED
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => Bonus::STATUS_EXPIRED
-        ]);
-        $this->createFakeBonus(100, $anotherAccount, [
-            'user_id' => $user->id,
-            'status' => Bonus::STATUS_ACTIVATED
-        ]);
+        $account = $this->createFakeAccountWithBalance(200);
 
         $this->assertException(function () use ($account) {
             $this->service->checkFunds($account, 300);
