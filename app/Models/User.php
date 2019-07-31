@@ -17,6 +17,7 @@ use Laravel\Passport\HasApiTokens;
 
 /**
  * Class User
+ *
  * @package App
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions

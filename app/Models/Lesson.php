@@ -43,15 +43,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Intent[] $intents
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Visit[] $visits
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null $payment
- * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newQuery()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Lesson onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson query()
- * @method static bool|null restore()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Lesson withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Lesson withoutTrashed()
- * @mixin \Eloquent
+ * @method static bool|null forceDelete()
+ * @method static bool|null restore()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereBranchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereCanceledAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereClassroomId($value)
@@ -70,6 +69,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson wherePaymentId($value)
+ * @mixin \Eloquent
  */
 class Lesson extends Model
 {
