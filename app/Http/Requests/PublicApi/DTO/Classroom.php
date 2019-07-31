@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Api\DTO;
+namespace App\Http\Requests\PublicApi\DTO;
 
 /**
  * Class Classroom
@@ -16,11 +16,6 @@ namespace App\Http\Requests\Api\DTO;
  */
 class Classroom
 {
-    /**
-     * @var int
-     */
-    public $id;
-
     /**
      * @var string
      */
