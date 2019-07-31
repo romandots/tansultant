@@ -8,6 +8,7 @@
 declare(strict_types=1);
 
 use App\Repository\BranchRepository;
+use App\Repository\ClassroomRepository;
 use Illuminate\Database\Seeder;
 
 /**
@@ -21,12 +22,21 @@ class BranchesTableSeeder extends Seeder
     private $branchRepository;
 
     /**
+     * @var ClassroomRepository
+     */
+    private $classroomRepository;
+
+    /**
      * BranchesTableSeeder constructor.
      * @param BranchRepository $branchRepository
+     * @param ClassroomRepository $classroomRepository
      */
-    public function __construct(BranchRepository $branchRepository)
-    {
+    public function __construct(
+        BranchRepository $branchRepository,
+        ClassroomRepository $classroomRepository
+    ) {
         $this->branchRepository = $branchRepository;
+        $this->classroomRepository = $classroomRepository;
     }
 
     /**
@@ -38,10 +48,19 @@ class BranchesTableSeeder extends Seeder
         try {
             $this->branchRepository->find(1);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
-            $dto = new \App\Http\Requests\Api\DTO\Branch;
-            $dto->name = 'Студия';
+            $branch = new \App\Http\Requests\Api\DTO\Branch;
+            $branch->name = 'Студия';
 
-            $this->branchRepository->create($dto);
+            $this->branchRepository->create($branch);
+        }
+
+        try {
+            $this->classroomRepository->find(1);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
+            $classroom = new \App\Http\Requests\Api\DTO\Classroom;
+            $classroom->name = 'Зал А';
+
+            $this->classroomRepository->create($classroom);
         }
     }
 }
