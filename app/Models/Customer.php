@@ -18,9 +18,9 @@ use Spatie\Permission\Traits\HasRoles;
  * Class Customer
  *
  * @package App\Models
- * @property int $id
+ * @property string $id
  * @property string $name
- * @property int $person_id
+ * @property string $person_id
  * @property \Carbon\Carbon $seen_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -50,7 +50,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class Customer extends Model
 {
-    use HasRoles, SoftDeletes;
+    use HasRoles, SoftDeletes, UsesUuid;
 
     public const TABLE = 'customers';
 

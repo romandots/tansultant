@@ -7,6 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Branch::class, static function (Faker $faker) {
     return [
+        'id' => \uuid(),
         'name' => $faker->name,
         'summary' => $faker->sentence,
         'description' => $faker->text,

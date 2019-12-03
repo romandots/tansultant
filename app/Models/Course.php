@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Course
- *
- * @property int $id
+
+ * @property string $id
  * @property string $name
  * @property string|null $summary
  * @property string|null $description
@@ -58,7 +58,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Course extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, UsesUuid;
 
     public const TABLE = 'courses';
 

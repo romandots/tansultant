@@ -15,9 +15,10 @@ use Faker\Generator as Faker;
 
 $factory->define(Schedule::class, static function (Faker $faker) {
     return [
-        'branch_id' => $faker->randomNumber(),
-        'classroom_id' => $faker->randomNumber(),
-        'course_id' => $faker->randomNumber(),
+        'id' => \uuid(),
+        'branch_id' => \uuid(),
+        'classroom_id' => \uuid(),
+        'course_id' => \uuid(),
         'starts_at' => $faker->date(),
         'ends_at' => $faker->date(),
         'duration' => 60,

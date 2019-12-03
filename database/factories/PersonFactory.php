@@ -15,6 +15,7 @@ use Faker\Generator as Faker;
 $factory->define(\App\Models\Person::class, static function (Faker $faker) {
     $username = $faker->word;
     return [
+        'id' => \uuid(),
         'last_name' => $faker->name,
         'first_name' => $faker->name,
         'patronymic_name' => $faker->name,

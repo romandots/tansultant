@@ -8,6 +8,11 @@
 
 declare(strict_types=1);
 
+use App\Models\Branch;
+use App\Models\Instructor;
+use App\Models\Lesson;
+use App\Models\Student;
+use App\Models\Visit;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -26,32 +31,38 @@ class CreateMoneyTables extends Migration
         Schema::create('accounts', static function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->enum('type', \App\Models\Account::TYPES)->index();
-            $table->enum('owner_type', \App\Models\Account::OWNER_TYPES)->index();
-            $table->unsignedInteger('owner_id')->index();
+            $table->text('type')->index();
+            $table->text('owner_type')->index();
+            $table->uuid('owner_id')->index();
             $table->timestamps();
             $table->softDeletes();
         });
+
+        \convertPostgresColumnTextToEnum('accounts', 'type', [
+            'operational',
+            'savings',
+            'personal',
+        ]);
+
+        \convertPostgresColumnTextToEnum('accounts', 'owner_type', [
+            Student::class,
+            Instructor::class,
+            Branch::class
+        ]);
 
         Schema::create('payments', static function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
             $table->integer('amount');
-            $table->enum('type', \App\Models\Payment::TYPES)
-                ->default(\App\Models\Payment::TYPE_MANUAL)
-                ->index();
-            $table->enum('transfer_type', \App\Models\Payment::TRANSFER_TYPES)
-                ->default(\App\Models\Payment::TRANSFER_TYPE_CASH)
-                ->index();
-            $table->enum('status', \App\Models\Payment::STATUSES)
-                ->default(\App\Models\Payment::STATUS_PENDING)
-                ->index();
-            $table->enum('object_type', \App\Models\Payment::OBJECT_TYPES)->nullable()->index();
-            $table->unsignedInteger('object_id')->nullable()->index();
+            $table->text('type')->index();
+            $table->text('transfer_type')->index();
+            $table->text('status')->index();
+            $table->text('object_type')->nullable()->index();
+            $table->uuid('object_id')->nullable()->index();
             $table->uuid('account_id')->index();
             $table->uuid('related_id')->nullable()->index();
             $table->string('external_id')->nullable()->index();
-            $table->unsignedInteger('user_id')->index();
+            $table->uuid('user_id')->index();
             $table->timestamp('confirmed_at')->nullable();
             $table->timestamp('canceled_at')->nullable();
             $table->timestamps();
@@ -68,6 +79,31 @@ class CreateMoneyTables extends Migration
                 ->references('id')
                 ->on(\App\Models\User::TABLE);
         });
+
+        \convertPostgresColumnTextToEnum('payments', 'type', [
+            'manual',
+            'automatic',
+        ]);
+
+        \convertPostgresColumnTextToEnum('payments', 'transfer_type', [
+            'cash',
+            'card',
+            'online',
+            'internal',
+            'code',
+        ]);
+
+        \convertPostgresColumnTextToEnum('payments', 'status', [
+            'pending',
+            'expired',
+            'confirmed',
+            'canceled',
+        ]);
+
+        \convertPostgresColumnTextToEnum('payments', 'object_type', [
+            Visit::class,
+            Lesson::class
+        ]);
 
         Schema::table('payments', static function (Blueprint $table) {
             $table->foreign('related_id')
@@ -94,13 +130,11 @@ class CreateMoneyTables extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->integer('amount');
-            $table->enum('type', \App\Models\Bonus::TYPES)->index();
-            $table->enum('status', \App\Models\Bonus::STATUSES)
-                ->default(\App\Models\Bonus::STATUS_PENDING)
-                ->index();
+            $table->text('type')->index();
+            $table->text('status')->index();
             $table->uuid('account_id')->index();
             $table->uuid('promocode_id')->nullable()->index();
-            $table->unsignedInteger('user_id')->nullable()->index();
+            $table->uuid('user_id')->nullable()->index();
             $table->timestamp('expired_at')->nullable();
             $table->timestamp('activated_at')->nullable();
             $table->timestamp('canceled_at')->nullable();
@@ -121,6 +155,18 @@ class CreateMoneyTables extends Migration
                 ->references('id')
                 ->on(\App\Models\User::TABLE);
         });
+
+        \convertPostgresColumnTextToEnum('bonuses', 'type', [
+            'code',
+            'reward',
+        ]);
+
+        \convertPostgresColumnTextToEnum('bonuses', 'status', [
+            'pending',
+            'expired',
+            'activated',
+            'canceled',
+        ]);
     }
 
     /**
@@ -129,6 +175,17 @@ class CreateMoneyTables extends Migration
      */
     public function down(): void
     {
+        \DB::unprepared('DROP TYPE accounts_type CASCADE');
+        \DB::unprepared('DROP TYPE accounts_owner_type CASCADE');
+
+        \DB::unprepared('DROP TYPE payments_status CASCADE');
+        \DB::unprepared('DROP TYPE payments_object_type CASCADE');
+        \DB::unprepared('DROP TYPE payments_type CASCADE');
+        \DB::unprepared('DROP TYPE payments_transfer_type CASCADE');
+
+        \DB::unprepared('DROP TYPE bonuses_type CASCADE');
+        \DB::unprepared('DROP TYPE bonuses_status CASCADE');
+
         Schema::table('visits', static function (Blueprint $table) {
             $table->dropForeign('visits_payment_id_foreign');
         });

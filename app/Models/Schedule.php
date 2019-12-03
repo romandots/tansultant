@@ -16,10 +16,10 @@ use Illuminate\Database\Eloquent\Model;
  * Class Schedule
  *
  * @package App
- * @property int $id
- * @property int $branch_id
- * @property int|null $classroom_id
- * @property int $course_id
+ * @property string $id
+ * @property string $branch_id
+ * @property string|null $classroom_id
+ * @property string $course_id
  * @property \Illuminate\Support\Carbon|null $starts_at
  * @property \Illuminate\Support\Carbon|null $ends_at
  * @property int $duration In minutes
@@ -56,6 +56,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Schedule extends Model
 {
+    use UsesUuid;
+
     public const TABLE = 'schedules';
 
     protected $table = self::TABLE;

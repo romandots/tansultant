@@ -16,9 +16,9 @@ use Illuminate\Database\Eloquent\Model;
  * Class Classroom
  *
  * @package App\Models
- * @property int $id
+ * @property string $id
  * @property string $name
- * @property int $branch_id
+ * @property string $branch_id
  * @property string|null $color
  * @property int|null $capacity
  * @property int|null $number
@@ -33,6 +33,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Classroom extends Model
 {
+    use UsesUuid;
+
     public const TABLE = 'classrooms';
 
     protected $table = self::TABLE;

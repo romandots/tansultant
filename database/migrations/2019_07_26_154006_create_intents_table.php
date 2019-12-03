@@ -8,6 +8,7 @@
 
 declare(strict_types=1);
 
+use App\Models\Lesson;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -25,15 +26,12 @@ class CreateIntentsTable extends Migration
     public function up(): void
     {
         Schema::create('intents', static function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedInteger('student_id')->index();
-            $table->unsignedInteger('manager_id')->nullable()->index();
-            $table->unsignedInteger('event_id');
-            $table->enum('event_type', \App\Models\Intent::EVENT_TYPES)
-                ->default(\App\Models\Lesson::class);
-            $table->enum('status', \App\Models\Intent::STATUSES)
-                ->default(\App\Models\Intent::STATUS_EXPECTING)
-                ->index();
+            $table->uuid('id')->primary();
+            $table->uuid('student_id')->index();
+            $table->uuid('manager_id')->nullable()->index();
+            $table->uuid('event_id');
+            $table->text('event_type')->index();
+            $table->text('status')->index();
             $table->timestamps();
 
             $table->index(['event_id', 'event_type'], 'morph_intents_event_id');
@@ -47,6 +45,17 @@ class CreateIntentsTable extends Migration
                 ->references('id')
                 ->on(\App\Models\User::TABLE);
         });
+
+        \convertPostgresColumnTextToEnum('intents', 'event_type', [
+            Lesson::class,
+            '\App\Models\Event'
+        ]);
+
+        \convertPostgresColumnTextToEnum('intents', 'status', [
+            'expecting',
+            'visited',
+            'no-show',
+        ]);
     }
 
     /**
@@ -56,6 +65,8 @@ class CreateIntentsTable extends Migration
      */
     public function down(): void
     {
+        \DB::unprepared('DROP TYPE intents_event_type CASCADE');
+        \DB::unprepared('DROP TYPE intents_status CASCADE');
         Schema::dropIfExists('intents');
     }
 }

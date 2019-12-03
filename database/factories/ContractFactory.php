@@ -7,10 +7,11 @@ use Faker\Generator as Faker;
 
 $factory->define(\App\Models\Contract::class, static function (Faker $faker) {
     return [
+        'id' => \uuid(),
         'serial' => 'TEST',
         'number' => $faker->numerify('######'),
-        'branch_id' => 1,
-        'customer_id' => 1,
+        'branch_id' => \uuid(),
+        'customer_id' => \uuid(),
         'status' => 'pending',
         'signed_at' => \Carbon\Carbon::now(),
         'terminated_at' => null,

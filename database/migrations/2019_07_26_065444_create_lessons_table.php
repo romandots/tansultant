@@ -8,7 +8,6 @@
 
 declare(strict_types=1);
 
-use App\Models\Lesson;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -25,17 +24,17 @@ class CreateLessonsTable extends Migration
     public function up(): void
     {
         Schema::create('lessons', static function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->uuid('id')->primary();
             $table->string('name');
-            $table->unsignedInteger('branch_id')->nullable()->index();
-            $table->unsignedInteger('course_id')->nullable()->index();
-            $table->unsignedInteger('schedule_id')->nullable()->index();
-            $table->unsignedInteger('classroom_id')->nullable()->index();
-            $table->unsignedInteger('instructor_id')->nullable()->index();
-            $table->unsignedInteger('controller_id')->nullable()->index();
+            $table->uuid('branch_id')->nullable()->index();
+            $table->uuid('course_id')->nullable()->index();
+            $table->uuid('schedule_id')->nullable()->index();
+            $table->uuid('classroom_id')->nullable()->index();
+            $table->uuid('instructor_id')->nullable()->index();
+            $table->uuid('controller_id')->nullable()->index();
             $table->uuid('payment_id')->nullable()->index();
-            $table->enum('type', Lesson::TYPES)->default(Lesson::TYPE_LESSON);
-            $table->enum('status', Lesson::STATUSES)->default(Lesson::STATUS_BOOKED);
+            $table->text('type');
+            $table->text('status');
             $table->timestamp('starts_at')->index();
             $table->timestamp('ends_at')->index();
             $table->timestamp('closed_at')->nullable()->index();
@@ -60,6 +59,20 @@ class CreateLessonsTable extends Migration
                 ->references('id')
                 ->on(\App\Models\User::TABLE);
         });
+
+        \convertPostgresColumnTextToEnum('lessons', 'type', [
+            'lesson',
+            'event',
+            'rent',
+        ]);
+
+        \convertPostgresColumnTextToEnum('lessons', 'status', [
+            'booked',
+            'ongoing',
+            'passed',
+            'canceled',
+            'closed',
+        ]);
     }
 
     /**
@@ -68,6 +81,8 @@ class CreateLessonsTable extends Migration
      */
     public function down(): void
     {
+        \DB::unprepared('DROP TYPE lessons_type CASCADE');
+        \DB::unprepared('DROP TYPE lessons_status CASCADE');
         Schema::dropIfExists('lessons');
     }
 }

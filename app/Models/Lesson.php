@@ -17,15 +17,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Class Lesson
  *
  * @package App\Models
- * @property int $id
+ * @property string $id
  * @property string $name
- * @property int|null $course_id
- * @property int|null $schedule_id
- * @property int|null $instructor_id
- * @property int|null $controller_id
- * @property int|null $payment_id
- * @property int $branch_id
- * @property int $classroom_id
+ * @property string|null $course_id
+ * @property string|null $schedule_id
+ * @property string|null $instructor_id
+ * @property string|null $controller_id
+ * @property string|null $payment_id
+ * @property string $branch_id
+ * @property string $classroom_id
  * @property string $type [lesson | event | rent]
  * @property string $status [booked | ongoing | passed | canceled | closed]
  * @property \Carbon\Carbon $starts_at
@@ -73,7 +73,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Lesson extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, UsesUuid;
 
     public const TABLE = 'lessons';
 

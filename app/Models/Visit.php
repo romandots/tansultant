@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Visit
  *
  * @package App\Models
- * @property int $id
+ * @property string $id
  * @property int $lesson_id
  * @property int $student_id
  * @property int|null $manager_id
@@ -46,6 +46,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Visit extends Model
 {
+    use UsesUuid;
+
     public const TABLE = 'visits';
 
     public const PAYMENT_TYPES = [

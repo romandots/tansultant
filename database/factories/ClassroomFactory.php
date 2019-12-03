@@ -15,8 +15,9 @@ use Faker\Generator as Faker;
 
 $factory->define(Classroom::class, static function (Faker $faker) {
     return [
+        'id' => \uuid(),
         'name' => $faker->randomLetter,
-        'branch_id' => $faker->randomNumber(),
+        'branch_id' => \uuid(),
         'color' => $faker->colorName,
         'capacity' => $faker->numberBetween(10, 25),
         'number' => $faker->randomNumber(),

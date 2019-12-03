@@ -16,11 +16,11 @@ use Illuminate\Database\Eloquent\Model;
  * Class Contract
  *
  * @package App\Models
- * @property int $id
+ * @property string $id
  * @property string $serial
  * @property string $number
- * @property int $branch_id
- * @property int|null $customer_id
+ * @property string $branch_id
+ * @property string|null $customer_id
  * @property string $status [pending|signed|terminated]
  * @property \App\Models\Customer $customer
  * @property \Carbon\Carbon $signed_at
@@ -44,6 +44,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Contract extends Model
 {
+    use UsesUuid;
+
     public const TABLE = 'contracts';
 
     public const STATUS_PENDING = 'pending';

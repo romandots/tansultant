@@ -14,11 +14,12 @@ use Faker\Generator as Faker;
 
 $factory->define(\App\Models\Student::class, static function (Faker $faker) {
     return [
+        'id' => \uuid(),
         'name' => $faker->name,
         'card_number' => $faker->unique()->numerify('####'),
         'status' => $faker->randomElement(\App\Models\Student::STATUSES),
-        'person_id' => $faker->numerify('####'),
-        'customer_id' => $faker->numerify('####'),
+        'person_id' => \uuid(),
+        'customer_id' => \uuid(),
         'seen_at' => \Carbon\Carbon::now(),
         'created_at' => \Carbon\Carbon::now(),
         'updated_at' => \Carbon\Carbon::now()

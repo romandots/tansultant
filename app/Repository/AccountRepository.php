@@ -22,11 +22,11 @@ use App\Models\Student;
 class AccountRepository
 {
     /**
-     * @param int $ownerId
+     * @param string $ownerId
      * @return Account
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function findInstructorPersonalAccountByOwnerId(int $ownerId): Account
+    public function findInstructorPersonalAccountByOwnerId(string $ownerId): Account
     {
         return Account::query()
             ->where('type', Account::TYPE_PERSONAL)
@@ -36,11 +36,11 @@ class AccountRepository
     }
 
     /**
-     * @param int $ownerId
+     * @param string $ownerId
      * @return Account
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function findStudentPersonalAccountByOwnerId(int $ownerId): Account
+    public function findStudentPersonalAccountByOwnerId(string $ownerId): Account
     {
         return Account::query()
             ->where('type', Account::TYPE_PERSONAL)
@@ -79,11 +79,11 @@ class AccountRepository
      * @param string $name
      * @param string $type
      * @param string $ownerType
-     * @param int $ownerId
+     * @param string $ownerId
      * @return Account
      * @throws \Exception
      */
-    private function create(string $name, string $type, string $ownerType, int $ownerId): Account
+    private function create(string $name, string $type, string $ownerType, string $ownerId): Account
     {
         $account = new Account;
         $account->id = \uuid();

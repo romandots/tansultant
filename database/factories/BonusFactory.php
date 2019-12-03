@@ -13,14 +13,14 @@ use Faker\Generator as Faker;
 
 $factory->define(Bonus::class, static function (Faker $faker) {
     return [
-        'id' => $faker->uuid,
-        'name' => $faker->word,
-        'amount' => $faker->randomNumber(),
-        'type' => $faker->randomElement(Bonus::TYPES),
-        'status' => $faker->randomElement(Bonus::STATUSES),
-        'account_id' => $faker->randomNumber(),
-        'promocode_id' => $faker->uuid,
-        'user_id' => $faker->randomNumber(),
+        'id' => \uuid(),
+        'name' => 'Bonus',
+        'amount' => 5000,
+        'type' => Bonus::TYPE_CODE,
+        'status' => Bonus::STATUS_ACTIVATED,
+        'account_id' => \uuid(),
+        'promocode_id' => null,
+        'user_id' => \uuid(),
         'expired_at' => \Carbon\Carbon::now()->addMonth()
     ];
 });

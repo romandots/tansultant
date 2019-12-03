@@ -18,12 +18,12 @@ use Spatie\Permission\Traits\HasRoles;
  * Class Student
  *
  * @package App\Models
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property int $card_number
  * @property string $status [potential|active|recent|former]
- * @property int $person_id
- * @property int $customer_id
+ * @property string $person_id
+ * @property string $customer_id
  * @property \Carbon\Carbon $seen_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -56,7 +56,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class Student extends Model
 {
-    use HasRoles, SoftDeletes;
+    use HasRoles, SoftDeletes, UsesUuid;
 
     public const TABLE = 'students';
 

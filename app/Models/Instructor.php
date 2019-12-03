@@ -18,13 +18,13 @@ use Spatie\Permission\Traits\HasRoles;
  * Class Instructor
  *
  * @package App\Models
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string $description
  * @property string $picture
  * @property bool $display
  * @property string $status [hired|freelance|fired]
- * @property int $person_id
+ * @property string $person_id
  * @property \Carbon\Carbon $seen_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -57,7 +57,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class Instructor extends Model
 {
-    use HasRoles, SoftDeletes;
+    use HasRoles, SoftDeletes, UsesUuid;
 
     public const TABLE = 'instructors';
 

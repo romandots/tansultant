@@ -32,11 +32,11 @@ use Laravel\Passport\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User role($roles, $guard = null)
  * @mixin \Eloquent
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string $username
  * @property string $password
- * @property int $person_id
+ * @property string $person_id
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $approved_at
  * @property \Illuminate\Support\Carbon|null $seen_at
@@ -57,7 +57,7 @@ use Laravel\Passport\HasApiTokens;
  */
 class User extends Authenticatable
 {
-    use Notifiable, HasRoles, HasApiTokens, Notifiable;
+    use Notifiable, HasRoles, HasApiTokens, Notifiable, UsesUuid;
 
     public const TABLE = 'users';
 

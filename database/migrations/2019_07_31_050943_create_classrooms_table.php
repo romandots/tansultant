@@ -24,12 +24,12 @@ class CreateClassroomsTable extends Migration
     public function up(): void
     {
         Schema::create('classrooms', static function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->uuid('id')->primary();
             $table->string('name')->index();
-            $table->unsignedInteger('branch_id',)->index();
+            $table->uuid('branch_id')->index();
             $table->string('color')->nullable();
-            $table->unsignedInteger('capacity',)->nullable();
-            $table->integer('number')->nullable();
+            $table->unsignedInteger('capacity')->nullable();
+            $table->unsignedInteger('number')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

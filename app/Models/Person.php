@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class Person
  *
  * @package App\Models
- * @property int $id
+ * @property string $id
  * @property string $last_name
  * @property string $first_name
  * @property string $patronymic_name
@@ -67,6 +67,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Person extends Model
 {
+    use UsesUuid;
+
     public const TABLE = 'people';
 
     public const GENDER_MALE = 'male';

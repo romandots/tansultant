@@ -26,10 +26,10 @@ class CreateSchedulesTable extends Migration
     public function up(): void
     {
         Schema::create('schedules', static function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedInteger('branch_id')->index();
-            $table->unsignedInteger('classroom_id')->nullable()->index();
-            $table->unsignedInteger('course_id')->index();
+            $table->uuid('id')->primary();
+            $table->uuid('branch_id')->index();
+            $table->uuid('classroom_id')->nullable()->index();
+            $table->uuid('course_id')->index();
             $table->date('starts_at')->nullable()->index();
             $table->date('ends_at')->nullable()->index();
             $table->unsignedInteger('duration')->default(60)->comment('In minutes');

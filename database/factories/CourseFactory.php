@@ -15,6 +15,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Course::class, function (Faker $faker) {
     return [
+        'id' => \uuid(),
         'name' => $faker->name,
         'status' => $faker->randomElement(Course::STATUSES),
         'summary' => $faker->sentence,

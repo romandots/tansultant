@@ -9,12 +9,13 @@ use Faker\Generator as Faker;
 $factory->define(\App\Models\Lesson::class, static function (Faker $faker) {
     $dateTime = $faker->dateTime;
     return [
+        'id' => \uuid(),
         'name' => $faker->name,
-        'branch_id' => $faker->randomNumber(),
-        'course_id' => $faker->randomNumber(),
+        'branch_id' => \uuid(),
+        'course_id' => \uuid(),
         'schedule_id' => null,
-        'classroom_id' => $faker->randomNumber(),
-        'instructor_id' => $faker->randomNumber(),
+        'classroom_id' => \uuid(),
+        'instructor_id' => \uuid(),
         'controller_id' => null,
         'type' => $faker->randomElement(\App\Models\Lesson::TYPES),
         'status' => $faker->randomElement(\App\Models\Lesson::STATUSES),

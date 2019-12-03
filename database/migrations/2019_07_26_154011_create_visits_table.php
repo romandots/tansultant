@@ -8,6 +8,8 @@
 
 declare(strict_types=1);
 
+use App\Models\Lesson;
+use App\Models\Payment;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -24,14 +26,12 @@ class CreateVisitsTable extends Migration
     public function up(): void
     {
         Schema::create('visits', static function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedInteger('student_id')->index();
-            $table->unsignedInteger('manager_id')->nullable()->index();
-            $table->enum('event_type', \App\Models\Visit::EVENT_TYPES)
-                ->default(\App\Models\Lesson::class);
-            $table->unsignedInteger('event_id');
-            $table->enum('payment_type', \App\Models\Visit::PAYMENT_TYPES)
-                ->default(App\Models\Payment::class);
+            $table->uuid('id')->primary();
+            $table->uuid('student_id')->index();
+            $table->uuid('manager_id')->nullable()->index();
+            $table->text('event_type');
+            $table->uuid('event_id');
+            $table->text('payment_type');
             $table->uuid('payment_id')->nullable()->index();
             $table->timestamps();
 
@@ -48,6 +48,16 @@ class CreateVisitsTable extends Migration
                 ->references('id')
                 ->on(\App\Models\User::TABLE);
         });
+
+        \convertPostgresColumnTextToEnum('visits','event_type', [
+            Lesson::class,
+            '\App\Models\Event'
+        ]);
+
+        \convertPostgresColumnTextToEnum('visits','payment_type', [
+            Payment::class,
+            'App\Models\Promocode',
+        ]);
     }
 
     /**
@@ -56,6 +66,8 @@ class CreateVisitsTable extends Migration
      */
     public function down(): void
     {
+        \DB::unprepared('DROP TYPE visits_event_type CASCADE');
+        \DB::unprepared('DROP TYPE visits_payment_type CASCADE');
         Schema::dropIfExists('visits');
     }
 }
