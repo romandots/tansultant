@@ -17,12 +17,12 @@ namespace App\Http\Requests\Api\DTO;
 class LessonVisit
 {
     /**
-     * @var int
+     * @var string
      */
     public $student_id;
 
     /**
-     * @var int
+     * @var string
      */
     public $lesson_id;
 

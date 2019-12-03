@@ -22,26 +22,34 @@ use App\Models\User;
 trait CreatesFakeIntent
 {
     /**
+     * @param array|null $attributes
      * @param Lesson|null $lesson
      * @param Student|null $student
      * @param User|null $manager
-     * @param array|null $attributes
      * @return Intent
      */
-    private function createFakeLessonIntent(
+    private function createFakeIntent(
+        ?array $attributes = [],
         ?Lesson $lesson = null,
         ?Student $student = null,
-        ?User $manager = null,
-        ?array $attributes = []
+        ?User $manager = null
     ): Intent {
-        $attributes['event_type'] = Lesson::class;
-        if (null !== $lesson) {
+        if (!isset($attributes['event_type'])) {
+            $attributes['event_type'] = Lesson::class;
+        }
+
+        if (!isset($attributes['event_id'])) {
+            $lesson = $lesson ?? $this->createFakeLesson();
             $attributes['event_id'] = $lesson->id;
         }
-        if (null !== $student) {
+
+        if (!isset($attributes['student_id'])) {
+            $student = $student ?? $this->createFakeStudent();
             $attributes['student_id'] = $student->id;
         }
-        if (null !== $manager) {
+
+        if (!isset($attributes['manager_id'])) {
+            $manager = $manager ?? $this->createFakeUser();
             $attributes['manager_id'] = $manager->id;
         }
 

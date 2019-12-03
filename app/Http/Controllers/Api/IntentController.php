@@ -38,6 +38,7 @@ class IntentController extends Controller
     /**
      * @param StoreLessonIntentRequest $request
      * @return IntentResource
+     * @throws \Exception
      */
     public function store(StoreLessonIntentRequest $request): IntentResource
     {
@@ -48,11 +49,11 @@ class IntentController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return IntentResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(int $id): IntentResource
+    public function show(string $id): IntentResource
     {
         $intent = $this->repository->find($id);
         $intent->load('student', 'manager', 'event');
@@ -61,11 +62,11 @@ class IntentController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Exception
      */
-    public function destroy(int $id): void
+    public function destroy(string $id): void
     {
         $intent = $this->repository->find($id);
         $this->repository->delete($intent);

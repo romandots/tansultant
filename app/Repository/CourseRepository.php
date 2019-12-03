@@ -20,10 +20,10 @@ use App\Models\Course;
 class CourseRepository
 {
     /**
-     * @param int $id
+     * @param string $id
      * @return \Illuminate\Database\Eloquent\Model|Course
      */
-    public function find(int $id): Course
+    public function find(string $id): Course
     {
         $course = Course::query()->findOrFail($id);
         $course->load('instructor');
@@ -35,10 +35,12 @@ class CourseRepository
      * @param CourseDto $dto
      * @return Course
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Exception
      */
     public function create(CourseDto $dto): Course
     {
         $course = new Course;
+        $course->id = \uuid();
         $this->fill($course, $dto);
         $course->save();
 

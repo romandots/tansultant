@@ -17,7 +17,7 @@ use Illuminate\Validation\Rule;
 /**
  * Class ChangeLessonInstructorRequest
  * @package App\Http\Requests\Api
- * @property-read int $instructor_id
+ * @property-read string $instructor_id
  */
 class ChangeLessonInstructorRequest extends FormRequest
 {
@@ -29,7 +29,8 @@ class ChangeLessonInstructorRequest extends FormRequest
         return [
             'instructor_id' => [
                 'required',
-                'integer',
+                'string',
+                'uuid',
                 Rule::exists(Instructor::TABLE, 'id')
             ]
         ];

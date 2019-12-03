@@ -12,13 +12,8 @@ namespace Tests\Feature\Api\Lesson;
 
 use App\Models\Lesson;
 use App\Services\Permissions\LessonsPermissions;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeCourse;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakeLesson;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeUser;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class LessonStoreTest
@@ -26,7 +21,7 @@ use Tests\Traits\CreatesFakeUser;
  */
 class LessonStoreTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeLesson, CreatesFakeInstructor, CreatesFakePerson, CreatesFakeCourse, WithFaker;
+    use CreatesFakes;
 
     protected const URL = '/lessons';
 
@@ -110,8 +105,8 @@ class LessonStoreTest extends TestCase
         $startsAt = \Carbon\Carbon::parse($this->faker->dateTime)->setSecond(0);
         $endsAt = $startsAt->clone()->addHour();
         $data = [
-            'branch_id' => $this->faker->randomNumber(),
-            'classroom_id' => $this->faker->randomNumber(),
+            'branch_id' => $this->createFakeBranch()->id,
+            'classroom_id' => $this->createFakeClassroom()->id,
             'course_id' => $course->id,
             'starts_at' => $startsAt->format('Y-m-d H:i'),
             'ends_at' => $endsAt->format('Y-m-d H:i'),

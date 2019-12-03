@@ -42,23 +42,25 @@ class BranchesTableSeeder extends Seeder
     /**
      * Seed the application's database.
      * @return void
+     * @throws Exception
      */
     public function run(): void
     {
         try {
-            $this->branchRepository->find(1);
+            $branch = \App\Models\Branch::query()->firstOrFail();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
-            $branch = new \App\Http\Requests\Api\DTO\Branch;
-            $branch->name = 'Студия';
+            $branchDto = new \App\Http\Requests\Api\DTO\Branch;
+            $branchDto->name = 'Студия';
 
-            $this->branchRepository->create($branch);
+            $branch = $this->branchRepository->create($branchDto);
         }
 
         try {
-            $this->classroomRepository->find(1);
+            \App\Models\Classroom::query()->firstOrFail();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
             $classroom = new \App\Http\Requests\PublicApi\DTO\Classroom;
             $classroom->name = 'Зал А';
+            $classroom->branch_id = $branch->id;
 
             $this->classroomRepository->create($classroom);
         }

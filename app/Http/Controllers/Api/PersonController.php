@@ -40,6 +40,7 @@ class PersonController extends Controller
     /**
      * @param StorePersonRequest $request
      * @return PersonResource
+     * @throws \Exception
      */
     public function store(StorePersonRequest $request): PersonResource
     {
@@ -49,11 +50,11 @@ class PersonController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return PersonResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(int $id): PersonResource
+    public function show(string $id): PersonResource
     {
         $person = $this->personRepository->find($id);
 
@@ -61,12 +62,12 @@ class PersonController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @param UpdatePersonRequest $request
      * @return PersonResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function update(int $id, UpdatePersonRequest $request): PersonResource
+    public function update(string $id, UpdatePersonRequest $request): PersonResource
     {
         $person = $this->personRepository->find($id);
         $this->personRepository->update($person, $request->getDto());
@@ -75,11 +76,11 @@ class PersonController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Exception
      */
-    public function destroy(int $id): void
+    public function destroy(string $id): void
     {
         $person = $this->personRepository->find($id);
         $this->personRepository->delete($person);

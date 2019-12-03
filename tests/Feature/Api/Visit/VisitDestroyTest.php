@@ -15,17 +15,7 @@ use App\Models\Visit;
 use App\Services\Permissions\VisitsPermissions;
 use Carbon\Carbon;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeAccount;
-use Tests\Traits\CreatesFakeBranch;
-use Tests\Traits\CreatesFakeCourse;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakeLesson;
-use Tests\Traits\CreatesFakePayment;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeSchedule;
-use Tests\Traits\CreatesFakeStudent;
-use Tests\Traits\CreatesFakeUser;
-use Tests\Traits\CreatesFakeVisit;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class LessonDestroyTest
@@ -33,8 +23,7 @@ use Tests\Traits\CreatesFakeVisit;
  */
 class VisitDestroyTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeLesson, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse,
-        CreatesFakePerson, CreatesFakeVisit, CreatesFakeStudent, CreatesFakePayment, CreatesFakeAccount, CreatesFakeBranch;
+    use CreatesFakes;
 
     protected const URL = '/visits';
 

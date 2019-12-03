@@ -25,11 +25,11 @@ use Illuminate\Support\Facades\DB;
 class ScheduleRepository
 {
     /**
-     * @param int $id
+     * @param string $id
      * @return Schedule
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function find(int $id): Schedule
+    public function find(string $id): Schedule
     {
         return Schedule::query()->findOrFail($id);
     }
@@ -37,10 +37,12 @@ class ScheduleRepository
     /**
      * @param ScheduleDto $dto
      * @return Schedule
+     * @throws \Exception
      */
     public function create(ScheduleDto $dto): Schedule
     {
         $schedule = new Schedule;
+        $schedule->id = \uuid();
         $this->fill($schedule, $dto);
         $schedule->save();
 

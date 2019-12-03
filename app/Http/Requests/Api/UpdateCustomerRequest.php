@@ -27,7 +27,8 @@ class UpdateCustomerRequest extends FormRequest
         return [
             'person_id' => [
                 'required',
-                'int',
+                'string',
+                'uuid',
                 Rule::exists(\App\Models\Person::TABLE)
             ],
         ];

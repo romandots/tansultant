@@ -17,7 +17,7 @@ namespace App\Http\Requests\Api\DTO;
 class Student
 {
     /**
-     * @var int
+     * @var string
      */
     public $card_number;
 }

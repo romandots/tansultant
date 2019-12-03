@@ -12,14 +12,8 @@ namespace Tests\Feature\Api\Lesson;
 
 use App\Models\Lesson;
 use App\Services\Permissions\LessonsPermissions;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeCourse;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakeLesson;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeSchedule;
-use Tests\Traits\CreatesFakeUser;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class LessonUpdateTest
@@ -27,9 +21,7 @@ use Tests\Traits\CreatesFakeUser;
  */
 class LessonUpdateTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeLesson, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse,
-        CreatesFakePerson,
-        WithFaker;
+    use CreatesFakes;
 
     protected const URL = '/lessons';
 
@@ -125,8 +117,8 @@ class LessonUpdateTest extends TestCase
         $endsAt = $startsAt->clone()->addHour();
 
         $data = [
-            'branch_id' => $this->faker->randomNumber(),
-            'classroom_id' => $this->faker->randomNumber(),
+            'branch_id' => $this->createFakeBranch()->id,
+            'classroom_id' => $this->createFakeClassroom()->id,
             'course_id' => $this->course->id,
             'starts_at' => $startsAt->format('Y-m-d H:i'),
             'ends_at' => $endsAt->format('Y-m-d H:i'),

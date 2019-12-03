@@ -12,13 +12,8 @@ namespace Tests\Feature\Api\Schedule;
 
 use App\Models\Schedule;
 use App\Services\Permissions\SchedulesPermissions;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeCourse;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeSchedule;
-use Tests\Traits\CreatesFakeUser;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class ScheduleUpdateTest
@@ -26,7 +21,7 @@ use Tests\Traits\CreatesFakeUser;
  */
 class ScheduleUpdateTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse, CreatesFakePerson, WithFaker;
+    use CreatesFakes;
 
     protected const URL = '/schedules';
 
@@ -111,8 +106,8 @@ class ScheduleUpdateTest extends TestCase
         $course = $this->createFakeCourse(['instructor_id' => $instructor->id]);
 
         $data = [
-            'branch_id' => $this->faker->randomNumber(),
-            'classroom_id' => $this->faker->randomNumber(),
+            'branch_id' => $this->createFakeBranch()->id,
+            'classroom_id' => $this->createFakeClassroom()->id,
             'course_id' => $course->id,
             'starts_at' => $this->faker->date(),
             'ends_at' => $this->faker->date(),

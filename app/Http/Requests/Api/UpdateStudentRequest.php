@@ -28,8 +28,8 @@ class UpdateStudentRequest extends FormRequest
         return [
             'card_number' => [
                 'nullable',
-                'integer',
-                Rule::unique(Student::TABLE)
+                'string',
+                Rule::unique(Student::TABLE)->ignore($this->getStudentId())
             ],
         ];
     }
@@ -44,5 +44,13 @@ class UpdateStudentRequest extends FormRequest
         $dto->card_number = $validated['card_number'] ?? null;
 
         return $dto;
+    }
+
+    /**
+     * @return string
+     */
+    private function getStudentId(): string
+    {
+        return $this->route()->parameter('id');
     }
 }

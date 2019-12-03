@@ -22,17 +22,17 @@ class LessonsOnDate
     public $date;
 
     /**
-     * @var int|null
+     * @var string|null
      */
     public $branch_id;
 
     /**
-     * @var int|null
+     * @var string|null
      */
     public $classroom_id;
 
     /**
-     * @var int|null
+     * @var string|null
      */
     public $course_id;
 }

@@ -49,7 +49,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes(): void
     {
-        Route::prefix('')
+        Route::prefix('api/v1')
             ->namespace($this->namespace . '\PublicApi')
             ->group(base_path('routes/public_api.php'));
 

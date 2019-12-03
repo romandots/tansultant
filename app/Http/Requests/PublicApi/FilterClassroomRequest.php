@@ -2,13 +2,13 @@
 /**
  * File: FilterClassroomRequest.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-08-1
+ * Date: 2019-12-3
  * Copyright (c) 2019
  */
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\PublicApi;
+namespace App\Http\Requests\PublicApi;
 
 use App\Models\Branch;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,7 +28,8 @@ class FilterClassroomRequest extends FormRequest
         return [
             'branch_id' => [
                 'nullable',
-                'integer',
+                'string',
+                'uuid',
                 Rule::exists(Branch::TABLE, 'id')
             ]
         ];
@@ -41,7 +42,7 @@ class FilterClassroomRequest extends FormRequest
     {
         $dto = new DTO\FilterClassroom;
         $validated = $this->validated();
-        $dto->branch_id = isset($validated['branch_id']) ? (int)$validated['branch_id'] : null;
+        $dto->branch_id = $validated['branch_id'] ?? null;
 
         return $dto;
     }

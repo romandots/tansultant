@@ -14,9 +14,11 @@ use Faker\Generator as Faker;
 
 $factory->define(Intent::class, static function (Faker $faker) {
     return [
+        'id' => \uuid(),
         'student_id' => \uuid(),
         'manager_id' => \uuid(),
         'event_type' => \App\Models\Lesson::class,
         'event_id' => \uuid(),
+        'status' => Intent::STATUS_EXPECTING,
     ];
 });

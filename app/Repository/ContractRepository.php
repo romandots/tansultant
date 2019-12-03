@@ -31,24 +31,26 @@ class ContractRepository
     }
 
     /**
-     * @param int $customerId
+     * @param string $customerId
      * @return Contract|null
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function findByCustomerId(int $customerId): ?Contract
+    public function findByCustomerId(string $customerId): ?Contract
     {
         return Contract::query()->where('customer_id', $customerId)->firstOrFail();
     }
 
     /**
-     * @param int $customerId
+     * @param string $customerId
      * @param int|null $branchId
      * @param string|null $serial
      * @return Contract
+     * @throws \Exception
      */
-    public function create(int $customerId, ?int $branchId = null, ?string $serial = null): Contract
+    public function create(string $customerId, ?int $branchId = null, ?string $serial = null): Contract
     {
         $contract = new Contract;
+        $contract->id = \uuid();
         $contract->serial = $serial ?: $this->getCurrentSerial();
         $contract->number = (int)$this->getLastNumber($contract->serial) + 1;
         $contract->branch_id = $branchId;

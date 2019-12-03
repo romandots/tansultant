@@ -17,17 +17,17 @@ namespace App\Http\Requests\Api\DTO;
 class Instructor
 {
     /**
-     * @var
+     * @var string
      */
     public $description;
 
     /**
-     * @var
+     * @var string
      */
     public $status;
 
     /**
-     * @var
+     * @var bool
      */
     public $display;
 }

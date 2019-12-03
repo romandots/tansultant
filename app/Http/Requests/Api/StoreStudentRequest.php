@@ -29,7 +29,7 @@ class StoreStudentRequest extends FormRequest
         return [
             'card_number' => [
                 'nullable',
-                'integer',
+                'string',
                 Rule::unique(Student::TABLE)
             ],
             'last_name' => [

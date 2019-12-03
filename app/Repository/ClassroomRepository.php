@@ -2,7 +2,7 @@
 /**
  * File: ClassroomRepository.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-31
+ * Date: 2019-12-3
  * Copyright (c) 2019
  */
 
@@ -20,11 +20,11 @@ use Illuminate\Database\Eloquent\Collection;
 class ClassroomRepository
 {
     /**
-     * @param int $id
+     * @param string $id
      * @return Classroom
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function find(int $id): Classroom
+    public function find(string $id): Classroom
     {
         return Classroom::query()
             ->whereNull('deleted_at')
@@ -35,10 +35,12 @@ class ClassroomRepository
     /**
      * @param ClassroomDto $dto
      * @return Classroom
+     * @throws \Exception
      */
     public function create(ClassroomDto $dto): Classroom
     {
         $classroom = new Classroom;
+        $classroom->id = \uuid();
         $this->fill($dto, $classroom);
         $classroom->save();
 
@@ -57,10 +59,10 @@ class ClassroomRepository
     }
 
     /**
-     * @param int $branchId
+     * @param string $branchId
      * @return Collection
      */
-    public function getByBranchId(int $branchId): Collection
+    public function getByBranchId(string $branchId): Collection
     {
         return Classroom::query()
             ->whereNull('deleted_at')

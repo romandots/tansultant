@@ -37,16 +37,19 @@ class ScheduleController extends Controller
     /**
      * ScheduleController constructor.
      * @param ScheduleRepository $repository
+     * @param ScheduleService $service
      */
-    public function __construct(ScheduleRepository $repository)
+    public function __construct(ScheduleRepository $repository, ScheduleService $service)
     {
         $this->repository = $repository;
+        $this->service = $service;
     }
 
     /**
      * @param StoreScheduleRequest $request
      * @return ScheduleResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Exception
      */
     public function store(StoreScheduleRequest $request): ScheduleResource
     {
@@ -57,11 +60,11 @@ class ScheduleController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return ScheduleResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(int $id): ScheduleResource
+    public function show(string $id): ScheduleResource
     {
         $schedule = $this->repository->find($id);
         $schedule->load('course');
@@ -71,11 +74,11 @@ class ScheduleController extends Controller
 
     /**
      * @param StoreScheduleRequest $request
-     * @param int $id
+     * @param string $id
      * @return ScheduleResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function update(StoreScheduleRequest $request, int $id): ScheduleResource
+    public function update(StoreScheduleRequest $request, string $id): ScheduleResource
     {
         $schedule = $this->repository->find($id);
         $this->repository->update($schedule, $request->getDto());
@@ -85,10 +88,10 @@ class ScheduleController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @throws \Exception
      */
-    public function destroy(int $id): void
+    public function destroy(string $id): void
     {
         $schedule = $this->repository->find($id);
         $this->repository->delete($schedule);

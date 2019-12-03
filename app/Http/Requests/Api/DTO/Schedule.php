@@ -17,17 +17,17 @@ namespace App\Http\Requests\Api\DTO;
 class Schedule
 {
     /**
-     * @var int
+     * @var string
      */
     public $branch_id;
 
     /**
-     * @var int
+     * @var string
      */
     public $classroom_id;
 
     /**
-     * @var int
+     * @var string
      */
     public $course_id;
 

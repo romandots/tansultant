@@ -13,12 +13,7 @@ namespace Tests\Feature\Api\Lesson;
 use App\Models\Lesson;
 use App\Services\Permissions\LessonsPermissions;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeCourse;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakeLesson;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeSchedule;
-use Tests\Traits\CreatesFakeUser;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class LessonDestroyTest
@@ -26,8 +21,7 @@ use Tests\Traits\CreatesFakeUser;
  */
 class LessonDestroyTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeLesson, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse,
-        CreatesFakePerson;
+    use CreatesFakes;
 
     protected const URL = '/lessons';
 

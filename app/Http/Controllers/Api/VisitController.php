@@ -56,11 +56,11 @@ class VisitController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return VisitResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(int $id): VisitResource
+    public function show(string $id): VisitResource
     {
         $visit = $this->repository->find($id);
         $visit->load('event', 'student', 'manager');
@@ -69,11 +69,11 @@ class VisitController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Exception
      */
-    public function destroy(int $id): void
+    public function destroy(string $id): void
     {
         $visit = $this->repository->find($id);
         $this->service->delete($visit);

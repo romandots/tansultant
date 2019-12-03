@@ -20,11 +20,11 @@ use App\Models\User;
 class UserRepository
 {
     /**
-     * @param int $id
+     * @param string $id
      * @return User|null
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function find(int $id): ?User
+    public function find(string $id): ?User
     {
         return User::query()->findOrFail($id);
     }
@@ -33,10 +33,12 @@ class UserRepository
      * @param Person $person
      * @param \App\Http\Requests\Api\DTO\User $dto
      * @return User
+     * @throws \Exception
      */
     public function create(Person $person, \App\Http\Requests\Api\DTO\User $dto): User
     {
         $user = new User;
+        $user->id = \uuid();
         $user->person_id = $person->id;
         $user->name = "{$person->last_name} {$person->first_name}";
         $user->username = $dto->username;

@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\Branch;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class BranchRepository
@@ -19,11 +20,21 @@ use App\Models\Branch;
 class BranchRepository
 {
     /**
-     * @param int $id
+     * @return Collection|Branch[]
+     */
+    public function getAll(): Collection
+    {
+        return Branch::query()
+            ->whereNull('deleted_at')
+            ->get();
+    }
+
+    /**
+     * @param string $id
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|Branch
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function find(int $id): ?Branch
+    public function find(string $id): ?Branch
     {
         return Branch::query()
             ->where('id', $id)
@@ -34,10 +45,12 @@ class BranchRepository
     /**
      * @param \App\Http\Requests\Api\DTO\Branch $dto
      * @return Branch
+     * @throws \Exception
      */
     public function create(\App\Http\Requests\Api\DTO\Branch $dto): Branch
     {
         $branch = new Branch;
+        $branch->id = \uuid();
         $branch->name = $dto->name;
         $branch->save();
 

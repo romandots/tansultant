@@ -15,10 +15,10 @@ use Illuminate\Database\Eloquent\Model;
  * Class Intent
  *
  * @package App\Models
- * @property int $id
- * @property int $event_id
- * @property int $student_id
- * @property int|null $manager_id
+ * @property string $id
+ * @property string $event_id
+ * @property string $student_id
+ * @property string|null $manager_id
  * @property string $event_type
  * @property string $status
  * @property \Carbon\Carbon $created_at
@@ -41,6 +41,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Intent extends Model
 {
+    use UsesUuid;
+
     public const TABLE = 'intents';
 
     public const EVENT_TYPES = [

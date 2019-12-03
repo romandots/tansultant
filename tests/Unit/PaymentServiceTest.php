@@ -20,16 +20,7 @@ use App\Models\Visit;
 use App\Services\Account\Exceptions\InsufficientFundsAccountServiceException;
 use App\Services\Payment\PaymentService;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeAccount;
-use Tests\Traits\CreatesFakeBranch;
-use Tests\Traits\CreatesFakeCourse;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakeLesson;
-use Tests\Traits\CreatesFakePayment;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeStudent;
-use Tests\Traits\CreatesFakeUser;
-use Tests\Traits\CreatesFakeVisit;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class PaymentServiceTest
@@ -37,9 +28,7 @@ use Tests\Traits\CreatesFakeVisit;
  */
 class PaymentServiceTest extends TestCase
 {
-    use CreatesFakeStudent, CreatesFakeVisit, CreatesFakeUser, CreatesFakePerson, CreatesFakeLesson,
-        CreatesFakeCourse, CreatesFakeInstructor, CreatesFakePayment, CreatesFakeAccount, CreatesFakeBranch,
-        AssertExceptionTrait;
+    use CreatesFakes, AssertExceptionTrait;
 
     /**
      * @var PaymentService
@@ -59,7 +48,11 @@ class PaymentServiceTest extends TestCase
     {
         $price = 100;
         $branchId = $this->createFakeBranch()->id;
-        $lesson = $this->createFakeLesson(['branch_id' => $branchId]);
+        $classroomId = $this->createFakeClassroom(['branch_id' => $branchId])->id;
+        $lesson = $this->createFakeLesson([
+            'branch_id' => $branchId,
+            'classroom_id' => $classroomId,
+        ]);
         $visit = $this->createFakeLessonVisit($lesson);
         $student = $this->createFakeStudent();
         $user = $this->createFakeUser();
@@ -116,7 +109,11 @@ class PaymentServiceTest extends TestCase
     {
         $price = 100;
         $branchId = $this->createFakeBranch()->id;
-        $lesson = $this->createFakeLesson(['branch_id' => $branchId]);
+        $classroomId = $this->createFakeClassroom(['branch_id' => $branchId])->id;
+        $lesson = $this->createFakeLesson([
+            'branch_id' => $branchId,
+            'classroom_id' => $classroomId,
+        ]);
         $user = $this->createFakeUser();
         $instructor = $this->createFakeInstructor();
         $instructorAccount = $this->createFakeAccount([
@@ -160,7 +157,11 @@ class PaymentServiceTest extends TestCase
     {
         $price = 100;
         $branchId = $this->createFakeBranch()->id;
-        $lesson = $this->createFakeLesson(['branch_id' => $branchId]);
+        $classroomId = $this->createFakeClassroom(['branch_id' => $branchId])->id;
+        $lesson = $this->createFakeLesson([
+            'branch_id' => $branchId,
+            'classroom_id' => $classroomId,
+        ]);
         $user = $this->createFakeUser();
         $instructor = $this->createFakeInstructor();
         $instructorAccount = $this->createFakeAccount([

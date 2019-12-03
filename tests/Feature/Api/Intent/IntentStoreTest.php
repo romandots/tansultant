@@ -13,14 +13,7 @@ namespace Tests\Feature\Api\Lesson;
 use App\Models\Lesson;
 use App\Services\Permissions\IntentsPermissions;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeCourse;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakeIntent;
-use Tests\Traits\CreatesFakeLesson;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeSchedule;
-use Tests\Traits\CreatesFakeStudent;
-use Tests\Traits\CreatesFakeUser;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class LessonStoreTest
@@ -28,8 +21,7 @@ use Tests\Traits\CreatesFakeUser;
  */
 class IntentStoreTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeLesson, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse,
-        CreatesFakePerson, CreatesFakeIntent, CreatesFakeStudent;
+    use CreatesFakes;
 
     protected const URL = '/intents';
 

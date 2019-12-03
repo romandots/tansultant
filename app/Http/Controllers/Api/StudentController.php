@@ -67,6 +67,7 @@ class StudentController extends Controller
      * @param AttachStudentRequest $request
      * @return StudentResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Exception
      */
     public function createFromPerson(AttachStudentRequest $request): StudentResource
     {
@@ -79,11 +80,11 @@ class StudentController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return StudentResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(int $id): StudentResource
+    public function show(string $id): StudentResource
     {
         $student = $this->studentRepository->find($id);
         $student->load('customer', 'person');
@@ -92,12 +93,12 @@ class StudentController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @param UpdateStudentRequest $request
      * @return StudentResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function update(int $id, UpdateStudentRequest $request): StudentResource
+    public function update(string $id, UpdateStudentRequest $request): StudentResource
     {
         $student = $this->studentRepository->find($id);
         $this->studentRepository->update($student, $request->getDto());
@@ -107,11 +108,11 @@ class StudentController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Exception
      */
-    public function destroy(int $id): void
+    public function destroy(string $id): void
     {
         $student = $this->studentRepository->find($id);
         $this->studentRepository->delete($student);

@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Api;
 
+use App\Models\Branch;
+use App\Models\Classroom;
 use App\Models\Course;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidDateException;
@@ -34,17 +36,20 @@ class ScheduleOnDateRequest extends FormRequest
             ],
             'branch_id' => [
                 'nullable',
-                'integer',
-                // Rule::exists(Branch::TABLE, 'id')
+                'string',
+                'uuid',
+                 Rule::exists(Branch::TABLE, 'id')
             ],
             'classroom_id' => [
                 'nullable',
-                'integer',
-                // Rule::exists(Classroom::TABLE, 'id')
+                'string',
+                'uuid',
+                 Rule::exists(Classroom::TABLE, 'id')
             ],
             'course_id' => [
                 'nullable',
-                'integer',
+                'string',
+                'uuid',
                 Rule::exists(Course::TABLE, 'id')
             ],
         ];

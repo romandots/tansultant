@@ -44,10 +44,10 @@ class CourseController
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return CourseResource
      */
-    public function show(int $id): CourseResource
+    public function show(string $id): CourseResource
     {
         $course = $this->repository->find($id);
         $course->load('instructor');
@@ -70,11 +70,11 @@ class CourseController
 
     /**
      * @param UpdateCourseRequest $request
-     * @param int $id
+     * @param string $id
      * @return CourseResource
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function update(UpdateCourseRequest $request, int $id): CourseResource
+    public function update(UpdateCourseRequest $request, string $id): CourseResource
     {
         $course = $this->repository->find($id);
         $this->repository->update($course, $request->getDto());
@@ -84,10 +84,10 @@ class CourseController
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @throws \Exception
      */
-    public function destroy(int $id): void
+    public function destroy(string $id): void
     {
         $course = $this->repository->find($id);
         $this->repository->delete($course);

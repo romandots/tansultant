@@ -29,12 +29,14 @@ class StoreLessonIntentRequest extends FormRequest
         return [
             'student_id' => [
                 'required',
-                'integer',
+                'string',
+                'uuid',
                 Rule::exists(Student::TABLE, 'id')
             ],
             'lesson_id' => [
                 'required',
-                'integer',
+                'string',
+                'uuid',
                 Rule::exists(Lesson::TABLE, 'id')
             ]
         ];

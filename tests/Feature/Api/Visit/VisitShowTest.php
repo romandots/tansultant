@@ -13,14 +13,7 @@ namespace Tests\Feature\Api\Lesson;
 use App\Models\Visit;
 use App\Services\Permissions\VisitsPermissions;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeCourse;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakeVisit;
-use Tests\Traits\CreatesFakeLesson;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeSchedule;
-use Tests\Traits\CreatesFakeStudent;
-use Tests\Traits\CreatesFakeUser;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class LessonShowTest
@@ -28,8 +21,7 @@ use Tests\Traits\CreatesFakeUser;
  */
 class VisitShowTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeLesson, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse,
-        CreatesFakePerson, CreatesFakeVisit, CreatesFakeStudent;
+    use CreatesFakes;
 
     protected const URL = '/visits';
 

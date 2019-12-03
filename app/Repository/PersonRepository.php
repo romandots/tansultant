@@ -22,11 +22,11 @@ use Ramsey\Uuid\Uuid;
 class PersonRepository
 {
     /**
-     * @param int $id
+     * @param string $id
      * @return Person|null
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function find(int $id): ?Person
+    public function find(string $id): ?Person
     {
         return Person::query()->findOrFail($id);
     }
@@ -34,10 +34,12 @@ class PersonRepository
     /**
      * @param PersonDto $dto
      * @return Person
+     * @throws \Exception
      */
     public function create(PersonDto $dto): Person
     {
         $person = new Person;
+        $person->id = \uuid();
         $this->fill($person, $dto);
         $person->save();
 

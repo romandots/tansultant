@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Api;
 
+use App\Models\Branch;
+use App\Models\Classroom;
 use App\Models\Course;
 use App\Models\Instructor;
 use App\Models\Lesson;
@@ -30,22 +32,26 @@ class StoreLessonRequest extends FormRequest
         return [
             'classroom_id' => [
                 'nullable',
-                'integer',
-//                Rule::exists(Classroom::TABLE, 'id')
+                'string',
+                'uuid',
+                Rule::exists(Classroom::TABLE, 'id')
             ],
             'course_id' => [
                 'nullable',
-                'integer',
+                'string',
+                'uuid',
                 Rule::exists(Course::TABLE, 'id')
             ],
             'branch_id' => [
                 'nullable',
-                'integer',
-//                Rule::exists(Branch::TABLE, 'id')
+                'string',
+                'uuid',
+                Rule::exists(Branch::TABLE, 'id')
             ],
             'instructor_id' => [
                 'nullable',
-                'integer',
+                'string',
+                'uuid',
                 Rule::exists(Instructor::TABLE, 'id')
             ],
             'type' => [

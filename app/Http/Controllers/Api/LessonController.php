@@ -47,10 +47,10 @@ class LessonController
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return LessonResource
      */
-    public function show(int $id): LessonResource
+    public function show(string $id): LessonResource
     {
         $lesson = $this->repository->find($id);
         $lesson->load('instructor', 'course', 'controller');
@@ -72,10 +72,10 @@ class LessonController
 
     /**
      * @param UpdateLessonRequest $request
-     * @param int $id
+     * @param string $id
      * @return LessonResource
      */
-    public function update(UpdateLessonRequest $request, int $id): LessonResource
+    public function update(UpdateLessonRequest $request, string $id): LessonResource
     {
         $lesson = $this->repository->find($id);
         $this->repository->update($lesson, $request->getDto());
@@ -86,10 +86,10 @@ class LessonController
 
     /**
      * @param ChangeLessonInstructorRequest $request
-     * @param int $id
+     * @param string $id
      * @return LessonResource
      */
-    public function changeInstructor(ChangeLessonInstructorRequest $request, int $id): LessonResource
+    public function changeInstructor(ChangeLessonInstructorRequest $request, string $id): LessonResource
     {
         $lesson = $this->repository->find($id);
         $this->repository->updateInstructor($lesson, $request->instructor_id);
@@ -99,10 +99,10 @@ class LessonController
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @throws \Exception
      */
-    public function destroy(int $id): void
+    public function destroy(string $id): void
     {
         $lesson = $this->repository->find($id);
         $this->repository->delete($lesson);
@@ -121,11 +121,11 @@ class LessonController
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return LessonResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function close(int $id): LessonResource
+    public function close(string $id): LessonResource
     {
         $lesson = $this->repository->find($id);
         $this->service->close($lesson);
@@ -134,11 +134,11 @@ class LessonController
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return LessonResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function open(int $id): LessonResource
+    public function open(string $id): LessonResource
     {
         $lesson = $this->repository->find($id);
         $this->service->open($lesson);
@@ -147,11 +147,11 @@ class LessonController
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return LessonResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function cancel(int $id): LessonResource
+    public function cancel(string $id): LessonResource
     {
         $lesson = $this->repository->find($id);
         $this->service->cancel($lesson);
@@ -160,11 +160,11 @@ class LessonController
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return LessonResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function book(int $id): LessonResource
+    public function book(string $id): LessonResource
     {
         $lesson = $this->repository->find($id);
         $this->repository->book($lesson);

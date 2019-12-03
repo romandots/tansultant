@@ -92,6 +92,7 @@ class UserController extends Controller
      * @param AttachUserRequest $request
      * @return UserResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Exception
      */
     public function createFromPerson(AttachUserRequest $request): UserResource
     {
@@ -104,11 +105,11 @@ class UserController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return UserResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(int $id): UserResource
+    public function show(string $id): UserResource
     {
         $user = $this->userRepository->find($id);
         $user->load('person');
@@ -117,12 +118,12 @@ class UserController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @param UpdateUserRequest $request
      * @return UserResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function update(int $id, UpdateUserRequest $request): UserResource
+    public function update(string $id, UpdateUserRequest $request): UserResource
     {
         $user = $this->userRepository->find($id);
         $this->userRepository->update($user, $request->getDto());
@@ -142,11 +143,11 @@ class UserController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Exception
      */
-    public function destroy(int $id): void
+    public function destroy(string $id): void
     {
         $user = $this->userRepository->find($id);
         $this->userRepository->delete($user);

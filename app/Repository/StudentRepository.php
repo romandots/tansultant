@@ -20,23 +20,25 @@ use App\Models\Student;
 class StudentRepository
 {
     /**
-     * @param int $id
+     * @param string $id
      * @return Student|null
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function find(int $id): ?Student
+    public function find(string $id): ?Student
     {
         return Student::query()->findOrFail($id);
     }
 
     /**
      * @param Person $person
-     * @param int|null $cardNumber
+     * @param string|null $cardNumber
      * @return Student
+     * @throws \Exception
      */
-    public function create(Person $person, ?int $cardNumber = null): Student
+    public function create(Person $person, ?string $cardNumber = null): Student
     {
         $student = new Student;
+        $student->id = \uuid();
         $student->person_id = $person->id;
         $student->name = "{$person->last_name} {$person->first_name}";
         $student->card_number = $cardNumber;

@@ -17,7 +17,7 @@ namespace App\Http\Requests\Api\DTO;
 class Customer
 {
     /**
-     * @var int $person_id
+     * @var string $person_id
      */
     public $person_id;
 }

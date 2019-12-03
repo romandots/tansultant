@@ -24,11 +24,11 @@ use App\Models\Visit;
 class VisitRepository
 {
     /**
-     * @param int $id
+     * @param string $id
      * @return Visit|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function find(int $id)
+    public function find(string $id)
     {
         return Visit::query()
             ->where('id', $id)
@@ -39,10 +39,12 @@ class VisitRepository
      * @param VisitDto $dto
      * @param User|null $user
      * @return Visit
+     * @throws \Exception
      */
     public function createLessonVisitFromDto(VisitDto $dto, ?User $user = null): Visit
     {
         $visit = new Visit;
+        $visit->id = \uuid();
         $visit->student_id = $dto->student_id;
         $visit->event_id = $dto->lesson_id;
         $visit->event_type = Lesson::class;
@@ -63,10 +65,12 @@ class VisitRepository
      * @param Student $student
      * @param User $user
      * @return Visit
+     * @throws \Exception
      */
     public function createLessonVisit(Lesson $lesson, Student $student, User $user): Visit
     {
         $visit = new Visit;
+        $visit->id = \uuid();
         $visit->manager_id = $user->id;
         $visit->student_id = $student->id;
         $visit->event_id = $lesson->id;

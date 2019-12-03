@@ -13,13 +13,8 @@ namespace Tests\Feature\Api\Lesson;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Services\Permissions\LessonsPermissions;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeCourse;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakeLesson;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeUser;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class LessonOnDateTest
@@ -27,7 +22,7 @@ use Tests\Traits\CreatesFakeUser;
  */
 class LessonOnDateTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeLesson, CreatesFakeInstructor, CreatesFakeCourse, CreatesFakePerson, WithFaker;
+    use CreatesFakes;
 
     protected const URL = '/lessons/date';
     public const JSON_STRUCTURE = [
@@ -117,10 +112,10 @@ class LessonOnDateTest extends TestCase
 
         $instructor = $this->createFakeInstructor();
 
-        $branchId1 = $this->faker->unique()->numerify('########');
-        $branchId2 = $this->faker->unique()->numerify('########');
-        $branchId3 = $this->faker->unique()->numerify('########');
-        $classroomId = $this->faker->unique()->numerify('########');
+        $branchId1 = $this->createFakeBranch()->id;
+        $branchId2 = $this->createFakeBranch()->id;
+        $branchId3 = $this->createFakeBranch()->id;
+        $classroomId = $this->createFakeClassroom()->id;
 
         $course1 = $this->createFakeCourse([
             'instructor_id' => $instructor->id,
@@ -154,7 +149,7 @@ class LessonOnDateTest extends TestCase
             'schedule_id' => null,
             'instructor_id' => $course1->instructor_id,
             'course_id' => $course1->id,
-            'starts_at' => '2019-09-09 10:00:00',
+            'starts_at' => '2019-09-09 10:00:01',
             'ends_at' => '2019-09-09 11:00:00',
             'branch_id' => $branchId1,
             'classroom_id' => $classroomId

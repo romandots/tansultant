@@ -20,11 +20,11 @@ use App\Models\Person;
 class InstructorRepository
 {
     /**
-     * @param int $id
+     * @param string $id
      * @return Instructor|null
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function find(int $id): ?Instructor
+    public function find(string $id): ?Instructor
     {
         return Instructor::query()->findOrFail($id);
     }
@@ -33,10 +33,12 @@ class InstructorRepository
      * @param Person $person
      * @param \App\Http\Requests\Api\DTO\Instructor $dto
      * @return Instructor
+     * @throws \Exception
      */
     public function create(Person $person, \App\Http\Requests\Api\DTO\Instructor $dto): Instructor
     {
         $instructor = new Instructor;
+        $instructor->id = \uuid();
         $instructor->person_id = $person->id;
         $instructor->name = "{$person->last_name} {$person->first_name}";
         $instructor->description = $dto->description;

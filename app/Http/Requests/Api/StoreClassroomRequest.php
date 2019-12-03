@@ -33,7 +33,8 @@ class StoreClassroomRequest extends FormRequest
             ],
             'branch_id' => [
                 'required',
-                'integer',
+                'string',
+                'uuid',
                 Rule::exists(Branch::TABLE, 'id')
             ],
             'color' => [

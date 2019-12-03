@@ -97,11 +97,11 @@ class CustomerController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return CustomerResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(int $id): CustomerResource
+    public function show(string $id): CustomerResource
     {
         $customer = $this->customerRepository->find($id);
         $customer->load('person');
@@ -110,11 +110,11 @@ class CustomerController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Exception
      */
-    public function destroy(int $id): void
+    public function destroy(string $id): void
     {
         $customer = $this->customerRepository->find($id);
         $this->customerRepository->delete($customer);

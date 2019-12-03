@@ -65,7 +65,7 @@ class CreatePeopleTables extends Migration
         Schema::create('students', static function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->unsignedInteger('card_number')->nullable();
+            $table->string('card_number')->nullable();
             $table->text('status');
             $table->uuid('person_id')->nullable()->index();
             $table->uuid('customer_id')->nullable()->index();

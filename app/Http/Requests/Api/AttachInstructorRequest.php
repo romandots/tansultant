@@ -16,7 +16,7 @@ use Illuminate\Validation\Rule;
 
 /**
  * Class AttachInstructorRequest
- * @property-read int $person_id
+ * @property-read string $person_id
  * @package App\Http\Requests\Api
  */
 class AttachInstructorRequest extends FormRequest
@@ -42,7 +42,8 @@ class AttachInstructorRequest extends FormRequest
             ],
             'person_id' => [
                 'required',
-                'integer',
+                'string',
+                'uuid',
                 Rule::exists(Person::TABLE, 'id')
             ]
         ];

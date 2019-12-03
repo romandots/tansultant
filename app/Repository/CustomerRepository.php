@@ -20,11 +20,11 @@ use App\Models\Person;
 class CustomerRepository
 {
     /**
-     * @param int $id
+     * @param string $id
      * @return Customer|null
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function find(int $id): ?Customer
+    public function find(string $id): ?Customer
     {
         return Customer::query()->findOrFail($id);
     }
@@ -32,10 +32,12 @@ class CustomerRepository
     /**
      * @param Person $person
      * @return Customer
+     * @throws \Exception
      */
     public function create(Person $person): Customer
     {
         $customer = new Customer;
+        $customer->id = \uuid();
         $customer->person_id = $person->id;
         $customer->name = "{$person->last_name} {$person->first_name}";
         $customer->save();

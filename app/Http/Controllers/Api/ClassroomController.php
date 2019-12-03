@@ -50,6 +50,7 @@ class ClassroomController extends Controller
     /**
      * @param UpdateClassroomRequest $request
      * @return ClassroomResource
+     * @throws \Exception
      */
     public function store(StoreClassroomRequest $request): ClassroomResource
     {
@@ -59,11 +60,11 @@ class ClassroomController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return ClassroomResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(int $id): ClassroomResource
+    public function show(string $id): ClassroomResource
     {
         $record = $this->repository->find($id);
 
@@ -72,11 +73,11 @@ class ClassroomController extends Controller
 
     /**
      * @param UpdateClassroomRequest $request
-     * @param int $id
+     * @param string $id
      * @return ClassroomResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function update(UpdateClassroomRequest $request, int $id): ClassroomResource
+    public function update(UpdateClassroomRequest $request, string $id): ClassroomResource
     {
         $record = $this->repository->find($id);
         $this->repository->update($record, $request->getDto());
@@ -85,12 +86,11 @@ class ClassroomController extends Controller
     }
 
     /**
-     * @param int $id
-     * @return ClassroomRepository
+     * @param string $id
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Exception
      */
-    public function destroy(int $id): ClassroomRepository
+    public function destroy(string $id): void
     {
         $record = $this->repository->find($id);
         $this->repository->delete($record);

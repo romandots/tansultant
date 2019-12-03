@@ -23,11 +23,11 @@ use Illuminate\Database\Eloquent\Collection;
 class LessonRepository
 {
     /**
-     * @param int $id
+     * @param string $id
      * @return \Illuminate\Database\Eloquent\Model|Lesson
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function find(int $id): Lesson
+    public function find(string $id): Lesson
     {
         return Lesson::query()->findOrFail($id);
     }
@@ -36,10 +36,12 @@ class LessonRepository
      * @param $name
      * @param LessonDto $dto
      * @return Lesson
+     * @throws \Exception
      */
     public function create(string $name, LessonDto $dto): Lesson
     {
         $lesson = new Lesson;
+        $lesson->id = \uuid();
         $lesson->name = $name;
         $lesson->status = Lesson::STATUS_BOOKED;
         $this->fill($lesson, $dto);
@@ -60,9 +62,9 @@ class LessonRepository
 
     /**
      * @param Lesson $lesson
-     * @param int $instructorId
+     * @param string $instructorId
      */
-    public function updateInstructor(Lesson $lesson, int $instructorId): void
+    public function updateInstructor(Lesson $lesson, string $instructorId): void
     {
         $lesson->instructor_id = $instructorId;
         $lesson->save();

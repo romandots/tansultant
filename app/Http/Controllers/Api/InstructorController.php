@@ -67,6 +67,7 @@ class InstructorController extends Controller
      * @param AttachInstructorRequest $request
      * @return InstructorResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Exception
      */
     public function createFromPerson(AttachInstructorRequest $request): InstructorResource
     {
@@ -79,11 +80,11 @@ class InstructorController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return InstructorResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(int $id): InstructorResource
+    public function show(string $id): InstructorResource
     {
         $instructor = $this->instructorRepository->find($id);
         $instructor->load('person');
@@ -92,12 +93,12 @@ class InstructorController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @param UpdateInstructorRequest $request
      * @return InstructorResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function update(int $id, UpdateInstructorRequest $request): InstructorResource
+    public function update(string $id, UpdateInstructorRequest $request): InstructorResource
     {
         $instructor = $this->instructorRepository->find($id);
         $this->instructorRepository->update($instructor, $request->getDto());
@@ -107,11 +108,11 @@ class InstructorController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Exception
      */
-    public function destroy(int $id): void
+    public function destroy(string $id): void
     {
         $instructor = $this->instructorRepository->find($id);
         $this->instructorRepository->delete($instructor);

@@ -11,8 +11,7 @@ declare(strict_types=1);
 namespace Tests\Feature\PublicApi\Classroom;
 
 use Tests\TestCase;
-use Tests\Traits\CreateFakeClassroom;
-use Tests\Traits\CreatesFakeBranch;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class ClassroomIndexTest
@@ -20,9 +19,9 @@ use Tests\Traits\CreatesFakeBranch;
  */
 class ClassroomIndexTest extends TestCase
 {
-    use CreatesFakeBranch, CreateFakeClassroom;
+    use CreatesFakes;
 
-    private const URL = 'classrooms';
+    private const URL = 'api/v1/classrooms';
 
     private const JSON_STRUCTURE = [
         'data' => [

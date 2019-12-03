@@ -57,7 +57,8 @@ class StoreCourseRequest extends FormRequest
             ],
             'instructor_id' => [
                 'nullable',
-                'integer',
+                'string',
+                'uuid',
                 Rule::exists(Instructor::TABLE, 'id')
             ],
             'starts_at' => [

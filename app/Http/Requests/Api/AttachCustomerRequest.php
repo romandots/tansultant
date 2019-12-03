@@ -29,7 +29,8 @@ class AttachCustomerRequest extends FormRequest
         return [
             'person_id' => [
                 'required',
-                'integer',
+                'string',
+                'uuid',
                 Rule::exists(Person::TABLE, 'id')
             ]
         ];

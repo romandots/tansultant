@@ -55,11 +55,11 @@ class ContractController extends Controller
     }
 
     /**
-     * @param int $customerId
+     * @param string $customerId
      * @return ContractResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(int $customerId): ContractResource
+    public function show(string $customerId): ContractResource
     {
         $contract = $this->contractRepository->findByCustomerId($customerId);
         $contract->load('customer');
@@ -68,11 +68,11 @@ class ContractController extends Controller
     }
 
     /**
-     * @param int $customerId
+     * @param string $customerId
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \App\Services\Contract\Exceptions\ContractAlreadySignedException
      */
-    public function sign(int $customerId): void
+    public function sign(string $customerId): void
     {
         $customer = $this->customerRepository->find($customerId);
         if (null === $customer->contract) {
@@ -82,11 +82,11 @@ class ContractController extends Controller
     }
 
     /**
-     * @param int $customerId
+     * @param string $customerId
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \App\Services\Contract\Exceptions\ContractAlreadyTerminatedException
      */
-    public function terminate(int $customerId): void
+    public function terminate(string $customerId): void
     {
         $customer = $this->customerRepository->find($customerId);
         if (null === $customer->contract) {

@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\PublicApi\DTO;
+namespace App\Http\Requests\PublicApi\DTO;
 
 /**
  * Class FilterClassroom
@@ -17,7 +17,7 @@ namespace App\Http\Controllers\PublicApi\DTO;
 class FilterClassroom
 {
     /**
-     * @var int|null
+     * @var string|null
      */
     public $branch_id;
 }

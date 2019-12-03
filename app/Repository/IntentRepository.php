@@ -23,11 +23,11 @@ use App\Models\User;
 class IntentRepository
 {
     /**
-     * @param int $id
+     * @param string $id
      * @return Intent|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function find(int $id)
+    public function find(string $id)
     {
         return Intent::query()
             ->where('id', $id)
@@ -38,10 +38,12 @@ class IntentRepository
      * @param IntentDto $dto
      * @param User $user
      * @return Intent
+     * @throws \Exception
      */
     public function createFromDto(IntentDto $dto, User $user): Intent
     {
         $intent = new Intent;
+        $intent->id = \uuid();
         $intent->manager_id = $user->id;
         $intent->status = Intent::STATUS_EXPECTING;
         $intent->student_id = $dto->student_id;
@@ -57,10 +59,12 @@ class IntentRepository
      * @param Student $student
      * @param User $user
      * @return Intent
+     * @throws \Exception
      */
     public function createLessonIntent(Lesson $lesson, Student $student, User $user): Intent
     {
         $intent = new Intent;
+        $intent->id = \uuid();
         $intent->manager_id = $user->id;
         $intent->status = Intent::STATUS_EXPECTING;
         $intent->student_id = $student->id;

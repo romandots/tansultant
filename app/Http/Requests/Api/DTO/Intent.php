@@ -17,12 +17,12 @@ namespace App\Http\Requests\Api\DTO;
 class Intent
 {
     /**
-     * @var
+     * @var string
      */
     public $student_id;
 
     /**
-     * @var
+     * @var string
      */
     public $event_id;
 

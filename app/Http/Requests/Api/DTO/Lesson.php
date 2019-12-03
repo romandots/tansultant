@@ -17,22 +17,22 @@ namespace App\Http\Requests\Api\DTO;
 class Lesson
 {
     /**
-     * @var int|null
+     * @var string|null
      */
     public $course_id;
 
     /**
-     * @var int|null
+     * @var string|null
      */
     public $instructor_id;
 
     /**
-     * @var int
+     * @var string
      */
     public $branch_id;
 
     /**
-     * @var int
+     * @var string
      */
     public $classroom_id;
 

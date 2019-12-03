@@ -42,7 +42,7 @@ class Kernel extends HttpKernel
         'public_api' => [
             'throttle:6000,1',
             'prefer_json:1',
-            \App\Http\Middleware\GetBearerTokenFromCookies::class,
+//            \App\Http\Middleware\GetBearerTokenFromCookies::class,
         ],
 
         'manager_api' => [

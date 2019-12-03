@@ -8,17 +8,14 @@
 declare(strict_types=1);
 
 use App\Services\Permissions\StudentsPermissions;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeStudent;
-use Tests\Traits\CreatesFakeUser;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class PersonTest
  */
 class StudentTest extends \Tests\TestCase
 {
-    use WithFaker, CreatesFakePerson, CreatesFakeStudent, CreatesFakeUser;
+    use CreatesFakes;
 
     protected const URL = '/students';
 
@@ -163,7 +160,7 @@ class StudentTest extends \Tests\TestCase
     public function testStore(): void
     {
         $data = [
-            'card_number' => $this->faker->unique()->randomNumber(4),
+            'card_number' => (string)$this->faker->randomNumber(4),
             'last_name' => $this->faker->lastName,
             'first_name' => $this->faker->firstName,
             'patronymic_name' => $this->faker->firstName,
@@ -228,7 +225,7 @@ class StudentTest extends \Tests\TestCase
     {
         $person = $this->createFakePerson();
         $data = [
-            'card_number' => $this->faker->unique()->randomNumber(4),
+            'card_number' => (string)$this->faker->unique()->randomNumber(4),
             'person_id' => $person->id
         ];
         $url = self::URL . '/from_person';
@@ -317,22 +314,6 @@ class StudentTest extends \Tests\TestCase
             ]);
     }
 
-    /**
-     * @param array $data
-     * @dataProvider provideInvalidUpdateData
-     */
-    public function testInvalidUpdate(array $data): void
-    {
-        $student = $this->createFakeStudent();
-
-        $url = self::URL . '/' . $student->id;
-
-        $this
-            ->actingAs($this->me, 'api')
-            ->patch($url, $data)
-            ->assertStatus(422);
-    }
-
     public function testDestroy(): void
     {
         $student = $this->createFakeStudent();
@@ -350,20 +331,6 @@ class StudentTest extends \Tests\TestCase
             'id' => $student->id,
             'deleted_at' => null
         ]);
-    }
-
-    /**
-     * @return array
-     */
-    public function provideInvalidUpdateData(): array
-    {
-        return [
-            [
-                [
-                    'card_number' => 'Иван',
-                ]
-            ],
-        ];
     }
 
     /**
@@ -399,7 +366,7 @@ class StudentTest extends \Tests\TestCase
             ],
             [
                 [
-                    'card_number' => 'Иван',
+                    'card_number' => '',
                 ]
             ],
         ];

@@ -13,13 +13,8 @@ namespace Tests\Feature\Api\Schedule;
 use App\Models\Course;
 use App\Models\Schedule;
 use App\Services\Permissions\SchedulesPermissions;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeCourse;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeSchedule;
-use Tests\Traits\CreatesFakeUser;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class ScheduleOnDateTest
@@ -27,7 +22,7 @@ use Tests\Traits\CreatesFakeUser;
  */
 class ScheduleOnDateTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse, CreatesFakePerson, WithFaker;
+    use CreatesFakes;
 
     protected const URL = '/schedules/date';
     public const JSON_STRUCTURE = [
@@ -117,10 +112,10 @@ class ScheduleOnDateTest extends TestCase
 
         $instructor = $this->createFakeInstructor();
 
-        $branchId1 = $this->faker->unique()->numerify('########');
-        $branchId2 = $this->faker->unique()->numerify('########');
-        $branchId3 = $this->faker->unique()->numerify('########');
-        $classroomId = $this->faker->unique()->numerify('########');
+        $branchId1 = $this->createFakeBranch()->id;
+        $branchId2 = $this->createFakeBranch()->id;
+        $branchId3 = $this->createFakeBranch()->id;
+        $classroomId = $this->createFakeClassroom()->id;
 
         $course1 = $this->createFakeCourse([
             'instructor_id' => $instructor->id,
@@ -143,14 +138,14 @@ class ScheduleOnDateTest extends TestCase
 
         $schedule1_1 = $this->createFakeSchedule([
             'course_id' => $course1->id,
-            'monday' => '11:00',
+            'monday' => '9:00',
             'tuesday' => null,
             'branch_id' => $branchId1,
             'classroom_id' => $classroomId
         ]);
         $schedule1_2 = $this->createFakeSchedule([
             'course_id' => $course1->id,
-            'monday' => '12:00',
+            'monday' => '11:00',
             'tuesday' => '12:00',
             'branch_id' => $branchId1,
             'classroom_id' => $classroomId
@@ -180,7 +175,7 @@ class ScheduleOnDateTest extends TestCase
         $schedule2_3 = $this->createFakeSchedule([
             'course_id' => $course2->id,
             'monday' => null,
-            'tuesday' => '13:00',
+            'tuesday' => '14:00',
             'branch_id' => $branchId2,
             'classroom_id' => $classroomId
         ]);

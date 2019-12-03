@@ -17,12 +17,12 @@ namespace App\Http\Requests\Api\DTO;
 class StudentFromPerson
 {
     /**
-     * @var int
+     * @var string
      */
     public $card_number;
 
     /**
-     * @var int
+     * @var string
      */
     public $person_id;
 }

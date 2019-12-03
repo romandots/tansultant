@@ -13,14 +13,7 @@ namespace Tests\Feature\Api\Lesson;
 use App\Models\Intent;
 use App\Services\Permissions\IntentsPermissions;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeCourse;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakeIntent;
-use Tests\Traits\CreatesFakeLesson;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeSchedule;
-use Tests\Traits\CreatesFakeStudent;
-use Tests\Traits\CreatesFakeUser;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class LessonDestroyTest
@@ -28,8 +21,7 @@ use Tests\Traits\CreatesFakeUser;
  */
 class IntentDestroyTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeLesson, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse,
-        CreatesFakePerson, CreatesFakeIntent, CreatesFakeStudent;
+    use CreatesFakes;
 
     protected const URL = '/intents';
 
@@ -46,17 +38,7 @@ class IntentDestroyTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $instructor = $this->createFakeInstructor();
-        $course = $this->createFakeCourse(['instructor_id' => $instructor->id]);
-        $schedule = $this->createFakeSchedule(['course_id' => $course->id]);
-        $lesson = $this->createFakeLesson([
-            'course_id' => $course->id,
-            'instructor_id' => $instructor->id,
-            'schedule_id' => $schedule->id,
-            'controller_id' => null
-        ]);
-        $student = $this->createFakeStudent();
-        $this->intent = $this->createFakeLessonIntent($lesson, $student, null, ['manager_id' => null]);
+        $this->intent = $this->createFakeIntent();
         $this->url = self::URL . '/' . $this->intent->id;
     }
 

@@ -13,11 +13,7 @@ namespace Tests\Feature\Api\Schedule;
 use App\Models\Schedule;
 use App\Services\Permissions\SchedulesPermissions;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeCourse;
-use Tests\Traits\CreatesFakeSchedule;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeUser;
+use Tests\Traits\CreatesFakes;
 
 /**
  * Class ScheduleShowTest
@@ -25,7 +21,7 @@ use Tests\Traits\CreatesFakeUser;
  */
 class ScheduleShowTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse, CreatesFakePerson;
+    use CreatesFakes;
 
     protected const URL = '/schedules';
 
@@ -62,7 +58,7 @@ class ScheduleShowTest extends TestCase
     {
         parent::setUp();
         $instructor = $this->createFakeInstructor();
-        $course =  $this->createFakeCourse(['instructor_id' => $instructor->id]);
+        $course = $this->createFakeCourse(['instructor_id' => $instructor->id]);
         $this->schedule = $this->createFakeSchedule(['course_id' => $course->id]);
         $this->url = self::URL . '/' . $this->schedule->id;
     }

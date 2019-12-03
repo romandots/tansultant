@@ -13,7 +13,7 @@ $factory->define(\App\Models\Lesson::class, static function (Faker $faker) {
         'name' => $faker->name,
         'branch_id' => \uuid(),
         'course_id' => \uuid(),
-        'schedule_id' => null,
+        'schedule_id' => \uuid(),
         'classroom_id' => \uuid(),
         'instructor_id' => \uuid(),
         'controller_id' => null,

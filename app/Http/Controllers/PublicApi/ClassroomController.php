@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\PublicApi;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PublicApi\FilterClassroomRequest;
 use App\Http\Resources\PublicApi\ClassroomResource;
 use App\Repository\ClassroomRepository;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -50,11 +51,11 @@ class ClassroomController extends Controller
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @return ClassroomResource
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(int $id): ClassroomResource
+    public function show(string $id): ClassroomResource
     {
         $record = $this->repository->find($id);
         $record->load('branch');
