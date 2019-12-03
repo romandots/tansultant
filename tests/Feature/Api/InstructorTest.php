@@ -20,7 +20,7 @@ class InstructorTest extends \Tests\TestCase
 {
     use WithFaker, CreatesFakeUser, CreatesFakePerson, CreatesFakeInstructor;
 
-    protected const URL = '/instructors';
+    protected const URL = 'manager_api/v1/instructors';
 
     protected const JSON_STRUCTURE = [
         'data' => [

@@ -19,7 +19,7 @@ class UserTest extends \Tests\TestCase
 {
     use WithFaker, CreatesFakePerson, CreatesFakeUser;
 
-    protected const URL = '/users';
+    protected const URL = 'manager_api/v1/users';
 
     protected const JSON_STRUCTURE = [
         'data' => [

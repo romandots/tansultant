@@ -23,7 +23,7 @@ class IntentShowTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = '/intents';
+    protected const URL = 'manager_api/v1/intents';
 
     private const JSON_STRUCTURE = [
         'data' => [

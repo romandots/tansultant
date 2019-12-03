@@ -23,7 +23,7 @@ class LessonShowTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = '/lessons';
+    protected const URL = 'manager_api/v1/lessons';
 
     private const JSON_STRUCTURE = [
         'data' => [

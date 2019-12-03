@@ -24,7 +24,7 @@ class LessonOnDateTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = '/lessons/date';
+    protected const URL = 'manager_api/v1/lessons/date';
     public const JSON_STRUCTURE = [
         'data' => [
             [

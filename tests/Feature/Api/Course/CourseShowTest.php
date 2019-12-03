@@ -26,7 +26,7 @@ class CourseShowTest extends TestCase
 {
     use CreatesFakeUser, CreatesFakeCourse, CreatesFakeInstructor, CreatesFakePerson;
 
-    protected const URL = '/courses';
+    protected const URL = 'manager_api/v1/courses';
 
     private const JSON_STRUCTURE = [
         'data' => [

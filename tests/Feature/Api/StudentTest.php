@@ -17,7 +17,7 @@ class StudentTest extends \Tests\TestCase
 {
     use CreatesFakes;
 
-    protected const URL = '/students';
+    protected const URL = 'manager_api/v1/students';
 
     protected const JSON_STRUCTURE = [
         'data' => [

@@ -23,7 +23,7 @@ class VisitShowTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = '/visits';
+    protected const URL = 'manager_api/v1/visits';
 
     private const JSON_STRUCTURE = [
         'data' => [

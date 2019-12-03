@@ -23,7 +23,7 @@ class IntentDestroyTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = '/intents';
+    protected const URL = 'manager_api/v1/intents';
 
     /**
      * @var Intent

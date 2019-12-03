@@ -36,19 +36,17 @@ class Kernel extends HttpKernel
             // \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+//            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
         'public_api' => [
-//            'throttle:6000,1',
             'prefer_json:1',
 //            \App\Http\Middleware\GetBearerTokenFromCookies::class,
         ],
 
         'manager_api' => [
-//            'throttle:6000,1',
             'prefer_json:1',
-            \App\Http\Middleware\GetBearerTokenFromCookies::class,
+//            \App\Http\Middleware\GetBearerTokenFromCookies::class,
             'auth:api',
             'role:' . \App\Services\Permissions\UserRoles::ADMIN
             . '|' . \App\Services\Permissions\UserRoles::MANAGER
@@ -57,25 +55,22 @@ class Kernel extends HttpKernel
         ],
 
         'student_api' => [
-//            'throttle:6000,1',
             'prefer_json:1',
-            \App\Http\Middleware\GetBearerTokenFromCookies::class,
+//            \App\Http\Middleware\GetBearerTokenFromCookies::class,
             'auth:api',
             'role:' . \App\Services\Permissions\UserRoles::STUDENT
         ],
 
         'customer_api' => [
-//            'throttle:6000,1',
             'prefer_json:1',
-            \App\Http\Middleware\GetBearerTokenFromCookies::class,
+//            \App\Http\Middleware\GetBearerTokenFromCookies::class,
             'auth:api',
             'role:' . \App\Services\Permissions\UserRoles::CUSTOMER
         ],
 
         'instructor_api' => [
-//            'throttle:6000,1',
             'prefer_json:1',
-            \App\Http\Middleware\GetBearerTokenFromCookies::class,
+//            \App\Http\Middleware\GetBearerTokenFromCookies::class,
             'auth:api',
             'role:' . \App\Services\Permissions\UserRoles::INSTRUCTOR
         ],
@@ -89,7 +84,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+//        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,

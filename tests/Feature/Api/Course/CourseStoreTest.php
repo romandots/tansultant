@@ -28,7 +28,7 @@ class CourseStoreTest extends TestCase
 {
     use CreatesFakeUser, CreatesFakeCourse, CreatesFakeInstructor, CreatesFakePerson, WithFaker;
 
-    protected const URL = '/courses';
+    protected const URL = 'manager_api/v1/courses';
 
     private const JSON_STRUCTURE = [
         'data' => [

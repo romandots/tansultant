@@ -23,7 +23,7 @@ class ScheduleStoreTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = '/schedules';
+    protected const URL = 'manager_api/v1/schedules';
 
     private const JSON_STRUCTURE = [
         'data' => [
