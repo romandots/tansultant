@@ -95,9 +95,9 @@ class CreatePermissionTables extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
-        $tableNames = config('permission.table_names');
+        $tableNames = \config('permission.table_names');
 
         Schema::drop($tableNames['role_has_permissions']);
         Schema::drop($tableNames['model_has_roles']);
