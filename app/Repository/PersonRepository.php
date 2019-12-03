@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Http\Requests\Api\DTO\Person as PersonDto;
+use App\Http\Requests\ManagerApi\DTO\StorePerson as PersonDto;
 use App\Models\Person;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;

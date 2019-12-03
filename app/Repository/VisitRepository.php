@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Http\Requests\Api\DTO\LessonVisit as VisitDto;
+use App\Http\Requests\ManagerApi\DTO\StoreLessonVisit as VisitDto;
 use App\Models\Lesson;
 use App\Models\Payment;
 use App\Models\Student;

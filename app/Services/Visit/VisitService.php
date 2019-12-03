@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Services\Visit;
 
-use App\Http\Requests\Api\DTO\LessonVisit;
+use App\Http\Requests\ManagerApi\DTO\StoreLessonVisit;
 use App\Models\Payment;
 use App\Models\User;
 use App\Models\Visit;
@@ -92,12 +92,12 @@ class VisitService
     }
 
     /**
-     * @param LessonVisit $dto
+     * @param StoreLessonVisit $dto
      * @param User|null $user
      * @return Visit
      * @throws \App\Services\Account\Exceptions\InsufficientFundsAccountServiceException
      */
-    public function createLessonVisit(LessonVisit $dto, ?User $user = null): Visit
+    public function createLessonVisit(StoreLessonVisit $dto, ?User $user = null): Visit
     {
         return \DB::transaction(function () use ($user, $dto) {
             // Create visit

@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Services\Lesson;
 
-use App\Http\Requests\Api\DTO\Lesson as LessonDto;
+use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
 use App\Models\Lesson;
 use App\Repository\CourseRepository;
 use App\Repository\LessonRepository;
@@ -66,6 +66,7 @@ class LessonService
     /**
      * @param LessonDto $dto
      * @return Lesson
+     * @throws \Exception
      */
     public function createFromDto(LessonDto $dto): Lesson
     {

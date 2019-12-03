@@ -12,7 +12,7 @@ namespace App\Http\Requests\PublicApi\DTO;
 
 /**
  * Class Classroom
- * @package App\Http\Requests\Api\DTO
+ * @package App\Http\Requests\ManagerApi\DTO
  */
 class Classroom
 {

@@ -49,7 +49,7 @@ class BranchesTableSeeder extends Seeder
         try {
             $branch = \App\Models\Branch::query()->firstOrFail();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
-            $branchDto = new \App\Http\Requests\Api\DTO\Branch;
+            $branchDto = new \App\Http\Requests\ManagerApi\DTO\StoreBranch;
             $branchDto->name = 'Студия';
 
             $branch = $this->branchRepository->create($branchDto);

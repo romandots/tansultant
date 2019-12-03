@@ -31,11 +31,11 @@ class InstructorRepository
 
     /**
      * @param Person $person
-     * @param \App\Http\Requests\Api\DTO\Instructor $dto
+     * @param \App\Http\Requests\ManagerApi\DTO\StoreInstructor $dto
      * @return Instructor
      * @throws \Exception
      */
-    public function create(Person $person, \App\Http\Requests\Api\DTO\Instructor $dto): Instructor
+    public function create(Person $person, \App\Http\Requests\ManagerApi\DTO\StoreInstructor $dto): Instructor
     {
         $instructor = new Instructor;
         $instructor->id = \uuid();
@@ -51,10 +51,10 @@ class InstructorRepository
 
     /**
      * @param Instructor $instructor
-     * @param \App\Http\Requests\Api\DTO\Instructor $dto
+     * @param \App\Http\Requests\ManagerApi\DTO\StoreInstructor $dto
      * @return void
      */
-    public function update(Instructor $instructor, \App\Http\Requests\Api\DTO\Instructor $dto): void
+    public function update(Instructor $instructor, \App\Http\Requests\ManagerApi\DTO\StoreInstructor $dto): void
     {
         $instructor->description = $dto->description;
         $instructor->display = $dto->display;

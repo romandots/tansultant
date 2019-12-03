@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Http\Requests\Api\DTO\Lesson as LessonDto;
-use App\Http\Requests\Api\DTO\LessonsOnDate;
+use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
+use App\Http\Requests\ManagerApi\DTO\GetLessonsOnDate;
 use App\Models\Lesson;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -95,10 +95,10 @@ class LessonRepository
     }
 
     /**
-     * @param LessonsOnDate $dto
+     * @param GetLessonsOnDate $dto
      * @return Collection|Lesson[]
      */
-    public function getLessonsForDate(LessonsOnDate $dto): Collection
+    public function getLessonsForDate(GetLessonsOnDate $dto): Collection
     {
         $query = Lesson::query()
             ->whereRaw('DATE(starts_at) = ?', [$dto->date]);

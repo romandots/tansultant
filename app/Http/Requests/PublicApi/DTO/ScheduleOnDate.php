@@ -2,7 +2,7 @@
 /**
  * File: ScheduleOnDate.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-25
+ * Date: 2019-12-4
  * Copyright (c) 2019
  */
 
@@ -12,7 +12,7 @@ namespace App\Http\Requests\PublicApi\DTO;
 
 /**
  * Class ScheduleOnDate
- * @package App\Http\Requests\Api\DTO
+ * @package App\Http\Requests\ManagerApi\DTO
  */
 class ScheduleOnDate
 {

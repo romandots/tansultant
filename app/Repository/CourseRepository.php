@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Http\Requests\Api\DTO\Course as CourseDto;
+use App\Http\Requests\ManagerApi\DTO\StoreCourse as CourseDto;
 use App\Models\Course;
 
 /**

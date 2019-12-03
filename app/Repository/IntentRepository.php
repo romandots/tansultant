@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Http\Requests\Api\DTO\Intent as IntentDto;
+use App\Http\Requests\ManagerApi\DTO\StoreIntent as IntentDto;
 use App\Models\Intent;
 use App\Models\Lesson;
 use App\Models\Student;

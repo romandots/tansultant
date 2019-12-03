@@ -31,11 +31,11 @@ class UserRepository
 
     /**
      * @param Person $person
-     * @param \App\Http\Requests\Api\DTO\User $dto
+     * @param \App\Http\Requests\ManagerApi\DTO\User $dto
      * @return User
      * @throws \Exception
      */
-    public function create(Person $person, \App\Http\Requests\Api\DTO\User $dto): User
+    public function create(Person $person, \App\Http\Requests\ManagerApi\DTO\User $dto): User
     {
         $user = new User;
         $user->id = \uuid();
@@ -61,9 +61,9 @@ class UserRepository
 
     /**
      * @param User $user
-     * @param \App\Http\Requests\Api\DTO\UserUpdate $dto
+     * @param \App\Http\Requests\ManagerApi\DTO\UserUpdate $dto
      */
-    public function update(User $user, \App\Http\Requests\Api\DTO\UserUpdate $dto): void
+    public function update(User $user, \App\Http\Requests\ManagerApi\DTO\UserUpdate $dto): void
     {
         if ($dto->name) {
             $user->name = $dto->name;

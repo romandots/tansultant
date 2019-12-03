@@ -50,9 +50,9 @@ class StudentRepository
 
     /**
      * @param Student $person
-     * @param \App\Http\Requests\Api\DTO\Student $dto
+     * @param \App\Http\Requests\ManagerApi\DTO\Student $dto
      */
-    public function update(Student $person, \App\Http\Requests\Api\DTO\Student $dto): void
+    public function update(Student $person, \App\Http\Requests\ManagerApi\DTO\Student $dto): void
     {
         $person->card_number = $dto->card_number;
         $person->save();
