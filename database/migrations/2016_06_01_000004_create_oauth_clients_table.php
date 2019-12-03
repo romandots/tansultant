@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,11 +12,11 @@ class CreateOauthClientsTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('oauth_clients', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->index()->nullable();
+            $table->uuid('user_id')->index()->nullable();
             $table->string('name');
             $table->string('secret', 100);
             $table->text('redirect');
@@ -31,7 +32,7 @@ class CreateOauthClientsTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('oauth_clients');
     }

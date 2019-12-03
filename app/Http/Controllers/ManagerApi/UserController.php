@@ -40,11 +40,6 @@ class UserController extends Controller
     private $userRepository;
 
     /**
-     * @var UserService
-     */
-    private $userService;
-
-    /**
      * UserController constructor.
      * @param UserRepository $userRepository
      * @param PersonRepository $personRepository
@@ -57,19 +52,6 @@ class UserController extends Controller
     ) {
         $this->userRepository = $userRepository;
         $this->personRepository = $personRepository;
-        $this->userService = $userService;
-    }
-
-    /**
-     * @param Request $request
-     * @return UserResource
-     */
-    public function me(Request $request): UserResource
-    {
-        $user = $request->user();
-        $user->load('person');
-
-        return new UserResource($user);
     }
 
     /**
@@ -130,16 +112,6 @@ class UserController extends Controller
         $user->load('person');
 
         return new UserResource($user);
-    }
-
-    /**
-     * @param UpdateUserPasswordRequest $request
-     */
-    public function updatePassword(UpdateUserPasswordRequest $request): void
-    {
-        $user = $request->user();
-        $dto = $request->getDto();
-        $this->userService->updatePassword($user, $dto);
     }
 
     /**

@@ -132,3 +132,15 @@ if (!function_exists('convertPostgresColumnEnumToEnum')) {
         \DB::unprepared('DROP TYPE IF EXIST {$type}_old');
     }
 }
+
+if (!function_exists('json_response')) {
+    function json_response($data, int $status = 200, array $headers = []): \Illuminate\Http\JsonResponse
+    {
+        return new \Illuminate\Http\JsonResponse(
+            $data,
+            $status,
+            $headers,
+            \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_LINE_TERMINATORS
+        );
+    }
+}

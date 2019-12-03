@@ -23,11 +23,10 @@ class RouteServiceProvider extends ServiceProvider
      * Define the routes for the application.
      * @return void
      */
-    public function map()
+    public function map(): void
     {
         $this->mapApiRoutes();
-
-        $this->mapWebRoutes();
+//        $this->mapWebRoutes();
     }
 
     /**
@@ -49,6 +48,10 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes(): void
     {
+        Route::prefix('auth')
+            ->namespace($this->namespace . '\Auth')
+            ->group(base_path('routes/auth.php'));
+
         Route::prefix('api/v1')
             ->namespace($this->namespace . '\PublicApi')
             ->group(base_path('routes/public_api.php'));

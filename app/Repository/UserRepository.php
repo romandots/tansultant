@@ -20,6 +20,18 @@ use App\Models\User;
 class UserRepository
 {
     /**
+     * @param string $username
+     * @return User|null
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function findByUsername(string $username): ?User
+    {
+        return User::query()
+            ->where('username', $username)
+            ->firstOrFail();
+    }
+
+    /**
      * @param string $id
      * @return User|null
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException

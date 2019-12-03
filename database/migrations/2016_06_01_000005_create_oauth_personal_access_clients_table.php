@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,7 +12,7 @@ class CreateOauthPersonalAccessClientsTable extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('oauth_personal_access_clients', function (Blueprint $table) {
             $table->increments('id');
@@ -25,7 +26,7 @@ class CreateOauthPersonalAccessClientsTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('oauth_personal_access_clients');
     }

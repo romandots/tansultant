@@ -1,6 +1,6 @@
 <?php
 /**
- * File: api.php
+ * File: manager_api.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
  * Date: 2019-07-18
  * Copyright (c) 2019
@@ -20,9 +20,6 @@ use App\Services\Permissions\StudentsPermissions;
 use App\Services\Permissions\UsersPermissions;
 use App\Services\Permissions\VisitsPermissions;
 use Illuminate\Support\Facades\Route;
-
-Route::get('user', 'UserController@me');
-Route::patch('user/password', 'UserController@updatePassword');
 
 Route::group(['prefix' => 'users'], static function () {
     Route::post('from_person', 'UserController@createFromPerson')

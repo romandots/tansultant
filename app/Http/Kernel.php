@@ -39,6 +39,10 @@ class Kernel extends HttpKernel
 //            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
+        'auth' => [
+            'prefer_json:1',
+        ],
+
         'public_api' => [
             'prefer_json:1',
 //            \App\Http\Middleware\GetBearerTokenFromCookies::class,
