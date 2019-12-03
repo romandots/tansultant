@@ -11,12 +11,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\ScheduleOnDateRequest;
 use App\Http\Requests\Api\StoreScheduleRequest;
 use App\Http\Resources\ScheduleResource;
 use App\Repository\ScheduleRepository;
 use App\Services\Schedule\ScheduleService;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Class ScheduleController
@@ -30,19 +28,13 @@ class ScheduleController extends Controller
     private $repository;
 
     /**
-     * @var ScheduleService
-     */
-    private $service;
-
-    /**
      * ScheduleController constructor.
      * @param ScheduleRepository $repository
      * @param ScheduleService $service
      */
-    public function __construct(ScheduleRepository $repository, ScheduleService $service)
+    public function __construct(ScheduleRepository $repository)
     {
         $this->repository = $repository;
-        $this->service = $service;
     }
 
     /**
@@ -95,17 +87,5 @@ class ScheduleController extends Controller
     {
         $schedule = $this->repository->find($id);
         $this->repository->delete($schedule);
-    }
-
-    /**
-     * @param ScheduleOnDateRequest $request
-     * @return AnonymousResourceCollection
-     */
-    public function onDate(ScheduleOnDateRequest $request): AnonymousResourceCollection
-    {
-        $schedules = $this->repository->getSchedulesForDate($request->getDto());
-        $schedules->load('course');
-
-        return ScheduleResource::collection($schedules);
     }
 }

@@ -2,13 +2,13 @@
 /**
  * File: ScheduleOnDateTest.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-25
+ * Date: 2019-12-3
  * Copyright (c) 2019
  */
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Api\Schedule;
+namespace Tests\Feature\PublicApi\Schedule;
 
 use App\Models\Course;
 use App\Models\Schedule;
@@ -24,7 +24,7 @@ class ScheduleOnDateTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = '/schedules/date';
+    protected const URL = 'api/v1/schedule/date';
     public const JSON_STRUCTURE = [
         'data' => [
             [
@@ -71,36 +71,14 @@ class ScheduleOnDateTest extends TestCase
         return self::URL . ($params !== [] ? '?' . $queryString : null);
     }
 
-    public function testAccessDenied(): void
-    {
-        $this
-            ->get($this->getUrl())
-            ->assertStatus(401);
-    }
-
-    public function testNoPermission(): void
-    {
-        $user = $this->createFakeUser();
-
-        $this
-            ->actingAs($user, 'api')
-            ->get($this->getUrl())
-            ->assertStatus(403);
-    }
-
     /**
      * @param array $params
      * @dataProvider provideInvalidData
      */
     public function testValidationErrors(array $params): void
     {
-        $user = $this->createFakeManagerUser([], [
-            SchedulesPermissions::READ_SCHEDULES
-        ]);
-
         $this
-            ->actingAs($user, 'api')
-            ->get($this->getUrl($params))
+            ->getJson($this->getUrl($params))
             ->assertStatus(422);
     }
 
@@ -146,7 +124,7 @@ class ScheduleOnDateTest extends TestCase
         $schedule1_2 = $this->createFakeSchedule([
             'course_id' => $course1->id,
             'monday' => '11:00',
-            'tuesday' => '12:00',
+            'tuesday' => '11:00',
             'branch_id' => $branchId1,
             'classroom_id' => $classroomId
         ]);
@@ -282,9 +260,6 @@ class ScheduleOnDateTest extends TestCase
     {
         return [
             [
-                [],
-            ],
-            [
                 [
                     'date' => 'not date at all'
                 ],
@@ -292,19 +267,19 @@ class ScheduleOnDateTest extends TestCase
             [
                 [
                     'date' => '2019-09-01',
-                    'branch_id' => 'string'
+                    'branch_id' => 1
                 ],
             ],
             [
                 [
                     'date' => '2019-09-01',
-                    'classroom_id' => 'string'
+                    'classroom_id' => 1
                 ],
             ],
             [
                 [
                     'date' => '2019-09-01',
-                    'course_id' => 'string'
+                    'course_id' => 1
                 ],
             ]
         ];

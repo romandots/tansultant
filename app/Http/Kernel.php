@@ -40,13 +40,13 @@ class Kernel extends HttpKernel
         ],
 
         'public_api' => [
-            'throttle:6000,1',
+//            'throttle:6000,1',
             'prefer_json:1',
 //            \App\Http\Middleware\GetBearerTokenFromCookies::class,
         ],
 
         'manager_api' => [
-            'throttle:6000,1',
+//            'throttle:6000,1',
             'prefer_json:1',
             \App\Http\Middleware\GetBearerTokenFromCookies::class,
             'auth:api',
@@ -57,7 +57,7 @@ class Kernel extends HttpKernel
         ],
 
         'student_api' => [
-            'throttle:6000,1',
+//            'throttle:6000,1',
             'prefer_json:1',
             \App\Http\Middleware\GetBearerTokenFromCookies::class,
             'auth:api',
@@ -65,7 +65,7 @@ class Kernel extends HttpKernel
         ],
 
         'customer_api' => [
-            'throttle:6000,1',
+//            'throttle:6000,1',
             'prefer_json:1',
             \App\Http\Middleware\GetBearerTokenFromCookies::class,
             'auth:api',
@@ -73,7 +73,7 @@ class Kernel extends HttpKernel
         ],
 
         'instructor_api' => [
-            'throttle:6000,1',
+//            'throttle:6000,1',
             'prefer_json:1',
             \App\Http\Middleware\GetBearerTokenFromCookies::class,
             'auth:api',

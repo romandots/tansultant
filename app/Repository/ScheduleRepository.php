@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Http\Requests\Api\DTO\Schedule as ScheduleDto;
-use App\Http\Requests\Api\DTO\ScheduleOnDate;
+use App\Http\Requests\PublicApi\DTO\ScheduleOnDate;
 use App\Models\Course;
 use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Collection;

@@ -8,7 +8,6 @@
 
 declare(strict_types=1);
 
-use App\Services\Permissions\BranchesPermissions;
 use App\Services\Permissions\CoursesPermissions;
 use App\Services\Permissions\CustomersPermissions;
 use App\Services\Permissions\InstructorsPermissions;
@@ -103,8 +102,6 @@ Route::group(['prefix' => 'courses'], static function () {
 });
 
 Route::group(['prefix' => 'schedules'], static function () {
-    Route::get('date', 'ScheduleController@onDate')
-        ->middleware('permission:' . SchedulesPermissions::MANAGE_SCHEDULES . '|' . SchedulesPermissions::READ_SCHEDULES);
     Route::post('/', 'ScheduleController@store')
         ->middleware('permission:' . SchedulesPermissions::MANAGE_SCHEDULES . '|' . SchedulesPermissions::CREATE_SCHEDULES);
     Route::patch('{id}', 'ScheduleController@update')

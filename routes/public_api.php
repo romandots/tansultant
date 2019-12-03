@@ -20,3 +20,6 @@ Route::group(['prefix' => 'classrooms'], static function () {
     Route::get('{id}', 'ClassroomController@show');
 });
 
+Route::group(['prefix' => 'schedule'], static function () {
+    Route::get('date', 'ScheduleController@onDate');
+});

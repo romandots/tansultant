@@ -2,13 +2,13 @@
 /**
  * File: ScheduleOnDateRequest.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-25
+ * Date: 2019-12-3
  * Copyright (c) 2019
  */
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Api;
+namespace App\Http\Requests\PublicApi;
 
 use App\Models\Branch;
 use App\Models\Classroom;
