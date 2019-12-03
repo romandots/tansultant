@@ -8,6 +8,7 @@
 
 declare(strict_types=1);
 
+use App\Services\Permissions\BranchesPermissions;
 use App\Services\Permissions\CoursesPermissions;
 use App\Services\Permissions\CustomersPermissions;
 use App\Services\Permissions\InstructorsPermissions;
@@ -153,3 +154,25 @@ Route::group(['prefix' => 'intents'], static function () {
     Route::get('{id}', 'IntentController@show')
         ->middleware('permission:' . IntentsPermissions::MANAGE_INTENTS . '|' . IntentsPermissions::READ_INTENTS);
 });
+
+//Route::group(['prefix' => 'branches'], static function () {
+//    Route::get('/', 'BranchController@index');
+//    Route::get('{id}', 'BranchController@show');
+//    Route::post('/', 'BranchController@store')
+//        ->middleware('permission:' . BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::CREATE_BRANCHES);
+//    Route::patch('{id}', 'BranchController@update')
+//        ->middleware('permission:' . BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::UPDATE_BRANCHES);
+//    Route::delete('{id}', 'BranchController@destroy')
+//        ->middleware('permission:' . BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::DELETE_BRANCHES);
+//});
+//
+//Route::group(['prefix' => 'classrooms'], static function () {
+//    Route::get('/', 'ClassroomController@index');
+//    Route::get('{id}', 'ClassroomController@show');
+//    Route::post('/', 'ClassroomController@store')
+//        ->middleware('permission:' . ClassroomsPermissions::MANAGE_CLASSROOMS . '|' . ClassroomsPermissions::CREATE_CLASSROOMS);
+//    Route::patch('{id}', 'ClassroomController@update')
+//        ->middleware('permission:' . ClassroomsPermissions::MANAGE_CLASSROOMS . '|' . ClassroomsPermissions::UPDATE_CLASSROOMS);
+//    Route::delete('{id}', 'ClassroomController@destroy')
+//        ->middleware('permission:' . ClassroomsPermissions::MANAGE_CLASSROOMS . '|' . ClassroomsPermissions::DELETE_CLASSROOMS);
+//});

@@ -12,17 +12,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'branches'], static function () {
     Route::get('/', 'BranchController@index');
-    Route::post('/', 'BranchController@store');
     Route::get('{id}', 'BranchController@show');
-    Route::patch('{id}', 'BranchController@update');
-    Route::delete('{id}', 'BranchController@destroy');
 });
 
 Route::group(['prefix' => 'classrooms'], static function () {
     Route::get('/', 'ClassroomController@index');
-    Route::post('/', 'ClassroomController@store');
     Route::get('{id}', 'ClassroomController@show');
-    Route::patch('{id}', 'ClassroomController@update');
-    Route::delete('{id}', 'ClassroomController@destroy');
 });
 

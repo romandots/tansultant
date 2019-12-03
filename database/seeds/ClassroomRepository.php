@@ -52,6 +52,20 @@ class ClassroomRepository
     {
         return Classroom::query()
             ->whereNull('deleted_at')
+            ->with('branch')
+            ->get();
+    }
+
+    /**
+     * @param int $branchId
+     * @return Collection
+     */
+    public function getByBranchId(int $branchId): Collection
+    {
+        return Classroom::query()
+            ->whereNull('deleted_at')
+            ->where('branch_id', $branchId)
+            ->with('branch')
             ->get();
     }
 
