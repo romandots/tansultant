@@ -11,7 +11,10 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', 'AuthController@login');
-Route::post('logout', 'AuthController@logout');
 
-Route::get('user', 'UserController@me');
-Route::patch('user/password', 'UserController@updatePassword');
+Route::middleware('auth:api')->group(static function () {
+    Route::post('logout', 'AuthController@logout');
+
+    Route::get('user', 'UserController@me');
+    Route::patch('user/password', 'UserController@updatePassword');
+});
