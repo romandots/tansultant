@@ -324,6 +324,9 @@ class PersonTest extends \Tests\TestCase
             ->delete($url)
             ->assertOk();
 
-        $this->assertDatabaseMissing(\App\Models\Person::TABLE, ['id' => $person->id]);
+        $this->assertDatabaseMissing(\App\Models\Person::TABLE, [
+            'id' => $person->id,
+            'deleted_at' => null
+        ]);
     }
 }
