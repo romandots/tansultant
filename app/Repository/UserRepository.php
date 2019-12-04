@@ -67,6 +67,8 @@ class UserRepository
     {
         $user = new User;
         $user->id = \uuid();
+        $user->created_at = Carbon::now();
+        $user->updated_at = Carbon::now();
         $user->person_id = $person->id;
         $user->name = "{$person->last_name} {$person->first_name}";
         $user->username = $dto->username;
@@ -96,6 +98,7 @@ class UserRepository
             $user->password = \Hash::make($dto->password);
         }
 
+        $user->updated_at = Carbon::now();
         $user->save();
     }
 
@@ -106,6 +109,7 @@ class UserRepository
     public function updatePassword(User $user, string $password): void
     {
         $user->password = \Hash::make($password);
+        $user->updated_at = Carbon::now();
         $user->save();
     }
 
@@ -115,6 +119,7 @@ class UserRepository
     public function updateSeenAt(User $user): void
     {
         $user->seen_at = Carbon::now();
+        $user->updated_at = Carbon::now();
         $user->save();
     }
 
@@ -124,6 +129,7 @@ class UserRepository
     public function approve(User $user): void
     {
         $user->approved_at = Carbon::now();
+        $user->updated_at = Carbon::now();
         $user->save();
     }
 
@@ -134,6 +140,7 @@ class UserRepository
     public function delete(User $user): void
     {
         $user->deleted_at = Carbon::now();
+        $user->updated_at = Carbon::now();
         $user->save();
     }
 
@@ -144,6 +151,7 @@ class UserRepository
     public function restore(User $user): void
     {
         $user->deleted_at = null;
+        $user->updated_at = Carbon::now();
         $user->save();
     }
 }

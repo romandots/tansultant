@@ -34,14 +34,7 @@ class ScheduleOnDateTest extends TestCase
                 'course',
                 'starts_at',
                 'ends_at',
-                'duration',
-                'monday',
-                'tuesday',
-                'wednesday',
-                'thursday',
-                'friday',
-                'saturday',
-                'sunday',
+                'weekday',
             ]
         ]
     ];
@@ -116,66 +109,83 @@ class ScheduleOnDateTest extends TestCase
 
         $schedule1_1 = $this->createFakeSchedule([
             'course_id' => $course1->id,
-            'monday' => '9:00',
-            'tuesday' => null,
+            'starts_at' => '9:00',
+            'ends_at' => '10:00',
+            'weekday' => 'monday',
             'branch_id' => $branchId1,
             'classroom_id' => $classroomId
         ]);
         $schedule1_2 = $this->createFakeSchedule([
             'course_id' => $course1->id,
-            'monday' => '11:00',
-            'tuesday' => '11:00',
+            'starts_at' => '11:00',
+            'ends_at' => '12:00',
+            'weekday' => 'monday',
+            'branch_id' => $branchId1,
+            'classroom_id' => $classroomId
+        ]);
+        $schedule1_4 = $this->createFakeSchedule([
+            'course_id' => $course1->id,
+            'starts_at' => '11:00',
+            'ends_at' => '12:00',
+            'weekday' => 'tuesday',
             'branch_id' => $branchId1,
             'classroom_id' => $classroomId
         ]);
         $schedule1_3 = $this->createFakeSchedule([
             'course_id' => $course1->id,
-            'monday' => null,
-            'tuesday' => '13:00',
+            'weekday' => 'tuesday',
+            'starts_at' => '13:00',
+            'ends_at' => '14:00',
             'branch_id' => $branchId1,
             'classroom_id' => $classroomId
         ]);
 
         $schedule2_1 = $this->createFakeSchedule([
             'course_id' => $course2->id,
-            'monday' => '11:00',
-            'tuesday' => null,
+            'starts_at' => '11:00',
+            'ends_at' => '12:00',
+            'weekday' => 'monday',
             'branch_id' => $branchId2,
             'classroom_id' => $classroomId
         ]);
         $schedule2_2 = $this->createFakeSchedule([
             'course_id' => $course2->id,
-            'monday' => '12:00',
-            'tuesday' => '12:00',
+            'starts_at' => '12:00',
+            'ends_at' => '13:00',
+            'weekday' => 'monday',
+            'branch_id' => $branchId2,
+            'classroom_id' => $classroomId
+        ]);
+        $schedule2_4 = $this->createFakeSchedule([
+            'course_id' => $course2->id,
+            'starts_at' => '12:00',
+            'ends_at' => '13:00',
+            'weekday' => 'tuesday',
             'branch_id' => $branchId2,
             'classroom_id' => $classroomId
         ]);
         $schedule2_3 = $this->createFakeSchedule([
             'course_id' => $course2->id,
-            'monday' => null,
-            'tuesday' => '14:00',
+            'starts_at' => '13:30',
+            'ends_at' => '14:30',
+            'weekday' => 'tuesday',
             'branch_id' => $branchId2,
             'classroom_id' => $classroomId
         ]);
 
         $schedule3_1 = $this->createFakeSchedule([
             'course_id' => $course3->id,
-            'monday' => '11:00',
-            'tuesday' => null,
+            'starts_at' => '11:00',
+            'ends_at' => '12:00',
+            'weekday' => 'monday',
             'branch_id' => $branchId2,
             'classroom_id' => $classroomId
         ]);
         $schedule3_2 = $this->createFakeSchedule([
             'course_id' => $course3->id,
-            'monday' => '12:00',
-            'tuesday' => '12:00',
-            'branch_id' => $branchId2,
-            'classroom_id' => $classroomId
-        ]);
-        $schedule3_3 = $this->createFakeSchedule([
-            'course_id' => $course3->id,
-            'monday' => null,
-            'tuesday' => '13:00',
+            'starts_at' => '12:00',
+            'ends_at' => '13:00',
+            'weekday' => 'monday',
             'branch_id' => $branchId2,
             'classroom_id' => $classroomId
         ]);
@@ -213,10 +223,10 @@ class ScheduleOnDateTest extends TestCase
         $result = [
             'data' => [
                 [
-                    'id' => $schedule1_2->id
+                    'id' => $schedule1_4->id
                 ],
                 [
-                    'id' => $schedule2_2->id // ordered
+                    'id' => $schedule2_4->id // ordered
                 ],
                 [
                     'id' => $schedule1_3->id // by time

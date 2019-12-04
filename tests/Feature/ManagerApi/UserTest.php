@@ -630,7 +630,13 @@ class UserTest extends \Tests\TestCase
             ->delete($url)
             ->assertOk();
 
-        $this->assertDatabaseHas(\App\Models\Person::TABLE, ['id' => $person->id]);
-        $this->assertDatabaseMissing(\App\Models\User::TABLE, ['id' => $user->id]);
+        $this->assertDatabaseHas(\App\Models\Person::TABLE, [
+            'id' => $person->id,
+            'deleted_at' => null
+        ]);
+        $this->assertDatabaseMissing(\App\Models\User::TABLE, [
+            'id' => $user->id,
+            'deleted_at' => null
+        ]);
     }
 }

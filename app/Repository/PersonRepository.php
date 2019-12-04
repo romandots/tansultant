@@ -28,7 +28,20 @@ class PersonRepository
      */
     public function find(string $id): ?Person
     {
-        return Person::query()->findOrFail($id);
+        return Person::query()
+            ->whereNull('deleted_at')
+            ->findOrFail($id);
+    }
+
+    /**
+     * @param string $id
+     * @return Person|null
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function findWithDeleted(string $id): ?Person
+    {
+        return Person::query()
+            ->findOrFail($id);
     }
 
     /**
@@ -40,6 +53,9 @@ class PersonRepository
     {
         $person = new Person;
         $person->id = \uuid();
+        $person->created_at = Carbon::now();
+        $person->updated_at = Carbon::now();
+
         $this->fill($person, $dto);
         $person->save();
 
@@ -53,6 +69,8 @@ class PersonRepository
      */
     public function update(Person $person, PersonDto $dto): Person
     {
+        $person->updated_at = Carbon::now();
+
         $this->fill($person, $dto);
         $person->save();
 
@@ -77,7 +95,6 @@ class PersonRepository
         $person->vk_url = $dto->vk_url;
         $person->facebook_url = $dto->facebook_url;
         $person->note = $dto->note;
-        $person->created_at = Carbon::now();
 
         if (null !== $dto->picture) {
             $this->savePicture($person, $dto->picture);
@@ -90,7 +107,20 @@ class PersonRepository
      */
     public function delete(Person $person): void
     {
-        $person->delete();
+        $person->deleted_at = Carbon::now();
+        $person->updated_at = Carbon::now();
+        $person->save();
+    }
+
+    /**
+     * @param Person $person
+     * @throws \Exception
+     */
+    public function restore(Person $person): void
+    {
+        $person->deleted_at = null;
+        $person->updated_at = Carbon::now();
+        $person->save();
     }
 
     /**

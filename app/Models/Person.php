@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Person
- *
  * @package App\Models
  * @property string $id
  * @property string $last_name
@@ -33,7 +32,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $facebook_url
  * @property string $note
  * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
  * @property-read \App\Models\Customer $customer
  * @property-read \App\Models\Instructor $instructor
  * @property-read \App\Models\Student $student

@@ -41,7 +41,9 @@ class CreatePeopleTables extends Migration
             $table->text('facebook_uid')->nullable();
             $table->text('facebook_url')->nullable();
             $table->text('note')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at');
+            $table->timestamp('updated_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
 
             $table->unique(['last_name', 'first_name', 'patronymic_name', 'birth_date'], 'unique_person');
         });
@@ -52,9 +54,10 @@ class CreatePeopleTables extends Migration
             $table->uuid('id')->primary();
             $table->text('name');
             $table->uuid('person_id')->nullable()->index();
+            $table->timestamp('created_at');
             $table->timestamp('seen_at')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+            $table->timestamp('updated_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
 
             $table->foreign('person_id')
                 ->references('id')
@@ -69,9 +72,10 @@ class CreatePeopleTables extends Migration
             $table->text('status');
             $table->uuid('person_id')->nullable()->index();
             $table->uuid('customer_id')->nullable()->index();
+            $table->timestamp('created_at');
             $table->timestamp('seen_at')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+            $table->timestamp('updated_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
 
             $table->foreign('person_id')
                 ->references('id')
@@ -99,9 +103,10 @@ class CreatePeopleTables extends Migration
             $table->text('status');
             $table->boolean('display')->default(true);
             $table->uuid('person_id')->nullable()->index();
+            $table->timestamp('created_at');
             $table->timestamp('seen_at')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+            $table->timestamp('updated_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
 
             $table->foreign('person_id')
                 ->references('id')
@@ -131,9 +136,11 @@ class CreatePeopleTables extends Migration
             $table->uuid('branch_id')->nullable()->index();
             $table->uuid('customer_id')->nullable()->index();
             $table->text('status');
+            $table->timestamp('created_at');
             $table->timestamp('signed_at')->nullable();
             $table->timestamp('terminated_at')->nullable();
-            $table->timestamps();
+            $table->timestamp('updated_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
 
             $table->unique(['serial', 'number'], 'unique_serial_number');
 

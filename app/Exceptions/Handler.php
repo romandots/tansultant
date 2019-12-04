@@ -6,6 +6,7 @@ namespace App\Exceptions;
 use App\Exceptions\Auth\UnauthorizedException;
 use App\Services\Login\Exceptions\UserNotFoundException;
 use App\Services\Login\Exceptions\WrongPasswordException;
+use App\Services\User\Exceptions\OldPasswordInvalidException;
 
 /**
  * Class Handler
@@ -21,6 +22,7 @@ class Handler extends BaseExceptionHandler
         UnauthorizedException::class,
         UserNotFoundException::class,
         WrongPasswordException::class,
+        OldPasswordInvalidException::class,
     ];
 
     /**
@@ -34,6 +36,7 @@ class Handler extends BaseExceptionHandler
             UnauthorizedException::class => [$this, 'renderAsJson'],
             UserNotFoundException::class => [$this, 'renderAsJson'],
             WrongPasswordException::class => [$this, 'renderAsJson'],
+            OldPasswordInvalidException::class => [$this, 'renderAsJson'],
         ];
     }
 
