@@ -58,6 +58,7 @@ class CreateSchedulesTable extends Migration
      */
     public function down(): void
     {
+        \DB::unprepared('DROP TYPE schedules_weekday CASCADE');
         Schema::dropIfExists('schedules');
     }
 }
