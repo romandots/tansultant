@@ -101,4 +101,10 @@ class UserRepository
         $user->password = \Hash::make($password);
         $user->save();
     }
+
+    public function findByAccessToken(string $accessToken): User
+    {
+dump($accessToken);
+        return User::query()->first();
+    }
 }

@@ -134,7 +134,13 @@ if (!function_exists('convertPostgresColumnEnumToEnum')) {
 }
 
 if (!function_exists('json_response')) {
-    function json_response($data, int $status = 200, array $headers = []): \Illuminate\Http\JsonResponse
+    /**
+     * @param mixed|null $data
+     * @param int $status
+     * @param array $headers
+     * @return \Illuminate\Http\JsonResponse
+     */
+    function json_response($data = null, int $status = 200, array $headers = []): \Illuminate\Http\JsonResponse
     {
         return new \Illuminate\Http\JsonResponse(
             $data,

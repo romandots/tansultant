@@ -22,6 +22,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
+//        \Barryvdh\Cors\HandleCors::class,
     ];
 
     /**
@@ -33,25 +34,29 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
-            // \Illuminate\Session\Middleware\AuthenticateSession::class,
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
-//            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+
+        'api' => [
+            'prefer_json:1',
+            \Barryvdh\Cors\HandleCors::class,
         ],
 
         'auth' => [
-            'prefer_json:1',
+            'api',
         ],
 
         'public_api' => [
-            'prefer_json:1',
-//            \App\Http\Middleware\GetBearerTokenFromCookies::class,
+            'api',
         ],
 
         'manager_api' => [
-            'prefer_json:1',
-//            \App\Http\Middleware\GetBearerTokenFromCookies::class,
+            'api',
             'auth:api',
+            \App\Http\Middleware\GetBearerTokenFromCookies::class,
             'role:' . \App\Services\Permissions\UserRoles::ADMIN
             . '|' . \App\Services\Permissions\UserRoles::MANAGER
             . '|' . \App\Services\Permissions\UserRoles::OPERATOR
@@ -59,23 +64,17 @@ class Kernel extends HttpKernel
         ],
 
         'student_api' => [
-            'prefer_json:1',
-//            \App\Http\Middleware\GetBearerTokenFromCookies::class,
-            'auth:api',
+            'api',
             'role:' . \App\Services\Permissions\UserRoles::STUDENT
         ],
 
         'customer_api' => [
-            'prefer_json:1',
-//            \App\Http\Middleware\GetBearerTokenFromCookies::class,
-            'auth:api',
+            'api',
             'role:' . \App\Services\Permissions\UserRoles::CUSTOMER
         ],
 
         'instructor_api' => [
-            'prefer_json:1',
-//            \App\Http\Middleware\GetBearerTokenFromCookies::class,
-            'auth:api',
+            'api',
             'role:' . \App\Services\Permissions\UserRoles::INSTRUCTOR
         ],
     ];
@@ -87,14 +86,14 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+//        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
 //        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+//        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'prefer_json' => \App\Http\Middleware\PreferJson::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
@@ -109,9 +108,9 @@ class Kernel extends HttpKernel
     protected $middlewarePriority = [
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-        \App\Http\Middleware\Authenticate::class,
-        \Illuminate\Session\Middleware\AuthenticateSession::class,
-        \Illuminate\Routing\Middleware\SubstituteBindings::class,
+//        \App\Http\Middleware\Authenticate::class,
+//        \Illuminate\Session\Middleware\AuthenticateSession::class,
+//        \Illuminate\Routing\Middleware\SubstituteBindings::class,
         \Illuminate\Auth\Middleware\Authorize::class,
     ];
 }

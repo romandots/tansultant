@@ -14,8 +14,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use App\Repository\UserRepository;
+use App\Services\Login\LoginService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use App\Exceptions\Auth\UnauthorizedException;
 
 /**
  * Class LoginController
@@ -26,26 +29,26 @@ class AuthController extends Controller
     use AuthenticatesUsers;
 
     /**
-     * @var UserRepository
+     * @var LoginService
      */
-    private $repository;
+    private $service;
 
     /**
      * AuthController constructor.
-     * @param UserRepository $repository
+     * @param LoginService $service
      */
-    public function __construct(UserRepository $repository)
+    public function __construct(LoginService $service)
     {
-        $this->repository = $repository;
+        $this->service = $service;
     }
 
     /**
      * @param LoginRequest $request
-     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response|
      */
     public function login(LoginRequest $request)
     {
-        $user = $this->attemptLogin($request);
+        $user = $this->service->attemptLogin($request->username, $request->password);
 
         if (null === $user) {
             return $this->sendFailedLoginResponse();
@@ -55,21 +58,17 @@ class AuthController extends Controller
     }
 
     /**
-     * Attempt to log the user into the application.
-     * @param LoginRequest $request
-     * @return User|null
+     * Log the user out of the application.
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws UnauthorizedException
      */
-    protected function attemptLogin(LoginRequest $request): ?User
+    public function logout(Request $request): \Illuminate\Http\JsonResponse
     {
-        try {
-            $user = $this->repository->findByUsername($request->username);
-            if (\Hash::check($request->password, $user->password)) {
-                return $user;
-            }
-        } catch (ModelNotFoundException $exception) {
-            //
-        }
-        return null;
+        $this->middleware('auth:api');
+        $this->service->logout($request->user());
+
+        return \json_response('OK', 200);
     }
 
     /**

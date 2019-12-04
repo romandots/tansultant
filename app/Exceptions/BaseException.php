@@ -18,35 +18,40 @@ use Illuminate\Http\JsonResponse;
  *
  * Base exception class which is JsonRenderable and can output result as JsonResponse
  */
-abstract class BaseException extends \RuntimeException implements JsonRenderable
+abstract class BaseException extends \RuntimeException implements JsonRenderable, ReadableExceptionInterface
 {
     /**
      * Data to render in response
      *
-     * @var mixed
+     * @var array|null
      */
     private $data;
 
+    protected $statusCode;
+
     /**
      * BaseException constructor.
-     * @param string $message
-     * @param null $data
-     * @param int $code
+     * @param string|null $message
+     * @param array|null $data
+     * @param int $statusCode
      * @param \Throwable|null $previous
      */
-    public function __construct(string $message = '', $data = null, int $code = 0, \Throwable $previous = null)
+    public function __construct(?string $message = '', ?array $data = null, int $statusCode = 500, \Throwable $previous =
+    null)
     {
         $this->data = $data;
+        $this->statusCode = $statusCode;
 
-        parent::__construct($message, $code, $previous);
+        parent::__construct($message, $statusCode, $previous);
     }
 
+
     /**
-     * @return mixed|null
+     * @return array|null
      */
-    public function getData()
+    public function getData(): ?array
     {
-        return $this->data;
+        return $this->data ?? null;
     }
 
     /**
@@ -54,7 +59,7 @@ abstract class BaseException extends \RuntimeException implements JsonRenderable
      */
     public function getStatusCode(): int
     {
-        return 500;
+        return $this->statusCode;
     }
 
     /**

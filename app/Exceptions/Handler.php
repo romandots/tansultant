@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Exceptions;
 
-use Exception;
+use App\Exceptions\Auth\UnauthorizedException;
 
 /**
  * Class Handler
@@ -16,37 +16,32 @@ class Handler extends BaseExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+        UnauthorizedException::class,
     ];
 
     /**
-     * A list of the inputs that are never flashed for validation exceptions.
-     * @var array
+     * Returns a list of user-defined exception handlers
+     * Feel free to put your handlers here, and also you can override internal handlers here
+     * @return array
      */
-    protected $dontFlash = [
-        'password',
-        'password_confirmation',
-    ];
-
-    /**
-     * Report or log an exception.
-     * @param \Exception $exception
-     * @return void
-     * @throws Exception
-     */
-    public function report(Exception $exception)
+    protected function getCustomHandlers(): array
     {
-        parent::report($exception);
+        return [
+            UnauthorizedException::class => [$this, 'unauthorizedException'],
+        ];
     }
 
     /**
-     * Render an exception into an HTTP response.
-     * @param \Illuminate\Http\Request $request
-     * @param \Exception $exception
-     * @return \Illuminate\Http\Response
+     * @param UnauthorizedException $exception
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function render($request, Exception $exception)
-    {
-        return parent::render($request, $exception);
+    protected function unauthorizedException(UnauthorizedException $exception): \Illuminate\Http\JsonResponse {
+        $output = ['message' => \trans('exceptions.' . $exception->getMessage())];
+        $payload = $exception->getData();
+        if (null !== $payload) {
+            $output['data'] = $payload;
+        }
+
+        return \json_response($output, $exception->getStatusCode());
     }
 }

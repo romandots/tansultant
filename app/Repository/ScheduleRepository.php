@@ -90,6 +90,14 @@ class ScheduleRepository
     }
 
     /**
+     * @return Collection|Schedule[]
+     */
+    public function getAll(): Collection
+    {
+        return Schedule::query()->get();
+    }
+
+    /**
      * @param ScheduleOnDate $dto
      * @return Collection|Schedule[]
      */
