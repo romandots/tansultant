@@ -92,12 +92,12 @@ class InstructorTest extends \Tests\TestCase
         $url = self::URL . '/' . $instructor->id;
 
         $this
-            ->patch($url, [])
+            ->put($url, [])
             ->assertStatus(401);
 
         $this
             ->actingAs($me, 'api')
-            ->patch($url, [])
+            ->put($url, [])
             ->assertStatus(403);
     }
 
@@ -319,7 +319,7 @@ class InstructorTest extends \Tests\TestCase
 
         $this
             ->actingAs($this->me, 'api')
-            ->patch($url, $data)
+            ->put($url, $data)
             ->assertStatus(200)
             ->assertJsonStructure(self::JSON_STRUCTURE)
             ->assertJson([
@@ -368,7 +368,7 @@ class InstructorTest extends \Tests\TestCase
 
         $this
             ->actingAs($this->me, 'api')
-            ->patch($url, $data)
+            ->put($url, $data)
             ->assertStatus(422);
     }
 

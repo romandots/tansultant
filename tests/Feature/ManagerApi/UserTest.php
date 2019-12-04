@@ -412,7 +412,7 @@ class UserTest extends \Tests\TestCase
         $url = 'auth/user/password';
 
         $this
-            ->patch($url, [
+            ->put($url, [
                 'old_password' => '123456',
                 'new_password' => '654321'
             ])
@@ -435,7 +435,7 @@ class UserTest extends \Tests\TestCase
 
         $this
             ->actingAs($user, 'api')
-            ->patch($url, $data)
+            ->put($url, $data)
             ->assertOk();
 
         $user->refresh();
@@ -455,7 +455,7 @@ class UserTest extends \Tests\TestCase
 
         $this
             ->actingAs($user, 'api')
-            ->patch($url, $data)
+            ->put($url, $data)
             ->assertStatus(422);
 
         $user->refresh();
@@ -491,12 +491,12 @@ class UserTest extends \Tests\TestCase
         $url = self::URL . '/' . $user->id;
 
         $this
-            ->patch($url, [])
+            ->put($url, [])
             ->assertStatus(401);
 
         $this
             ->actingAs($me, 'api')
-            ->patch($url, [])
+            ->put($url, [])
             ->assertStatus(403);
     }
 
@@ -515,7 +515,7 @@ class UserTest extends \Tests\TestCase
 
         $this
             ->actingAs($this->me, 'api')
-            ->patch($url, $data)
+            ->put($url, $data)
             ->assertOk()
             ->assertJsonStructure(self::JSON_STRUCTURE)
             ->assertJson([
@@ -564,7 +564,7 @@ class UserTest extends \Tests\TestCase
 
         $this
             ->actingAs($this->me, 'api')
-            ->patch($url, $data)
+            ->put($url, $data)
             ->assertStatus(422);
     }
 

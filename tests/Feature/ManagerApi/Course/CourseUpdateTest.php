@@ -67,7 +67,7 @@ class CourseUpdateTest extends TestCase
     public function testAccessDenied(): void
     {
         $this
-            ->patch($this->url)
+            ->put($this->url)
             ->assertStatus(401);
     }
 
@@ -77,7 +77,7 @@ class CourseUpdateTest extends TestCase
 
         $this
             ->actingAs($user, 'api')
-            ->patch($this->url)
+            ->put($this->url)
             ->assertStatus(403);
     }
 
@@ -93,7 +93,7 @@ class CourseUpdateTest extends TestCase
 
         $this
             ->actingAs($user, 'api')
-            ->patch($this->url, $data)
+            ->put($this->url, $data)
             ->assertStatus(422);
     }
 
@@ -118,7 +118,7 @@ class CourseUpdateTest extends TestCase
 
         $this
             ->actingAs($user, 'api')
-            ->patch($this->url, $data)
+            ->put($this->url, $data)
             ->assertOk()
             ->assertJsonStructure(self::JSON_STRUCTURE)
             ->assertJson([
