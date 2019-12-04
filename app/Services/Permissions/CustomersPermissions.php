@@ -21,6 +21,7 @@ class CustomersPermissions
     public const READ = 'read_customers';
     public const UPDATE = 'update_customers';
     public const DELETE = 'delete_customers';
+    public const RESTORE = 'restore_customers';
     public const SIGN_CONTRACTS = 'sign_contracts';
     public const TERMINATE_CONTRACTS = 'terminate_contracts';
 
@@ -50,6 +51,7 @@ class CustomersPermissions
             self::READ => 'Просматривать покупателей',
             self::UPDATE => 'Обновлять покупателей',
             self::DELETE => 'Удалять покупателей',
+            self::RESTORE => 'Восстанавливать удаленных покупателей',
             self::SIGN_CONTRACTS => 'Подписывать договор',
             self::TERMINATE_CONTRACTS => 'Прекращать договор',
         ];

@@ -21,6 +21,7 @@ class StudentsPermissions
     public const READ = 'read_students';
     public const UPDATE = 'update_students';
     public const DELETE = 'delete_students';
+    public const RESTORE = 'restore_students';
 
     /**
      * Get names of all defined permissions
@@ -46,6 +47,7 @@ class StudentsPermissions
             self::READ => 'Просматривать студентов',
             self::UPDATE => 'Обновлять студентов',
             self::DELETE => 'Удалять студентов',
+            self::RESTORE => 'Восстанавливать удаленных студентов',
         ];
     }
 }

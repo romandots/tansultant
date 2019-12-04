@@ -21,6 +21,7 @@ class LessonsPermissions
     public const READ = 'read_lessons';
     public const UPDATE = 'update_lessons';
     public const DELETE = 'delete_lessons';
+    public const RESTORE = 'restore_lessons';
     public const CANCEL = 'cancel_lessons';
     public const CLOSE = 'close_lessons';
     public const OPEN = 'open_lessons';
@@ -50,6 +51,7 @@ class LessonsPermissions
             self::READ => 'Просматривать уроки',
             self::UPDATE => 'Обновлять уроки',
             self::DELETE => 'Удалять уроки',
+            self::RESTORE => 'Восстанавливать удаленные уроки',
             self::CANCEL => 'Отменять уроки',
             self::CLOSE => 'Закрывать уроки',
             self::OPEN => 'Отменять закрытие урока',

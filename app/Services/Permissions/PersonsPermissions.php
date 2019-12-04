@@ -21,6 +21,7 @@ class PersonsPermissions
     public const READ = 'read_persons';
     public const UPDATE = 'update_persons';
     public const DELETE = 'delete_persons';
+    public const RESTORE = 'restore_persons';
 
     /**
      * Get names of all defined permissions
@@ -43,11 +44,12 @@ class PersonsPermissions
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE => 'Управлять инструкторами',
-            self::CREATE => 'Создавать инструкторов',
-            self::READ => 'Просматривать инструкторов',
-            self::UPDATE => 'Обновлять инструкторов',
-            self::DELETE => 'Удалять инструкторов',
+            self::MANAGE => 'Управлять профилями',
+            self::CREATE => 'Создавать профили',
+            self::READ => 'Просматривать профили',
+            self::UPDATE => 'Обновлять профили',
+            self::DELETE => 'Удалять профили',
+            self::RESTORE => 'Восстанавливать удаленные профили',
         ];
     }
 }

@@ -21,6 +21,7 @@ class IntentsPermissions
     public const READ = 'read_intents';
     public const UPDATE = 'update_intents';
     public const DELETE = 'delete_intents';
+    public const RESTORE = 'restore_intents';
 
     /**
      * Get names of all defined permissions
@@ -47,6 +48,7 @@ class IntentsPermissions
             self::CREATE => 'Создавать записи на урок',
             self::READ => 'Просматривать записи на урок',
             self::DELETE => 'Удалять записи на урок',
+            self::RESTORE => 'Восстанавливать удаленные записи на урок',
         ];
     }
 }

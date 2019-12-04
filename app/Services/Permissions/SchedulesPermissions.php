@@ -21,6 +21,7 @@ class SchedulesPermissions
     public const READ = 'read_schedules';
     public const UPDATE = 'update_schedules';
     public const DELETE = 'delete_schedules';
+    public const RESTORE = 'restore_schedules';
 
     /**
      * Get names of all defined permissions
@@ -48,6 +49,7 @@ class SchedulesPermissions
             self::READ => 'Просматривать расписания',
             self::UPDATE => 'Обновлять расписания',
             self::DELETE => 'Удалять расписания',
+            self::RESTORE => 'Восстанавливать удаленные расписания',
         ];
     }
 }

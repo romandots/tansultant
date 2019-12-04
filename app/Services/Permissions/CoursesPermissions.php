@@ -21,6 +21,7 @@ class CoursesPermissions
     public const READ = 'read_courses';
     public const UPDATE = 'update_courses';
     public const DELETE = 'delete_courses';
+    public const RESTORE = 'restore_courses';
 
     /**
      * Get names of all defined permissions
@@ -48,6 +49,7 @@ class CoursesPermissions
             self::READ => 'Просматривать курсы',
             self::UPDATE => 'Обновлять курсы',
             self::DELETE => 'Удалять курсы',
+            self::RESTORE => 'Восстанавливать удаленные курсы',
         ];
     }
 }

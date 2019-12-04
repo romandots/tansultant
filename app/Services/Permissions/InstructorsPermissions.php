@@ -21,6 +21,7 @@ class InstructorsPermissions
     public const READ = 'read_instructors';
     public const UPDATE = 'update_instructors';
     public const DELETE = 'delete_instructors';
+    public const RESTORE = 'restore_instructors';
 
     /**
      * Get names of all defined permissions
@@ -48,6 +49,7 @@ class InstructorsPermissions
             self::READ => 'Просматривать инструкторов',
             self::UPDATE => 'Обновлять инструкторов',
             self::DELETE => 'Удалять инструкторов',
+            self::RESTORE => 'Восстанавливать удаленных инструкторов',
         ];
     }
 }

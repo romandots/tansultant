@@ -21,6 +21,7 @@ class BranchesPermissions
     public const READ = 'read_branches';
     public const UPDATE = 'update_branches';
     public const DELETE = 'delete_branches';
+    public const RESTORE = 'restore_branches';
 
     /**
      * Get names of all defined permissions
@@ -48,6 +49,7 @@ class BranchesPermissions
             self::READ => 'Просматривать филиалы',
             self::UPDATE => 'Обновлять филиалы',
             self::DELETE => 'Удалять филиалы',
+            self::RESTORE => 'Восстанавливать удаленные филиалы',
         ];
     }
 }

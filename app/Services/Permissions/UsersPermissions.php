@@ -21,6 +21,7 @@ class UsersPermissions
     public const READ = 'read_users';
     public const UPDATE = 'update_users';
     public const DELETE = 'delete_users';
+    public const RESTORE = 'restore_users';
 
     /**
      * Get names of all defined permissions
@@ -48,6 +49,7 @@ class UsersPermissions
             self::READ => 'Просматривать пользователей',
             self::UPDATE => 'Обновлять пользователей',
             self::DELETE => 'Удалять пользователей',
+            self::RESTORE => 'Восстанавливать удаленных пользователей',
         ];
     }
 }

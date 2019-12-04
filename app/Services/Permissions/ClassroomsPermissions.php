@@ -21,6 +21,7 @@ class ClassroomsPermissions
     public const READ = 'read_classrooms';
     public const UPDATE = 'update_classrooms';
     public const DELETE = 'delete_classrooms';
+    public const RESTORE = 'restore_classrooms';
 
     /**
      * Get names of all defined permissions
@@ -48,6 +49,7 @@ class ClassroomsPermissions
             self::READ => 'Просматривать залы',
             self::UPDATE => 'Обновлять залы',
             self::DELETE => 'Удалять залы',
+            self::RESTORE => 'Восстанавливать удаленные залы',
         ];
     }
 }

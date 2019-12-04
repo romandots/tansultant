@@ -21,6 +21,7 @@ class VisitsPermissions
     public const READ = 'read_visits';
     public const UPDATE = 'update_visits';
     public const DELETE = 'delete_visits';
+    public const RESTORE = 'restore_visits';
 
     /**
      * Get names of all defined permissions
@@ -47,6 +48,7 @@ class VisitsPermissions
             self::CREATE => 'Создавать посещения',
             self::READ => 'Просматривать посещения',
             self::DELETE => 'Удалять посещения',
+            self::RESTORE => 'Восстанавливать удаленные посещения',
         ];
     }
 }
