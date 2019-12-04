@@ -15,6 +15,7 @@ use App\Http\Requests\ManagerApi\StoreScheduleRequest;
 use App\Http\Resources\ScheduleResource;
 use App\Repository\ScheduleRepository;
 use App\Services\Schedule\ScheduleService;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Class ScheduleController
@@ -35,6 +36,16 @@ class ScheduleController extends Controller
     public function __construct(ScheduleRepository $repository)
     {
         $this->repository = $repository;
+    }
+
+    /**
+     * @return AnonymousResourceCollection
+     */
+    public function index(): AnonymousResourceCollection
+    {
+        $schedules = $this->repository->getAll();
+
+        return ScheduleResource::collection($schedules);
     }
 
     /**

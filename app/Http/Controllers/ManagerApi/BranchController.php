@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ManagerApi\StoreBranchRequest;
 use App\Http\Resources\ManagerApi\BranchResource;
 use App\Repository\BranchRepository;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Class BranchController
@@ -33,6 +34,16 @@ class BranchController extends Controller
     public function __construct(BranchRepository $branchRepository)
     {
         $this->repository = $branchRepository;
+    }
+
+    /**
+     * @return AnonymousResourceCollection
+     */
+    public function index(): AnonymousResourceCollection
+    {
+        $branches = $this->repository->getAll();
+
+        return BranchResource::collection($branches);
     }
 
     /**
