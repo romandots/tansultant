@@ -14,9 +14,9 @@ use App\Http\Requests\ManagerApi\DTO\StoreSchedule as ScheduleDto;
 use App\Http\Requests\PublicApi\DTO\ScheduleOnDate;
 use App\Models\Course;
 use App\Models\Schedule;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Class ScheduleRepository
@@ -25,13 +25,39 @@ use Illuminate\Support\Facades\DB;
 class ScheduleRepository
 {
     /**
+     * @return Collection|Schedule[]
+     */
+    public function getAll(): Collection
+    {
+        return Schedule::query()
+            ->whereNull('deleted_at')
+            ->with('course')
+            ->get();
+    }
+
+    /**
      * @param string $id
      * @return Schedule
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function find(string $id): Schedule
     {
-        return Schedule::query()->findOrFail($id);
+        return Schedule::query()
+            ->whereNull('deleted_at')
+            ->where('id', $id)
+            ->firstOrFail();
+    }
+
+    /**
+     * @param string $id
+     * @return Schedule|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function findWithDeleted(string $id): Schedule
+    {
+        return Schedule::query()
+            ->where('id', $id)
+            ->firstOrFail();
     }
 
     /**
@@ -43,6 +69,8 @@ class ScheduleRepository
     {
         $schedule = new Schedule;
         $schedule->id = \uuid();
+        $schedule->created_at = Carbon::now();
+
         $this->fill($schedule, $dto);
         $schedule->save();
 
@@ -55,6 +83,8 @@ class ScheduleRepository
      */
     public function update(Schedule $schedule, ScheduleDto $dto): void
     {
+        $schedule->updated_at = Carbon::now();
+
         $this->fill($schedule, $dto);
         $schedule->save();
     }
@@ -77,51 +107,40 @@ class ScheduleRepository
         $schedule->branch_id = $dto->branch_id;
         $schedule->classroom_id = $dto->classroom_id;
         $schedule->course_id = $dto->course_id;
+        $schedule->weekday = $dto->weekday;
         $schedule->starts_at = $dto->starts_at;
         $schedule->ends_at = $dto->ends_at;
-        $schedule->duration = $dto->duration;
-        $schedule->monday = $dto->monday;
-        $schedule->tuesday = $dto->tuesday;
-        $schedule->wednesday = $dto->wednesday;
-        $schedule->thursday = $dto->thursday;
-        $schedule->friday = $dto->friday;
-        $schedule->saturday = $dto->saturday;
-        $schedule->sunday = $dto->sunday;
     }
 
     /**
-     * @return Collection|Schedule[]
-     */
-    public function getAll(): Collection
-    {
-        return Schedule::query()->get();
-    }
-
-    /**
+     * Get schedules for
+     *  courses in NOT disabled status
+     *  for selected date
+     *  by course_id (optional)
+     *  classroom_id (optional)
+     *  branch_id (optional)
      * @param ScheduleOnDate $dto
+     * @param string[]|null $relations
      * @return Collection|Schedule[]
      */
-    public function getSchedulesForDate(ScheduleOnDate $dto): Collection
+    public function getSchedulesForDateWithRelations(ScheduleOnDate $dto, ?array $relations = []): Collection
     {
-        $date = $dto->date;
-        $weekDay = \mb_strtolower(\weekday($date));
-
-        $query = DB::table(Schedule::TABLE)
-            ->whereNotNull($weekDay)
-            ->whereIn('course_id', static function (Builder $query) use ($date) {
+        $query = Schedule::query()//table(Schedule::TABLE)
+            ->where('weekday', $dto->weekday)
+            ->whereIn('course_id', static function (Builder $query) use ($dto) {
                 $query
                     ->select('id')
                     ->from(Course::TABLE)
-                    ->where('status', '!=', Course::STATUS_DISABLED)
-                    ->where(static function (Builder $query) use ($date) {
+                    ->where('status', '=', Course::STATUS_ACTIVE)
+                    ->where(static function (Builder $query) use ($dto) {
                         $query
                             ->whereNull('starts_at')
-                            ->orWhere('starts_at', '<=', $date);
+                            ->orWhere('starts_at', '<=', $dto->date);
                     })
-                    ->where(static function (Builder $query) use ($date) {
+                    ->where(static function (Builder $query) use ($dto) {
                         $query
                             ->whereNull('ends_at')
-                            ->orWhere('ends_at', '>=', $date);
+                            ->orWhere('ends_at', '>=', $dto->date);
                     });
             });
 
@@ -137,11 +156,13 @@ class ScheduleRepository
             $query = $query->where('classroom_id', $dto->classroom_id);
         }
 
-        $results = $query
-            ->distinct()
-            ->orderBy($weekDay)
-            ->get(Schedule::TABLE . '.*');
+        if ([] !== $relations) {
+            $query->with($relations);
+        }
 
-        return (new Schedule)->hydrate($results->toArray());
+        return $query
+            ->distinct()
+            ->orderBy('starts_at')
+            ->get();
     }
 }

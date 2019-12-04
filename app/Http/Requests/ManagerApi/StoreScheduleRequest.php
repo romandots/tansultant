@@ -13,6 +13,7 @@ namespace App\Http\Requests\ManagerApi;
 use App\Models\Branch;
 use App\Models\Classroom;
 use App\Models\Course;
+use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -48,45 +49,17 @@ class StoreScheduleRequest extends FormRequest
                 Rule::exists(Course::TABLE, 'id'),
             ],
             'starts_at' => [
-                'nullable',
-                'date'
+                'required',
+                'regex:/\d{1,2}:\d{1,2}(:\d{1,2})?.+$/i',
             ],
             'ends_at' => [
-                'nullable',
-                'date'
-            ],
-            'duration' => [
                 'required',
-                'integer',
-                'min:15'
+                'regex:/\d{1,2}:\d{1,2}(:\d{1,2})?.+$/i',
             ],
-            'monday' => [
-                'nullable',
-                'date_format:H:i'
-            ],
-            'tuesday' => [
-                'nullable',
-                'date_format:H:i'
-            ],
-            'wednesday' => [
-                'nullable',
-                'date_format:H:i'
-            ],
-            'thursday' => [
-                'nullable',
-                'date_format:H:i'
-            ],
-            'friday' => [
-                'nullable',
-                'date_format:H:i'
-            ],
-            'saturday' => [
-                'nullable',
-                'date_format:H:i'
-            ],
-            'sunday' => [
-                'nullable',
-                'date_format:H:i'
+            'weekday' => [
+                'required',
+                'string',
+                Rule::in(Schedule::WEEKDAYS),
             ],
         ];
     }
@@ -102,18 +75,9 @@ class StoreScheduleRequest extends FormRequest
         $dto->branch_id = $validated['branch_id'];
         $dto->classroom_id = $validated['classroom_id'];
         $dto->course_id = $validated['course_id'];
+        $dto->weekday = $validated['weekday'];
         $dto->starts_at = isset($validated['starts_at']) ? Carbon::parse($validated['starts_at']) : null;
         $dto->ends_at = isset($validated['ends_at']) ? Carbon::parse($validated['ends_at']) : null;
-        $dto->duration = (int)$validated['duration'];
-        $dto->monday = isset($validated['monday']) ? Carbon::createFromFormat('H:i', $validated['monday']) : null;
-        $dto->tuesday = isset($validated['tuesday']) ? Carbon::createFromFormat('H:i', $validated['tuesday']) : null;
-        $dto->wednesday = isset($validated['wednesday']) ? Carbon::createFromFormat('H:i',
-            $validated['wednesday']) : null;
-        $dto->thursday = isset($validated['thursday']) ? Carbon::createFromFormat('H:i', $validated['thursday']) : null;
-        $dto->friday = isset($validated['friday']) ? Carbon::createFromFormat('H:i', $validated['friday']) : null;
-        $dto->saturday = isset($validated['saturday']) ? Carbon::createFromFormat('H:i', $validated['saturday']) :
-            null;
-        $dto->sunday = isset($validated['sunday']) ? Carbon::createFromFormat('H:i', $validated['sunday']) : null;
 
         return $dto;
     }

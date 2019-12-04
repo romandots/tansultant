@@ -8,8 +8,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\PublicApi;
+namespace App\Http\Requests\ManagerApi;
 
+use App\Http\Requests\PublicApi\DTO\ScheduleOnDate;
 use App\Models\Branch;
 use App\Models\Classroom;
 use App\Models\Course;
@@ -39,13 +40,13 @@ class ScheduleOnDateRequest extends FormRequest
                 'nullable',
                 'string',
                 'uuid',
-                 Rule::exists(Branch::TABLE, 'id')
+                Rule::exists(Branch::TABLE, 'id')
             ],
             'classroom_id' => [
                 'nullable',
                 'string',
                 'uuid',
-                 Rule::exists(Classroom::TABLE, 'id')
+                Rule::exists(Classroom::TABLE, 'id')
             ],
             'course_id' => [
                 'nullable',
@@ -57,9 +58,9 @@ class ScheduleOnDateRequest extends FormRequest
     }
 
     /**
-     * @return DTO\ScheduleOnDate
+     * @return ScheduleOnDate
      */
-    public function getDto(): DTO\ScheduleOnDate
+    public function getDto(): ScheduleOnDate
     {
         $validated = $this->validated();
 
@@ -74,7 +75,8 @@ class ScheduleOnDateRequest extends FormRequest
             throw new \LogicException('Weekday is unusual', ['weekday' => $weekday]);
         }
 
-        $dto = new DTO\ScheduleOnDate;
+
+        $dto = new ScheduleOnDate;
         $dto->date = $date;
         $dto->weekday = $weekday;
         $dto->branch_id = $validated['branch_id'] ?? null;

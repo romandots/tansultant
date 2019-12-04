@@ -27,9 +27,14 @@ class StoreSchedule
     public $classroom_id;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $course_id;
+
+    /**
+     * @var string
+     */
+    public $weekday;
 
     /**
      * @var \Carbon\Carbon|null
@@ -40,44 +45,4 @@ class StoreSchedule
      * @var \Carbon\Carbon|null
      */
     public $ends_at;
-
-    /**
-     * @var int
-     */
-    public $duration;
-
-    /**
-     * @var \Carbon\Carbon|null
-     */
-    public $monday;
-
-    /**
-     * @var \Carbon\Carbon|null
-     */
-    public $tuesday;
-
-    /**
-     * @var \Carbon\Carbon|null
-     */
-    public $wednesday;
-
-    /**
-     * @var \Carbon\Carbon|null
-     */
-    public $thursday;
-
-    /**
-     * @var \Carbon\Carbon|null
-     */
-    public $friday;
-
-    /**
-     * @var \Carbon\Carbon|null
-     */
-    public $saturday;
-
-    /**
-     * @var \Carbon\Carbon|null
-     */
-    public $sunday;
 }

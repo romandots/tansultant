@@ -103,6 +103,8 @@ Route::group(['prefix' => 'courses'], static function () {
 });
 
 Route::group(['prefix' => 'schedules'], static function () {
+    Route::get('date', 'ScheduleController@onDate')
+        ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::READ);
     Route::get('/', 'ScheduleController@index')
         ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::READ);
     Route::post('/', 'ScheduleController@store')

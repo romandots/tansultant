@@ -31,7 +31,6 @@ class ScheduleController extends Controller
     /**
      * ScheduleController constructor.
      * @param ScheduleRepository $repository
-     * @param ScheduleService $service
      */
     public function __construct(ScheduleRepository $repository)
     {
@@ -44,8 +43,7 @@ class ScheduleController extends Controller
      */
     public function onDate(ScheduleOnDateRequest $request): AnonymousResourceCollection
     {
-        $schedules = $this->repository->getSchedulesForDate($request->getDto());
-        $schedules->load('course');
+        $schedules = $this->repository->getSchedulesForDateWithRelations($request->getDto(), ['course.instructor.person']);
 
         return ScheduleResource::collection($schedules);
     }

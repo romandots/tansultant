@@ -17,21 +17,15 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App
  * @property string $id
+ * @property string $weekday
+ * @property \Illuminate\Support\Carbon $starts_at
+ * @property \Illuminate\Support\Carbon $ends_at
  * @property string $branch_id
- * @property string|null $classroom_id
- * @property string $course_id
- * @property \Illuminate\Support\Carbon|null $starts_at
- * @property \Illuminate\Support\Carbon|null $ends_at
- * @property int $duration In minutes
- * @property \Carbon\Carbon|null $monday
- * @property \Carbon\Carbon|null $tuesday
- * @property \Carbon\Carbon|null $wednesday
- * @property \Carbon\Carbon|null $thursday
- * @property \Carbon\Carbon|null $friday
- * @property \Carbon\Carbon|null $saturday
- * @property \Carbon\Carbon|null $sunday
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $classroom_id
+ * @property string|null $course_id
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Course|null $course
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Schedule newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Schedule newQuery()
@@ -60,19 +54,25 @@ class Schedule extends Model
 
     public const TABLE = 'schedules';
 
-    protected $table = self::TABLE;
+    public const MONDAY = 'monday';
+    public const TUESDAY = 'tuesday';
+    public const WEDNESDAY = 'wednesday';
+    public const THURSDAY = 'thursday';
+    public const FRIDAY = 'friday';
+    public const SATURDAY = 'saturday';
+    public const SUNDAY = 'sunday';
 
-    protected $casts = [
-        'starts_at' => 'date',
-        'ends_at' => 'date',
-        'monday' => 'time',
-        'tuesday' => 'time',
-        'wednesday' => 'time',
-        'thursday' => 'time',
-        'friday' => 'time',
-        'saturday' => 'time',
-        'sunday' => 'time',
+    public const WEEKDAYS = [
+        self::MONDAY,
+        self::TUESDAY,
+        self::WEDNESDAY,
+        self::THURSDAY,
+        self::FRIDAY,
+        self::SATURDAY,
+        self::SUNDAY,
     ];
+
+    protected $table = self::TABLE;
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Course|null

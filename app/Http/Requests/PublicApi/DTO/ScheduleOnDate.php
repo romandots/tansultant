@@ -35,4 +35,9 @@ class ScheduleOnDate
      * @var \Carbon\Carbon
      */
     public $date;
+
+    /**
+     * @var \Carbon\Carbon
+     */
+    public $weekday;
 }

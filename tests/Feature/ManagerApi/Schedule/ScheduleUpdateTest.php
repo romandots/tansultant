@@ -33,14 +33,7 @@ class ScheduleUpdateTest extends TestCase
             'course',
             'starts_at',
             'ends_at',
-            'duration',
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday',
+            'weekday',
         ]
     ];
 
@@ -109,17 +102,14 @@ class ScheduleUpdateTest extends TestCase
             'branch_id' => $this->createFakeBranch()->id,
             'classroom_id' => $this->createFakeClassroom()->id,
             'course_id' => $course->id,
-            'starts_at' => $this->faker->date(),
-            'ends_at' => $this->faker->date(),
-            'duration' => 60,
-            'monday' => $this->faker->time('H:i'),
-            'tuesday' => $this->faker->time('H:i'),
-            'wednesday' => $this->faker->time('H:i'),
-            'thursday' => $this->faker->time('H:i'),
-            'friday' => $this->faker->time('H:i'),
-            'saturday' => $this->faker->time('H:i'),
-            'sunday' => $this->faker->time('H:i'),
+            'starts_at' => $this->faker->time('H:i:00'),
+            'ends_at' => $this->faker->time('H:i:00'),
+            'weekday' => 'monday',
         ];
+
+        $responseData = $data;
+        $responseData['course'] = ['id' => $data['course_id']];
+        unset($responseData['course_id']);
 
         $this
             ->actingAs($user, 'api')
@@ -127,20 +117,7 @@ class ScheduleUpdateTest extends TestCase
             ->assertOk()
             ->assertJsonStructure(self::JSON_STRUCTURE)
             ->assertJson([
-                'data' => [
-                    'branch_id' => $data['branch_id'],
-                    'classroom_id' => $data['classroom_id'],
-                    'starts_at' => $data['starts_at'],
-                    'ends_at' => $data['ends_at'],
-                    'duration' => $data['duration'],
-                    'monday' => $data['monday'],
-                    'tuesday' => $data['tuesday'],
-                    'wednesday' => $data['wednesday'],
-                    'thursday' => $data['thursday'],
-                    'friday' => $data['friday'],
-                    'saturday' => $data['saturday'],
-                    'sunday' => $data['sunday'],
-                ]
+                'data' => $responseData
             ]);
     }
 
@@ -153,67 +130,54 @@ class ScheduleUpdateTest extends TestCase
             [
                 [
                     'classroom_id' => 1,
-                    'course_id' => 1,
-                    'starts_at' => '2019-07-01',
-                    'ends_at' => '2019-12-31',
-                    'duration' => 60,
-                    'monday' => '11:00',
-                    'tuesday' => '11:00',
-                    'wednesday' => '11:00',
-                    'thursday' => '11:00',
-                    'friday' => '11:00',
-                    'saturday' => '11:00',
-                    'sunday' => '11:00',
+                    'starts_at' => '11:00:00',
+                    'ends_at' => '12:00:00',
+                    'weekday' => 'monday',
                 ]
             ],
             [
                 [
                     'branch_id' => 1,
-                    'course_id' => 1,
-                    'starts_at' => '2019-07-01',
-                    'ends_at' => '2019-12-31',
-                    'duration' => 60,
-                    'monday' => '11:00',
-                    'tuesday' => '11:00',
-                    'wednesday' => '11:00',
-                    'thursday' => '11:00',
-                    'friday' => '11:00',
-                    'saturday' => '11:00',
-                    'sunday' => '11:00',
+                    'starts_at' => '11:00:00',
+                    'ends_at' => '12:00:00',
+                    'weekday' => 'monday',
                 ]
             ],
             [
                 [
-                    'branch_id' => 1,
-                    'classroom_id' => 1,
-                    'starts_at' => '2019-07-01',
-                    'ends_at' => '2019-12-31',
-                    'duration' => 60,
-                    'monday' => '11:00',
-                    'tuesday' => '11:00',
-                    'wednesday' => '11:00',
-                    'thursday' => '11:00',
-                    'friday' => '11:00',
-                    'saturday' => '11:00',
-                    'sunday' => '11:00',
+                    'course_id' => 1,
+                    'starts_at' => '11:00:00',
+                    'ends_at' => '12:00:00',
+                    'weekday' => 'monday',
                 ]
             ],
             [
                 [
-                    'branch_id' => 1,
-                    'classroom_id' => 1,
-                    'course_id' => 1,
-                    'starts_at' => '2019-07-01',
-                    'ends_at' => '2019-12-31',
-                    'monday' => '11:00',
-                    'tuesday' => '11:00',
-                    'wednesday' => '11:00',
-                    'thursday' => '11:00',
-                    'friday' => '11:00',
-                    'saturday' => '11:00',
-                    'sunday' => '11:00',
+                    'starts_at' => '11:00:00',
+                    'ends_at' => '12:00:00',
                 ]
-            ]
+            ],
+            [
+                [
+                    'starts_at' => '11:00:00',
+                    'ends_at' => '12:00:00',
+                    'weekday' => 60,
+                ]
+            ],
+            [
+                [
+                    'starts_at' => '11:00:00',
+                    'ends_at' => '12:00:00',
+                    'weekday' => '',
+                ]
+            ],
+            [
+                [
+                    'starts_at' => '11:00:00',
+                    'ends_at' => '12:00:00',
+                    'weekday' => 'buesday',
+                ]
+            ],
         ];
     }
 }

@@ -33,14 +33,7 @@ class ScheduleShowTest extends TestCase
             'course',
             'starts_at',
             'ends_at',
-            'duration',
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday',
+            'weekday',
         ]
     ];
 
@@ -96,16 +89,9 @@ class ScheduleShowTest extends TestCase
                     'id' => $this->schedule->id,
                     'branch_id' => $this->schedule->branch_id,
                     'classroom_id' => $this->schedule->classroom_id,
-                    'starts_at' => $this->schedule->starts_at->toDateString(),
-                    'ends_at' => $this->schedule->ends_at->toDateString(),
-                    'duration' => $this->schedule->duration,
-                    'monday' => $this->schedule->monday,
-                    'tuesday' => $this->schedule->tuesday,
-                    'wednesday' => $this->schedule->wednesday,
-                    'thursday' => $this->schedule->thursday,
-                    'friday' => $this->schedule->friday,
-                    'saturday' => $this->schedule->saturday,
-                    'sunday' => $this->schedule->sunday,
+                    'starts_at' => \Carbon\Carbon::parse($this->schedule->starts_at)->format('H:i:00'),
+                    'ends_at' => \Carbon\Carbon::parse($this->schedule->ends_at)->format('H:i:00'),
+                    'weekday' => $this->schedule->weekday,
                 ]
             ]);
     }

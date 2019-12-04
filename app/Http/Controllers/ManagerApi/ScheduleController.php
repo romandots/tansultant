@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ManagerApi\ScheduleOnDateRequest;
 use App\Http\Requests\ManagerApi\StoreScheduleRequest;
 use App\Http\Resources\ScheduleResource;
 use App\Repository\ScheduleRepository;
@@ -98,5 +99,26 @@ class ScheduleController extends Controller
     {
         $schedule = $this->repository->find($id);
         $this->repository->delete($schedule);
+    }
+
+    /**
+     * @param string $id
+     * @throws \Exception
+     */
+    public function restore(string $id): void
+    {
+        $schedule = $this->repository->findWithDeleted($id);
+        $this->repository->restore($schedule);
+    }
+
+    /**
+     * @param ScheduleOnDateRequest $request
+     * @return AnonymousResourceCollection
+     */
+    public function onDate(ScheduleOnDateRequest $request): AnonymousResourceCollection
+    {
+        $schedules = $this->repository->getSchedulesForDateWithRelations($request->getDto(), ['course.instructor.person']);
+
+        return ScheduleResource::collection($schedules);
     }
 }
