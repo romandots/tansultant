@@ -15,6 +15,7 @@ use App\Http\Requests\ManagerApi\StoreCourseRequest as UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
 use App\Repository\CourseRepository;
 use App\Services\Course\CourseService;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Class CourseController
@@ -41,6 +42,16 @@ class CourseController
     {
         $this->repository = $repository;
         $this->service = $service;
+    }
+
+    /**
+     * @return AnonymousResourceCollection
+     */
+    public function index(): AnonymousResourceCollection
+    {
+        $records = $this->repository->getAll();
+
+        return CourseResource::collection($records);
     }
 
     /**

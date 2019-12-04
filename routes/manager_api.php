@@ -90,6 +90,8 @@ Route::group(['prefix' => 'customers'], static function () {
 });
 
 Route::group(['prefix' => 'courses'], static function () {
+    Route::get('/', 'CourseController@index')
+        ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::READ);
     Route::post('/', 'CourseController@store')
         ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::CREATE);
     Route::put('{id}', 'CourseController@update')

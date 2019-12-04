@@ -12,6 +12,7 @@ namespace App\Repository;
 
 use App\Http\Requests\ManagerApi\DTO\StoreCourse as CourseDto;
 use App\Models\Course;
+use Illuminate\Support\Collection;
 
 /**
  * Class CourseRepository
@@ -19,6 +20,16 @@ use App\Models\Course;
  */
 class CourseRepository
 {
+    /**
+     * @return Collection|Course[]
+     */
+    public function getAll(): Collection
+    {
+        return Course::query()
+            ->whereNull('deleted_at')
+            ->get();
+    }
+
     /**
      * @param string $id
      * @return \Illuminate\Database\Eloquent\Model|Course
