@@ -412,7 +412,7 @@ class UserTest extends \Tests\TestCase
         $url = 'auth/user/password';
 
         $this
-            ->put($url, [
+            ->patch($url, [
                 'old_password' => '123456',
                 'new_password' => '654321'
             ])
@@ -435,7 +435,7 @@ class UserTest extends \Tests\TestCase
 
         $this
             ->actingAs($user, 'api')
-            ->put($url, $data)
+            ->patch($url, $data)
             ->assertOk();
 
         $user->refresh();
@@ -455,7 +455,7 @@ class UserTest extends \Tests\TestCase
 
         $this
             ->actingAs($user, 'api')
-            ->put($url, $data)
+            ->patch($url, $data)
             ->assertStatus(422);
 
         $user->refresh();
