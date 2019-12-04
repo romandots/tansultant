@@ -47,10 +47,16 @@ class ClassroomStoreTest extends TestCase
      */
     private $url;
 
+    /**
+     * @var string
+     */
+    private $branchId;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->url = self::URL;
+        $this->branchId = $this->createFakeBranch()->id;
     }
 
     public function testAccessDenied(): void
@@ -70,20 +76,41 @@ class ClassroomStoreTest extends TestCase
             ->assertStatus(403);
     }
 
-    /**
-     * @param array $data
-     * @dataProvider provideInvalidData
-     */
-    public function testValidationErrors(array $data): void
+    public function testValidationErrors(): void
     {
         $user = $this->createFakeManagerUser([], [
             ClassroomsPermissions::CREATE_CLASSROOMS
         ]);
 
-        $this
-            ->actingAs($user, 'api')
-            ->post($this->url, $data)
-            ->assertStatus(422);
+        $data = [
+            [
+                'name' => 'Зал А',
+                'branch_id' => \uuid(),
+            ],
+            [
+                'name' => 'Зал А',
+            ],
+            [
+                'branch_id' => $this->branchId,
+            ],
+            [
+                'name' => 'Зал А',
+                'branch_id' => $this->branchId,
+                'number' => 'one',
+            ],
+            [
+                'name' => 'Зал А',
+                'branch_id' => $this->branchId,
+                'capacity' => 'много',
+            ]
+        ];
+
+        foreach ($data as $params) {
+            $this
+                ->actingAs($user, 'api')
+                ->post($this->url, $params)
+                ->assertStatus(422);
+        }
     }
 
     public function testSuccess(): void
@@ -92,11 +119,9 @@ class ClassroomStoreTest extends TestCase
             ClassroomsPermissions::CREATE_CLASSROOMS
         ]);
 
-        $branchId = $this->createFakeBranch()->id;
-
         $data = [
             'name' => 'Зал А',
-            'branch_id' => $branchId,
+            'branch_id' => $this->branchId,
             'color' => '#ffffff',
             'capacity' => 30,
             'number' => 1,
@@ -113,48 +138,10 @@ class ClassroomStoreTest extends TestCase
 
         $this->assertDatabaseHas(Classroom::TABLE, [
             'name' => 'Зал А',
-            'branch_id' => $branchId,
+            'branch_id' => $this->branchId,
             'color' => '#ffffff',
             'capacity' => 30,
             'number' => 1,
         ]);
-    }
-
-    /**
-     * @return array
-     */
-    public function provideInvalidData(): array
-    {
-        return [
-            [
-                [
-                    'student_id' => 'text value',
-                    'lesson_id' => 1
-                ]
-            ],
-            [
-                [
-                    'student_id' => 1,
-                    'lesson_id' => 'text value'
-                ]
-            ],
-            [
-                [
-                    'lesson_id' => 1
-                ]
-            ],
-            [
-                [
-                    'student_id' => 1
-                ]
-            ],
-            [
-                [
-                    'lesson_id' => 1,
-                    'student_id' => 1,
-                    'promocode_id' => 'WrongType'
-                ]
-            ]
-        ];
     }
 }
