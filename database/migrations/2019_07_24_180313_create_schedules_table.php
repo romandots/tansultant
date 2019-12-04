@@ -39,11 +39,6 @@ class CreateSchedulesTable extends Migration
                 ->references('id')
                 ->on(\App\Models\Course::TABLE)
                 ->onDelete('cascade');
-
-            $table->foreign('classroom_id')
-                ->references('id')
-                ->on(\App\Models\Classroom::TABLE)
-                ->onDelete('cascade');
         });
 
         \convertPostgresColumnTextToEnum('schedules', 'weekday', [
