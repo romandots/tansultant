@@ -81,14 +81,6 @@ class Kernel extends HttpKernel
             'cors'
         ],
 
-        'auth' => [
-            'api',
-        ],
-
-        'public_api' => [
-            'api',
-        ],
-
         'manager_api' => [
             'api',
             'auth:api',

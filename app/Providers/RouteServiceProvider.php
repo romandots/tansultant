@@ -48,15 +48,15 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes(): void
     {
-        Route::prefix('auth')
-            ->middleware('auth')
-            ->namespace($this->namespace . '\Auth')
-            ->group(base_path('routes/auth.php'));
-
         Route::prefix('api/v1')
-            ->middleware('public_api')
+            ->middleware('api')
             ->namespace($this->namespace . '\PublicApi')
             ->group(base_path('routes/public_api.php'));
+
+        Route::prefix('manager_api/v1')
+            ->middleware('api')
+            ->namespace($this->namespace . '\Auth')
+            ->group(base_path('routes/auth.php'));
 
         Route::prefix('manager_api/v1')
             ->middleware('manager_api')
