@@ -49,7 +49,7 @@ class UserTest extends \Tests\TestCase
 
     public function testMe(): void
     {
-        $url = 'manager_api/v1/user';
+        $url = 'auth/user';
 
         $this
             ->actingAs($this->me, 'api')
@@ -409,7 +409,7 @@ class UserTest extends \Tests\TestCase
 
     public function testUpdatePasswordDenied(): void
     {
-        $url = 'manager_api/v1/user/password';
+        $url = 'auth/user/password';
 
         $this
             ->patch($url, [
@@ -431,7 +431,7 @@ class UserTest extends \Tests\TestCase
             'new_password' => $newPassword,
         ];
 
-        $url = 'manager_api/v1/user/password';
+        $url = 'auth/user/password';
 
         $this
             ->actingAs($user, 'api')
@@ -451,7 +451,7 @@ class UserTest extends \Tests\TestCase
     {
         $user = $this->createFakeManagerUser(['password' => \Hash::make('123456')]);
 
-        $url = 'manager_api/v1/user/password';
+        $url = 'auth/user/password';
 
         $this
             ->actingAs($user, 'api')
