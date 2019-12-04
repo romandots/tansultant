@@ -26,16 +26,16 @@ class CreateBranchesTable extends Migration
     {
         Schema::create('branches', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name')->index();
+            $table->text('name')->index();
             $table->text('summary')->nullable();
             $table->text('description')->nullable();
-            $table->string('phone')->nullable();
-            $table->string('email')->nullable();
-            $table->string('url')->nullable();
-            $table->string('vk_url')->nullable();
-            $table->string('facebook_url')->nullable();
-            $table->string('telegram_username')->nullable();
-            $table->string('instagram_username')->nullable();
+            $table->text('phone')->nullable();
+            $table->text('email')->nullable();
+            $table->text('url')->nullable();
+            $table->text('vk_url')->nullable();
+            $table->text('facebook_url')->nullable();
+            $table->text('telegram_username')->nullable();
+            $table->text('instagram_username')->nullable();
             $table->json('address')->nullable();
             $table->integer('number')->nullable();
             $table->timestamps();

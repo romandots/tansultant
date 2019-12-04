@@ -8,10 +8,9 @@
 
 declare(strict_types=1);
 
-use App\Models\Course;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Class CreateSchedulesTable
@@ -20,38 +19,46 @@ class CreateSchedulesTable extends Migration
 {
     /**
      * Run the migrations.
-     *
      * @return void
      */
     public function up(): void
     {
         Schema::create('schedules', static function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->text('weekday')->index();
+            $table->time('starts_at')->index();
+            $table->time('ends_at')->index();
             $table->uuid('branch_id')->index();
-            $table->uuid('classroom_id')->nullable()->index();
-            $table->uuid('course_id')->index();
-            $table->date('starts_at')->nullable()->index();
-            $table->date('ends_at')->nullable()->index();
-            $table->unsignedInteger('duration')->default(60)->comment('In minutes');
-            $table->time('monday')->nullable()->index();
-            $table->time('tuesday')->nullable()->index();
-            $table->time('wednesday')->nullable()->index();
-            $table->time('thursday')->nullable()->index();
-            $table->time('friday')->nullable()->index();
-            $table->time('saturday')->nullable()->index();
-            $table->time('sunday')->nullable()->index();
-            $table->timestamps();
+            $table->uuid('classroom_id')->index();
+            $table->uuid('course_id')->nullable()->index();
+            $table->timestamp('created_at');
+            $table->timestamp('updated_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
 
             $table->foreign('course_id')
                 ->references('id')
-                ->on(Course::TABLE)
+                ->on(\App\Models\Course::TABLE)
+                ->onDelete('cascade');
+
+            $table->foreign('classroom_id')
+                ->references('id')
+                ->on(\App\Models\Classroom::TABLE)
                 ->onDelete('cascade');
         });
+
+        \convertPostgresColumnTextToEnum('schedules', 'weekday', [
+            'monday',
+            'tuesday',
+            'wednesday',
+            'thursday',
+            'friday',
+            'saturday',
+            'sunday',
+        ]);
     }
 
     /**
      * Reverse the migrations.
-     *
      * @return void
      */
     public function down(): void

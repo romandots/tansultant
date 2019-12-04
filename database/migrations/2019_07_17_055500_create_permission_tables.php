@@ -22,24 +22,24 @@ class CreatePermissionTables extends Migration
 
         Schema::create($tableNames['permissions'], function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->string('guard_name');
-            $table->string('description')->nullable();
+            $table->text('name');
+            $table->text('guard_name');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
 
         Schema::create($tableNames['roles'], function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->string('guard_name');
-            $table->string('description')->nullable();
+            $table->text('name');
+            $table->text('guard_name');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
 
         Schema::create($tableNames['model_has_permissions'], static function (Blueprint $table) use ($tableNames, $columnNames) {
             $table->unsignedInteger('permission_id');
 
-            $table->string('model_type');
+            $table->text('model_type');
             $table->uuid($columnNames['model_morph_key']);
             $table->index([$columnNames['model_morph_key'], 'model_type', ]);
 
@@ -55,7 +55,7 @@ class CreatePermissionTables extends Migration
         Schema::create($tableNames['model_has_roles'], static function (Blueprint $table) use ($tableNames, $columnNames) {
             $table->unsignedInteger('role_id');
 
-            $table->string('model_type');
+            $table->text('model_type');
             $table->uuid($columnNames['model_morph_key']);
             $table->index([$columnNames['model_morph_key'], 'model_type', ]);
 

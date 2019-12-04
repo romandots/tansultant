@@ -25,9 +25,9 @@ class CreateClassroomsTable extends Migration
     {
         Schema::create('classrooms', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name')->index();
+            $table->text('name')->index();
             $table->uuid('branch_id')->index();
-            $table->string('color')->nullable();
+            $table->text('color')->nullable();
             $table->unsignedInteger('capacity')->nullable();
             $table->unsignedInteger('number')->nullable();
             $table->timestamps();

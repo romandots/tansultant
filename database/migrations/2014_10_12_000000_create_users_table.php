@@ -26,13 +26,15 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->string('username')->unique();
-            $table->string('password');
-            $table->rememberToken();
+            $table->text('name');
+            $table->text('username')->unique();
+            $table->text('password');
+            $table->text('remember_token')->nullable();
+            $table->timestamp('created_at');
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('seen_at')->nullable();
-            $table->timestamps();
+            $table->timestamp('updated_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

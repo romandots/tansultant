@@ -25,21 +25,21 @@ class CreatePeopleTables extends Migration
     {
         Schema::create('people', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('last_name')->nullable();
-            $table->string('first_name')->nullable();
-            $table->string('patronymic_name')->nullable();
+            $table->text('last_name')->nullable();
+            $table->text('first_name')->nullable();
+            $table->text('patronymic_name')->nullable();
             $table->date('birth_date')->nullable();
             $table->text('gender')->nullable();
-            $table->string('phone')->unique()->nullable();
-            $table->string('email')->unique()->nullable();
-            $table->string('picture')->nullable();
-            $table->string('picture_thumb')->nullable();
-            $table->string('instagram_username')->nullable();
-            $table->string('telegram_username')->nullable();
-            $table->string('vk_uid')->nullable();
-            $table->string('vk_url')->nullable();
-            $table->string('facebook_uid')->nullable();
-            $table->string('facebook_url')->nullable();
+            $table->text('phone')->unique()->nullable();
+            $table->text('email')->unique()->nullable();
+            $table->text('picture')->nullable();
+            $table->text('picture_thumb')->nullable();
+            $table->text('instagram_username')->nullable();
+            $table->text('telegram_username')->nullable();
+            $table->text('vk_uid')->nullable();
+            $table->text('vk_url')->nullable();
+            $table->text('facebook_uid')->nullable();
+            $table->text('facebook_url')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
 
@@ -50,7 +50,7 @@ class CreatePeopleTables extends Migration
 
         Schema::create('customers', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->text('name');
             $table->uuid('person_id')->nullable()->index();
             $table->timestamp('seen_at')->nullable();
             $table->timestamps();
@@ -64,8 +64,8 @@ class CreatePeopleTables extends Migration
 
         Schema::create('students', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->string('card_number')->nullable();
+            $table->text('name');
+            $table->text('card_number')->nullable();
             $table->text('status');
             $table->uuid('person_id')->nullable()->index();
             $table->uuid('customer_id')->nullable()->index();
@@ -93,9 +93,9 @@ class CreatePeopleTables extends Migration
 
         Schema::create('instructors', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->string('description')->nullable();
-            $table->string('picture')->nullable();
+            $table->text('name');
+            $table->text('description')->nullable();
+            $table->text('picture')->nullable();
             $table->text('status');
             $table->boolean('display')->default(true);
             $table->uuid('person_id')->nullable()->index();
@@ -126,7 +126,7 @@ class CreatePeopleTables extends Migration
 
         Schema::create('contracts', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('serial')->index();
+            $table->text('serial')->index();
             $table->unsignedInteger('number')->index();
             $table->uuid('branch_id')->nullable()->index();
             $table->uuid('customer_id')->nullable()->index();

@@ -18,12 +18,12 @@ class CreateCoursesTable extends Migration
     {
         Schema::create('courses', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->text('name');
             $table->text('summary')->nullable();
             $table->text('description')->nullable();
-            $table->string('age_restrictions')->nullable();
-            $table->string('picture')->nullable();
-            $table->string('picture_thumb')->nullable();
+            $table->text('age_restrictions')->nullable();
+            $table->text('picture')->nullable();
+            $table->text('picture_thumb')->nullable();
             $table->text('status')->index();
             $table->uuid('instructor_id')->nullable()->index();
             $table->date('starts_at')->nullable();

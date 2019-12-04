@@ -30,7 +30,7 @@ class CreateMoneyTables extends Migration
     {
         Schema::create('accounts', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->text('name');
             $table->text('type')->index();
             $table->text('owner_type')->index();
             $table->uuid('owner_id')->index();
@@ -52,7 +52,7 @@ class CreateMoneyTables extends Migration
 
         Schema::create('payments', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->text('name');
             $table->integer('amount');
             $table->text('type')->index();
             $table->text('transfer_type')->index();
@@ -61,7 +61,7 @@ class CreateMoneyTables extends Migration
             $table->uuid('object_id')->nullable()->index();
             $table->uuid('account_id')->index();
             $table->uuid('related_id')->nullable()->index();
-            $table->string('external_id')->nullable()->index();
+            $table->text('external_id')->nullable()->index();
             $table->uuid('user_id')->index();
             $table->timestamp('confirmed_at')->nullable();
             $table->timestamp('canceled_at')->nullable();
@@ -128,7 +128,7 @@ class CreateMoneyTables extends Migration
 
         Schema::create('bonuses', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->text('name');
             $table->integer('amount');
             $table->text('type')->index();
             $table->text('status')->index();
