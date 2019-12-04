@@ -87,7 +87,7 @@ class ScheduleUpdateTest extends TestCase
     public function testValidationErrors(array $data): void
     {
         $user = $this->createFakeManagerUser([], [
-            SchedulesPermissions::UPDATE_SCHEDULES
+            SchedulesPermissions::UPDATE
         ]);
 
         $this
@@ -99,7 +99,7 @@ class ScheduleUpdateTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            SchedulesPermissions::UPDATE_SCHEDULES
+            SchedulesPermissions::UPDATE
         ]);
 
         $instructor = $this->createFakeInstructor();

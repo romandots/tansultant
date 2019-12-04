@@ -98,7 +98,7 @@ class LessonUpdateTest extends TestCase
     public function testValidationErrors(array $data): void
     {
         $user = $this->createFakeManagerUser([], [
-            LessonsPermissions::UPDATE_LESSONS
+            LessonsPermissions::UPDATE
         ]);
 
         $this
@@ -110,7 +110,7 @@ class LessonUpdateTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            LessonsPermissions::UPDATE_LESSONS
+            LessonsPermissions::UPDATE
         ]);
 
         $startsAt = \Carbon\Carbon::parse($this->faker->dateTime)->setSecond(0);

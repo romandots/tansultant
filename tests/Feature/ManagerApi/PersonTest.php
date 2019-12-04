@@ -52,10 +52,10 @@ class PersonTest extends \Tests\TestCase
     {
         parent::setUp();
         $this->me = $this->createFakeManagerUser([], [
-            PersonsPermissions::CREATE_PERSONS,
-            PersonsPermissions::READ_PERSONS,
-            PersonsPermissions::UPDATE_PERSONS,
-            PersonsPermissions::DELETE_PERSONS
+            PersonsPermissions::CREATE,
+            PersonsPermissions::READ,
+            PersonsPermissions::UPDATE,
+            PersonsPermissions::DELETE
         ]);
     }
 

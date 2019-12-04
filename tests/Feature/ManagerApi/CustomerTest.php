@@ -42,10 +42,10 @@ class CustomerTest extends \Tests\TestCase
     {
         parent::setUp();
         $this->me = $this->createFakeManagerUser([], [
-            CustomersPermissions::CREATE_CUSTOMERS,
-            CustomersPermissions::READ_CUSTOMERS,
-            CustomersPermissions::UPDATE_CUSTOMERS,
-            CustomersPermissions::DELETE_CUSTOMERS
+            CustomersPermissions::CREATE,
+            CustomersPermissions::READ,
+            CustomersPermissions::UPDATE,
+            CustomersPermissions::DELETE
         ]);
     }
 

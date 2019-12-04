@@ -16,10 +16,11 @@ namespace App\Services\Permissions;
  */
 class VisitsPermissions
 {
-    public const MANAGE_VISITS = 'manage_visits';
-    public const CREATE_VISITS = 'create_visits';
-    public const READ_VISITS = 'read_visits';
-    public const DELETE_VISITS = 'delete_visits';
+    public const MANAGE = 'manage_visits';
+    public const CREATE = 'create_visits';
+    public const READ = 'read_visits';
+    public const UPDATE = 'update_visits';
+    public const DELETE = 'delete_visits';
 
     /**
      * Get names of all defined permissions
@@ -42,10 +43,10 @@ class VisitsPermissions
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE_VISITS => 'Управлять посещениями',
-            self::CREATE_VISITS => 'Создавать посещения',
-            self::READ_VISITS => 'Просматривать посещения',
-            self::DELETE_VISITS => 'Удалять посещения',
+            self::MANAGE => 'Управлять посещениями',
+            self::CREATE => 'Создавать посещения',
+            self::READ => 'Просматривать посещения',
+            self::DELETE => 'Удалять посещения',
         ];
     }
 }

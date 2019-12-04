@@ -67,7 +67,7 @@ class BranchRecoverTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            BranchesPermissions::DELETE_BRANCHES
+            BranchesPermissions::DELETE
         ]);
 
         $this->assertDatabaseMissing(Branch::TABLE, [

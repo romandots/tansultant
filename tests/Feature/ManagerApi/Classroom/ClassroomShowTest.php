@@ -75,7 +75,7 @@ class ClassroomShowTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            ClassroomsPermissions::READ_CLASSROOMS
+            ClassroomsPermissions::READ
         ]);
 
         $responseData = $this->classroom->toArray();

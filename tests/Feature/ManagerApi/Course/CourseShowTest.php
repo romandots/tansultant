@@ -82,7 +82,7 @@ class CourseShowTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            CoursesPermissions::READ_COURSES
+            CoursesPermissions::READ
         ]);
 
         $this

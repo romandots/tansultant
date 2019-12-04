@@ -66,7 +66,7 @@ class ClassroomDestroyTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            ClassroomsPermissions::DELETE_CLASSROOMS
+            ClassroomsPermissions::DELETE
         ]);
 
         $this->assertDatabaseHas(Classroom::TABLE, [

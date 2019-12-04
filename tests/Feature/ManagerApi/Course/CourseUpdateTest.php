@@ -88,7 +88,7 @@ class CourseUpdateTest extends TestCase
     public function testValidationErrors(array $data): void
     {
         $user = $this->createFakeManagerUser([], [
-            CoursesPermissions::UPDATE_COURSES
+            CoursesPermissions::UPDATE
         ]);
 
         $this
@@ -100,7 +100,7 @@ class CourseUpdateTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            CoursesPermissions::UPDATE_COURSES
+            CoursesPermissions::UPDATE
         ]);
 
         $instructor = $this->createFakeInstructor();

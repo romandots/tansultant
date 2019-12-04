@@ -66,7 +66,7 @@ class BranchDestroyTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            BranchesPermissions::DELETE_BRANCHES
+            BranchesPermissions::DELETE
         ]);
 
         $this->assertDatabaseHas(Branch::TABLE, [

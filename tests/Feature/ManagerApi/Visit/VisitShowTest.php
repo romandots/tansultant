@@ -84,7 +84,7 @@ class VisitShowTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            VisitsPermissions::READ_VISITS
+            VisitsPermissions::READ
         ]);
 
         $this

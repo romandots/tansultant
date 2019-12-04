@@ -82,7 +82,7 @@ class CourseDestroyTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            CoursesPermissions::DELETE_COURSES
+            CoursesPermissions::DELETE
         ]);
 
         $this

@@ -46,10 +46,10 @@ class InstructorTest extends \Tests\TestCase
     {
         parent::setUp();
         $this->me = $this->createFakeManagerUser([], [
-            InstructorsPermissions::CREATE_INSTRUCTORS,
-            InstructorsPermissions::READ_INSTRUCTORS,
-            InstructorsPermissions::UPDATE_INSTRUCTORS,
-            InstructorsPermissions::DELETE_INSTRUCTORS
+            InstructorsPermissions::CREATE,
+            InstructorsPermissions::READ,
+            InstructorsPermissions::UPDATE,
+            InstructorsPermissions::DELETE
         ]);
     }
 

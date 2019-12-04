@@ -85,7 +85,7 @@ class ScheduleOnDateTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            SchedulesPermissions::READ_SCHEDULES
+            SchedulesPermissions::READ
         ]);
 
         $instructor = $this->createFakeInstructor();

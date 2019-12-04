@@ -16,11 +16,11 @@ namespace App\Services\Permissions;
  */
 class CustomersPermissions
 {
-    public const MANAGE_CUSTOMERS = 'manage_customers';
-    public const CREATE_CUSTOMERS = 'create_customers';
-    public const READ_CUSTOMERS = 'read_customers';
-    public const UPDATE_CUSTOMERS = 'update_customers';
-    public const DELETE_CUSTOMERS = 'delete_customers';
+    public const MANAGE = 'manage_customers';
+    public const CREATE = 'create_customers';
+    public const READ = 'read_customers';
+    public const UPDATE = 'update_customers';
+    public const DELETE = 'delete_customers';
     public const SIGN_CONTRACTS = 'sign_contracts';
     public const TERMINATE_CONTRACTS = 'terminate_contracts';
 
@@ -45,11 +45,11 @@ class CustomersPermissions
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE_CUSTOMERS => 'Управлять покупателями',
-            self::CREATE_CUSTOMERS => 'Создавать покупателей',
-            self::READ_CUSTOMERS => 'Просматривать покупателей',
-            self::UPDATE_CUSTOMERS => 'Обновлять покупателей',
-            self::DELETE_CUSTOMERS => 'Удалять покупателей',
+            self::MANAGE => 'Управлять покупателями',
+            self::CREATE => 'Создавать покупателей',
+            self::READ => 'Просматривать покупателей',
+            self::UPDATE => 'Обновлять покупателей',
+            self::DELETE => 'Удалять покупателей',
             self::SIGN_CONTRACTS => 'Подписывать договор',
             self::TERMINATE_CONTRACTS => 'Прекращать договор',
         ];

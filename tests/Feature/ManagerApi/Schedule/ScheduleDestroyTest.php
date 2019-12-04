@@ -62,7 +62,7 @@ class ScheduleDestroyTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            SchedulesPermissions::DELETE_SCHEDULES
+            SchedulesPermissions::DELETE
         ]);
 
         $this

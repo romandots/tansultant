@@ -16,11 +16,11 @@ namespace App\Services\Permissions;
  */
 class ClassroomsPermissions
 {
-    public const MANAGE_CLASSROOMS = 'manage_classrooms';
-    public const CREATE_CLASSROOMS = 'create_classrooms';
-    public const READ_CLASSROOMS = 'read_classrooms';
-    public const UPDATE_CLASSROOMS = 'update_classrooms';
-    public const DELETE_CLASSROOMS = 'delete_classrooms';
+    public const MANAGE = 'manage_classrooms';
+    public const CREATE = 'create_classrooms';
+    public const READ = 'read_classrooms';
+    public const UPDATE = 'update_classrooms';
+    public const DELETE = 'delete_classrooms';
 
     /**
      * Get names of all defined permissions
@@ -43,11 +43,11 @@ class ClassroomsPermissions
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE_CLASSROOMS => 'Управлять залами',
-            self::CREATE_CLASSROOMS => 'Создавать залы',
-            self::READ_CLASSROOMS => 'Просматривать залы',
-            self::UPDATE_CLASSROOMS => 'Обновлять залы',
-            self::DELETE_CLASSROOMS => 'Удалять залы',
+            self::MANAGE => 'Управлять залами',
+            self::CREATE => 'Создавать залы',
+            self::READ => 'Просматривать залы',
+            self::UPDATE => 'Обновлять залы',
+            self::DELETE => 'Удалять залы',
         ];
     }
 }

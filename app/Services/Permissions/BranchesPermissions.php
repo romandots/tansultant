@@ -16,11 +16,11 @@ namespace App\Services\Permissions;
  */
 class BranchesPermissions
 {
-    public const MANAGE_BRANCHES = 'manage_branches';
-    public const CREATE_BRANCHES = 'create_branches';
-    public const READ_BRANCHES = 'read_branches';
-    public const UPDATE_BRANCHES = 'update_branches';
-    public const DELETE_BRANCHES = 'delete_branches';
+    public const MANAGE = 'manage_branches';
+    public const CREATE = 'create_branches';
+    public const READ = 'read_branches';
+    public const UPDATE = 'update_branches';
+    public const DELETE = 'delete_branches';
 
     /**
      * Get names of all defined permissions
@@ -43,11 +43,11 @@ class BranchesPermissions
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE_BRANCHES => 'Управлять филиалами',
-            self::CREATE_BRANCHES => 'Создавать филиалы',
-            self::READ_BRANCHES => 'Просматривать филиалы',
-            self::UPDATE_BRANCHES => 'Обновлять филиалы',
-            self::DELETE_BRANCHES => 'Удалять филиалы',
+            self::MANAGE => 'Управлять филиалами',
+            self::CREATE => 'Создавать филиалы',
+            self::READ => 'Просматривать филиалы',
+            self::UPDATE => 'Обновлять филиалы',
+            self::DELETE => 'Удалять филиалы',
         ];
     }
 }

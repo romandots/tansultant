@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
+/* @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Models\Schedule;
 use Faker\Generator as Faker;
@@ -19,15 +19,8 @@ $factory->define(Schedule::class, static function (Faker $faker) {
         'branch_id' => \uuid(),
         'classroom_id' => \uuid(),
         'course_id' => \uuid(),
-        'starts_at' => $faker->date(),
-        'ends_at' => $faker->date(),
-        'duration' => 60,
-        'monday' => $faker->time('H:i'),
-        'tuesday' => $faker->time('H:i'),
-        'wednesday' => $faker->time('H:i'),
-        'thursday' => $faker->time('H:i'),
-        'friday' => $faker->time('H:i'),
-        'saturday' => $faker->time('H:i'),
-        'sunday' => $faker->time('H:i'),
+        'starts_at' => $faker->time(),
+        'ends_at' => $faker->time(),
+        'weekday' => 'monday',
     ];
 });

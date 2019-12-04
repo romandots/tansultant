@@ -95,7 +95,7 @@ class LessonOnDateTest extends TestCase
     public function testValidationErrors(array $params): void
     {
         $user = $this->createFakeManagerUser([], [
-            LessonsPermissions::READ_LESSONS
+            LessonsPermissions::READ
         ]);
 
         $this
@@ -107,7 +107,7 @@ class LessonOnDateTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            LessonsPermissions::READ_LESSONS
+            LessonsPermissions::READ
         ]);
 
         $instructor = $this->createFakeInstructor();

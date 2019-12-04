@@ -67,7 +67,7 @@ class ClassroomRecoverTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            ClassroomsPermissions::DELETE_CLASSROOMS
+            ClassroomsPermissions::DELETE
         ]);
 
         $this->assertDatabaseMissing(Classroom::TABLE, [

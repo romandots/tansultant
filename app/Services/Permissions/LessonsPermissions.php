@@ -16,15 +16,15 @@ namespace App\Services\Permissions;
  */
 class LessonsPermissions
 {
-    public const MANAGE_LESSONS = 'manage_lessons';
-    public const CREATE_LESSONS = 'create_lessons';
-    public const READ_LESSONS = 'read_lessons';
-    public const UPDATE_LESSONS = 'update_lessons';
-    public const DELETE_LESSONS = 'delete_lessons';
-    public const CANCEL_LESSONS = 'cancel_lessons';
-    public const CLOSE_LESSONS = 'close_lessons';
-    public const OPEN_LESSONS = 'open_lessons';
-    public const BOOK_LESSONS = 'book_lessons';
+    public const MANAGE = 'manage_lessons';
+    public const CREATE = 'create_lessons';
+    public const READ = 'read_lessons';
+    public const UPDATE = 'update_lessons';
+    public const DELETE = 'delete_lessons';
+    public const CANCEL = 'cancel_lessons';
+    public const CLOSE = 'close_lessons';
+    public const OPEN = 'open_lessons';
+    public const BOOK = 'book_lessons';
 
     /**
      * Get names of all defined permissions
@@ -45,15 +45,15 @@ class LessonsPermissions
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE_LESSONS => 'Управлять уроками',
-            self::CREATE_LESSONS => 'Создавать уроки',
-            self::READ_LESSONS => 'Просматривать уроки',
-            self::UPDATE_LESSONS => 'Обновлять уроки',
-            self::DELETE_LESSONS => 'Удалять уроки',
-            self::CANCEL_LESSONS => 'Отменять уроки',
-            self::CLOSE_LESSONS => 'Закрывать уроки',
-            self::OPEN_LESSONS => 'Отменять закрытие урока',
-            self::BOOK_LESSONS => 'Отменять отмену урока',
+            self::MANAGE => 'Управлять уроками',
+            self::CREATE => 'Создавать уроки',
+            self::READ => 'Просматривать уроки',
+            self::UPDATE => 'Обновлять уроки',
+            self::DELETE => 'Удалять уроки',
+            self::CANCEL => 'Отменять уроки',
+            self::CLOSE => 'Закрывать уроки',
+            self::OPEN => 'Отменять закрытие урока',
+            self::BOOK => 'Отменять отмену урока',
         ];
     }
 }

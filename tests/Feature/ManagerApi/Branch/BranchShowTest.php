@@ -81,7 +81,7 @@ class BranchShowTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            BranchesPermissions::READ_BRANCHES
+            BranchesPermissions::READ
         ]);
 
         $responseData = $this->branch->toArray();
