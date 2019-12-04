@@ -39,7 +39,22 @@ class UserRepository
      */
     public function find(string $id): ?User
     {
-        return User::query()->findOrFail($id);
+        return User::query()
+            ->where('id', $id)
+            ->whereNull('deleted_at')
+            ->firstOrFail();
+    }
+
+    /**
+     * @param string $id
+     * @return User|null
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function findWithDeleted(string $id): ?User
+    {
+        return User::query()
+            ->where('id', $id)
+            ->firstOrFail();
     }
 
     /**

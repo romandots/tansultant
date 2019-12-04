@@ -24,10 +24,11 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $password
  * @property string $person_id
  * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $approved_at
- * @property \Illuminate\Support\Carbon|null $seen_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $approved_at
+ * @property \Carbon\Carbon|null $seen_at
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
@@ -51,31 +52,15 @@ class User extends Authenticatable
     protected $table = self::TABLE;
 
     /**
-     * The attributes that are mass assignable.
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'username',
-        'password',
-    ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
      * The attributes that should be cast to native types.
      * @var array
      */
     protected $casts = [
+        'created_at' => 'datetime',
         'approved_at' => 'datetime',
         'seen_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**
