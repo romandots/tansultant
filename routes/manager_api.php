@@ -9,6 +9,7 @@
 declare(strict_types=1);
 
 use App\Services\Permissions\BranchesPermissions;
+use App\Services\Permissions\ClassroomsPermissions;
 use App\Services\Permissions\CoursesPermissions;
 use App\Services\Permissions\CustomersPermissions;
 use App\Services\Permissions\InstructorsPermissions;
@@ -114,64 +115,94 @@ Route::group(['prefix' => 'schedules'], static function () {
 
 Route::group(['prefix' => 'lessons'], static function () {
     Route::get('date', 'LessonController@onDate')
-        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::READ_LESSONS);
+        ->middleware('permission:' .
+            LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::READ_LESSONS);
     Route::post('/', 'LessonController@store')
-        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::CREATE_LESSONS);
+        ->middleware('permission:' .
+            LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::CREATE_LESSONS);
     Route::put('{id}', 'LessonController@update')
-        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::UPDATE_LESSONS);
+        ->middleware('permission:' .
+            LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::UPDATE_LESSONS);
     Route::delete('{id}', 'LessonController@destroy')
-        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::DELETE_LESSONS);
+        ->middleware('permission:' .
+            LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::DELETE_LESSONS);
     Route::get('{id}', 'LessonController@show')
-        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::READ_LESSONS);
+        ->middleware('permission:' .
+            LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::READ_LESSONS);
 
     Route::post('{id}/cancel', 'LessonController@cancel')
-        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::CANCEL_LESSONS);
+        ->middleware('permission:' .
+            LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::CANCEL_LESSONS);
     Route::post('{id}/book', 'LessonController@book')
-        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::BOOK_LESSONS);
+        ->middleware('permission:' .
+            LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::BOOK_LESSONS);
     Route::post('{id}/close', 'LessonController@close')
-        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::CLOSE_LESSONS);
+        ->middleware('permission:' .
+            LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::CLOSE_LESSONS);
     Route::post('{id}/open', 'LessonController@open')
-        ->middleware('permission:' . LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::OPEN_LESSONS);
+        ->middleware('permission:' .
+            LessonsPermissions::MANAGE_LESSONS . '|' . LessonsPermissions::OPEN_LESSONS);
 });
 
 Route::group(['prefix' => 'visits'], static function () {
     Route::post('/', 'VisitController@createLessonVisit')
-        ->middleware('permission:' . VisitsPermissions::MANAGE_VISITS . '|' . VisitsPermissions::CREATE_VISITS);
+        ->middleware('permission:' .
+            VisitsPermissions::MANAGE_VISITS . '|' . VisitsPermissions::CREATE_VISITS);
     Route::delete('{id}', 'VisitController@destroy')
-        ->middleware('permission:' . VisitsPermissions::MANAGE_VISITS . '|' . VisitsPermissions::DELETE_VISITS);
+        ->middleware('permission:' .
+            VisitsPermissions::MANAGE_VISITS . '|' . VisitsPermissions::DELETE_VISITS);
     Route::get('{id}', 'VisitController@show')
-        ->middleware('permission:' . VisitsPermissions::MANAGE_VISITS . '|' . VisitsPermissions::READ_VISITS);
+        ->middleware('permission:' .
+            VisitsPermissions::MANAGE_VISITS . '|' . VisitsPermissions::READ_VISITS);
 });
 
 Route::group(['prefix' => 'intents'], static function () {
     Route::post('/', 'IntentController@store')
-        ->middleware('permission:' . IntentsPermissions::MANAGE_INTENTS . '|' . IntentsPermissions::CREATE_INTENTS);
+        ->middleware('permission:' .
+            IntentsPermissions::MANAGE_INTENTS . '|' . IntentsPermissions::CREATE_INTENTS);
     Route::delete('{id}', 'IntentController@destroy')
-        ->middleware('permission:' . IntentsPermissions::MANAGE_INTENTS . '|' . IntentsPermissions::DELETE_INTENTS);
+        ->middleware('permission:' .
+            IntentsPermissions::MANAGE_INTENTS . '|' . IntentsPermissions::DELETE_INTENTS);
     Route::get('{id}', 'IntentController@show')
-        ->middleware('permission:' . IntentsPermissions::MANAGE_INTENTS . '|' . IntentsPermissions::READ_INTENTS);
+        ->middleware('permission:' .
+            IntentsPermissions::MANAGE_INTENTS . '|' . IntentsPermissions::READ_INTENTS);
 });
 
 Route::group(['prefix' => 'branches'], static function () {
-    Route::get('/', 'BranchController@index');
-    Route::get('{id}', 'BranchController@show');
+    Route::get('/', 'BranchController@index')
+        ->middleware('permission:' .
+            BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::READ_BRANCHES);
+    Route::get('{id}', 'BranchController@show')
+        ->middleware('permission:' .
+            BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::READ_BRANCHES);
     Route::post('/', 'BranchController@store')
-        ->middleware('permission:' . BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::CREATE_BRANCHES);
+        ->middleware('permission:' .
+            BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::CREATE_BRANCHES);
     Route::put('{id}', 'BranchController@update')
-        ->middleware('permission:' . BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::UPDATE_BRANCHES);
+        ->middleware('permission:' .
+            BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::UPDATE_BRANCHES);
     Route::delete('{id}', 'BranchController@destroy')
-        ->middleware('permission:' . BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::DELETE_BRANCHES);
-    Route::post('{id}/recover', 'BranchController@recover')
-        ->middleware('permission:' . BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::DELETE_BRANCHES);
+        ->middleware('permission:' .
+            BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::DELETE_BRANCHES);
+    Route::post('{id}/recover', 'BranchController@restore')
+        ->middleware('permission:' .
+            BranchesPermissions::MANAGE_BRANCHES . '|' . BranchesPermissions::DELETE_BRANCHES);
 });
-//
-//Route::group(['prefix' => 'classrooms'], static function () {
-//    Route::get('/', 'ClassroomController@index');
-//    Route::get('{id}', 'ClassroomController@show');
-//    Route::post('/', 'ClassroomController@store')
-//        ->middleware('permission:' . ClassroomsPermissions::MANAGE_CLASSROOMS . '|' . ClassroomsPermissions::CREATE_CLASSROOMS);
-//    Route::put('{id}', 'ClassroomController@update')
-//        ->middleware('permission:' . ClassroomsPermissions::MANAGE_CLASSROOMS . '|' . ClassroomsPermissions::UPDATE_CLASSROOMS);
-//    Route::delete('{id}', 'ClassroomController@destroy')
-//        ->middleware('permission:' . ClassroomsPermissions::MANAGE_CLASSROOMS . '|' . ClassroomsPermissions::DELETE_CLASSROOMS);
-//});
+
+Route::group(['prefix' => 'classrooms'], static function () {
+    Route::get('/', 'ClassroomController@index')
+        ->middleware('permission:' .
+            ClassroomsPermissions::MANAGE_CLASSROOMS . '|' . ClassroomsPermissions::READ_CLASSROOMS);
+    Route::get('{id}', 'ClassroomController@show')
+        ->middleware('permission:' .
+            ClassroomsPermissions::MANAGE_CLASSROOMS . '|' . ClassroomsPermissions::READ_CLASSROOMS);
+    Route::post('/', 'ClassroomController@store')
+        ->middleware('permission:' . ClassroomsPermissions::MANAGE_CLASSROOMS . '|' . ClassroomsPermissions::CREATE_CLASSROOMS);
+    Route::put('{id}', 'ClassroomController@update')
+        ->middleware('permission:' . ClassroomsPermissions::MANAGE_CLASSROOMS . '|' . ClassroomsPermissions::UPDATE_CLASSROOMS);
+    Route::delete('{id}', 'ClassroomController@destroy')
+        ->middleware('permission:' . ClassroomsPermissions::MANAGE_CLASSROOMS . '|' . ClassroomsPermissions::DELETE_CLASSROOMS);
+    Route::post('{id}/recover', 'ClassroomController@restore')
+        ->middleware('permission:' . ClassroomsPermissions::MANAGE_CLASSROOMS . '|' .
+            ClassroomsPermissions::DELETE_CLASSROOMS);
+});

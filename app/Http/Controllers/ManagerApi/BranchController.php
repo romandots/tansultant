@@ -98,9 +98,9 @@ class BranchController extends Controller
      * @param string $id
      * @throws \Exception
      */
-    public function recover(string $id): void
+    public function restore(string $id): void
     {
-        $branch = $this->repository->findWithDeleted($id);
-        $this->repository->recover($branch);
+        $record = $this->repository->findWithDeleted($id);
+        $this->repository->restore($record);
     }
 }

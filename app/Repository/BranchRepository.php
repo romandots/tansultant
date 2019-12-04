@@ -100,7 +100,7 @@ class BranchRepository
      * @param Branch $branch
      * @throws \Exception
      */
-    public function recover(Branch $branch): void
+    public function restore(Branch $branch): void
     {
         $branch->deleted_at = null;
         $branch->save();

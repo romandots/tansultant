@@ -12,6 +12,7 @@ namespace App\Repository;
 
 use App\Http\Requests\PublicApi\DTO\Classroom as ClassroomDto;
 use App\Models\Classroom;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -33,18 +34,14 @@ class ClassroomRepository
     }
 
     /**
-     * @param ClassroomDto $dto
+     * @param string $id
      * @return Classroom
-     * @throws \Exception
      */
-    public function create(ClassroomDto $dto): Classroom
+    public function findWithDeleted(string $id): Classroom
     {
-        $classroom = new Classroom;
-        $classroom->id = \uuid();
-        $this->fill($dto, $classroom);
-        $classroom->save();
-
-        return $classroom;
+        return Classroom::query()
+            ->where('id', $id)
+            ->firstOrFail();
     }
 
     /**
@@ -72,11 +69,28 @@ class ClassroomRepository
     }
 
     /**
+     * @param ClassroomDto $dto
+     * @return Classroom
+     * @throws \Exception
+     */
+    public function create(ClassroomDto $dto): Classroom
+    {
+        $classroom = new Classroom;
+        $classroom->id = \uuid();
+        $classroom->created_at = Carbon::now();
+        $this->fill($dto, $classroom);
+        $classroom->save();
+
+        return $classroom;
+    }
+
+    /**
      * @param Classroom $classroom
      * @param ClassroomDto $dto
      */
     public function update(Classroom $classroom, ClassroomDto $dto): void
     {
+        $classroom->updated_at = Carbon::now();
         $this->fill($dto, $classroom);
         $classroom->save();
     }
@@ -100,6 +114,16 @@ class ClassroomRepository
      */
     public function delete(Classroom $classroom): void
     {
-        $classroom->delete();
+        $classroom->deleted_at = Carbon::now();
+        $classroom->save();
+    }
+
+    /**
+     * @param Classroom $classroom
+     */
+    public function restore(Classroom $classroom): void
+    {
+        $classroom->deleted_at = null;
+        $classroom->save();
     }
 }

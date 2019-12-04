@@ -95,4 +95,14 @@ class ClassroomController extends Controller
         $record = $this->repository->find($id);
         $this->repository->delete($record);
     }
+
+    /**
+     * @param string $id
+     * @throws \Exception
+     */
+    public function restore(string $id): void
+    {
+        $record = $this->repository->findWithDeleted($id);
+        $this->repository->restore($record);
+    }
 }
