@@ -16,11 +16,11 @@ namespace App\Services\Permissions;
  */
 class CoursesPermissions
 {
-    public const MANAGE_COURSES = 'manage_courses';
-    public const CREATE_COURSES = 'create_courses';
-    public const READ_COURSES = 'read_courses';
-    public const UPDATE_COURSES = 'update_courses';
-    public const DELETE_COURSES = 'delete_courses';
+    public const MANAGE = 'manage_courses';
+    public const CREATE = 'create_courses';
+    public const READ = 'read_courses';
+    public const UPDATE = 'update_courses';
+    public const DELETE = 'delete_courses';
 
     /**
      * Get names of all defined permissions
@@ -43,11 +43,11 @@ class CoursesPermissions
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE_COURSES => 'Управлять курсами',
-            self::CREATE_COURSES => 'Создавать курсы',
-            self::READ_COURSES => 'Просматривать курсы',
-            self::UPDATE_COURSES => 'Обновлять курсы',
-            self::DELETE_COURSES => 'Удалять курсы',
+            self::MANAGE => 'Управлять курсами',
+            self::CREATE => 'Создавать курсы',
+            self::READ => 'Просматривать курсы',
+            self::UPDATE => 'Обновлять курсы',
+            self::DELETE => 'Удалять курсы',
         ];
     }
 }

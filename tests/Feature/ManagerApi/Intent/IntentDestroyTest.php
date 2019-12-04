@@ -62,7 +62,7 @@ class IntentDestroyTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            IntentsPermissions::DELETE_INTENTS
+            IntentsPermissions::DELETE
         ]);
 
         $this

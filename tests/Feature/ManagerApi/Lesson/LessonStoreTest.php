@@ -84,7 +84,7 @@ class LessonStoreTest extends TestCase
     public function testValidationErrors(array $data): void
     {
         $user = $this->createFakeManagerUser([], [
-            LessonsPermissions::CREATE_LESSONS
+            LessonsPermissions::CREATE
         ]);
 
         $this
@@ -96,7 +96,7 @@ class LessonStoreTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            LessonsPermissions::CREATE_LESSONS
+            LessonsPermissions::CREATE
         ]);
 
         $instructor = $this->createFakeInstructor();

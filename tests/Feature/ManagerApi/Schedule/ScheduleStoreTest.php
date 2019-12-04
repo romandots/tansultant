@@ -84,7 +84,7 @@ class ScheduleStoreTest extends TestCase
     public function testValidationErrors(array $data): void
     {
         $user = $this->createFakeManagerUser([], [
-            SchedulesPermissions::CREATE_SCHEDULES
+            SchedulesPermissions::CREATE
         ]);
 
         $this
@@ -96,7 +96,7 @@ class ScheduleStoreTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            SchedulesPermissions::CREATE_SCHEDULES
+            SchedulesPermissions::CREATE
         ]);
 
         $course = $this->createFakeCourse();

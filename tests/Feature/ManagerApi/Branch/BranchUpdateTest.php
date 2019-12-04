@@ -85,7 +85,7 @@ class BranchUpdateTest extends TestCase
     public function testValidationErrors(array $data): void
     {
         $user = $this->createFakeManagerUser([], [
-            BranchesPermissions::UPDATE_BRANCHES
+            BranchesPermissions::UPDATE
         ]);
 
         $this
@@ -97,7 +97,7 @@ class BranchUpdateTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            BranchesPermissions::UPDATE_BRANCHES
+            BranchesPermissions::UPDATE
         ]);
 
         $data = [

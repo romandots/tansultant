@@ -40,10 +40,10 @@ class UserTest extends \Tests\TestCase
     {
         parent::setUp();
         $this->me = $this->createFakeManagerUser([], [
-            UsersPermissions::CREATE_USERS,
-            UsersPermissions::READ_USERS,
-            UsersPermissions::UPDATE_USERS,
-            UsersPermissions::DELETE_USERS
+            UsersPermissions::CREATE,
+            UsersPermissions::READ,
+            UsersPermissions::UPDATE,
+            UsersPermissions::DELETE
         ]);
     }
 

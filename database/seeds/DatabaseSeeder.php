@@ -16,7 +16,6 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     *
      * @return void
      */
     public function run(): void
@@ -25,5 +24,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PermissionsTableSeeder::class);
         $this->call(RolesTableSeeder::class);
         $this->call(UsersTableSeeder::class);
+        $this->call(PersonalAccessClientSeeder::class);
     }
 }

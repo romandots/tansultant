@@ -16,11 +16,11 @@ namespace App\Services\Permissions;
  */
 class UsersPermissions
 {
-    public const MANAGE_USERS = 'manage_users';
-    public const CREATE_USERS = 'create_users';
-    public const READ_USERS = 'read_users';
-    public const UPDATE_USERS = 'update_users';
-    public const DELETE_USERS = 'delete_users';
+    public const MANAGE = 'manage_users';
+    public const CREATE = 'create_users';
+    public const READ = 'read_users';
+    public const UPDATE = 'update_users';
+    public const DELETE = 'delete_users';
 
     /**
      * Get names of all defined permissions
@@ -43,11 +43,11 @@ class UsersPermissions
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE_USERS => 'Управлять пользователями',
-            self::CREATE_USERS => 'Создавать пользователей',
-            self::READ_USERS => 'Просматривать пользователей',
-            self::UPDATE_USERS => 'Обновлять пользователей',
-            self::DELETE_USERS => 'Удалять пользователей',
+            self::MANAGE => 'Управлять пользователями',
+            self::CREATE => 'Создавать пользователей',
+            self::READ => 'Просматривать пользователей',
+            self::UPDATE => 'Обновлять пользователей',
+            self::DELETE => 'Удалять пользователей',
         ];
     }
 }

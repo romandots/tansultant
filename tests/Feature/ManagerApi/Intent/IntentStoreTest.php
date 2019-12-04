@@ -76,7 +76,7 @@ class IntentStoreTest extends TestCase
     public function testValidationErrors(array $data): void
     {
         $user = $this->createFakeManagerUser([], [
-            IntentsPermissions::CREATE_INTENTS
+            IntentsPermissions::CREATE
         ]);
 
         $this
@@ -88,7 +88,7 @@ class IntentStoreTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            IntentsPermissions::CREATE_INTENTS
+            IntentsPermissions::CREATE
         ]);
 
         $instructor = $this->createFakeInstructor();

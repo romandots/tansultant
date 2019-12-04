@@ -79,7 +79,7 @@ class ClassroomStoreTest extends TestCase
     public function testValidationErrors(): void
     {
         $user = $this->createFakeManagerUser([], [
-            ClassroomsPermissions::CREATE_CLASSROOMS
+            ClassroomsPermissions::CREATE
         ]);
 
         $data = [
@@ -116,7 +116,7 @@ class ClassroomStoreTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            ClassroomsPermissions::CREATE_CLASSROOMS
+            ClassroomsPermissions::CREATE
         ]);
 
         $data = [

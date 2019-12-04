@@ -95,7 +95,6 @@ class Kernel extends HttpKernel
             'role:' . \App\Services\Permissions\UserRoles::ADMIN
             . '|' . \App\Services\Permissions\UserRoles::MANAGER
             . '|' . \App\Services\Permissions\UserRoles::OPERATOR
-            . '|' . \App\Services\Permissions\UserRoles::SUPERVISOR
         ],
 
         'student_api' => [

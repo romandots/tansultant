@@ -83,7 +83,7 @@ class BranchStoreTest extends TestCase
     public function testValidationErrors(array $data): void
     {
         $user = $this->createFakeManagerUser([], [
-            BranchesPermissions::CREATE_BRANCHES
+            BranchesPermissions::CREATE
         ]);
 
         $this
@@ -95,7 +95,7 @@ class BranchStoreTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            BranchesPermissions::CREATE_BRANCHES
+            BranchesPermissions::CREATE
         ]);
 
         $data = [

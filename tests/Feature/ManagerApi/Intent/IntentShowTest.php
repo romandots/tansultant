@@ -82,7 +82,7 @@ class IntentShowTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            IntentsPermissions::READ_INTENTS
+            IntentsPermissions::READ
         ]);
 
         $this

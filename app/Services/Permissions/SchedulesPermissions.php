@@ -16,11 +16,11 @@ namespace App\Services\Permissions;
  */
 class SchedulesPermissions
 {
-    public const MANAGE_SCHEDULES = 'manage_schedules';
-    public const CREATE_SCHEDULES = 'create_schedules';
-    public const READ_SCHEDULES = 'read_schedules';
-    public const UPDATE_SCHEDULES = 'update_schedules';
-    public const DELETE_SCHEDULES = 'delete_schedules';
+    public const MANAGE = 'manage_schedules';
+    public const CREATE = 'create_schedules';
+    public const READ = 'read_schedules';
+    public const UPDATE = 'update_schedules';
+    public const DELETE = 'delete_schedules';
 
     /**
      * Get names of all defined permissions
@@ -43,11 +43,11 @@ class SchedulesPermissions
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE_SCHEDULES => 'Управлять расписаниями',
-            self::CREATE_SCHEDULES => 'Создавать расписания',
-            self::READ_SCHEDULES => 'Просматривать расписания',
-            self::UPDATE_SCHEDULES => 'Обновлять расписания',
-            self::DELETE_SCHEDULES => 'Удалять расписания',
+            self::MANAGE => 'Управлять расписаниями',
+            self::CREATE => 'Создавать расписания',
+            self::READ => 'Просматривать расписания',
+            self::UPDATE => 'Обновлять расписания',
+            self::DELETE => 'Удалять расписания',
         ];
     }
 }

@@ -16,11 +16,11 @@ namespace App\Services\Permissions;
  */
 class PersonsPermissions
 {
-    public const MANAGE_PERSONS = 'manage_persons';
-    public const CREATE_PERSONS = 'create_persons';
-    public const READ_PERSONS = 'read_persons';
-    public const UPDATE_PERSONS = 'update_persons';
-    public const DELETE_PERSONS = 'delete_persons';
+    public const MANAGE = 'manage_persons';
+    public const CREATE = 'create_persons';
+    public const READ = 'read_persons';
+    public const UPDATE = 'update_persons';
+    public const DELETE = 'delete_persons';
 
     /**
      * Get names of all defined permissions
@@ -43,11 +43,11 @@ class PersonsPermissions
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE_PERSONS => 'Управлять инструкторами',
-            self::CREATE_PERSONS => 'Создавать инструкторов',
-            self::READ_PERSONS => 'Просматривать инструкторов',
-            self::UPDATE_PERSONS => 'Обновлять инструкторов',
-            self::DELETE_PERSONS => 'Удалять инструкторов',
+            self::MANAGE => 'Управлять инструкторами',
+            self::CREATE => 'Создавать инструкторов',
+            self::READ => 'Просматривать инструкторов',
+            self::UPDATE => 'Обновлять инструкторов',
+            self::DELETE => 'Удалять инструкторов',
         ];
     }
 }

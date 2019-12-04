@@ -16,11 +16,11 @@ namespace App\Services\Permissions;
  */
 class InstructorsPermissions
 {
-    public const MANAGE_INSTRUCTORS = 'manage_instructors';
-    public const CREATE_INSTRUCTORS = 'create_instructors';
-    public const READ_INSTRUCTORS = 'read_instructors';
-    public const UPDATE_INSTRUCTORS = 'update_instructors';
-    public const DELETE_INSTRUCTORS = 'delete_instructors';
+    public const MANAGE = 'manage_instructors';
+    public const CREATE = 'create_instructors';
+    public const READ = 'read_instructors';
+    public const UPDATE = 'update_instructors';
+    public const DELETE = 'delete_instructors';
 
     /**
      * Get names of all defined permissions
@@ -43,11 +43,11 @@ class InstructorsPermissions
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE_INSTRUCTORS => 'Управлять инструкторами',
-            self::CREATE_INSTRUCTORS => 'Создавать инструкторов',
-            self::READ_INSTRUCTORS => 'Просматривать инструкторов',
-            self::UPDATE_INSTRUCTORS => 'Обновлять инструкторов',
-            self::DELETE_INSTRUCTORS => 'Удалять инструкторов',
+            self::MANAGE => 'Управлять инструкторами',
+            self::CREATE => 'Создавать инструкторов',
+            self::READ => 'Просматривать инструкторов',
+            self::UPDATE => 'Обновлять инструкторов',
+            self::DELETE => 'Удалять инструкторов',
         ];
     }
 }

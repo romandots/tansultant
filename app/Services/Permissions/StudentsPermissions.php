@@ -16,15 +16,14 @@ namespace App\Services\Permissions;
  */
 class StudentsPermissions
 {
-    public const MANAGE_STUDENTS = 'manage_students';
-    public const CREATE_STUDENTS = 'create_students';
-    public const READ_STUDENTS = 'read_students';
-    public const UPDATE_STUDENTS = 'update_students';
-    public const DELETE_STUDENTS = 'delete_students';
+    public const MANAGE = 'manage_students';
+    public const CREATE = 'create_students';
+    public const READ = 'read_students';
+    public const UPDATE = 'update_students';
+    public const DELETE = 'delete_students';
 
     /**
      * Get names of all defined permissions
-     *
      * @return string[]
      * @throws \ReflectionException
      */
@@ -37,17 +36,16 @@ class StudentsPermissions
 
     /**
      * Get all built-in permission descriptions
-     *
      * @return string[]
      */
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE_STUDENTS => 'Управлять студентами',
-            self::CREATE_STUDENTS => 'Создавать студентов',
-            self::READ_STUDENTS => 'Просматривать студентов',
-            self::UPDATE_STUDENTS => 'Обновлять студентов',
-            self::DELETE_STUDENTS => 'Удалять студентов',
+            self::MANAGE => 'Управлять студентами',
+            self::CREATE => 'Создавать студентов',
+            self::READ => 'Просматривать студентов',
+            self::UPDATE => 'Обновлять студентов',
+            self::DELETE => 'Удалять студентов',
         ];
     }
 }

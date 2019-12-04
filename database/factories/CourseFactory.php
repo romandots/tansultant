@@ -8,23 +8,23 @@
 
 declare(strict_types=1);
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
+/* @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Models\Course;
 use Faker\Generator as Faker;
 
-$factory->define(Course::class, function (Faker $faker) {
+$factory->define(Course::class, static function (Faker $faker) {
     return [
         'id' => \uuid(),
         'name' => $faker->name,
-        'status' => $faker->randomElement(Course::STATUSES),
+        'status' => Course::STATUS_ACTIVE,
         'summary' => $faker->sentence,
         'description' => $faker->text,
         'picture' => $faker->imageUrl(),
         'picture_thumb' => $faker->imageUrl(),
         'age_restrictions' => null,
         'starts_at' => \Carbon\Carbon::now(),
-        'ends_at' => null,
-        'instructor_id' => $faker->randomNumber()
+        'ends_at' => \Carbon\Carbon::now()->addYear(),
+        'instructor_id' => \uuid(),
     ];
 });

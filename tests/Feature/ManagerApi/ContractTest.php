@@ -51,9 +51,9 @@ class ContractTest extends \Tests\TestCase
     {
         parent::setUp();
         $this->me = $this->createFakeManagerUser([], [
-            CustomersPermissions::CREATE_CUSTOMERS,
-            CustomersPermissions::READ_CUSTOMERS,
-            CustomersPermissions::DELETE_CUSTOMERS,
+            CustomersPermissions::CREATE,
+            CustomersPermissions::READ,
+            CustomersPermissions::DELETE,
             CustomersPermissions::SIGN_CONTRACTS,
             CustomersPermissions::TERMINATE_CONTRACTS,
         ]);

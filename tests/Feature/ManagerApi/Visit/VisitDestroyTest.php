@@ -108,7 +108,7 @@ class VisitDestroyTest extends TestCase
     public function testSuccess(): void
     {
         $user = $this->createFakeManagerUser([], [
-            VisitsPermissions::DELETE_VISITS
+            VisitsPermissions::DELETE
         ]);
 
         $this->assertDatabaseHas(Visit::TABLE, [

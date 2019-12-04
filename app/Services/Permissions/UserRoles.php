@@ -16,133 +16,24 @@ namespace App\Services\Permissions;
  */
 class UserRoles
 {
-    public const ADMIN = 'admin';
-    public const MANAGER = 'manager';
-    public const OPERATOR = 'operator';
-    public const SUPERVISOR = 'supervisor';
-    public const STUDENT = 'student';
-    public const CUSTOMER = 'customer';
-    public const INSTRUCTOR = 'instructor';
+    public const ADMIN = AdminRole::ROLE;
+    public const MANAGER = ManagerRole::ROLE;
+    public const OPERATOR = OperatorRole::ROLE;
+    public const STUDENT = StudentRole::ROLE;
+    public const CUSTOMER = CustomerRole::ROLE;
+    public const INSTRUCTOR = InstructorRole::ROLE;
 
-    public const ADMIN_PERMISSIONS = [
-        SystemPermissions::ACCESS_PANEL,
-
-        PersonsPermissions::MANAGE_PERSONS,
-        PersonsPermissions::CREATE_PERSONS,
-        PersonsPermissions::READ_PERSONS,
-        PersonsPermissions::UPDATE_PERSONS,
-        PersonsPermissions::DELETE_PERSONS,
-
-        UsersPermissions::MANAGE_USERS,
-        UsersPermissions::CREATE_USERS,
-        UsersPermissions::READ_USERS,
-        UsersPermissions::UPDATE_USERS,
-        UsersPermissions::DELETE_USERS,
-
-        InstructorsPermissions::MANAGE_INSTRUCTORS,
-        InstructorsPermissions::CREATE_INSTRUCTORS,
-        InstructorsPermissions::READ_INSTRUCTORS,
-        InstructorsPermissions::UPDATE_INSTRUCTORS,
-        InstructorsPermissions::DELETE_INSTRUCTORS,
-
-        CustomersPermissions::MANAGE_CUSTOMERS,
-        CustomersPermissions::CREATE_CUSTOMERS,
-        CustomersPermissions::READ_CUSTOMERS,
-        CustomersPermissions::UPDATE_CUSTOMERS,
-        CustomersPermissions::DELETE_CUSTOMERS,
-        CustomersPermissions::SIGN_CONTRACTS,
-        CustomersPermissions::TERMINATE_CONTRACTS,
-
-        StudentsPermissions::MANAGE_STUDENTS,
-        StudentsPermissions::CREATE_STUDENTS,
-        StudentsPermissions::READ_STUDENTS,
-        StudentsPermissions::UPDATE_STUDENTS,
-        StudentsPermissions::DELETE_STUDENTS,
-    ];
-
-    public const MANAGER_PERMISSIONS = [
-        UsersPermissions::READ_USERS,
-
-        PersonsPermissions::MANAGE_PERSONS,
-        PersonsPermissions::CREATE_PERSONS,
-        PersonsPermissions::READ_PERSONS,
-        PersonsPermissions::UPDATE_PERSONS,
-
-        InstructorsPermissions::MANAGE_INSTRUCTORS,
-        InstructorsPermissions::CREATE_INSTRUCTORS,
-        InstructorsPermissions::READ_INSTRUCTORS,
-        InstructorsPermissions::UPDATE_INSTRUCTORS,
-
-        CustomersPermissions::MANAGE_CUSTOMERS,
-        CustomersPermissions::CREATE_CUSTOMERS,
-        CustomersPermissions::READ_CUSTOMERS,
-        CustomersPermissions::UPDATE_CUSTOMERS,
-        CustomersPermissions::SIGN_CONTRACTS,
-        CustomersPermissions::TERMINATE_CONTRACTS,
-
-        StudentsPermissions::MANAGE_STUDENTS,
-        StudentsPermissions::CREATE_STUDENTS,
-        StudentsPermissions::READ_STUDENTS,
-        StudentsPermissions::UPDATE_STUDENTS,
-    ];
-
-    public const OPERATOR_PERMISSIONS = [
-        UsersPermissions::READ_USERS,
-
-        PersonsPermissions::READ_PERSONS,
-
-        InstructorsPermissions::MANAGE_INSTRUCTORS,
-        InstructorsPermissions::CREATE_INSTRUCTORS,
-        InstructorsPermissions::READ_INSTRUCTORS,
-        InstructorsPermissions::UPDATE_INSTRUCTORS,
-
-        CustomersPermissions::MANAGE_CUSTOMERS,
-        CustomersPermissions::CREATE_CUSTOMERS,
-        CustomersPermissions::READ_CUSTOMERS,
-        CustomersPermissions::UPDATE_CUSTOMERS,
-        CustomersPermissions::SIGN_CONTRACTS,
-        CustomersPermissions::TERMINATE_CONTRACTS,
-
-        StudentsPermissions::MANAGE_STUDENTS,
-        StudentsPermissions::CREATE_STUDENTS,
-        StudentsPermissions::READ_STUDENTS,
-        StudentsPermissions::UPDATE_STUDENTS,
-    ];
-
-    public const SUPERVISOR_PERMISSIONS = [
-        UsersPermissions::READ_USERS,
-
-        PersonsPermissions::READ_PERSONS,
-
-        InstructorsPermissions::MANAGE_INSTRUCTORS,
-        InstructorsPermissions::CREATE_INSTRUCTORS,
-        InstructorsPermissions::READ_INSTRUCTORS,
-        InstructorsPermissions::UPDATE_INSTRUCTORS,
-
-        CustomersPermissions::MANAGE_CUSTOMERS,
-        CustomersPermissions::CREATE_CUSTOMERS,
-        CustomersPermissions::READ_CUSTOMERS,
-        CustomersPermissions::UPDATE_CUSTOMERS,
-        CustomersPermissions::SIGN_CONTRACTS,
-        CustomersPermissions::TERMINATE_CONTRACTS,
-
-        StudentsPermissions::MANAGE_STUDENTS,
-        StudentsPermissions::CREATE_STUDENTS,
-        StudentsPermissions::READ_STUDENTS,
-        StudentsPermissions::UPDATE_STUDENTS,
-    ];
-
-    public const STUDENT_PERMISSIONS = [];
-
-    public const CUSTOMER_PERMISSIONS = [];
-
-    public const INSTRUCTOR_PERMISSIONS = [];
+    public const ADMIN_PERMISSIONS = AdminRole::PERMISSIONS;
+    public const MANAGER_PERMISSIONS = ManagerRole::PERMISSIONS;
+    public const OPERATOR_PERMISSIONS = OperatorRole::PERMISSIONS;
+    public const STUDENT_PERMISSIONS = StudentRole::PERMISSIONS;
+    public const CUSTOMER_PERMISSIONS = CustomerRole::PERMISSIONS;
+    public const INSTRUCTOR_PERMISSIONS = InstructorRole::PERMISSIONS;
 
     public const PERMISSIONS_MAP = [
         self::ADMIN => self::ADMIN_PERMISSIONS,
         self::MANAGER => self::MANAGER_PERMISSIONS,
         self::OPERATOR => self::OPERATOR_PERMISSIONS,
-        self::SUPERVISOR => self::SUPERVISOR_PERMISSIONS,
         self::STUDENT => self::STUDENT_PERMISSIONS,
         self::CUSTOMER => self::CUSTOMER_PERMISSIONS,
         self::INSTRUCTOR => self::INSTRUCTOR_PERMISSIONS,
@@ -158,7 +49,9 @@ class UserRoles
             self::ADMIN,
             self::MANAGER,
             self::OPERATOR,
-            self::SUPERVISOR,
+            self::INSTRUCTOR,
+            self::CUSTOMER,
+            self::STUDENT,
         ];
     }
 
@@ -169,10 +62,12 @@ class UserRoles
     public static function getInitialDescriptions(): array
     {
         return [
-            self::ADMIN => 'Администратор',
-            self::MANAGER => 'Менеджер',
+            self::ADMIN => 'Администратор системы',
+            self::MANAGER => 'Управляющий',
             self::OPERATOR => 'Оператор',
-            self::SUPERVISOR => 'Супервайзер',
+            self::INSTRUCTOR => 'Преподаватель',
+            self::CUSTOMER => 'Покупатель',
+            self::STUDENT => 'Студент',
         ];
     }
 }

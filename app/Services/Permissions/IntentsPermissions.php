@@ -16,10 +16,11 @@ namespace App\Services\Permissions;
  */
 class IntentsPermissions
 {
-    public const MANAGE_INTENTS = 'manage_intents';
-    public const CREATE_INTENTS = 'create_intents';
-    public const READ_INTENTS = 'read_intents';
-    public const DELETE_INTENTS = 'delete_intents';
+    public const MANAGE = 'manage_intents';
+    public const CREATE = 'create_intents';
+    public const READ = 'read_intents';
+    public const UPDATE = 'update_intents';
+    public const DELETE = 'delete_intents';
 
     /**
      * Get names of all defined permissions
@@ -42,10 +43,10 @@ class IntentsPermissions
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE_INTENTS => 'Управлять записями на урок',
-            self::CREATE_INTENTS => 'Создавать записи на урок',
-            self::READ_INTENTS => 'Просматривать записи на урок',
-            self::DELETE_INTENTS => 'Удалять записи на урок',
+            self::MANAGE => 'Управлять записями на урок',
+            self::CREATE => 'Создавать записи на урок',
+            self::READ => 'Просматривать записи на урок',
+            self::DELETE => 'Удалять записи на урок',
         ];
     }
 }
