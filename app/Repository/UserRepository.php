@@ -12,6 +12,7 @@ namespace App\Repository;
 
 use App\Models\Person;
 use App\Models\User;
+use Carbon\Carbon;
 
 /**
  * Class UserRepository
@@ -64,15 +65,6 @@ class UserRepository
 
     /**
      * @param User $user
-     * @throws \Exception
-     */
-    public function delete(User $user): void
-    {
-        $user->delete();
-    }
-
-    /**
-     * @param User $user
      * @param \App\Http\Requests\ManagerApi\DTO\UserUpdate $dto
      */
     public function update(User $user, \App\Http\Requests\ManagerApi\DTO\UserUpdate $dto): void
@@ -102,9 +94,41 @@ class UserRepository
         $user->save();
     }
 
-    public function findByAccessToken(string $accessToken): User
+    /**
+     * @param User $user
+     */
+    public function updateSeenAt(User $user): void
     {
-dump($accessToken);
-        return User::query()->first();
+        $user->seen_at = Carbon::now();
+        $user->save();
+    }
+
+    /**
+     * @param User $user
+     */
+    public function approve(User $user): void
+    {
+        $user->approved_at = Carbon::now();
+        $user->save();
+    }
+
+    /**
+     * @param User $user
+     * @throws \Exception
+     */
+    public function delete(User $user): void
+    {
+        $user->deleted_at = Carbon::now();
+        $user->save();
+    }
+
+    /**
+     * @param User $user
+     * @throws \Exception
+     */
+    public function restore(User $user): void
+    {
+        $user->deleted_at = null;
+        $user->save();
     }
 }

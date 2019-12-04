@@ -64,6 +64,8 @@ class LoginService
     {
         $user = $this->attemptLogin($login->username, $login->password);
 
+        $this->repository->updateSeenAt($user);
+
         return $user->createToken($user->username);
     }
 
