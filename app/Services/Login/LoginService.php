@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Services\Login;
 
 use App\Exceptions\Auth\UnauthorizedException;
+use App\Http\Requests\Auth\DTO\Login;
 use App\Models\User;
 use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -38,19 +39,32 @@ class LoginService
     /**
      * @param string $username
      * @param string $password
-     * @return \App\Models\User|null
+     * @return \App\Models\User
      */
-    public function attemptLogin(string $username, string $password): ?\App\Models\User
+    private function attemptLogin(string $username, string $password): \App\Models\User
     {
         try {
             $user = $this->repository->findByUsername($username);
-            if (\Hash::check($password, $user->password)) {
-                return $user;
-            }
         } catch (ModelNotFoundException $exception) {
-            //
+            throw new Exceptions\UserNotFoundException();
         }
-        return null;
+
+        if (!\Hash::check($password, $user->password)) {
+            throw new Exceptions\WrongPasswordException();
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param Login $login
+     * @return \Laravel\Passport\PersonalAccessTokenResult
+     */
+    public function login(Login $login): \Laravel\Passport\PersonalAccessTokenResult
+    {
+        $user = $this->attemptLogin($login->username, $login->password);
+
+        return $user->createToken($user->username);
     }
 
     /**
@@ -60,10 +74,5 @@ class LoginService
     public function logout(User $user): bool
     {
         return $user->token()->revoke();
-    }
-
-    public function getUserByToken(string $accessToken): User
-    {
-        return $this->repository->findByAccessToken($accessToken);
     }
 }

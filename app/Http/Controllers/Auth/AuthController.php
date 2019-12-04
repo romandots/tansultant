@@ -48,13 +48,9 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        $user = $this->service->attemptLogin($request->username, $request->password);
+        $token = $this->service->login($request->getDto());
 
-        if (null === $user) {
-            return $this->sendFailedLoginResponse();
-        }
-
-        return $this->sendLoginResponse($user);
+        return \json_response($token);
     }
 
     /**
@@ -65,31 +61,8 @@ class AuthController extends Controller
      */
     public function logout(Request $request): \Illuminate\Http\JsonResponse
     {
-        $this->middleware('auth:api');
         $this->service->logout($request->user());
 
         return \json_response('OK', 200);
-    }
-
-    /**
-     * Send the response after the user was authenticated.
-     * @param User $user
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function sendLoginResponse(User $user): \Illuminate\Http\JsonResponse
-    {
-        $this->clearLoginAttempts(\request());
-
-        $token = $user->createToken($user->username);
-
-        return \json_response($token);
-    }
-
-    /**
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    protected function sendFailedLoginResponse(): \Symfony\Component\HttpFoundation\Response
-    {
-        abort(401, \trans('auth.failed'));
     }
 }

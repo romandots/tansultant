@@ -25,4 +25,9 @@ interface ReadableExceptionInterface
      * @return int|null
      */
     public function getStatusCode(): ?int;
+
+    /**
+     * @return int|null
+     */
+    public function getMessage();
 }

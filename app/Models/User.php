@@ -18,6 +18,16 @@ use Spatie\Permission\Traits\HasRoles;
 /**
  * Class User
  * @package App
+ * @property string $id
+ * @property string $name
+ * @property string $username
+ * @property string $password
+ * @property string $person_id
+ * @property string|null $remember_token
+ * @property \Illuminate\Support\Carbon|null $approved_at
+ * @property \Illuminate\Support\Carbon|null $seen_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
@@ -31,28 +41,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User role($roles, $guard = null)
  * @mixin \Eloquent
- * @property string $id
- * @property string $name
- * @property string $username
- * @property string $password
- * @property string $person_id
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $approved_at
- * @property \Illuminate\Support\Carbon|null $seen_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereApprovedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereSeenAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUsername($value)
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
- * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePersonId($value)
  */
 class User extends Authenticatable
 {

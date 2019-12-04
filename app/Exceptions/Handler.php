@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Exceptions;
 
 use App\Exceptions\Auth\UnauthorizedException;
+use App\Services\Login\Exceptions\UserNotFoundException;
+use App\Services\Login\Exceptions\WrongPasswordException;
 
 /**
  * Class Handler
@@ -17,6 +19,8 @@ class Handler extends BaseExceptionHandler
      */
     protected $dontReport = [
         UnauthorizedException::class,
+        UserNotFoundException::class,
+        WrongPasswordException::class,
     ];
 
     /**
@@ -27,16 +31,21 @@ class Handler extends BaseExceptionHandler
     protected function getCustomHandlers(): array
     {
         return [
-            UnauthorizedException::class => [$this, 'unauthorizedException'],
+            UnauthorizedException::class => [$this, 'renderAsJson'],
+            UserNotFoundException::class => [$this, 'renderAsJson'],
+            WrongPasswordException::class => [$this, 'renderAsJson'],
         ];
     }
 
     /**
-     * @param UnauthorizedException $exception
+     * @param ReadableExceptionInterface $exception
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function unauthorizedException(UnauthorizedException $exception): \Illuminate\Http\JsonResponse {
-        $output = ['message' => \trans('exceptions.' . $exception->getMessage())];
+    protected function renderAsJson(ReadableExceptionInterface $exception): \Illuminate\Http\JsonResponse {
+        $output = [
+            'error' => $exception->getMessage(),
+            'message' => \trans('exceptions.' . $exception->getMessage()),
+        ];
         $payload = $exception->getData();
         if (null !== $payload) {
             $output['data'] = $payload;

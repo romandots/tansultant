@@ -36,4 +36,18 @@ class LoginRequest extends FormRequest
             ],
         ];
     }
+
+    /**
+     * @return DTO\Login
+     */
+    public function getDto(): DTO\Login
+    {
+        $validated = $this->validated();
+        $dto = new DTO\Login;
+
+        $dto->username = $validated['username'];
+        $dto->password = $validated['password'];
+
+        return $dto;
+    }
 }
