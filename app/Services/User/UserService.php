@@ -36,9 +36,9 @@ class UserService
 
     /**
      * @param User $user
-     * @param \App\Http\Requests\ManagerApi\DTO\UserPassword $dto
+     * @param \App\Http\Requests\ManagerApi\DTO\UpdateUserPassword $dto
      */
-    public function updatePassword(User $user, \App\Http\Requests\ManagerApi\DTO\UserPassword $dto): void
+    public function updatePassword(User $user, \App\Http\Requests\ManagerApi\DTO\UpdateUserPassword $dto): void
     {
         if (!\Hash::check($dto->old_password, $user->password)) {
             throw new OldPasswordInvalidException();

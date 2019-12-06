@@ -63,7 +63,7 @@ class UserController extends Controller
         /** @var User $user */
         $user = DB::transaction(function () use ($request) {
             $person = $this->personRepository->create($request->getPersonDto());
-            return $this->userRepository->create($person, $request->getUserDto());
+            return $this->userRepository->createFromPerson($person, $request->getUserDto());
         });
         $user->load('person');
 
@@ -80,7 +80,7 @@ class UserController extends Controller
     {
         $dto = $request->getDto();
         $person = $this->personRepository->find($dto->person_id);
-        $user = $this->userRepository->create($person, $dto);
+        $user = $this->userRepository->createFromPerson($person, $dto);
         $user->load('person');
 
         return new UserResource($user);

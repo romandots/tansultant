@@ -1,8 +1,8 @@
 <?php
 /**
- * File: User.php
+ * File: UserPassword.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-20
+ * Date: 2019-07-21
  * Copyright (c) 2019
  */
 
@@ -11,23 +11,18 @@ declare(strict_types=1);
 namespace App\Http\Requests\ManagerApi\DTO;
 
 /**
- * Class User
+ * Class UserPassword
  * @package App\Http\Requests\ManagerApi\DTO
  */
-class User
+class UpdateUserPassword
 {
     /**
-     * @var string $person_id
+     * @var string
      */
-    public $person_id;
+    public $old_password;
 
     /**
-     * @var string $username
+     * @var string
      */
-    public $username;
-
-    /**
-     * @var string $password
-     */
-    public $password;
+    public $new_password;
 }

@@ -10,8 +10,10 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Http\Requests\ManagerApi\DTO\StoreInstructor;
 use App\Models\Instructor;
 use App\Models\Person;
+use Carbon\Carbon;
 
 /**
  * Class InstructorRepository
@@ -31,19 +33,23 @@ class InstructorRepository
 
     /**
      * @param Person $person
-     * @param \App\Http\Requests\ManagerApi\DTO\StoreInstructor $dto
+     * @param StoreInstructor $dto
      * @return Instructor
      * @throws \Exception
      */
-    public function create(Person $person, \App\Http\Requests\ManagerApi\DTO\StoreInstructor $dto): Instructor
+    public function createFromPerson(Person $person, StoreInstructor $dto): Instructor
     {
         $instructor = new Instructor;
         $instructor->id = \uuid();
+        $instructor->created_at = Carbon::now();
+        $instructor->updated_at = Carbon::now();
+
         $instructor->person_id = $person->id;
-        $instructor->name = "{$person->last_name} {$person->first_name}";
+        $instructor->name = $dto->name;
         $instructor->description = $dto->description;
         $instructor->display = $dto->display;
         $instructor->status = $dto->status ?: Instructor::STATUS_HIRED;
+
         $instructor->save();
 
         return $instructor;

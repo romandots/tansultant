@@ -56,7 +56,7 @@ class InstructorController extends Controller
         /** @var Instructor $instructor */
         $instructor = DB::transaction(function () use ($request) {
             $person = $this->personRepository->create($request->getPersonDto());
-            return $this->instructorRepository->create($person, $request->getInstructorDto());
+            return $this->instructorRepository->createFromPerson($person, $request->getInstructorDto());
         });
         $instructor->load('person');
 
@@ -73,7 +73,7 @@ class InstructorController extends Controller
     {
         $instructor = $request->getDto();
         $person = $this->personRepository->find($request->person_id);
-        $instructor = $this->instructorRepository->create($person, $instructor);
+        $instructor = $this->instructorRepository->createFromPerson($person, $instructor);
         $instructor->load('person');
 
         return new InstructorResource($instructor);

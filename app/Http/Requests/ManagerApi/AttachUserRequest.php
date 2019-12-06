@@ -45,13 +45,13 @@ class AttachUserRequest extends FormRequest
     }
 
     /**
-     * @return DTO\User
+     * @return DTO\StoreUser
      */
-    public function getDto(): DTO\User
+    public function getDto(): DTO\StoreUser
     {
         $validated = $this->validated();
 
-        $dto = new DTO\User;
+        $dto = new DTO\StoreUser;
         $dto->person_id = $validated['person_id'];
         $dto->username = $validated['username'];
         $dto->password = $validated['password'];

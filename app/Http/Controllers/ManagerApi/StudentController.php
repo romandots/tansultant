@@ -56,24 +56,8 @@ class StudentController extends Controller
         /** @var Student $student */
         $student = DB::transaction(function () use ($request) {
             $person = $this->personRepository->create($request->getPersonDto());
-            return $this->studentRepository->create($person, $request->getStudentDto()->card_number);
+            return $this->studentRepository->createFromPerson($person, $request->getStudentDto());
         });
-        $student->load('customer', 'person');
-
-        return new StudentResource($student);
-    }
-
-    /**
-     * @param AttachStudentRequest $request
-     * @return StudentResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Exception
-     */
-    public function createFromPerson(AttachStudentRequest $request): StudentResource
-    {
-        $attachStudent = $request->getDto();
-        $person = $this->personRepository->find($attachStudent->person_id);
-        $student = $this->studentRepository->create($person, $attachStudent->card_number);
         $student->load('customer', 'person');
 
         return new StudentResource($student);

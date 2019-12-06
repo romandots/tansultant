@@ -22,7 +22,7 @@ class StoreBranch
     public $name;
 
     /**
-     * @var User
+     * @var StoreUser
      */
     public $user;
 

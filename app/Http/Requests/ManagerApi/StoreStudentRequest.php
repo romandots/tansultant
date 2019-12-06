@@ -89,18 +89,18 @@ class StoreStudentRequest extends FormRequest
     }
 
     /**
-     * @return DTO\StorePerson
+     * @return \App\Http\Requests\DTO\StorePerson
      */
-    public function getPersonDto(): DTO\StorePerson
+    public function getPersonDto(): \App\Http\Requests\DTO\StorePerson
     {
         $validated = $this->validated();
-        $dto = new DTO\StorePerson;
+        $dto = new \App\Http\Requests\DTO\StorePerson;
         $dto->last_name = $validated['last_name'] ?? null;
         $dto->first_name = $validated['first_name'] ?? null;
         $dto->patronymic_name = $validated['patronymic_name'] ?? null;
         $dto->birth_date = $validated['birth_date'] ? \Carbon\Carbon::parse($validated['birth_date']) : null;
         $dto->gender = $validated['gender'] ?? null;
-        $dto->phone = $validated['phone'] ? \phone_format($validated['phone']) : null;
+        $dto->phone = $validated['phone'] ? \normalize_phone_number($validated['phone']) : null;
         $dto->email = $validated['email'] ?? null;
         $dto->instagram_username = $validated['instagram_username'] ?? null;
         $dto->telegram_username = $validated['telegram_username'] ?? null;
@@ -113,12 +113,12 @@ class StoreStudentRequest extends FormRequest
     }
 
     /**
-     * @return DTO\Student
+     * @return \App\Http\Requests\DTO\StoreStudent
      */
-    public function getStudentDto(): DTO\Student
+    public function getStudentDto(): \App\Http\Requests\DTO\StoreStudent
     {
         $validated = $this->validated();
-        $dto = new DTO\Student;
+        $dto = new \App\Http\Requests\DTO\StoreStudent;
         $dto->card_number = $validated['card_number'];
 
         return $dto;

@@ -97,12 +97,12 @@ class StoreInstructorRequest extends FormRequest
     }
 
     /**
-     * @return DTO\StorePerson
+     * @return \App\Http\Requests\DTO\StorePerson
      */
-    public function getPersonDto(): DTO\StorePerson
+    public function getPersonDto(): \App\Http\Requests\DTO\StorePerson
     {
         $validated = $this->validated();
-        $dto = new \App\Http\Requests\ManagerApi\DTO\StorePerson;
+        $dto = new \App\Http\Requests\DTO\StorePerson;
         $dto->last_name = $validated['last_name'] ?? null;
         $dto->first_name = $validated['first_name'] ?? null;
         $dto->patronymic_name = $validated['patronymic_name'] ?? null;

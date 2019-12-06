@@ -1,21 +1,24 @@
 <?php
 /**
- * File: StorePerson.php
+ * File: RegisterUser.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-19
+ * Date: 2019-12-5
  * Copyright (c) 2019
  */
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\ManagerApi\DTO;
+namespace App\Http\Requests\DTO;
 
 /**
- * Class StorePerson
+ * Class RegisterUser
  * @package App\Http\Requests\DTO
  */
-class StorePerson
+class RegisterUser
 {
+    public const TYPE_INSTRUCTOR = 'instructor';
+    public const TYPE_STUDENT = 'student';
+
     /**
      * @var string|null
      */
@@ -52,32 +55,31 @@ class StorePerson
     public $email;
 
     /**
+     * For instructors
+     *
      * @var string|null
      */
-    public $instagram_username;
+    public $description;
+
+    /**
+     * @var string
+     */
+    public $user_type;
+
+    /**
+     * @var string
+     */
+    public $password;
 
     /**
      * @var string|null
      */
-    public $telegram_username;
+    public $confirmation_code;
 
     /**
-     * @var string|null
+     * @var \Carbon\Carbon|null
      */
-    public $vk_url;
+    public $verified_at;
 
-    /**
-     * @var string|null
-     */
-    public $facebook_url;
-
-    /**
-     * @var string|null
-     */
-    public $note;
-
-    /**
-     * @var \Illuminate\Http\UploadedFile|null
-     */
-    public $picture;
+    private $sex;
 }

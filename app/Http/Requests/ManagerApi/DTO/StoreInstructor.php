@@ -19,6 +19,11 @@ class StoreInstructor
     /**
      * @var string
      */
+    public $name;
+
+    /**
+     * @var string
+     */
     public $description;
 
     /**

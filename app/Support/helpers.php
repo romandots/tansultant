@@ -133,6 +133,19 @@ if (!function_exists('convertPostgresColumnEnumToEnum')) {
     }
 }
 
+if (!function_exists('normalize_phone_number')) {
+    /**
+     * @param string|integer $phoneNumber
+     * @return string
+     */
+    function normalize_phone_number($phoneNumber): string
+    {
+        $phoneNumber = (string)$phoneNumber;
+        
+        return \preg_replace('/\D/', $phoneNumber, $phoneNumber);
+    }
+}
+
 if (!function_exists('json_response')) {
     /**
      * @param mixed|null $data

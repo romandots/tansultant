@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class Contract
  *
+ * @todo add contract full text to record
+ *
  * @package App\Models
  * @property string $id
  * @property string $serial
