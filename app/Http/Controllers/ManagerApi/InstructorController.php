@@ -20,37 +20,21 @@ use App\Repository\InstructorRepository;
 use App\Repository\PersonRepository;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Class InstructorController
- * @package App\Http\Controllers\Api
- */
 class InstructorController extends Controller
 {
-    /**
-     * @var PersonRepository
-     */
-    private $personRepository;
+    private PersonRepository $personRepository;
 
     /**
      * @var InstructorRepository
      */
-    private $instructorRepository;
+    private InstructorRepository $instructorRepository;
 
-    /**
-     * InstructorController constructor.
-     * @param InstructorRepository $instructorRepository
-     * @param PersonRepository $personRepository
-     */
     public function __construct(InstructorRepository $instructorRepository, PersonRepository $personRepository)
     {
         $this->instructorRepository = $instructorRepository;
         $this->personRepository = $personRepository;
     }
 
-    /**
-     * @param StoreInstructorRequest $request
-     * @return InstructorResource
-     */
     public function store(StoreInstructorRequest $request): InstructorResource
     {
         /** @var Instructor $instructor */

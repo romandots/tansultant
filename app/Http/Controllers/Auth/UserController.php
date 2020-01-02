@@ -16,31 +16,15 @@ use App\Http\Resources\UserResource;
 use App\Services\User\UserService;
 use Illuminate\Http\Request;
 
-/**
- * Class UserController
- * @package App\Http\Controllers\Auth
- */
 class UserController extends Controller
 {
-    /**
-     * @var UserService
-     */
-    private $userService;
+    private UserService $userService;
 
-    /**
-     * UserController constructor.
-     * @param UserService $userService
-     */
-    public function __construct(
-        UserService $userService
-    ) {
+    public function __construct(UserService $userService)
+    {
         $this->userService = $userService;
     }
 
-    /**
-     * @param Request $request
-     * @return UserResource
-     */
     public function me(Request $request): UserResource
     {
         $user = $request->user();
@@ -49,9 +33,6 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    /**
-     * @param UpdateUserPasswordRequest $request
-     */
     public function updatePassword(UpdateUserPasswordRequest $request): void
     {
         $user = $request->user();

@@ -17,33 +17,23 @@ use App\Services\Login\LoginService;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 
-/**
- * Class LoginController
- * @package App\Http\Controllers\ManagerApi
- */
 class AuthController extends Controller
 {
     use AuthenticatesUsers;
 
-    /**
-     * @var LoginService
-     */
-    private $service;
+    private LoginService $service;
 
-    /**
-     * AuthController constructor.
-     * @param LoginService $service
-     */
     public function __construct(LoginService $service)
     {
         $this->service = $service;
     }
 
     /**
+     * Log the user in to the application.
      * @param LoginRequest $request
-     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response|
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): \Illuminate\Http\JsonResponse
     {
         $token = $this->service->login($request->getDto());
 

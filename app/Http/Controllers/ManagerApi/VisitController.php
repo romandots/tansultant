@@ -21,21 +21,9 @@ use App\Services\Visit\VisitService;
  */
 class VisitController extends Controller
 {
-    /**
-     * @var VisitRepository
-     */
-    private $repository;
+    private VisitRepository $repository;
+    private VisitService $service;
 
-    /**
-     * @var VisitService
-     */
-    private $service;
-
-    /**
-     * VisitController constructor.
-     * @param VisitRepository $repository
-     * @param VisitService $service
-     */
     public function __construct(VisitRepository $repository, VisitService $service)
     {
         $this->repository = $repository;

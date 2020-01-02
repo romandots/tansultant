@@ -15,21 +15,10 @@ use App\Http\Requests\ManagerApi\StoreLessonIntentRequest;
 use App\Http\Resources\IntentResource;
 use App\Repository\IntentRepository;
 
-/**
- * Class IntentController
- * @package App\Http\Controllers
- */
 class IntentController extends Controller
 {
-    /**
-     * @var IntentRepository
-     */
-    private $repository;
+    private IntentRepository $repository;
 
-    /**
-     * IntentController constructor.
-     * @param IntentRepository $repository
-     */
     public function __construct(IntentRepository $repository)
     {
         $this->repository = $repository;

@@ -20,33 +20,13 @@ use App\Repository\CustomerRepository;
 use App\Repository\PersonRepository;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Class CustomerController
- * @package App\Http\Controllers\Api
- */
+
 class CustomerController extends Controller
 {
-    /**
-     * @var PersonRepository
-     */
-    private $personRepository;
+    private PersonRepository $personRepository;
+    private CustomerRepository $customerRepository;
+    private ContractRepository $contractRepository;
 
-    /**
-     * @var CustomerRepository
-     */
-    private $customerRepository;
-
-    /**
-     * @var ContractRepository
-     */
-    private $contractRepository;
-
-    /**
-     * CustomerController constructor.
-     * @param CustomerRepository $customerRepository
-     * @param PersonRepository $personRepository
-     * @param ContractRepository $contractRepository
-     */
     public function __construct(
         CustomerRepository $customerRepository,
         PersonRepository $personRepository,

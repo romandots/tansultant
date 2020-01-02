@@ -17,29 +17,15 @@ use App\Http\Resources\ManagerApi\ClassroomResource;
 use App\Repository\ClassroomRepository;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-/**
- * Class ClassroomController
- * @package App\Http\Controllers\Api
- */
 class ClassroomController extends Controller
 {
-    /**
-     * @var ClassroomRepository
-     */
-    private $repository;
+    private ClassroomRepository $repository;
 
-    /**
-     * ClassroomController constructor.
-     * @param ClassroomRepository $repository
-     */
     public function __construct(ClassroomRepository $repository)
     {
         $this->repository = $repository;
     }
 
-    /**
-     * @return AnonymousResourceCollection
-     */
     public function index(): AnonymousResourceCollection
     {
         $records = $this->repository->getAll();

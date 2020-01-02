@@ -13,38 +13,22 @@ namespace App\Http\Controllers\ManagerApi;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ManagerApi\AttachUserRequest;
 use App\Http\Requests\ManagerApi\StoreUserRequest;
-use App\Http\Requests\ManagerApi\UpdateUserPasswordRequest;
 use App\Http\Requests\ManagerApi\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repository\PersonRepository;
 use App\Repository\UserRepository;
 use App\Services\User\UserService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Class UserController
- * @package App\Http\Controllers\Api
- */
 class UserController extends Controller
 {
-    /**
-     * @var PersonRepository
-     */
-    private $personRepository;
+    private PersonRepository $personRepository;
 
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
+    private UserRepository $userRepository;
 
-    /**
-     * UserController constructor.
-     * @param UserRepository $userRepository
-     * @param PersonRepository $personRepository
-     * @param UserService $userService
-     */
+    private UserService $userService;
+
     public function __construct(
         UserRepository $userRepository,
         PersonRepository $personRepository,
@@ -52,6 +36,7 @@ class UserController extends Controller
     ) {
         $this->userRepository = $userRepository;
         $this->personRepository = $personRepository;
+        $this->userService = $userService;
     }
 
     /**

@@ -16,27 +16,12 @@ use App\Http\Resources\UserResource;
 use App\Repository\UserRepository;
 use App\Services\UserRegister\UserRegisterService;
 
-/**
- * Class RegistrationController
- * @package App\Http\Controllers\StudentApi
- */
 class RegistrationController extends Controller
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
+    private UserRepository $userRepository;
 
-    /**
-     * @var UserRegisterService
-     */
-    private $registrationService;
+    private UserRegisterService $registrationService;
 
-    /**
-     * RegistrationController constructor.
-     * @param UserRepository $userRepository
-     * @param UserRegisterService $userRegistrationService
-     */
     public function __construct(UserRepository $userRepository, UserRegisterService $userRegistrationService)
     {
         $this->userRepository = $userRepository;

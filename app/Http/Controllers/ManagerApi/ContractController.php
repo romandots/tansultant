@@ -17,33 +17,12 @@ use App\Repository\CustomerRepository;
 use App\Services\Contract\ContractService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * Class ContractController
- * @package App\Http\Controllers\Api
- */
 class ContractController extends Controller
 {
-    /**
-     * @var ContractRepository
-     */
-    private $contractRepository;
+    private ContractRepository $contractRepository;
+    private ContractService $contractService;
+    private CustomerRepository $customerRepository;
 
-    /**
-     * @var ContractService
-     */
-    private $contractService;
-
-    /**
-     * @var CustomerRepository
-     */
-    private $customerRepository;
-
-    /**
-     * ContractController constructor.
-     * @param ContractService $contractService
-     * @param ContractRepository $contractRepository
-     * @param CustomerRepository $customerRepository
-     */
     public function __construct(
         ContractService $contractService,
         ContractRepository $contractRepository,

@@ -19,37 +19,17 @@ use App\Repository\LessonRepository;
 use App\Services\Lesson\LessonService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-/**
- * Class LessonController
- * @package App\Http\Controllers\Api
- */
 class LessonController
 {
-    /**
-     * @var LessonRepository
-     */
-    protected $repository;
+    protected LessonRepository $repository;
+    protected LessonService $service;
 
-    /**
-     * @var LessonService
-     */
-    protected $service;
-
-    /**
-     * LessonController constructor.
-     * @param LessonRepository $repository
-     * @param LessonService $service
-     */
     public function __construct(LessonRepository $repository, LessonService $service)
     {
         $this->repository = $repository;
         $this->service = $service;
     }
 
-    /**
-     * @param string $id
-     * @return LessonResource
-     */
     public function show(string $id): LessonResource
     {
         $lesson = $this->repository->find($id);
@@ -61,6 +41,7 @@ class LessonController
     /**
      * @param StoreLessonRequest $request
      * @return LessonResource
+     * @throws \Exception
      */
     public function store(StoreLessonRequest $request): LessonResource
     {
@@ -70,11 +51,6 @@ class LessonController
         return new LessonResource($lesson);
     }
 
-    /**
-     * @param UpdateLessonRequest $request
-     * @param string $id
-     * @return LessonResource
-     */
     public function update(UpdateLessonRequest $request, string $id): LessonResource
     {
         $lesson = $this->repository->find($id);
@@ -84,11 +60,6 @@ class LessonController
         return new LessonResource($lesson);
     }
 
-    /**
-     * @param ChangeLessonInstructorRequest $request
-     * @param string $id
-     * @return LessonResource
-     */
     public function changeInstructor(ChangeLessonInstructorRequest $request, string $id): LessonResource
     {
         $lesson = $this->repository->find($id);
@@ -108,10 +79,6 @@ class LessonController
         $this->repository->delete($lesson);
     }
 
-    /**
-     * @param LessonsOnDateRequest $request
-     * @return AnonymousResourceCollection
-     */
     public function onDate(LessonsOnDateRequest $request): AnonymousResourceCollection
     {
         $lessons = $this->repository->getLessonsForDate($request->getDto());

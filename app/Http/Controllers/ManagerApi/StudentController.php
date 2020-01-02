@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ManagerApi\AttachStudentRequest;
 use App\Http\Requests\ManagerApi\StoreStudentRequest;
 use App\Http\Requests\ManagerApi\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
@@ -20,37 +19,17 @@ use App\Repository\PersonRepository;
 use App\Repository\StudentRepository;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Class StudentController
- * @package App\Http\Controllers\Api
- */
 class StudentController extends Controller
 {
-    /**
-     * @var PersonRepository
-     */
-    private $personRepository;
+    private PersonRepository $personRepository;
+    private StudentRepository $studentRepository;
 
-    /**
-     * @var StudentRepository
-     */
-    private $studentRepository;
-
-    /**
-     * StudentController constructor.
-     * @param StudentRepository $studentRepository
-     * @param PersonRepository $personRepository
-     */
     public function __construct(StudentRepository $studentRepository, PersonRepository $personRepository)
     {
         $this->studentRepository = $studentRepository;
         $this->personRepository = $personRepository;
     }
 
-    /**
-     * @param StoreStudentRequest $request
-     * @return StudentResource
-     */
     public function store(StoreStudentRequest $request): StudentResource
     {
         /** @var Student $student */
