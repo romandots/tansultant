@@ -70,11 +70,11 @@ class Instructor extends Model
         self::STATUS_FIRED
     ];
 
-    protected $table = self::TABLE;
+    protected string $table = self::TABLE;
 
-    protected $guarded = [];
+    protected array $guarded = [];
 
-    protected $casts = [
+    protected array $casts = [
         'seen_at' => 'datetime'
     ];
 

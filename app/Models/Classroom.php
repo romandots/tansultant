@@ -37,7 +37,7 @@ class Classroom extends Model
 
     public const TABLE = 'classrooms';
 
-    protected $table = self::TABLE;
+    protected string $table = self::TABLE;
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Branch

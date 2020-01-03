@@ -50,15 +50,17 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class Customer extends Model
 {
-    use HasRoles, SoftDeletes, UsesUuid;
+    use HasRoles;
+    use SoftDeletes;
+    use UsesUuid;
 
     public const TABLE = 'customers';
 
-    protected $table = self::TABLE;
+    protected string $table = self::TABLE;
 
-    protected $guarded = [];
+    protected array $guarded = [];
 
-    protected $casts = [
+    protected array $casts = [
         'seen_at' => 'date'
     ];
 

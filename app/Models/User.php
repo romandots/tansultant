@@ -49,13 +49,13 @@ class User extends Authenticatable
 
     public const TABLE = 'users';
 
-    protected $table = self::TABLE;
+    protected string $table = self::TABLE;
 
     /**
      * The attributes that should be cast to native types.
      * @var array
      */
-    protected $casts = [
+    protected array $casts = [
         'created_at' => 'datetime',
         'approved_at' => 'datetime',
         'seen_at' => 'datetime',

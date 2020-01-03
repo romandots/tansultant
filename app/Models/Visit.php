@@ -60,7 +60,7 @@ class Visit extends Model
         '\App\Models\Event'
     ];
 
-    protected $table = self::TABLE;
+    protected string $table = self::TABLE;
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Student|null

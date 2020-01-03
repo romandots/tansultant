@@ -49,7 +49,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Account extends Model
 {
-    use SoftDeletes, UsesUuid;
+    use SoftDeletes;
+    use UsesUuid;
 
     public const TABLE = 'accounts';
 
@@ -68,7 +69,7 @@ class Account extends Model
         Branch::class
     ];
 
-    protected $table = self::TABLE;
+    protected string $table = self::TABLE;
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo|Instructor|Student|Branch

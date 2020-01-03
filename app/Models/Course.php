@@ -72,9 +72,9 @@ class Course extends Model
         self::STATUS_DISABLED
     ];
 
-    protected $table = self::TABLE;
+    protected string $table = self::TABLE;
 
-    protected $casts = [
+    protected array $casts = [
         'starts_at' => 'date',
         'ends_at' => 'date',
     ];

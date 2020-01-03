@@ -67,9 +67,9 @@ class Branch extends Model
         'coordinates'
     ];
 
-    protected $casts = [
+    protected array $casts = [
         'address' => 'array'
     ];
 
-    protected $table = self::TABLE;
+    protected string $table = self::TABLE;
 }

@@ -72,7 +72,7 @@ class Schedule extends Model
         self::SUNDAY,
     ];
 
-    protected $table = self::TABLE;
+    protected string $table = self::TABLE;
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Course|null

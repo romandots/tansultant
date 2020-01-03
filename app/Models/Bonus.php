@@ -59,7 +59,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Bonus extends Model
 {
-    use SoftDeletes, UsesUuid;
+    use SoftDeletes;
+    use UsesUuid;
 
     public const TABLE = 'bonuses';
 
@@ -81,9 +82,9 @@ class Bonus extends Model
         self::STATUS_CANCELED,
     ];
 
-    protected $table = self::TABLE;
+    protected string $table = self::TABLE;
 
-    protected $casts = [
+    protected array $casts = [
         'expired_at' => 'datetime',
         'activated_at' => 'datetime',
         'canceled_at' => 'datetime',

@@ -78,11 +78,11 @@ class Person extends Model
         self::GENDER_FEMALE
     ];
 
-    protected $table = self::TABLE;
+    protected string $table = self::TABLE;
 
-    protected $guarded = [];
+    protected array $guarded = [];
 
-    protected $casts = [
+    protected array $casts = [
         'birth_date' => 'date',
     ];
 
