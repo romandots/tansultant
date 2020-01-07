@@ -19,7 +19,8 @@
         "laravel/passport": "^7.3",
         "laravel/tinker": "^1.0",
         "nutnet/laravel-sms": "~0.4",
-        "spatie/laravel-permission": "^2.37"
+        "spatie/laravel-permission": "^2.37",
+        "zelenin/smsru": "^4.1"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

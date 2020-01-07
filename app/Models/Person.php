@@ -9,8 +9,9 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Traits\Notifiable;
+use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 
 /**
  * Class Person
@@ -87,14 +88,6 @@ class Person extends Model
     protected $casts = [
         'birth_date' => 'date',
     ];
-
-    /**
-     * Phone number for SMS notifications
-     * @return string
-     */
-    public function routeNotificationForSms(): string {
-        return $this->phone;
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne|Student|null

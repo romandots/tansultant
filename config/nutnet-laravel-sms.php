@@ -15,13 +15,16 @@ return [
      * * \Nutnet\LaravelSms\Providers\IqSmsRu (alias: iqsmsru)
      * @see Nutnet\LaravelSms\Providers
      */
-    'provider' => env('NUTNET_SMS_PROVIDER', 'log'),
+    'provider' => env('SMS_PROVIDER', 'log'),
 
     /**
      * настройки, специфичные для провайдера
      */
     'provider_options' => [
-        'login' => env('NUTNET_SMS_LOGIN'),
-        'password' => env('NUTNET_SMS_PASSWORD'),
+        'auth_type' => 'standard',
+        'login' => \env('SMS_LOGIN'),
+        'password' => \env('SMS_PASSWORD'),
+        'api_id' => \env('SMS_API_ID'),
+        'partner_id' => \env('SMS_PARTNER_ID'),
     ],
 ];

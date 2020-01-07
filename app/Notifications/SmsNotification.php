@@ -36,7 +36,7 @@ class SmsNotification extends Notification
         return [NutnetSmsChannel::class];
     }
 
-    public function toSms($notifiable): NutnetSmsMessage
+    public function toNutnetSms($notifiable): NutnetSmsMessage
     {
         return new NutnetSmsMessage($this->message);
     }
