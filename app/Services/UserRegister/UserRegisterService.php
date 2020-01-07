@@ -10,6 +10,9 @@ declare(strict_types=1);
 
 namespace App\Services\UserRegister;
 
+use App\Events\InstructorCreatedEvent;
+use App\Events\StudentCreatedEvent;
+use App\Events\UserCreatedEvent;
 use App\Events\UserRegisteredEvent;
 use App\Http\Requests\DTO\RegisterUser;
 use App\Http\Requests\DTO\StorePerson;
@@ -27,7 +30,7 @@ use App\Repository\UserRepository;
 use App\Services\Verify\Exceptions\VerificationCodeAlreadySentRecently;
 use App\Services\Verify\Exceptions\VerificationCodeIsInvalid;
 use App\Services\Verify\Exceptions\VerificationCodeWasSentTooManyTimes;
-use App\Services\Verify\VerifyService;
+use App\Services\Verify\VerificationService;
 
 class UserRegisterService
 {
@@ -57,7 +60,7 @@ class UserRegisterService
     private $personRepository;
 
     /**
-     * @var VerifyService
+     * @var VerificationService
      */
     private $verifyService;
 
@@ -68,7 +71,7 @@ class UserRegisterService
      * @param StudentRepository $studentRepository
      * @param InstructorRepository $instructorRepository
      * @param PersonRepository $personRepository
-     * @param VerifyService $verifyService
+     * @param VerificationService $verifyService
      */
     public function __construct(
         UserRepository $userRepository,
@@ -76,7 +79,7 @@ class UserRegisterService
         StudentRepository $studentRepository,
         InstructorRepository $instructorRepository,
         PersonRepository $personRepository,
-        VerifyService $verifyService
+        VerificationService $verifyService
     ) {
         $this->userRepository = $userRepository;
         $this->customerRepository = $customerRepository;
@@ -136,7 +139,7 @@ class UserRegisterService
             $this->checkPeopleWithSameBio($registerUser);
         }
 
-        $storePerson = new StorePerson;
+        $storePerson = new StorePerson();
         $storePerson->last_name = $registerUser->last_name;
         $storePerson->first_name = $registerUser->first_name;
         $storePerson->patronymic_name = $registerUser->patronymic_name;
@@ -165,7 +168,10 @@ class UserRegisterService
             return;
         }
 
-        $this->studentRepository->createFromPerson($person, new StoreStudent);
+        $newStudent = $this->studentRepository->createFromPerson($person, new StoreStudent());
+
+        // Fire event
+        \event(new StudentCreatedEvent($newStudent));
 
         $person->load('student');
     }
@@ -173,7 +179,7 @@ class UserRegisterService
     /**
      * @param Person $person
      * @param RegisterUser $registerUser
-     * @return Instructor
+     * @return void
      * @throws \Exception
      */
     private function createInstructorIfNotExist(Person $person, RegisterUser $registerUser): void
@@ -188,7 +194,10 @@ class UserRegisterService
         $storeInstructor->display = false;
         $storeInstructor->status = Instructor::STATUS_FREELANCE;
 
-        $this->instructorRepository->createFromPerson($person, $storeInstructor);
+        $newInstructor = $this->instructorRepository->createFromPerson($person, $storeInstructor);
+
+        // Fire event
+        \event(new InstructorCreatedEvent($newInstructor));
 
         $person->load('instructor');
     }
@@ -201,12 +210,17 @@ class UserRegisterService
      */
     private function createUser(Person $person, RegisterUser $registerUser): User
     {
-        $storeUser = new StoreUser;
+        $storeUser = new StoreUser();
         $storeUser->person_id = $person;
         $storeUser->username = $registerUser->phone;
         $storeUser->password = $registerUser->password;
 
-        return $this->userRepository->createFromPerson($person, $storeUser);
+        $newUser = $this->userRepository->createFromPerson($person, $storeUser);
+
+        // Fire event
+        \event(new UserCreatedEvent($newUser));
+
+        return $newUser;
     }
 
     /**
@@ -223,7 +237,7 @@ class UserRegisterService
      */
     public function verifyUserPhoneNumber(RegisterUser $registerUser): bool
     {
-        return $this->verifyService->verifyPhoneNumber($registerUser->phone, $registerUser->confirmation_code);
+        return $this->verifyService->verifyPhoneNumber($registerUser->phone, $registerUser->verification_code);
     }
 
     /**
@@ -255,12 +269,11 @@ class UserRegisterService
         }
 
         // Create User
-        $user = $this->createUser($person, $registerUser);
-        $user->load('person.instructor', 'person.student', 'person.customer');
+        $newUser = $this->createUser($person, $registerUser);
+        $newUser->load('person.instructor', 'person.student', 'person.customer');
 
-        // Fire event
-        \event(new UserRegisteredEvent($user));
+        \event(new UserRegisteredEvent($newUser));
 
-        return $user;
+        return $newUser;
     }
 }

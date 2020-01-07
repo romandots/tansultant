@@ -52,6 +52,12 @@ class User extends Authenticatable
     use UsesUuid;
 
     public const TABLE = 'users';
+    public const TYPES = [
+        self::class,
+        \App\Models\Instructor::class,
+        \App\Models\Student::class,
+        \App\Models\Customer::class,
+    ];
 
     protected $table = self::TABLE;
 

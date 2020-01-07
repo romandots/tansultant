@@ -1,4 +1,20 @@
 # API
+#### Auth Api
+Регистрация, аутентификация и авторизация для всех пользователей системы
+```
+POST /register
+
+POST /register/verify
+
+POST /login
+
+POST /logout
+
+GET /user
+
+PATCH /user/password
+```
+
 #### Admin Api
 Непубличный АПИ для интерфейса администраторов (менеджеров, руководителей)
 ```

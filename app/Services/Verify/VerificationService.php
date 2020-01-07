@@ -16,17 +16,11 @@ use App\Repository\VerificationCodeRepository;
  * Class VerifyService
  * @package App\Services\Verify
  */
-class VerifyService
+class VerificationService
 {
-    /**
-     * @var VerificationCodeRepository
-     */
-    private $codeRepository;
+    private VerificationCodeRepository $codeRepository;
 
-    /**
-     * @var array
-     */
-    private $config;
+    private array $config;
 
     /**
      * VerifyService constructor.
@@ -67,7 +61,7 @@ class VerifyService
      * @param string|null $code
      * @throws Exceptions\VerificationCodeIsInvalid
      */
-    private function checkVerificationCode(string $phoneNumber, ?string $code): void
+    public function checkVerificationCode(string $phoneNumber, ?string $code): void
     {
         try {
             $verificationCode = $this->codeRepository->findByPhoneNumberAndVerificationCode($phoneNumber, $code);

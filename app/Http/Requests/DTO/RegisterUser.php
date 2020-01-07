@@ -19,67 +19,30 @@ class RegisterUser
     public const TYPE_INSTRUCTOR = 'instructor';
     public const TYPE_STUDENT = 'student';
 
-    /**
-     * @var string|null
-     */
-    public $last_name;
+    public ?string $last_name;
 
-    /**
-     * @var string|null
-     */
-    public $first_name;
+    public ?string $first_name;
 
-    /**
-     * @var string|null
-     */
-    public $patronymic_name;
+    public ?string $patronymic_name;
 
-    /**
-     * @var \Carbon\Carbon
-     */
-    public $birth_date;
+    public ?\Carbon\Carbon $birth_date;
 
-    /**
-     * @var string|null
-     */
-    public $gender;
+    public ?string $gender;
 
-    /**
-     * @var string|null
-     */
-    public $phone;
+    public string $phone;
 
-    /**
-     * @var string|null
-     */
-    public $email;
+    public ?string $email;
 
     /**
      * For instructors
      *
      * @var string|null
      */
-    public $description;
+    public ?string $description;
 
-    /**
-     * @var string
-     */
-    public $user_type;
+    public string $user_type;
 
-    /**
-     * @var string
-     */
-    public $password;
+    public ?string $password;
 
-    /**
-     * @var string|null
-     */
-    public $confirmation_code;
-
-    /**
-     * @var \Carbon\Carbon|null
-     */
-    public $verified_at;
-
-    private $sex;
+    public ?string $verification_code;
 }

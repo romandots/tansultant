@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'api'], static function () {
     Route::post('register', 'RegistrationController@registerUser');
+    Route::post('register/verify', 'RegistrationController@checkVerificationCode');
     Route::post('login', 'AuthController@login');
 });
 
