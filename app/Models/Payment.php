@@ -107,9 +107,9 @@ class Payment extends Model
         Lesson::class
     ];
 
-    protected string $table = self::TABLE;
+    protected $table = self::TABLE;
 
-    protected array $casts = [
+    protected $casts = [
         'expired_at' => 'datetime',
         'confirmed_at' => 'datetime',
         'canceled_at' => 'datetime',

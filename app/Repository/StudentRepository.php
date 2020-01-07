@@ -39,7 +39,7 @@ class StudentRepository
      */
     public function createFromPerson(Person $person, StoreStudent $storeStudent): Student
     {
-        $student = new Student;
+        $student = new Student();
 
         $student->id = \uuid();
         $student->created_at = Carbon::now();

@@ -71,11 +71,11 @@ class Student extends Model
         self::STATUS_FORMER
     ];
 
-    protected string $table = self::TABLE;
+    protected $table = self::TABLE;
 
-    protected array $guarded = [];
+    protected $guarded = [];
 
-    protected array $casts = [
+    protected $casts = [
         'seen_at' => 'datetime'
     ];
 

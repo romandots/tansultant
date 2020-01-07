@@ -6,6 +6,11 @@
  * Copyright (c) 2019
  */
 
+/**
+ * Публичный АПИ с открытой информацией
+ * для сайтов, виджетов и приложений
+ */
+
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;

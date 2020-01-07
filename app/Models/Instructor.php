@@ -57,7 +57,9 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class Instructor extends Model
 {
-    use HasRoles, SoftDeletes, UsesUuid;
+    use HasRoles;
+    use SoftDeletes;
+    use UsesUuid;
 
     public const TABLE = 'instructors';
 
@@ -70,11 +72,11 @@ class Instructor extends Model
         self::STATUS_FIRED
     ];
 
-    protected string $table = self::TABLE;
+    protected $table = self::TABLE;
 
-    protected array $guarded = [];
+    protected $guarded = [];
 
-    protected array $casts = [
+    protected $casts = [
         'seen_at' => 'datetime'
     ];
 

@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ManagerApi\StoreStudentFromPersonRequest;
 use App\Http\Requests\ManagerApi\StoreStudentRequest;
 use App\Http\Requests\ManagerApi\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 class StudentController extends Controller
 {
     private PersonRepository $personRepository;
+
     private StudentRepository $studentRepository;
 
     public function __construct(StudentRepository $studentRepository, PersonRepository $personRepository)
@@ -35,6 +37,18 @@ class StudentController extends Controller
         /** @var Student $student */
         $student = DB::transaction(function () use ($request) {
             $person = $this->personRepository->create($request->getPersonDto());
+            return $this->studentRepository->createFromPerson($person, $request->getStudentDto());
+        });
+        $student->load('customer', 'person');
+
+        return new StudentResource($student);
+    }
+
+    public function storeFromPerson(StoreStudentFromPersonRequest $request): StudentResource
+    {
+        /** @var Student $student */
+        $student = DB::transaction(function () use ($request) {
+            $person = $this->personRepository->find($request->getPersonDto()->person_id);
             return $this->studentRepository->createFromPerson($person, $request->getStudentDto());
         });
         $student->load('customer', 'person');

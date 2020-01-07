@@ -1,9 +1,13 @@
 <?php
 /**
- * File: manager_api.php
+ * File: admin_api.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
  * Date: 2019-07-18
  * Copyright (c) 2019
+ */
+
+/**
+ * АПИ для админ-панели и админского приложения
  */
 
 declare(strict_types=1);
@@ -22,6 +26,7 @@ use App\Services\Permissions\UsersPermissions;
 use App\Services\Permissions\VisitsPermissions;
 use Illuminate\Support\Facades\Route;
 
+// USERS
 Route::group(['prefix' => 'users'], static function () {
     Route::post('from_person', 'UserController@createFromPerson')
         ->middleware('permission:' . UsersPermissions::MANAGE . '|' . UsersPermissions::CREATE);
@@ -35,6 +40,7 @@ Route::group(['prefix' => 'users'], static function () {
         ->middleware('permission:' . UsersPermissions::MANAGE . '|' . UsersPermissions::DELETE);
 });
 
+// PEOPLE
 Route::group(['prefix' => 'people'], static function () {
     Route::post('/', 'PersonController@store')
         ->middleware('permission:' . PersonsPermissions::MANAGE . '|' . PersonsPermissions::CREATE);
@@ -46,8 +52,9 @@ Route::group(['prefix' => 'people'], static function () {
         ->middleware('permission:' . PersonsPermissions::MANAGE . '|' . PersonsPermissions::DELETE);
 });
 
+// STUDENTS
 Route::group(['prefix' => 'students'], static function () {
-    Route::post('from_person', 'StudentController@createFromPerson')
+    Route::post('from_person', 'StudentController@storeFromPerson')
         ->middleware('permission:' . StudentsPermissions::MANAGE . '|' . StudentsPermissions::CREATE);
     Route::post('/', 'StudentController@store')
         ->middleware('permission:' . StudentsPermissions::MANAGE . '|' . StudentsPermissions::CREATE);
@@ -59,6 +66,7 @@ Route::group(['prefix' => 'students'], static function () {
         ->middleware('permission:' . StudentsPermissions::MANAGE . '|' . StudentsPermissions::DELETE);
 });
 
+// INSTRUCTORS
 Route::group(['prefix' => 'instructors'], static function () {
     Route::post('from_person', 'InstructorController@createFromPerson')
         ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::CREATE);
@@ -72,6 +80,7 @@ Route::group(['prefix' => 'instructors'], static function () {
         ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::DELETE);
 });
 
+// CUSTOMERS
 Route::group(['prefix' => 'customers'], static function () {
     Route::post('from_person', 'CustomerController@createFromPerson')
         ->middleware('permission:' . CustomersPermissions::MANAGE . '|' . CustomersPermissions::CREATE);
@@ -89,6 +98,7 @@ Route::group(['prefix' => 'customers'], static function () {
         ->middleware('permission:' . CustomersPermissions::TERMINATE_CONTRACTS);
 });
 
+// COURSES
 Route::group(['prefix' => 'courses'], static function () {
     Route::get('/', 'CourseController@index')
         ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::READ);
@@ -102,6 +112,7 @@ Route::group(['prefix' => 'courses'], static function () {
         ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::READ);
 });
 
+// SCHEDULES
 Route::group(['prefix' => 'schedules'], static function () {
     Route::get('date', 'ScheduleController@onDate')
         ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::READ);
@@ -117,6 +128,7 @@ Route::group(['prefix' => 'schedules'], static function () {
         ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::READ);
 });
 
+// LESSONS
 Route::group(['prefix' => 'lessons'], static function () {
     Route::get('date', 'LessonController@onDate')
         ->middleware('permission:' .
@@ -148,6 +160,7 @@ Route::group(['prefix' => 'lessons'], static function () {
             LessonsPermissions::MANAGE . '|' . LessonsPermissions::OPEN);
 });
 
+// VISITS
 Route::group(['prefix' => 'visits'], static function () {
     Route::post('/', 'VisitController@createLessonVisit')
         ->middleware('permission:' .
@@ -160,6 +173,7 @@ Route::group(['prefix' => 'visits'], static function () {
             VisitsPermissions::MANAGE . '|' . VisitsPermissions::READ);
 });
 
+// INTENTS
 Route::group(['prefix' => 'intents'], static function () {
     Route::post('/', 'IntentController@store')
         ->middleware('permission:' .
@@ -172,6 +186,7 @@ Route::group(['prefix' => 'intents'], static function () {
             IntentsPermissions::MANAGE . '|' . IntentsPermissions::READ);
 });
 
+// BRANCHES
 Route::group(['prefix' => 'branches'], static function () {
     Route::get('/', 'BranchController@index')
         ->middleware('permission:' .
@@ -193,6 +208,7 @@ Route::group(['prefix' => 'branches'], static function () {
             BranchesPermissions::MANAGE . '|' . BranchesPermissions::DELETE);
 });
 
+// CLASSROOMS
 Route::group(['prefix' => 'classrooms'], static function () {
     Route::get('/', 'ClassroomController@index')
         ->middleware('permission:' .

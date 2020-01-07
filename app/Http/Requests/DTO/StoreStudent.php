@@ -16,8 +16,5 @@ namespace App\Http\Requests\DTO;
  */
 class StoreStudent
 {
-    /**
-     * @var string
-     */
-    public $card_number;
+    public ?string $card_number;
 }

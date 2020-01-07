@@ -22,7 +22,7 @@ class ContractTest extends \Tests\TestCase
 {
     use WithFaker, CreatesFakeUser, CreatesFakePerson, CreatesFakeCustomer, CreatesFakeContract;
 
-    protected const URL = 'manager_api/v1/customers/%s/contract';
+    protected const URL = 'admin/customers/%s/contract';
     protected const JSON_STRUCTURE = [
         'data' => [
             'serial',

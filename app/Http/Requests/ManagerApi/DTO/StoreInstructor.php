@@ -16,23 +16,8 @@ namespace App\Http\Requests\ManagerApi\DTO;
  */
 class StoreInstructor
 {
-    /**
-     * @var string
-     */
-    public $name;
-
-    /**
-     * @var string
-     */
-    public $description;
-
-    /**
-     * @var string
-     */
-    public $status;
-
-    /**
-     * @var bool
-     */
-    public $display;
+    public ?string $name;
+    public ?string $description;
+    public string $status;
+    public bool $display;
 }

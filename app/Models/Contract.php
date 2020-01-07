@@ -59,11 +59,11 @@ class Contract extends Model
         self::STATUS_TERMINATED
     ];
 
-    protected string $table = self::TABLE;
+    protected $table = self::TABLE;
 
-    protected array $fillable = [];
+    protected $fillable = [];
 
-    protected array $casts = [
+    protected $casts = [
         'signed_at' => 'datetime',
         'terminated_at' => 'datetime',
     ];

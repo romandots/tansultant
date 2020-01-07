@@ -58,7 +58,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Course extends Model
 {
-    use SoftDeletes, UsesUuid;
+    use SoftDeletes;
+    use UsesUuid;
 
     public const TABLE = 'courses';
 
@@ -72,9 +73,9 @@ class Course extends Model
         self::STATUS_DISABLED
     ];
 
-    protected string $table = self::TABLE;
+    protected $table = self::TABLE;
 
-    protected array $casts = [
+    protected $casts = [
         'starts_at' => 'date',
         'ends_at' => 'date',
     ];

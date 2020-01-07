@@ -21,7 +21,7 @@ class ClassroomIndexTest extends TestCase
 {
     use CreatesFakes;
 
-    private const URL = 'api/v1/classrooms';
+    private const URL = 'classrooms';
 
     private const JSON_STRUCTURE = [
         'data' => [

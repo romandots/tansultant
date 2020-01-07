@@ -69,7 +69,7 @@ class Account extends Model
         Branch::class
     ];
 
-    protected string $table = self::TABLE;
+    protected $table = self::TABLE;
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo|Instructor|Student|Branch

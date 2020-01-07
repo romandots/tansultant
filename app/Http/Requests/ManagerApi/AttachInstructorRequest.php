@@ -56,7 +56,8 @@ class AttachInstructorRequest extends FormRequest
     {
         $validated = $this->validated();
 
-        $dto = new DTO\StoreInstructor;
+        $dto = new DTO\StoreInstructor();
+        $dto->name = $validated['name'] ?? null;
         $dto->description = $validated['description'] ?? null;
         $dto->status = $validated['status'];
         $dto->display = (bool)($validated['display'] ?? null);

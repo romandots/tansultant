@@ -24,7 +24,7 @@ class BranchRecoverTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = 'manager_api/v1/branches';
+    protected const URL = 'admin/branches';
 
     /**
      * @var Branch

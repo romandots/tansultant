@@ -82,9 +82,9 @@ class Bonus extends Model
         self::STATUS_CANCELED,
     ];
 
-    protected string $table = self::TABLE;
+    protected $table = self::TABLE;
 
-    protected array $casts = [
+    protected $casts = [
         'expired_at' => 'datetime',
         'activated_at' => 'datetime',
         'canceled_at' => 'datetime',

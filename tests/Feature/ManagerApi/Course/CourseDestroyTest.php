@@ -26,7 +26,7 @@ class CourseDestroyTest extends TestCase
 {
     use CreatesFakeUser, CreatesFakeCourse, CreatesFakeInstructor, CreatesFakePerson;
 
-    protected const URL = 'manager_api/v1/courses';
+    protected const URL = 'admin/courses';
 
     private const JSON_STRUCTURE = [
         'data' => [

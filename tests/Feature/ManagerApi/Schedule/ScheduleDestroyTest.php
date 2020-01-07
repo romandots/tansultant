@@ -23,7 +23,7 @@ class ScheduleDestroyTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = 'manager_api/v1/schedules';
+    protected const URL = 'admin/schedules';
 
     /**
      * @var Schedule

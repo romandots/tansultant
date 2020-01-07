@@ -45,17 +45,21 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable
 {
-    use Notifiable, HasRoles, HasApiTokens, Notifiable, UsesUuid;
+    use HasApiTokens;
+    use HasRoles;
+    use Notifiable;
+    use Notifiable;
+    use UsesUuid;
 
     public const TABLE = 'users';
 
-    protected string $table = self::TABLE;
+    protected $table = self::TABLE;
 
     /**
      * The attributes that should be cast to native types.
      * @var array
      */
-    protected array $casts = [
+    protected $casts = [
         'created_at' => 'datetime',
         'approved_at' => 'datetime',
         'seen_at' => 'datetime',

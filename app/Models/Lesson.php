@@ -102,9 +102,9 @@ class Lesson extends Model
         self::STATUS_CLOSED
     ];
 
-    protected string $table = self::TABLE;
+    protected $table = self::TABLE;
 
-    protected array $casts = [
+    protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'closed_at' => 'datetime',

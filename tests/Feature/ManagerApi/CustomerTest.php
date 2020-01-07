@@ -20,7 +20,7 @@ class CustomerTest extends \Tests\TestCase
 {
     use WithFaker, CreatesFakeUser, CreatesFakePerson, CreatesFakeCustomer;
 
-    protected const URL = 'manager_api/v1/customers';
+    protected const URL = 'admin/customers';
 
     protected const JSON_STRUCTURE = [
         'data' => [

@@ -39,13 +39,13 @@ class InstructorRepository
      */
     public function createFromPerson(Person $person, StoreInstructor $dto): Instructor
     {
-        $instructor = new Instructor;
+        $instructor = new Instructor();
         $instructor->id = \uuid();
         $instructor->created_at = Carbon::now();
         $instructor->updated_at = Carbon::now();
 
         $instructor->person_id = $person->id;
-        $instructor->name = $dto->name;
+        $instructor->name = $dto->name ?? "{$person->first_name} {$person->last_name}";
         $instructor->description = $dto->description;
         $instructor->display = $dto->display;
         $instructor->status = $dto->status ?: Instructor::STATUS_HIRED;

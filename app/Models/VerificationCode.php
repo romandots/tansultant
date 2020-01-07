@@ -28,5 +28,5 @@ class VerificationCode extends Model
 
     public const TABLE = 'verification_codes';
 
-    protected string $table = self::TABLE;
+    protected $table = self::TABLE;
 }

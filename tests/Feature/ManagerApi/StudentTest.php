@@ -17,7 +17,7 @@ class StudentTest extends \Tests\TestCase
 {
     use CreatesFakes;
 
-    protected const URL = 'manager_api/v1/students';
+    protected const URL = 'admin/students';
 
     protected const JSON_STRUCTURE = [
         'data' => [
@@ -166,7 +166,7 @@ class StudentTest extends \Tests\TestCase
             'patronymic_name' => $this->faker->firstName,
             'birth_date' => $this->faker->date(),
             'gender' => 'male',
-            'phone' => $this->faker->numerify('+7-###-###-##-##'),
+            'phone' => '+7-999-633-97-76',
             'email' => $this->faker->email,
             'instagram_username' => $this->faker->word,
             'telegram_username' => $this->faker->word,
@@ -191,7 +191,7 @@ class StudentTest extends \Tests\TestCase
                             'patronymic_name' => $data['patronymic_name'],
                             'birth_date' => $data['birth_date'],
                             'gender' => 'male',
-                            'phone' => $data['phone'],
+                            'phone' => '79996339776',
                             'email' => $data['email'],
                             'picture' => null,
                             'picture_thumb' => null,

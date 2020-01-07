@@ -142,7 +142,7 @@ if (!function_exists('normalize_phone_number')) {
     {
         $phoneNumber = (string)$phoneNumber;
 
-        return \preg_replace('/\D/', $phoneNumber, $phoneNumber);
+        return \preg_replace('/\D/', '', $phoneNumber);
     }
 }
 

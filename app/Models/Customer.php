@@ -56,11 +56,11 @@ class Customer extends Model
 
     public const TABLE = 'customers';
 
-    protected string $table = self::TABLE;
+    protected $table = self::TABLE;
 
-    protected array $guarded = [];
+    protected $guarded = [];
 
-    protected array $casts = [
+    protected $casts = [
         'seen_at' => 'date'
     ];
 

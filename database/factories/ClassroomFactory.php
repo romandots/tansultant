@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
+/* @var \Illuminate\Database\Eloquent\Factory  $factory */
 
 use App\Models\Classroom;
 use Faker\Generator as Faker;

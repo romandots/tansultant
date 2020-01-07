@@ -60,7 +60,7 @@ class Intent extends Model
         self::STATUS_NOSHOW,
     ];
 
-    protected string $table = self::TABLE;
+    protected $table = self::TABLE;
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo|\App\Models\Lesson
