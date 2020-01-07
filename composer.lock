@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3ce3ee71b6bb5de4f219c6fb50327384",
+    "content-hash": "45ff485ae77dbbe1d745cf93bfc6eaea",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2369,6 +2369,57 @@
                 "php"
             ],
             "time": "2019-11-08T13:50:10+00:00"
+        },
+        {
+            "name": "nutnet/laravel-sms",
+            "version": "0.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nutnetru/laravel-sms.git",
+                "reference": "9b673fb98cd546b87cc3ea19829ae7ad834dee40"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nutnetru/laravel-sms/zipball/9b673fb98cd546b87cc3ea19829ae7ad834dee40",
+                "reference": "9b673fb98cd546b87cc3ea19829ae7ad834dee40",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "~5.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.5",
+                "zelenin/smsru": "^4.1"
+            },
+            "suggest": {
+                "franzose/laravel-smpp": "Required for SMPP provider",
+                "illuminate/log": "Required for Log provider",
+                "zelenin/smsru": "Required for Sms.Ru provider"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Nutnet\\LaravelSms\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Nutnet\\LaravelSms\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Пакет для Laravel 5.x для отправки смс",
+            "keywords": [
+                "laravel iqsms",
+                "laravel smpp",
+                "laravel sms",
+                "laravel sms.ru",
+                "laravel smsc.ru",
+                "sms"
+            ],
+            "time": "2019-10-01T05:10:30+00:00"
         },
         {
             "name": "opis/closure",
