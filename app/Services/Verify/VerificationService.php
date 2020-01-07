@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Services\Verify;
 
 use App\Repository\VerificationCodeRepository;
+use App\Services\TextMessaging\TextMessaging;
 
 /**
  * Class VerifyService
@@ -20,16 +21,20 @@ class VerificationService
 {
     private VerificationCodeRepository $codeRepository;
 
+    private TextMessaging $messagingService;
+
     private array $config;
 
     /**
      * VerifyService constructor.
      * @param VerificationCodeRepository $codeRepository
+     * @param TextMessaging $messagingService
      */
-    public function __construct(VerificationCodeRepository $codeRepository)
+    public function __construct(VerificationCodeRepository $codeRepository, TextMessaging $messagingService)
     {
         $this->codeRepository = $codeRepository;
         $this->config = \app('config')['verification'];
+        $this->messagingService = $messagingService;
     }
 
     /**
@@ -146,8 +151,7 @@ class VerificationService
 
         if ($this->config['send_messages']) {
             try {
-                // @todo Implement transport
-                // $this->textMessageService->sendMessageTo($message, $phoneNumber);
+                 $this->messagingService->send($phoneNumber, $message);
             } catch (\Exception $exception) {
                 throw new Exceptions\TextMessageSendingFailed($exception->getMessage());
             }
