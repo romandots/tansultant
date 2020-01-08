@@ -11,7 +11,7 @@ declare(strict_types=1);
 use App\Models\Visit;
 use Faker\Generator as Faker;
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
+/* @var \Illuminate\Database\Eloquent\Factory  $factory */
 
 $factory->define(Visit::class, static function (Faker $faker) {
     return [

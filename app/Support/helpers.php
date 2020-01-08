@@ -102,9 +102,9 @@ if (!function_exists('convertPostgresColumnTextToEnum')) {
         $values = \array_map(function ($item) {
             return "'{$item}'";
         }, $values);
-        $values = \implode(',', $values);
+        $valueString = \implode(',', $values);
 
-        \DB::unprepared("CREATE TYPE {$type} AS ENUM({$values})");
+        \DB::unprepared("CREATE TYPE {$type} AS ENUM({$valueString})");
         \DB::unprepared("ALTER TABLE {$table} ALTER COLUMN {$column} TYPE {$type} USING
         {$column}::text::{$type}");
     }
@@ -123,13 +123,26 @@ if (!function_exists('convertPostgresColumnEnumToEnum')) {
         $values = \array_map(function ($item) {
             return "'{$item}'";
         }, $values);
-        $values = \implode(',', $values);
+        $valueString = \implode(',', $values);
 
         \DB::unprepared("ALTER TYPE {$type} RENAME TO {$type}_old");
-        \DB::unprepared("CREATE TYPE {$type} AS ENUM({$values})");
+        \DB::unprepared("CREATE TYPE {$type} AS ENUM({$valueString})");
         \DB::unprepared("ALTER TABLE {$table} ALTER COLUMN {$column} TYPE {$type} USING
         {$column}::text::{$type}");
         \DB::unprepared('DROP TYPE IF EXIST {$type}_old');
+    }
+}
+
+if (!function_exists('normalize_phone_number')) {
+    /**
+     * @param string|integer $phoneNumber
+     * @return string
+     */
+    function normalize_phone_number($phoneNumber): string
+    {
+        $phoneNumber = (string)$phoneNumber;
+
+        return \preg_replace('/\D/', '', $phoneNumber);
     }
 }
 

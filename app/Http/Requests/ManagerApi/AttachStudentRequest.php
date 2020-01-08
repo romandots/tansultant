@@ -42,13 +42,13 @@ class AttachStudentRequest extends FormRequest
     }
 
     /**
-     * @return DTO\StudentFromPerson
+     * @return DTO\StoreStudentFromPerson
      */
-    public function getDto(): DTO\StudentFromPerson
+    public function getDto(): DTO\StoreStudentFromPerson
     {
         $validated = $this->validated();
 
-        $dto = new DTO\StudentFromPerson;
+        $dto = new DTO\StoreStudentFromPerson;
         $dto->card_number = $validated['card_number'];
         $dto->person_id = $validated['person_id'];
 

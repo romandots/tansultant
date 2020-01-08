@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Traits\UsesUuid;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -45,9 +46,19 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable
 {
-    use Notifiable, HasRoles, HasApiTokens, Notifiable, UsesUuid;
+    use HasApiTokens;
+    use HasRoles;
+    use Notifiable;
+    use Notifiable;
+    use UsesUuid;
 
     public const TABLE = 'users';
+    public const TYPES = [
+        self::class,
+        \App\Models\Instructor::class,
+        \App\Models\Student::class,
+        \App\Models\Customer::class,
+    ];
 
     protected $table = self::TABLE;
 

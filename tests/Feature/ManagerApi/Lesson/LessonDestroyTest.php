@@ -23,7 +23,7 @@ class LessonDestroyTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = 'manager_api/v1/lessons';
+    protected const URL = 'admin/lessons';
 
     /**
      * @var Lesson

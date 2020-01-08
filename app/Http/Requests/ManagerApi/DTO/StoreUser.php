@@ -1,8 +1,8 @@
 <?php
 /**
- * File: StoreInstructor.php
+ * File: User.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-19
+ * Date: 2019-07-20
  * Copyright (c) 2019
  */
 
@@ -11,23 +11,23 @@ declare(strict_types=1);
 namespace App\Http\Requests\ManagerApi\DTO;
 
 /**
- * Class StoreInstructor
+ * Class User
  * @package App\Http\Requests\ManagerApi\DTO
  */
-class StoreInstructor
+class StoreUser
 {
     /**
      * @var string
      */
-    public $description;
+    public $person_id;
 
     /**
      * @var string
      */
-    public $status;
+    public $username;
 
     /**
-     * @var bool
+     * @var string
      */
-    public $display;
+    public $password;
 }

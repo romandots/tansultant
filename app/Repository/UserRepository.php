@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Http\Requests\ManagerApi\DTO\StoreUser;
+use App\Http\Requests\ManagerApi\DTO\UpdateUser;
 use App\Models\Person;
 use App\Models\User;
 use Carbon\Carbon;
@@ -59,18 +61,18 @@ class UserRepository
 
     /**
      * @param Person $person
-     * @param \App\Http\Requests\ManagerApi\DTO\User $dto
+     * @param StoreUser $dto
      * @return User
      * @throws \Exception
      */
-    public function create(Person $person, \App\Http\Requests\ManagerApi\DTO\User $dto): User
+    public function createFromPerson(Person $person, StoreUser $dto): User
     {
-        $user = new User;
+        $user = new User();
         $user->id = \uuid();
         $user->created_at = Carbon::now();
         $user->updated_at = Carbon::now();
         $user->person_id = $person->id;
-        $user->name = "{$person->last_name} {$person->first_name}";
+        $user->name = \trans('person.user_name', $person->compactName());
         $user->username = $dto->username;
         if ($dto->password) {
             $user->password = \Hash::make($dto->password);
@@ -82,9 +84,9 @@ class UserRepository
 
     /**
      * @param User $user
-     * @param \App\Http\Requests\ManagerApi\DTO\UserUpdate $dto
+     * @param UpdateUser $dto
      */
-    public function update(User $user, \App\Http\Requests\ManagerApi\DTO\UserUpdate $dto): void
+    public function update(User $user, UpdateUser $dto): void
     {
         if ($dto->name) {
             $user->name = $dto->name;

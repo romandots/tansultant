@@ -42,13 +42,13 @@ class UpdateInstructorRequest extends FormRequest
     }
 
     /**
-     * @return DTO\StoreInstructor
+     * @return \App\Http\Requests\DTO\StoreInstructor
      */
-    public function getDto(): DTO\StoreInstructor
+    public function getDto(): \App\Http\Requests\DTO\StoreInstructor
     {
         $validated = $this->validated();
 
-        $dto = new DTO\StoreInstructor;
+        $dto = new \App\Http\Requests\DTO\StoreInstructor;
         $dto->description = $validated['description'] ?? null;
         $dto->status = $validated['status'];
         $dto->display = (bool)$validated['display'];

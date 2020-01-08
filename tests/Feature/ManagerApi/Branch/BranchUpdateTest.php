@@ -23,7 +23,7 @@ class BranchUpdateTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = 'manager_api/v1/branches';
+    protected const URL = 'admin/branches';
 
     private const JSON_STRUCTURE = [
         'data' => [

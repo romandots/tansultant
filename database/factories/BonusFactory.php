@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * File: BonusFactory.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
@@ -6,7 +7,7 @@
  * Copyright (c) 2019
  */
 
-/* @var $factory \Illuminate\Database\Eloquent\Factory */
+/* @var \Illuminate\Database\Eloquent\Factory  $factory */
 
 use App\Models\Bonus;
 use Faker\Generator as Faker;

@@ -165,4 +165,12 @@ class ScheduleRepository
             ->orderBy('starts_at')
             ->get();
     }
+
+    /**
+     * @param Schedule $schedule
+     * @todo Implement this
+     */
+    public function restore(Schedule $schedule): void
+    {
+    }
 }

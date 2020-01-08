@@ -45,13 +45,13 @@ class UpdateUserRequest extends FormRequest
     }
 
     /**
-     * @return DTO\UserUpdate
+     * @return DTO\UpdateUser
      */
-    public function getDto(): DTO\UserUpdate
+    public function getDto(): DTO\UpdateUser
     {
         $validated = $this->validated();
 
-        $dto = new DTO\UserUpdate;
+        $dto = new DTO\UpdateUser;
         $dto->password = $validated['password'] ?? null;
         $dto->name = $validated['name'] ?? null;
         $dto->username = $validated['username'] ?? null;

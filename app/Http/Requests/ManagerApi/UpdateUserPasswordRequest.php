@@ -39,13 +39,13 @@ class UpdateUserPasswordRequest extends FormRequest
     }
 
     /**
-     * @return DTO\UserPassword
+     * @return DTO\UpdateUserPassword
      */
-    public function getDto(): DTO\UserPassword
+    public function getDto(): DTO\UpdateUserPassword
     {
         $validated = $this->validated();
 
-        $dto = new DTO\UserPassword;
+        $dto = new DTO\UpdateUserPassword;
         $dto->old_password = $validated['old_password'];
         $dto->new_password = $validated['new_password'];
 

@@ -15,33 +15,17 @@ use App\Http\Requests\ManagerApi\ScheduleOnDateRequest;
 use App\Http\Requests\ManagerApi\StoreScheduleRequest;
 use App\Http\Resources\ScheduleResource;
 use App\Repository\ScheduleRepository;
-use App\Services\Schedule\ScheduleService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-/**
- * Class ScheduleController
- * @package App\Http\Controllers
- */
 class ScheduleController extends Controller
 {
-    /**
-     * @var ScheduleRepository
-     */
-    private $repository;
+    private ScheduleRepository $repository;
 
-    /**
-     * ScheduleController constructor.
-     * @param ScheduleRepository $repository
-     * @param ScheduleService $service
-     */
     public function __construct(ScheduleRepository $repository)
     {
         $this->repository = $repository;
     }
 
-    /**
-     * @return AnonymousResourceCollection
-     */
     public function index(): AnonymousResourceCollection
     {
         $schedules = $this->repository->getAll();
@@ -111,13 +95,10 @@ class ScheduleController extends Controller
         $this->repository->restore($schedule);
     }
 
-    /**
-     * @param ScheduleOnDateRequest $request
-     * @return AnonymousResourceCollection
-     */
     public function onDate(ScheduleOnDateRequest $request): AnonymousResourceCollection
     {
-        $schedules = $this->repository->getSchedulesForDateWithRelations($request->getDto(), ['course.instructor.person']);
+        $schedules = $this->repository->getSchedulesForDateWithRelations($request->getDto(),
+            ['course.instructor.person']);
 
         return ScheduleResource::collection($schedules);
     }

@@ -17,36 +17,17 @@ use App\Repository\CourseRepository;
 use App\Services\Course\CourseService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-/**
- * Class CourseController
- * @package App\Http\Controllers\Api
- */
 class CourseController
 {
-    /**
-     * @var CourseRepository
-     */
-    protected $repository;
+    protected CourseRepository $repository;
+    protected CourseService $service;
 
-    /**
-     * @var CourseService
-     */
-    protected $service;
-
-    /**
-     * CourseController constructor.
-     * @param CourseRepository $repository
-     * @param CourseService $service
-     */
     public function __construct(CourseRepository $repository, CourseService $service)
     {
         $this->repository = $repository;
         $this->service = $service;
     }
 
-    /**
-     * @return AnonymousResourceCollection
-     */
     public function index(): AnonymousResourceCollection
     {
         $records = $this->repository->getAll();
@@ -54,10 +35,6 @@ class CourseController
         return CourseResource::collection($records);
     }
 
-    /**
-     * @param string $id
-     * @return CourseResource
-     */
     public function show(string $id): CourseResource
     {
         $course = $this->repository->find($id);

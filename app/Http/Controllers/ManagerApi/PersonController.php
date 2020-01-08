@@ -17,21 +17,12 @@ use App\Http\Resources\PersonResource;
 use App\Repository\PersonRepository;
 
 /**
- * Class PersonController
- * @package App\Http\Controllers\Api
  * @todo test picture upload
  */
 class PersonController extends Controller
 {
-    /**
-     * @var PersonRepository
-     */
-    private $personRepository;
+    private PersonRepository $personRepository;
 
-    /**
-     * PersonController constructor.
-     * @param PersonRepository $personRepository
-     */
     public function __construct(PersonRepository $personRepository)
     {
         $this->personRepository = $personRepository;

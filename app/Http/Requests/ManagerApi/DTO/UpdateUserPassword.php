@@ -14,7 +14,7 @@ namespace App\Http\Requests\ManagerApi\DTO;
  * Class UserPassword
  * @package App\Http\Requests\ManagerApi\DTO
  */
-class UserPassword
+class UpdateUserPassword
 {
     /**
      * @var string

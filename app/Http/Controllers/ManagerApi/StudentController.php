@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ManagerApi\AttachStudentRequest;
+use App\Http\Requests\ManagerApi\StoreStudentFromPersonRequest;
 use App\Http\Requests\ManagerApi\StoreStudentRequest;
 use App\Http\Requests\ManagerApi\UpdateStudentRequest;
 use App\Http\Resources\StudentResource;
@@ -20,60 +20,37 @@ use App\Repository\PersonRepository;
 use App\Repository\StudentRepository;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Class StudentController
- * @package App\Http\Controllers\Api
- */
 class StudentController extends Controller
 {
-    /**
-     * @var PersonRepository
-     */
-    private $personRepository;
+    private PersonRepository $personRepository;
 
-    /**
-     * @var StudentRepository
-     */
-    private $studentRepository;
+    private StudentRepository $studentRepository;
 
-    /**
-     * StudentController constructor.
-     * @param StudentRepository $studentRepository
-     * @param PersonRepository $personRepository
-     */
     public function __construct(StudentRepository $studentRepository, PersonRepository $personRepository)
     {
         $this->studentRepository = $studentRepository;
         $this->personRepository = $personRepository;
     }
 
-    /**
-     * @param StoreStudentRequest $request
-     * @return StudentResource
-     */
     public function store(StoreStudentRequest $request): StudentResource
     {
         /** @var Student $student */
         $student = DB::transaction(function () use ($request) {
             $person = $this->personRepository->create($request->getPersonDto());
-            return $this->studentRepository->create($person, $request->getStudentDto()->card_number);
+            return $this->studentRepository->createFromPerson($person, $request->getStudentDto());
         });
         $student->load('customer', 'person');
 
         return new StudentResource($student);
     }
 
-    /**
-     * @param AttachStudentRequest $request
-     * @return StudentResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Exception
-     */
-    public function createFromPerson(AttachStudentRequest $request): StudentResource
+    public function storeFromPerson(StoreStudentFromPersonRequest $request): StudentResource
     {
-        $attachStudent = $request->getDto();
-        $person = $this->personRepository->find($attachStudent->person_id);
-        $student = $this->studentRepository->create($person, $attachStudent->card_number);
+        /** @var Student $student */
+        $student = DB::transaction(function () use ($request) {
+            $person = $this->personRepository->find($request->getPersonDto()->person_id);
+            return $this->studentRepository->createFromPerson($person, $request->getStudentDto());
+        });
         $student->load('customer', 'person');
 
         return new StudentResource($student);

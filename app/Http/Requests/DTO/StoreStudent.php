@@ -8,16 +8,13 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\ManagerApi\DTO;
+namespace App\Http\Requests\DTO;
 
 /**
  * Class StoreStudent
- * @package App\Http\Requests\ManagerApi\DTO
+ * @package App\Http\Requests\DTO
  */
-class Student
+class StoreStudent
 {
-    /**
-     * @var string
-     */
-    public $card_number;
+    public ?string $card_number = null;
 }

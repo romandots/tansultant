@@ -25,7 +25,7 @@ class VisitDestroyTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = 'manager_api/v1/visits';
+    protected const URL = 'admin/visits';
 
     /**
      * @var Visit

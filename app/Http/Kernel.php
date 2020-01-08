@@ -22,7 +22,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
-        \Barryvdh\Cors\HandleCors::class,
+        \Fruitcake\Cors\HandleCors::class,
     ];
 
     /**
@@ -44,7 +44,7 @@ class Kernel extends HttpKernel
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
-        'cors' => \Barryvdh\Cors\HandleCors::class,
+        'cors' => \Fruitcake\Cors\HandleCors::class,
     ];
 
     /**
@@ -81,26 +81,31 @@ class Kernel extends HttpKernel
             'cors'
         ],
 
-        'manager_api' => [
-            'api',
+        'member_api' => [
+            'prefer_json:1',
+            'cors',
             'auth:api',
+        ],
+
+        'manager_api' => [
+            'member_api',
             'role:' . \App\Services\Permissions\UserRoles::ADMIN
             . '|' . \App\Services\Permissions\UserRoles::MANAGER
             . '|' . \App\Services\Permissions\UserRoles::OPERATOR
         ],
 
         'student_api' => [
-            'api',
+            'member_api',
             'role:' . \App\Services\Permissions\UserRoles::STUDENT
         ],
 
         'customer_api' => [
-            'api',
+            'member_api',
             'role:' . \App\Services\Permissions\UserRoles::CUSTOMER
         ],
 
         'instructor_api' => [
-            'api',
+            'member_api',
             'role:' . \App\Services\Permissions\UserRoles::INSTRUCTOR
         ],
     ];

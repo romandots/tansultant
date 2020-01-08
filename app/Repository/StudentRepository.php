@@ -10,8 +10,10 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Http\Requests\DTO\StoreStudent;
 use App\Models\Person;
 use App\Models\Student;
+use Carbon\Carbon;
 
 /**
  * Class StudentRepository
@@ -31,18 +33,24 @@ class StudentRepository
 
     /**
      * @param Person $person
-     * @param string|null $cardNumber
+     * @param StoreStudent $storeStudent
      * @return Student
      * @throws \Exception
      */
-    public function create(Person $person, ?string $cardNumber = null): Student
+    public function createFromPerson(Person $person, StoreStudent $storeStudent): Student
     {
-        $student = new Student;
+        $student = new Student();
+
         $student->id = \uuid();
+        $student->created_at = Carbon::now();
+        $student->updated_at = Carbon::now();
+
+        $student->name = $dto->name ?? \trans('person.student_name', $person->compactName());;
         $student->person_id = $person->id;
-        $student->name = "{$person->last_name} {$person->first_name}";
-        $student->card_number = $cardNumber;
+
+        $student->card_number = $storeStudent->card_number;
         $student->status = Student::STATUS_POTENTIAL;
+
         $student->save();
 
         return $student;
@@ -50,9 +58,9 @@ class StudentRepository
 
     /**
      * @param Student $person
-     * @param \App\Http\Requests\ManagerApi\DTO\Student $dto
+     * @param \App\Http\Requests\DTO\StoreStudent $dto
      */
-    public function update(Student $person, \App\Http\Requests\ManagerApi\DTO\Student $dto): void
+    public function update(Student $person, \App\Http\Requests\DTO\StoreStudent $dto): void
     {
         $person->card_number = $dto->card_number;
         $person->save();

@@ -19,7 +19,7 @@ class UserTest extends \Tests\TestCase
 {
     use WithFaker, CreatesFakePerson, CreatesFakeUser;
 
-    protected const URL = 'manager_api/v1/users';
+    protected const URL = 'admin/users';
 
     protected const JSON_STRUCTURE = [
         'data' => [
@@ -49,7 +49,7 @@ class UserTest extends \Tests\TestCase
 
     public function testMe(): void
     {
-        $url = 'auth/user';
+        $url = 'user';
 
         $this
             ->actingAs($this->me, 'api')
@@ -185,7 +185,7 @@ class UserTest extends \Tests\TestCase
             ->assertJson([
                 'data' => [
                     'username' => $data['username'],
-                    'name' => "{$data['last_name']} {$data['first_name']}",
+                    'name' => "{$data['first_name']} {$data['last_name']}",
                     'person' =>
                         [
                             'last_name' => $data['last_name'],
@@ -409,7 +409,7 @@ class UserTest extends \Tests\TestCase
 
     public function testUpdatePasswordDenied(): void
     {
-        $url = 'auth/user/password';
+        $url = 'user/password';
 
         $this
             ->patch($url, [
@@ -431,7 +431,7 @@ class UserTest extends \Tests\TestCase
             'new_password' => $newPassword,
         ];
 
-        $url = 'auth/user/password';
+        $url = 'user/password';
 
         $this
             ->actingAs($user, 'api')
@@ -451,7 +451,7 @@ class UserTest extends \Tests\TestCase
     {
         $user = $this->createFakeManagerUser(['password' => \Hash::make('123456')]);
 
-        $url = 'auth/user/password';
+        $url = 'user/password';
 
         $this
             ->actingAs($user, 'api')

@@ -20,7 +20,7 @@ class CustomerTest extends \Tests\TestCase
 {
     use WithFaker, CreatesFakeUser, CreatesFakePerson, CreatesFakeCustomer;
 
-    protected const URL = 'manager_api/v1/customers';
+    protected const URL = 'admin/customers';
 
     protected const JSON_STRUCTURE = [
         'data' => [
@@ -162,7 +162,7 @@ class CustomerTest extends \Tests\TestCase
             ->assertJsonStructure(self::JSON_STRUCTURE)
             ->assertJson([
                 'data' => [
-                    'name' => "{$data['last_name']} {$data['first_name']}",
+                    'name' => "{$data['last_name']} {$data['first_name']} {$data['patronymic_name']}",
                     'person' => [
                         'last_name' => $data['last_name'],
                         'first_name' => $data['first_name'],

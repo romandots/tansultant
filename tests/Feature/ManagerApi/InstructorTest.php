@@ -20,7 +20,7 @@ class InstructorTest extends \Tests\TestCase
 {
     use WithFaker, CreatesFakeUser, CreatesFakePerson, CreatesFakeInstructor;
 
-    protected const URL = 'manager_api/v1/instructors';
+    protected const URL = 'admin/instructors';
 
     protected const JSON_STRUCTURE = [
         'data' => [
@@ -192,7 +192,7 @@ class InstructorTest extends \Tests\TestCase
                     'status_label' => \trans(\App\Models\Instructor::STATUS_HIRED),
                     'description' => 'Some teacher info',
                     'display' => true,
-                    'name' => "{$data['last_name']} {$data['first_name']}",
+                    'name' => "{$data['first_name']} {$data['last_name']}",
                     'person' => [
                         'last_name' => $data['last_name'],
                         'first_name' => $data['first_name'],
@@ -272,7 +272,7 @@ class InstructorTest extends \Tests\TestCase
             ->assertJsonStructure(self::JSON_STRUCTURE)
             ->assertJson([
                 'data' => [
-                    'name' => "{$person->last_name} {$person->first_name}",
+                    'name' => "{$person->first_name} {$person->last_name}",
                     'status' => \App\Models\Instructor::STATUS_HIRED,
                     'description' => 'Some teacher info',
                     'display' => true,

@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Traits\Notifiable;
+use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -68,6 +70,7 @@ use Illuminate\Database\Eloquent\Model;
 class Person extends Model
 {
     use UsesUuid;
+    use Notifiable;
 
     public const TABLE = 'people';
 
@@ -116,5 +119,24 @@ class Person extends Model
     public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(User::class);
+    }
+
+    /**
+     * Get name vars in comact array
+     *
+     * @return array
+     */
+    public function compactName(): array
+    {
+        return [
+            'last_name' => $this->last_name,
+            'first_name' => $this->first_name,
+            'patronymic_name' => $this->patronymic_name,
+            'initials' => \sprintf(
+                '%s. %s.',
+                \mb_substr($this->first_name, 0, 1),
+                \mb_substr($this->patronymic_name, 0, 1)
+            ),
+        ];
     }
 }

@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Http\Requests\ManagerApi\DTO\StorePerson as PersonDto;
+use App\Http\Requests\DTO\StorePerson as PersonDto;
 use App\Models\Person;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
@@ -29,8 +29,9 @@ class PersonRepository
     public function find(string $id): ?Person
     {
         return Person::query()
+            ->where('id', $id)
             ->whereNull('deleted_at')
-            ->findOrFail($id);
+            ->firstOrFail();
     }
 
     /**
@@ -41,7 +42,47 @@ class PersonRepository
     public function findWithDeleted(string $id): ?Person
     {
         return Person::query()
-            ->findOrFail($id);
+            ->where('id', $id)
+            ->firstOrFail();
+    }
+
+    /**
+     * @param string $phoneNumber
+     * @return Person|null
+     */
+    public function getByPhoneNumber(string $phoneNumber): ?Person
+    {
+        $phoneNumber = \normalize_phone_number($phoneNumber);
+
+        return Person::query()
+            ->where('phone', $phoneNumber)
+            ->whereNull('deleted_at')
+            ->first();
+    }
+
+    /**
+     * @param string $lastName
+     * @param string $firstName
+     * @param string $patronymicName
+     * @param string $gender
+     * @param Carbon $birthDate
+     * @return Person|null
+     */
+    public function getByNameGenderAndBirthDate(
+        string $lastName,
+        string $firstName,
+        string $patronymicName,
+        string $gender,
+        Carbon $birthDate
+    ): ?Person {
+        return Person::query()
+            ->where('last_name', $lastName)
+            ->where('first_name', $firstName)
+            ->where('patronymic_name', $patronymicName)
+            ->where('gender', $gender)
+            ->where('birth_date', $birthDate)
+            ->whereNull('deleted_at')
+            ->first();
     }
 
     /**
@@ -65,16 +106,13 @@ class PersonRepository
     /**
      * @param Person $person
      * @param PersonDto $dto
-     * @return Person
      */
-    public function update(Person $person, PersonDto $dto): Person
+    public function update(Person $person, PersonDto $dto): void
     {
         $person->updated_at = Carbon::now();
 
         $this->fill($person, $dto);
         $person->save();
-
-        return $person;
     }
 
     /**

@@ -17,7 +17,7 @@ class StudentTest extends \Tests\TestCase
 {
     use CreatesFakes;
 
-    protected const URL = 'manager_api/v1/students';
+    protected const URL = 'admin/students';
 
     protected const JSON_STRUCTURE = [
         'data' => [
@@ -166,7 +166,7 @@ class StudentTest extends \Tests\TestCase
             'patronymic_name' => $this->faker->firstName,
             'birth_date' => $this->faker->date(),
             'gender' => 'male',
-            'phone' => $this->faker->numerify('+7-###-###-##-##'),
+            'phone' => '+7-999-633-97-76',
             'email' => $this->faker->email,
             'instagram_username' => $this->faker->word,
             'telegram_username' => $this->faker->word,
@@ -183,7 +183,7 @@ class StudentTest extends \Tests\TestCase
             ->assertJson([
                 'data' => [
                     'card_number' => $data['card_number'],
-                    'name' => "{$data['last_name']} {$data['first_name']}",
+                    'name' => "{$data['last_name']} {$data['first_name']} {$data['patronymic_name']}",
                     'person' =>
                         [
                             'last_name' => $data['last_name'],
@@ -191,7 +191,7 @@ class StudentTest extends \Tests\TestCase
                             'patronymic_name' => $data['patronymic_name'],
                             'birth_date' => $data['birth_date'],
                             'gender' => 'male',
-                            'phone' => $data['phone'],
+                            'phone' => '79996339776',
                             'email' => $data['email'],
                             'picture' => null,
                             'picture_thumb' => null,
@@ -237,7 +237,7 @@ class StudentTest extends \Tests\TestCase
             ->assertJsonStructure(self::JSON_STRUCTURE)
             ->assertJson([
                 'data' => [
-                    'name' => "{$person->last_name} {$person->first_name}",
+                    'name' => "{$person->last_name} {$person->first_name} {$person->patronymic_name}",
                     'card_number' => $data['card_number'],
                     'status' => \App\Models\Student::STATUS_POTENTIAL,
                     'person' => [

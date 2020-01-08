@@ -10,10 +10,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Contract
+ *
+ * @todo add contract full text to record
  *
  * @package App\Models
  * @property string $id

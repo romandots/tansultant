@@ -10,19 +10,14 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 
-Route::group([
-    'middleware' => ['api'],
-    'prefix' => 'manager_api/v1'
-], static function () {
+Route::group(['middleware' => 'api'], static function () {
+    Route::post('register', 'RegistrationController@registerUser');
+    Route::post('register/verify', 'RegistrationController@checkVerificationCode');
     Route::post('login', 'AuthController@login');
 });
 
-Route::group([
-    'middleware' => ['api', 'auth:api'],
-    'prefix' => 'manager_api/v1'
-], static function () {
+Route::group(['middleware' => 'member_api'], static function () {
     Route::post('logout', 'AuthController@logout');
-
     Route::get('user', 'UserController@me');
     Route::patch('user/password', 'UserController@updatePassword');
 });
