@@ -21,7 +21,7 @@ $factory->define(\App\Models\Person::class, static function (Faker $faker) {
         'patronymic_name' => $faker->name,
         'birth_date' => \Carbon\Carbon::now(),
         'gender' => $faker->randomElement(\App\Models\Person::GENDER),
-        'phone' => $faker->unique()->phoneNumber,
+        'phone' => \normalize_phone_number($faker->unique()->phoneNumber),
         'email' => $faker->unique()->safeEmail,
         'picture' => $faker->imageUrl(),
         'picture_thumb' => $faker->imageUrl('200', '200'),

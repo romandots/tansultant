@@ -26,9 +26,13 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
 use Mockery\MockInterface;
 use Tests\TestCase;
+use Tests\Traits\CreatesFakePerson;
+use Tests\Traits\CreatesFakeUser;
 
 class RegisterControllerTest extends TestCase
 {
+    use CreatesFakeUser;
+    use CreatesFakePerson;
     use WithFaker;
 
     public const REGISTER_URL = 'register';
@@ -398,6 +402,131 @@ class RegisterControllerTest extends TestCase
         ];
     }
 
+    public function testRegisterWithExistingPersonByPhoneNumber(): void
+    {
+        $fakePerson = $this->createFakePerson();
+
+        $postData = [
+            'user_type' => Student::class,
+            'phone' => $fakePerson->phone,
+            'email' => $this->faker->email,
+            'last_name' => 'Dots',
+            'first_name' => 'Roman',
+            'patronymic_name' => 'A.',
+            'birth_date' => '1986-01-08',
+            'gender' => Person::GENDER_MALE,
+            'password' => '123456',
+        ];
+
+        $this
+            ->post(self::REGISTER_URL, $postData)
+            ->assertStatus(200)
+            ->assertJson([
+                'message' => 'verification_code_sent',
+            ]);
+
+        /** @var VerificationCode $verificationCode */
+        $verificationCode = VerificationCode::query()
+            ->where('phone_number', $postData['phone'])
+            ->first();
+        $postData['verification_code'] = $verificationCode->verification_code;
+
+        $this
+            ->post(self::REGISTER_URL, $postData)
+            ->assertStatus(201)
+            ->assertJson([
+                'data' => [
+                    'person' => [
+                        'id' => $fakePerson->id,
+                        'phone' => $fakePerson->phone,
+                        'last_name' => 'Dots',
+                        'first_name' => 'Roman',
+                        'patronymic_name' => 'A.',
+                        'birth_date' => '1986-01-08',
+                        'gender' => Person::GENDER_MALE,
+                    ]
+                ],
+            ]);
+    }
+
+    public function testRegisterWithExistingUserByPhoneNumber(): void
+    {
+        $fakeUser = $this->createFakeUser();
+        $fakePerson = $fakeUser->person;
+
+        $postData = [
+            'user_type' => Student::class,
+            'phone' => $fakePerson->phone,
+            'email' => $this->faker->email,
+            'last_name' => 'Dots',
+            'first_name' => 'Roman',
+            'patronymic_name' => 'A.',
+            'birth_date' => '1986-01-08',
+            'gender' => Person::GENDER_MALE,
+            'password' => '123456',
+        ];
+
+        $this
+            ->post(self::REGISTER_URL, $postData)
+            ->assertStatus(200)
+            ->assertJson([
+                'message' => 'verification_code_sent',
+            ]);
+
+        /** @var VerificationCode $verificationCode */
+        $verificationCode = VerificationCode::query()
+            ->where('phone_number', $postData['phone'])
+            ->first();
+        $postData['verification_code'] = $verificationCode->verification_code;
+
+        $this
+            ->post(self::REGISTER_URL, $postData)
+            ->assertStatus(409)
+            ->assertJson([
+                'error' => 'user_with_this_phone_number_already_registered',
+                'message' => 'Пользователь уже зарегистрирован. Воспользуйтесь восстановлением пароля'
+            ]);
+    }
+
+    public function testRegisterWithExistingNameAndBirthDate(): void
+    {
+        $postData = [
+            'phone' => $this->faker->e164PhoneNumber,
+            'email' => $this->faker->email,
+            'last_name' => 'Dots',
+            'first_name' => 'Roman',
+            'patronymic_name' => 'A.',
+            'birth_date' => '1986-01-08',
+            'gender' => Person::GENDER_MALE,
+        ];
+
+        $fakePerson = $this->createFakePerson($postData);
+
+        $postData['user_type'] = Student::class;
+        $postData['password'] = '123456';
+
+        $this
+            ->post(self::REGISTER_URL, $postData)
+            ->assertStatus(200)
+            ->assertJson([
+                'message' => 'verification_code_sent',
+            ]);
+
+        /** @var VerificationCode $verificationCode */
+        $verificationCode = VerificationCode::query()
+            ->where('phone_number', $postData['phone'])
+            ->first();
+        $postData['verification_code'] = $verificationCode->verification_code;
+
+        $this
+            ->post(self::REGISTER_URL, $postData)
+            ->assertStatus(409)
+            ->assertJson([
+                'error' => 'user_already_registered_with_another_phone_number',
+                'message' => 'Пользователь уже зарегистрирован с другим номером телефона',
+            ]);
+    }
+
     public function testCheckVerificationCode(): void
     {
         $phone = $this->faker->e164PhoneNumber;
@@ -422,15 +551,5 @@ class RegisterControllerTest extends TestCase
         $this
             ->post(self::VERIFY_URL, ['phone' => $phone, 'verification_code' => $code])
             ->assertStatus(200);
-    }
-
-    public function testRegisterWithExistingPhoneNumber(): void
-    {
-
-    }
-
-    public function testRegisterWithExistingNameAndBirthDate(): void
-    {
-
     }
 }
