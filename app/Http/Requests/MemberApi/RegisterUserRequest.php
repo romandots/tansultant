@@ -13,8 +13,10 @@ namespace App\Http\Requests\MemberApi;
 use App\Http\Requests\DTO\RegisterUser;
 use App\Models\Person;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 /**
  * Class RegisterUserRequest
@@ -28,6 +30,11 @@ class RegisterUserRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_type' => [
+                'required',
+                'string',
+                Rule::in(User::TYPES),
+            ],
             'phone' => [
                 'required',
                 'string',
@@ -67,16 +74,28 @@ class RegisterUserRequest extends FormRequest
                 'nullable',
                 'string',
             ],
-            'user_type' => [
-                'required',
-                'string',
-                Rule::in(User::TYPES),
-            ],
             'password' => [
                 'nullable',
                 'string',
             ],
         ];
+    }
+
+
+    protected function withValidator(Validator $validator): void
+    {
+        $data = $validator->getData();
+
+        if (isset($data['verification_code'])) {
+            $validator->addRules([
+                'last_name' => ['required'],
+                'first_name' => ['required'],
+                'patronymic_name' => ['required'],
+                'birth_date' => ['required'],
+                'gender' => ['required'],
+                'password' => ['required'],
+            ]);
+        }
     }
 
     /**
@@ -90,10 +109,10 @@ class RegisterUserRequest extends FormRequest
         $dto->user_type = $validated['user_type'];
         $dto->phone = $validated['phone'];
         $dto->verification_code = $validated['verification_code'] ?? null;
-        $dto->last_name = $validated['phone'] ?? null;
+        $dto->last_name = $validated['last_name'] ?? null;
         $dto->first_name = $validated['first_name'] ?? null;
         $dto->patronymic_name = $validated['patronymic_name'] ?? null;
-        $dto->birth_date = $validated['birth_date'] ?? null;
+        $dto->birth_date = isset($validated['birth_date']) ? Carbon::parse($validated['birth_date']) : null;
         $dto->gender = $validated['gender'] ?? null;
         $dto->email = $validated['email'] ?? null;
         $dto->password = isset($validated['password']) ? \Hash::make($validated['password']) : null;

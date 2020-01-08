@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Services\Verify;
 
 use App\Repository\VerificationCodeRepository;
-use App\Services\TextMessaging\TextMessaging;
+use App\Services\TextMessaging\TextMessagingService;
 
 /**
  * Class VerifyService
@@ -21,16 +21,16 @@ class VerificationService
 {
     private VerificationCodeRepository $codeRepository;
 
-    private TextMessaging $messagingService;
+    private TextMessagingService $messagingService;
 
     private array $config;
 
     /**
      * VerifyService constructor.
      * @param VerificationCodeRepository $codeRepository
-     * @param TextMessaging $messagingService
+     * @param TextMessagingService $messagingService
      */
-    public function __construct(VerificationCodeRepository $codeRepository, TextMessaging $messagingService)
+    public function __construct(VerificationCodeRepository $codeRepository, TextMessagingService $messagingService)
     {
         $this->codeRepository = $codeRepository;
         $this->config = \app('config')['verification'];
@@ -77,9 +77,6 @@ class VerificationService
         $this->codeRepository->updateVerifiedAt($verificationCode);
     }
 
-    /**
-     * @return string
-     */
     private function generateVerificationCode(): string
     {
         $chars = [];

@@ -58,7 +58,7 @@ class StoreInstructorRequest extends FormRequest
                 'date'
             ],
             'gender' => [
-                'nullable',
+                'required',
                 'string',
                 Rule::in(Person::GENDER)
             ],
@@ -107,7 +107,7 @@ class StoreInstructorRequest extends FormRequest
         $dto->first_name = $validated['first_name'] ?? null;
         $dto->patronymic_name = $validated['patronymic_name'] ?? null;
         $dto->birth_date = $validated['birth_date'] ? \Carbon\Carbon::parse($validated['birth_date']) : null;
-        $dto->gender = $validated['gender'] ?? null;
+        $dto->gender = $validated['gender'];
         $dto->phone = $validated['phone'] ? \phone_format($validated['phone']) : null;
         $dto->email = $validated['email'] ?? null;
         $dto->instagram_username = $validated['instagram_username'] ?? null;
@@ -121,13 +121,13 @@ class StoreInstructorRequest extends FormRequest
     }
 
     /**
-     * @return DTO\StoreInstructor
+     * @return \App\Http\Requests\DTO\StoreInstructor
      */
-    public function getInstructorDto(): DTO\StoreInstructor
+    public function getInstructorDto(): \App\Http\Requests\DTO\StoreInstructor
     {
         $validated = $this->validated();
 
-        $dto = new DTO\StoreInstructor;
+        $dto = new \App\Http\Requests\DTO\StoreInstructor;
         $dto->description = $validated['description'];
         $dto->status = $validated['status'];
         $dto->display = (bool)$validated['display'];

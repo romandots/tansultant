@@ -48,9 +48,9 @@ class PersonRepository
 
     /**
      * @param string $phoneNumber
-     * @return Person
+     * @return Person|null
      */
-    public function getByPhoneNumber(string $phoneNumber): Person
+    public function getByPhoneNumber(string $phoneNumber): ?Person
     {
         $phoneNumber = \normalize_phone_number($phoneNumber);
 
@@ -66,7 +66,7 @@ class PersonRepository
      * @param string $patronymicName
      * @param string $gender
      * @param Carbon $birthDate
-     * @return Person
+     * @return Person|null
      */
     public function getByNameGenderAndBirthDate(
         string $lastName,
@@ -74,7 +74,7 @@ class PersonRepository
         string $patronymicName,
         string $gender,
         Carbon $birthDate
-    ): Person {
+    ): ?Person {
         return Person::query()
             ->where('last_name', $lastName)
             ->where('first_name', $firstName)

@@ -67,12 +67,12 @@ class UserRepository
      */
     public function createFromPerson(Person $person, StoreUser $dto): User
     {
-        $user = new User;
+        $user = new User();
         $user->id = \uuid();
         $user->created_at = Carbon::now();
         $user->updated_at = Carbon::now();
         $user->person_id = $person->id;
-        $user->name = "{$person->last_name} {$person->first_name}";
+        $user->name = \trans('person.user_name', $person->compactName());
         $user->username = $dto->username;
         if ($dto->password) {
             $user->password = \Hash::make($dto->password);

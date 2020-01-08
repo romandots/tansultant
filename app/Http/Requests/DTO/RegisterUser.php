@@ -10,14 +10,17 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\DTO;
 
+use App\Models\Instructor;
+use App\Models\Student;
+
 /**
  * Class RegisterUser
  * @package App\Http\Requests\DTO
  */
 class RegisterUser
 {
-    public const TYPE_INSTRUCTOR = 'instructor';
-    public const TYPE_STUDENT = 'student';
+    public const TYPE_INSTRUCTOR = Instructor::class;
+    public const TYPE_STUDENT = Student::class;
 
     public ?string $last_name;
 
@@ -38,7 +41,7 @@ class RegisterUser
      *
      * @var string|null
      */
-    public ?string $description;
+    public ?string $description = null;
 
     public string $user_type;
 

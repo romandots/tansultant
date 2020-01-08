@@ -162,7 +162,7 @@ class CustomerTest extends \Tests\TestCase
             ->assertJsonStructure(self::JSON_STRUCTURE)
             ->assertJson([
                 'data' => [
-                    'name' => "{$data['last_name']} {$data['first_name']}",
+                    'name' => "{$data['last_name']} {$data['first_name']} {$data['patronymic_name']}",
                     'person' => [
                         'last_name' => $data['last_name'],
                         'first_name' => $data['first_name'],

@@ -70,10 +70,12 @@ class VerificationCodeRepository
      */
     public function create(string $phoneNumber, string $code): VerificationCode
     {
-        $verificationCode = new VerificationCode;
+        $timeout = (int)\config('verification.timeout', 60);
+
+        $verificationCode = new VerificationCode();
         $verificationCode->id = \uuid();
         $verificationCode->created_at = Carbon::now();
-        $verificationCode->expired_at = Carbon::now()->addSeconds((int)\config('verification.timeout', 60));
+        $verificationCode->expired_at = Carbon::now()->addSeconds($timeout);
         $verificationCode->phone_number = $phoneNumber;
         $verificationCode->verification_code = $code;
         $verificationCode->save();

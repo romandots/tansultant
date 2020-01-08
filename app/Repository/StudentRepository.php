@@ -45,7 +45,7 @@ class StudentRepository
         $student->created_at = Carbon::now();
         $student->updated_at = Carbon::now();
 
-        $student->name = "{$person->last_name} {$person->first_name}";
+        $student->name = $dto->name ?? \trans('person.student_name', $person->compactName());;
         $student->person_id = $person->id;
 
         $student->card_number = $storeStudent->card_number;

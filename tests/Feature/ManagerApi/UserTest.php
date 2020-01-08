@@ -185,7 +185,7 @@ class UserTest extends \Tests\TestCase
             ->assertJson([
                 'data' => [
                     'username' => $data['username'],
-                    'name' => "{$data['last_name']} {$data['first_name']}",
+                    'name' => "{$data['first_name']} {$data['last_name']}",
                     'person' =>
                         [
                             'last_name' => $data['last_name'],

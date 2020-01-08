@@ -12,9 +12,9 @@ namespace App\Http\Requests\DTO;
 
 /**
  * Class StoreStudent
- * @package App\Http\Requests\ManagerApi\DTO
+ * @package App\Http\Requests\DTO
  */
 class StoreStudent
 {
-    public ?string $card_number;
+    public ?string $card_number = null;
 }

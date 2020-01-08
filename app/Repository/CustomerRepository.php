@@ -39,7 +39,7 @@ class CustomerRepository
         $customer = new Customer;
         $customer->id = \uuid();
         $customer->person_id = $person->id;
-        $customer->name = "{$person->last_name} {$person->first_name}";
+        $customer->name = $dto->name ?? \trans('person.customer_name', $person->compactName());;
         $customer->save();
 
         return $customer;

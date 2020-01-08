@@ -12,7 +12,7 @@ namespace App\Services\TextMessaging;
 
 use Nutnet\LaravelSms\SmsSender;
 
-class TextMessaging implements TextMessagingServiceInterface
+class TextMessagingService implements TextMessagingServiceInterface
 {
     private SmsSender $sender;
 

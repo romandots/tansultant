@@ -30,4 +30,6 @@ class VerificationCode extends Model
     public const TABLE = 'verification_codes';
 
     protected $table = self::TABLE;
+
+    public const UPDATED_AT = null;
 }

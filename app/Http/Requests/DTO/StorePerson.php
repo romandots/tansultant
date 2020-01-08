@@ -19,65 +19,65 @@ class StorePerson
     /**
      * @var string|null
      */
-    public $last_name;
+    public ?string $last_name = null;
 
     /**
      * @var string|null
      */
-    public $first_name;
+    public ?string $first_name = null;
 
     /**
      * @var string|null
      */
-    public $patronymic_name;
+    public ?string $patronymic_name = null;
 
     /**
      * @var \Carbon\Carbon
      */
-    public $birth_date;
+    public \Carbon\Carbon $birth_date;
+
+    /**
+     * @var string
+     */
+    public string $gender;
 
     /**
      * @var string|null
      */
-    public $gender;
+    public ?string $phone = null;
 
     /**
      * @var string|null
      */
-    public $phone;
+    public ?string $email = null;
 
     /**
      * @var string|null
      */
-    public $email;
+    public ?string $instagram_username = null;
 
     /**
      * @var string|null
      */
-    public $instagram_username;
+    public ?string $telegram_username = null;
 
     /**
      * @var string|null
      */
-    public $telegram_username;
+    public ?string $vk_url = null;
 
     /**
      * @var string|null
      */
-    public $vk_url;
+    public ?string $facebook_url = null;
 
     /**
      * @var string|null
      */
-    public $facebook_url;
-
-    /**
-     * @var string|null
-     */
-    public $note;
+    public ?string $note = null;
 
     /**
      * @var \Illuminate\Http\UploadedFile|null
      */
-    public $picture;
+    public ?\Illuminate\Http\UploadedFile $picture = null;
 }

@@ -183,7 +183,7 @@ class StudentTest extends \Tests\TestCase
             ->assertJson([
                 'data' => [
                     'card_number' => $data['card_number'],
-                    'name' => "{$data['last_name']} {$data['first_name']}",
+                    'name' => "{$data['last_name']} {$data['first_name']} {$data['patronymic_name']}",
                     'person' =>
                         [
                             'last_name' => $data['last_name'],
@@ -237,7 +237,7 @@ class StudentTest extends \Tests\TestCase
             ->assertJsonStructure(self::JSON_STRUCTURE)
             ->assertJson([
                 'data' => [
-                    'name' => "{$person->last_name} {$person->first_name}",
+                    'name' => "{$person->last_name} {$person->first_name} {$person->patronymic_name}",
                     'card_number' => $data['card_number'],
                     'status' => \App\Models\Student::STATUS_POTENTIAL,
                     'person' => [

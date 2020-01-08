@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Http\Requests\ManagerApi\DTO\StoreInstructor;
+use App\Http\Requests\DTO\StoreInstructor;
 use App\Models\Instructor;
 use App\Models\Person;
 use Carbon\Carbon;
@@ -45,7 +45,7 @@ class InstructorRepository
         $instructor->updated_at = Carbon::now();
 
         $instructor->person_id = $person->id;
-        $instructor->name = $dto->name ?? "{$person->first_name} {$person->last_name}";
+        $instructor->name = $dto->name ?? \trans('person.instructor_name', $person->compactName());
         $instructor->description = $dto->description;
         $instructor->display = $dto->display;
         $instructor->status = $dto->status ?: Instructor::STATUS_HIRED;
@@ -57,10 +57,10 @@ class InstructorRepository
 
     /**
      * @param Instructor $instructor
-     * @param \App\Http\Requests\ManagerApi\DTO\StoreInstructor $dto
+     * @param \App\Http\Requests\DTO\StoreInstructor $dto
      * @return void
      */
-    public function update(Instructor $instructor, \App\Http\Requests\ManagerApi\DTO\StoreInstructor $dto): void
+    public function update(Instructor $instructor, \App\Http\Requests\DTO\StoreInstructor $dto): void
     {
         $instructor->description = $dto->description;
         $instructor->display = $dto->display;

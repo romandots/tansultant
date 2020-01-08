@@ -53,9 +53,9 @@ class UserResource extends JsonResource
                 return null !== $this->customer;
             }),
             'permissions' => $this->getPermissionNames(),
-            'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : '',
-            'approved_at' => $this->approved_at ? $this->approved_at->toDateTimeString() : '',
-            'seen_at' => $this->seen_at ? $this->seen_at->toDateTimeString() : '',
+            'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
+            'approved_at' => $this->approved_at ? $this->approved_at->toDateTimeString() : null,
+            'seen_at' => $this->seen_at ? $this->seen_at->toDateTimeString() : null,
         ];
     }
 }
