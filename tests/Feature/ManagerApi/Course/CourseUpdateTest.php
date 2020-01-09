@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\Course;
 
 use App\Models\Course;
+use App\Models\Genre;
 use App\Services\Permissions\CoursesPermissions;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -26,7 +27,11 @@ use Tests\Traits\CreatesFakeUser;
  */
 class CourseUpdateTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeCourse, CreatesFakeInstructor, CreatesFakePerson, WithFaker;
+    use CreatesFakeCourse;
+    use CreatesFakeInstructor;
+    use CreatesFakePerson;
+    use CreatesFakeUser;
+    use WithFaker;
 
     protected const URL = 'admin/courses';
 
@@ -40,21 +45,24 @@ class CourseUpdateTest extends TestCase
             'picture_thumb',
             'status',
             'status_label',
+            'age_restrictions_from',
+            'age_restrictions_to',
             'instructor',
             'starts_at',
-            'ends_at'
+            'ends_at',
+            'genres',
         ]
     ];
 
     /**
      * @var Course
      */
-    private $course;
+    private Course $course;
 
     /**
      * @var string
      */
-    private $url;
+    private string $url;
 
     public function setUp(): void
     {
@@ -103,6 +111,8 @@ class CourseUpdateTest extends TestCase
             CoursesPermissions::UPDATE
         ]);
 
+        $this->course->syncTagsWithType(['waacking'], Genre::class);
+
         $instructor = $this->createFakeInstructor();
         $data = [
             'name' => $this->faker->name,
@@ -110,10 +120,11 @@ class CourseUpdateTest extends TestCase
             'summary' => $this->faker->sentence,
             'description' => $this->faker->text,
             'picture' => null,
-            'age_restrictions' => '3+',
+            'age_restrictions_from' => 3,
             'instructor_id' => $instructor->id,
             'starts_at' => Carbon::now()->toDateString(),
             'ends_at' => null,
+            'genres' => ['vogue'],
         ];
 
         $this
@@ -127,6 +138,9 @@ class CourseUpdateTest extends TestCase
                     'summary' => $data['summary'],
                     'description' => $data['description'],
                     'status' => $data['status'],
+                    'age_restrictions_from' => $data['age_restrictions_from'],
+                    'age_restrictions_to' => null,
+                    'genres' => ['vogue'],
                 ]
             ]);
     }

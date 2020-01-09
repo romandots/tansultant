@@ -15,6 +15,7 @@ use App\Http\Requests\ManagerApi\StoreCourseRequest as UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
 use App\Repository\CourseRepository;
 use App\Services\Course\CourseService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CourseController
@@ -50,8 +51,7 @@ class CourseController
      */
     public function store(StoreCourseRequest $request): CourseResource
     {
-        $course = $this->repository->create($request->getDto());
-        $course->load('instructor');
+        $course = $this->service->create($request->getDto(), $request->user());
 
         return new CourseResource($course);
     }
@@ -61,23 +61,47 @@ class CourseController
      * @param string $id
      * @return CourseResource
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function update(UpdateCourseRequest $request, string $id): CourseResource
     {
         $course = $this->repository->find($id);
-        $this->repository->update($course, $request->getDto());
-        $course->load('instructor');
+        $this->service->update($course, $request->getDto(), $request->user());
 
         return new CourseResource($course);
     }
 
     /**
+     * @param Request $request
      * @param string $id
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Exception
      */
-    public function destroy(string $id): void
+    public function destroy(Request $request, string $id): void
     {
         $course = $this->repository->find($id);
-        $this->repository->delete($course);
+        $this->service->delete($course, $request->user());
+    }
+
+    /**
+     * @param Request $request
+     * @param string $id
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function disable(Request $request, string $id): void
+    {
+        $course = $this->repository->find($id);
+        $this->service->disable($course, $request->user());
+    }
+
+    /**
+     * @param Request $request
+     * @param string $id
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function enable(Request $request, string $id): void
+    {
+        $course = $this->repository->find($id);
+        $this->service->disable($course, $request->user());
     }
 }

@@ -51,9 +51,13 @@ class StoreCourseRequest extends FormRequest
                 'max:' . \config('uploads.max', 10240),
                 'mimes:jpeg,png,pdf'
             ],
-            'age_restrictions' => [
+            'age_restrictions_from' => [
                 'nullable',
-                'string'
+                'integer'
+            ],
+            'age_restrictions_to' => [
+                'nullable',
+                'integer'
             ],
             'instructor_id' => [
                 'nullable',
@@ -69,6 +73,13 @@ class StoreCourseRequest extends FormRequest
                 'nullable',
                 'date'
             ],
+            'genres' => [
+                'nullable',
+                'array'
+            ],
+            'genres.*' => [
+                'string',
+            ],
         ];
     }
 
@@ -79,16 +90,20 @@ class StoreCourseRequest extends FormRequest
     {
         $validated = $this->validated();
 
-        $dto = new DTO\StoreCourse;
+        $dto = new DTO\StoreCourse();
         $dto->name = $validated['name'];
         $dto->status = $validated['status'];
         $dto->summary = $validated['summary'] ?? null;
         $dto->description = $validated['description'] ?? null;
         $dto->picture = $this->file('picture');
-        $dto->age_restrictions = $validated['age_restrictions'] ?? null;
+        $dto->age_restrictions_from = isset($validated['age_restrictions_from'])
+            ? (int)$validated['age_restrictions_from'] : null;
+        $dto->age_restrictions_to = isset($validated['age_restrictions_to'])
+            ? (int)$validated['age_restrictions_to'] : null;
         $dto->instructor_id = $validated['instructor_id'] ?? null;
         $dto->starts_at = isset($validated['starts_at']) ? Carbon::parse($validated['starts_at']) : null;
         $dto->ends_at = isset($validated['ends_at']) ? Carbon::parse($validated['ends_at']) : null;
+        $dto->genres = $validated['genres'] ?? [];
 
         return $dto;
     }

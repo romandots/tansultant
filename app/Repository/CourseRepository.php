@@ -12,6 +12,7 @@ namespace App\Repository;
 
 use App\Http\Requests\ManagerApi\DTO\StoreCourse as CourseDto;
 use App\Models\Course;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 /**
@@ -33,6 +34,7 @@ class CourseRepository
     /**
      * @param string $id
      * @return \Illuminate\Database\Eloquent\Model|Course
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function find(string $id): Course
     {
@@ -50,8 +52,9 @@ class CourseRepository
      */
     public function create(CourseDto $dto): Course
     {
-        $course = new Course;
+        $course = new Course();
         $course->id = \uuid();
+        $course->created_at = Carbon::now();
         $this->fill($course, $dto);
         $course->save();
 
@@ -66,6 +69,25 @@ class CourseRepository
     public function update(Course $course, CourseDto $dto): void
     {
         $this->fill($course, $dto);
+        $course->updated_at = Carbon::now();
+        $course->save();
+    }
+
+    public function setPending(Course $course): void
+    {
+        $course->status = Course::STATUS_PENDING;
+        $course->save();
+    }
+
+    public function setActive(Course $course): void
+    {
+        $course->status = Course::STATUS_ACTIVE;
+        $course->save();
+    }
+
+    public function setDisabled(Course $course): void
+    {
+        $course->status = Course::STATUS_DISABLED;
         $course->save();
     }
 
@@ -106,7 +128,8 @@ class CourseRepository
         if (null !== $dto->picture) {
             $this->savePicture($course, $dto->picture);
         }
-        $course->age_restrictions = $dto->age_restrictions;
+        $course->age_restrictions_from = $dto->age_restrictions_from;
+        $course->age_restrictions_to = $dto->age_restrictions_to;
         $course->instructor_id = $dto->instructor_id;
         $course->starts_at = $dto->starts_at;
         $course->ends_at = $dto->ends_at;
@@ -115,10 +138,10 @@ class CourseRepository
     /**
      * @param Course $course
      * @throws \Exception
-     * @todo delete all future lessons of the course
      */
     public function delete(Course $course): void
     {
-        $course->delete();
+        $course->deleted_at = Carbon::now();
+        $course->save();
     }
 }

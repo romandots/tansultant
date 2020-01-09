@@ -26,7 +26,11 @@ use Tests\Traits\CreatesFakeUser;
  */
 class CourseStoreTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeCourse, CreatesFakeInstructor, CreatesFakePerson, WithFaker;
+    use CreatesFakeCourse;
+    use CreatesFakeInstructor;
+    use CreatesFakePerson;
+    use CreatesFakeUser;
+    use WithFaker;
 
     protected const URL = 'admin/courses';
 
@@ -40,21 +44,24 @@ class CourseStoreTest extends TestCase
             'picture_thumb',
             'status',
             'status_label',
+            'age_restrictions_from',
+            'age_restrictions_to',
             'instructor',
             'starts_at',
-            'ends_at'
+            'ends_at',
+            'genres',
         ]
     ];
 
     /**
      * @var Course
      */
-    private $course;
+    private Course $course;
 
     /**
      * @var string
      */
-    private $url;
+    private string $url;
 
     public function setUp(): void
     {
@@ -108,10 +115,11 @@ class CourseStoreTest extends TestCase
             'summary' => $this->faker->sentence,
             'description' => $this->faker->text,
             'picture' => null,
-            'age_restrictions' => '3+',
+            'age_restrictions_from' => 3,
             'instructor_id' => $instructor->id,
             'starts_at' => Carbon::now()->toDateString(),
             'ends_at' => null,
+            'genres' => ['vogue', 'waacking'],
         ];
 
         $this
@@ -126,6 +134,9 @@ class CourseStoreTest extends TestCase
                     'description' => $data['description'],
                     'picture' => $data['picture'],
                     'status' => $data['status'],
+                    'age_restrictions_from' => $data['age_restrictions_from'],
+                    'age_restrictions_to' => null,
+                    'genres' => ['vogue', 'waacking'],
                 ]
             ]);
     }

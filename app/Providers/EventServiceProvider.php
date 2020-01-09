@@ -19,18 +19,22 @@ class EventServiceProvider extends ServiceProvider
 //        \Illuminate\Auth\Events\Registered::class => [
 //            \Illuminate\Auth\Listeners\SendEmailVerificationNotification::class,
 //        ],
-        \App\Events\UserRegisteredEvent::class => [
-            //
-        ],
-        \App\Events\UserCreatedEvent::class => [
-            //
-        ],
-        \App\Events\InstructorCreatedEvent::class => [
-            //
-        ],
-        \App\Events\StudentCreatedEvent::class => [
-            //
-        ],
+
+        // Users
+        \App\Events\UserRegisteredEvent::class => [],
+        \App\Events\UserCreatedEvent::class => [],
+
+        // Instructors
+        \App\Events\InstructorCreatedEvent::class => [],
+
+        // Students
+        \App\Events\StudentCreatedEvent::class => [],
+
+        // Courses
+        \App\Events\CourseCreatedEvent::class => [],
+        \App\Events\CourseEnabledEvent::class => [],
+        \App\Events\CourseDisabledEvent::class => [],
+        \App\Events\CourseDeletedEvent::class => [],
     ];
 
     /**

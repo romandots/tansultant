@@ -19,45 +19,55 @@ class StoreCourse
     /**
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * @var string|null
      */
-    public $summary;
+    public ?string $summary = null;
 
     /**
      * @var string|null
      */
-    public $description;
+    public ?string $description = null;
 
     /**
-     * @var string|null
+     * @var int|null
      */
-    public $age_restrictions;
+    public ?int $age_restrictions_from = null;
+
+    /**
+     * @var int|null
+     */
+    public ?int $age_restrictions_to = null;
 
     /**
      * @var \Illuminate\Http\UploadedFile|null
      */
-    public $picture;
+    public ?\Illuminate\Http\UploadedFile $picture = null;
 
     /**
      * @var string
      */
-    public $status;
+    public string $status;
 
     /**
      * @var string|null
      */
-    public $instructor_id;
+    public ?string $instructor_id = null;
 
     /**
      * @var \Carbon\Carbon|null
      */
-    public $starts_at;
+    public ?\Carbon\Carbon $starts_at = null;
 
     /**
      * @var \Carbon\Carbon|null
      */
-    public $ends_at;
+    public ?\Carbon\Carbon $ends_at = null;
+
+    /**
+     * @var string[]
+     */
+    public array $genres = [];
 }
