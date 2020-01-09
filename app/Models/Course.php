@@ -59,6 +59,9 @@ use Spatie\Tags\HasTags;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Course whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Course withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Course withoutTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Course withAnyTags($tags, string $type = null)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Course withAllTagsOfAnyType($tags)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Course withAnyTagsOfAnyType($tags)
  * @mixin \Eloquent
  */
 class Course extends Model

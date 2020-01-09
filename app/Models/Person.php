@@ -68,6 +68,9 @@ use Spatie\Tags\HasTags;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Person whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Person whereVkUid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Person whereVkUrl($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Person withAnyTags($tags, string $type = null)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Person withAllTagsOfAnyType($tags)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Person withAnyTagsOfAnyType($tags)
  */
 class Person extends Model
 {

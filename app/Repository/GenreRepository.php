@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\Course;
 use App\Models\Genre;
 use App\Models\Person;
 use Spatie\Tags\Tag;
@@ -39,6 +40,18 @@ class GenreRepository
             ->all();
     }
 
+    /**
+     * @param Course $course
+     * @return string[]
+     */
+    public function getAllForCourse(Course $course): array
+    {
+        return $course
+            ->tagsWithType(Genre::class)
+            ->pluck('name')
+            ->all();
+    }
+
     public function create(string $name): Tag
     {
         return Tag::findOrCreate($name, Genre::class);
@@ -63,5 +76,23 @@ class GenreRepository
             ->where("name->{$locale}", $genre)
             ->where('type', Genre::class)
             ->firstOrFail();
+    }
+
+    /**
+     * @param string[] $genres
+     * @return \Illuminate\Support\Collection|Course[]
+     */
+    public function getCoursesByGenres(array $genres): \Illuminate\Support\Collection
+    {
+        return Course::withAnyTags($genres, Genre::class)->get();
+    }
+
+    /**
+     * @param string[] $genres
+     * @return \Illuminate\Support\Collection|Person[]
+     */
+    public function getPersonsByGenres(array $genres): \Illuminate\Support\Collection
+    {
+        return Person::withAnyTags($genres, Genre::class)->get();
     }
 }
