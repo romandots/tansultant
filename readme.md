@@ -2,7 +2,7 @@
 #### Auth Api
 Регистрация, аутентификация и авторизация для всех пользователей системы
 ```
-POST /register
+POST /register - самостоятельная регистрация пользователя
 {
     "user_type": "student",
     "phone": "79996339776",
@@ -15,25 +15,25 @@ POST /register
     "password": "123456"
 }
 
-POST /register/verify
+POST /register/verify - верификация номера телефона
 {
     "phone": "79996339776",
     "verification_code": "12345"
 }
 
-POST /login
+POST /login - авторизация
 {
     "username": "79996339776",
     "password": "123456"
 }
 
-POST /logout
+POST /logout - сброс авторизации
 
-GET /user
+GET /user - данные пользователя
 
-PATCH /user/password
+PATCH /user/password - смена пароля
 
-* POST /user/passsword/recover
+POST /user/passsword/reset - сброс пароля
 ```
 
 #### Admin Api
