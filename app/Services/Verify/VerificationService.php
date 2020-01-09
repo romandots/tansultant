@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Services\Verify;
 
 use App\Repository\VerificationCodeRepository;
-use App\Services\TextMessaging\TextMessagingService;
+use App\Services\TextMessaging\TextMessagingServiceInterface;
 
 /**
  * Class VerifyService
@@ -21,17 +21,19 @@ class VerificationService
 {
     private VerificationCodeRepository $codeRepository;
 
-    private TextMessagingService $messagingService;
+    private TextMessagingServiceInterface $messagingService;
 
     private array $config;
 
     /**
      * VerifyService constructor.
      * @param VerificationCodeRepository $codeRepository
-     * @param TextMessagingService $messagingService
+     * @param TextMessagingServiceInterface $messagingService
      */
-    public function __construct(VerificationCodeRepository $codeRepository, TextMessagingService $messagingService)
-    {
+    public function __construct(
+        VerificationCodeRepository $codeRepository,
+        TextMessagingServiceInterface $messagingService
+    ) {
         $this->codeRepository = $codeRepository;
         $this->config = \app('config')['verification'];
         $this->messagingService = $messagingService;
@@ -41,7 +43,6 @@ class VerificationService
      * Step 1. Generates and sends code
      * Step 2. Compares input with code
      * Step 3. Passes without exceptions
-     *
      * @param string $phoneNumber
      * @param string|null $code
      * @return bool
@@ -128,7 +129,6 @@ class VerificationService
 
         // And the record will not be created
         $this->codeRepository->create($phoneNumber, $code);
-
         // That's okay!
     }
 
@@ -148,7 +148,7 @@ class VerificationService
 
         if ($this->config['send_messages']) {
             try {
-                 $this->messagingService->send($phoneNumber, $message);
+                $this->messagingService->send($phoneNumber, $message);
             } catch (\Exception $exception) {
                 throw new Exceptions\TextMessageSendingFailed($exception->getMessage());
             }

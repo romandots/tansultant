@@ -14,6 +14,7 @@ Route::group(['middleware' => 'api'], static function () {
     Route::post('register', 'RegistrationController@registerUser');
     Route::post('register/verify', 'RegistrationController@checkVerificationCode');
     Route::post('login', 'AuthController@login');
+    Route::post('user/password/reset', 'ResetPasswordController@reset');
 });
 
 Route::group(['middleware' => 'member_api'], static function () {

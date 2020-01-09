@@ -16,18 +16,9 @@ namespace App\Http\Requests\ManagerApi\DTO;
  */
 class UpdateUser
 {
-    /**
-     * @var string
-     */
-    public $name;
+    public ?string $name = null;
 
-    /**
-     * @var string
-     */
-    public $username;
+    public ?string $username = null;
 
-    /**
-     * @var string\null
-     */
-    public $password;
+    public ?string $password = null;
 }

@@ -3,24 +3,24 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Services\TextMessaging\TextMessagingService;
+use App\Services\TextMessaging\TextMessagingServiceInterface;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use Nutnet\LaravelSms\SmsSender;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
-        //
+        $this->app->bind(TextMessagingServiceInterface::class, static function (Application $app) {
+            $sender = $app->get(SmsSender::class);
+
+            return new TextMessagingService($sender);
+        });
     }
 
-    /**
-     * Bootstrap any application services.
-     * @return void
-     */
-    public function boot()
+    public function boot(): void
     {
         //
     }
