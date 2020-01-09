@@ -22,17 +22,24 @@ trait CreatesFakeUser
     /**
      * @param array|null $attributes
      * @param array $permissions
+     * @param array $roles
      * @return \App\Models\User
      */
-    private function createFakeUser(array $attributes = [], array $permissions = []): \App\Models\User
-    {
+    private function createFakeUser(
+        array $attributes = [],
+        array $permissions = [],
+        array $roles = []
+    ): \App\Models\User {
         if (!isset($attributes['person_id'])) {
             $person = $this->createFakePerson();
             $attributes['person_id'] = $person->id;
         }
 
+        /** @var User $user */
         $user = \factory(\App\Models\User::class)->create($attributes);
         $user->givePermissionTo($permissions);
+
+        $user->assignRole($roles);
 
         return $user;
     }

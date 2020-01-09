@@ -41,6 +41,7 @@ use Spatie\Tags\HasTags;
  * @property-read \App\Models\Instructor $instructor
  * @property-read \App\Models\Student $student
  * @property-read \App\Models\User $user
+ * @property \Illuminate\Database\Eloquent\Collection|\Spatie\Tags\Tag[] $tags
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Person newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Person newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Person query()
