@@ -12,6 +12,7 @@ namespace App\Models;
 use App\Models\Traits\Notifiable;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Tags\HasTags;
 
 /**
  * Class Person
@@ -71,6 +72,7 @@ class Person extends Model
 {
     use UsesUuid;
     use Notifiable;
+    use HasTags;
 
     public const TABLE = 'people';
 
@@ -122,7 +124,7 @@ class Person extends Model
     }
 
     /**
-     * Get name vars in comact array
+     * Get name vars in compact array
      *
      * @return array
      */
