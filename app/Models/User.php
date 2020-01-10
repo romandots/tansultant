@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Traits\HasName;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -18,6 +19,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * Class User
+ *
  * @package App
  * @property string $id
  * @property string $name
@@ -43,9 +45,28 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User query()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User role($roles, $guard = null)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Client[] $clients
+ * @property-read int|null $clients_count
+ * @property-read int|null $notifications_count
+ * @property-read int|null $permissions_count
+ * @property-read int|null $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
+ * @property-read int|null $tokens_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereApprovedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePersonId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereSeenAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUsername($value)
  */
 class User extends Authenticatable
 {
+    use HasName;
     use HasApiTokens;
     use HasRoles;
     use Notifiable;
