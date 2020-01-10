@@ -19,6 +19,7 @@ use App\Http\Requests\ManagerApi\DTO\StoreCourse;
 use App\Models\Course;
 use App\Models\Genre;
 use App\Repository\CourseRepository;
+use App\Services\LogRecord\LogRecordService;
 use Illuminate\Foundation\Auth\User;
 
 /**
@@ -29,16 +30,20 @@ class CourseService
 {
     private CourseRepository $repository;
 
-    public function __construct(CourseRepository $repository)
+    private LogRecordService $actions;
+
+    public function __construct(CourseRepository $repository, LogRecordService $actions)
     {
         $this->repository = $repository;
+        $this->actions = $actions;
     }
 
     /**
      * @param StoreCourse $dto
-     * @return Course
      * @param User $user
+     * @return Course
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Exception
      */
     public function create(StoreCourse $dto, User $user): Course
     {
@@ -46,7 +51,7 @@ class CourseService
         $course->syncTagsWithType($dto->genres, Genre::class);
         $course->load('instructor');
 
-        // $this->actions->log($user, $course, 'create');
+        $this->actions->logCreate($user, $course);
 
         \event(new CourseCreatedEvent($course));
 
@@ -58,6 +63,7 @@ class CourseService
      * @param StoreCourse $dto
      * @param User $user
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Exception
      */
     public function update(Course $course, StoreCourse $dto, User $user): void
     {
@@ -66,7 +72,7 @@ class CourseService
         $course->syncTagsWithType($dto->genres, Genre::class);
         $course->load('instructor');
 
-        // $this->actions->log($user, $course, 'update', $oldCourse);
+        $this->actions->logUpdate($user, $course, $oldCourse);
 
         \event(new CourseUpdatedEvent($course));
     }
@@ -76,16 +82,19 @@ class CourseService
      *
      * @param Course $course
      * @param User $user
+     * @throws \Exception
      */
     public function enable(Course $course, User $user): void
     {
+        $oldCourse = clone $course;
+
         if ($course->isInPeriod()) {
             $this->repository->setActive($course);
         } else {
             $this->repository->setPending($course);
         }
 
-        // $this->actions->log($user, $course, 'enable');
+         $this->actions->logEnable($user, $course, $oldCourse);
 
         \event(new CourseEnabledEvent($course));
     }
@@ -95,16 +104,19 @@ class CourseService
      *
      * @param Course $course
      * @param User $user
+     * @throws \Exception
      */
     public function disable(Course $course, User $user): void
     {
+        $oldCourse = clone $course;
+
         if ($course->isInPeriod()) {
             $this->repository->setActive($course);
         } else {
             $this->repository->setPending($course);
         }
 
-        // $this->actions->log($user, $course, 'disable');
+        $this->actions->logDisable($user, $course, $oldCourse);
 
         \event(new CourseDisabledEvent($course));
     }
@@ -116,9 +128,11 @@ class CourseService
      */
     public function delete(Course $course, User $user): void
     {
+        $oldCourse = clone $course;
+
         $this->repository->delete($course);
 
-        // $this->actions->log($user, $course, 'delete');
+        $this->actions->logDelete($user, $oldCourse);
 
         \event(new CourseDeletedEvent($course));
     }

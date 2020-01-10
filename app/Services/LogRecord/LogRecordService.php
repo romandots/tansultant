@@ -35,7 +35,7 @@ class LogRecordService
      * Universal log method
      * creates log record for action
      *
-     * @param User $user
+     * @param \Illuminate\Foundation\Auth\User|User $user
      * @param string $action
      * @param object|string $objectOrClassName
      * @param object|null $oldValue
@@ -53,28 +53,28 @@ class LogRecordService
     }
 
     /**
-     * @param User $user
+     * @param \Illuminate\Foundation\Auth\User|User $user
      * @param object $object
      * @throws \Exception
      */
-    public function logCreate(User $user, $object): void
+    public function logCreate(User $user, object $object): void
     {
         $this->log($user, LogRecord::ACTION_CREATE, $object);
     }
 
     /**
-     * @param User $user
-     * @param object $object
-     * @param object $oldValue
+     * @param \Illuminate\Foundation\Auth\User|User $user
+     * @param object $updatedObject
+     * @param object $oldObject
      * @throws \Exception
      */
-    public function logUpdate(User $user, object $object, object $oldValue): void
+    public function logUpdate(User $user, object $updatedObject, object $oldObject): void
     {
-        $this->log($user, LogRecord::ACTION_UPDATE, $object, $oldValue);
+        $this->log($user, LogRecord::ACTION_UPDATE, $updatedObject, $oldObject);
     }
 
     /**
-     * @param User $user
+     * @param \Illuminate\Foundation\Auth\User|User $user
      * @param object $object
      * @throws \Exception
      */
@@ -84,7 +84,7 @@ class LogRecordService
     }
 
     /**
-     * @param User $user
+     * @param \Illuminate\Foundation\Auth\User|User $user
      * @param object $restoredObject
      * @throws \Exception
      */
@@ -94,7 +94,7 @@ class LogRecordService
     }
 
     /**
-     * @param User $user
+     * @param \Illuminate\Foundation\Auth\User|User $user
      * @param object $object
      * @param object|null $oldValue
      * @throws \Exception
@@ -105,7 +105,7 @@ class LogRecordService
     }
 
     /**
-     * @param User $user
+     * @param \Illuminate\Foundation\Auth\User|User $user
      * @param object $object
      * @param object|null $oldValue
      * @throws \Exception
@@ -116,7 +116,7 @@ class LogRecordService
     }
 
     /**
-     * @param User $user
+     * @param \Illuminate\Foundation\Auth\User|User $user
      * @param object $object
      * @throws \Exception
      */
