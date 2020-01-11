@@ -85,14 +85,31 @@ class PersonRepository
             ->first();
     }
 
+    public function create(array $data): Person
+    {
+        $person = new Person();
+        $person->id = \uuid();
+        $person->created_at = Carbon::now();
+        $person->updated_at = Carbon::now();
+        $person->last_name = $data['last_name'] ?? null;
+        $person->first_name = $data['first_name'] ?? null;
+        $person->patronymic_name = $data['patronymic_name'] ?? null;
+        $person->gender = $data['gender'] ?? null;
+        $person->birth_date = isset($data['birth_date']) ? Carbon::parse($data['birth_date']) : null;
+        $person->phone = $data['phone'] ?? null;
+        $person->save();
+
+        return $person;
+    }
+
     /**
      * @param PersonDto $dto
      * @return Person
      * @throws \Exception
      */
-    public function create(PersonDto $dto): Person
+    public function createFromDto(PersonDto $dto): Person
     {
-        $person = new Person;
+        $person = new Person();
         $person->id = \uuid();
         $person->created_at = Carbon::now();
         $person->updated_at = Carbon::now();

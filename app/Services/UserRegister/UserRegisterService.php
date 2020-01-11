@@ -149,7 +149,7 @@ class UserRegisterService
         $storePerson->email = $registerUser->email;
 
         if (null === $person) {
-            $person = $this->personRepository->create($storePerson);
+            $person = $this->personRepository->createFromDto($storePerson);
         } else {
             $this->personRepository->update($person, $storePerson);
         }

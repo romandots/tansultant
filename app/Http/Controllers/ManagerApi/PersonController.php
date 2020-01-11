@@ -35,7 +35,7 @@ class PersonController extends Controller
      */
     public function store(StorePersonRequest $request): PersonResource
     {
-        $person = $this->personRepository->create($request->getDto());
+        $person = $this->personRepository->createFromDto($request->getDto());
 
         return new PersonResource($person);
     }
