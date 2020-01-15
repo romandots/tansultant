@@ -22,7 +22,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
-        \Fruitcake\Cors\HandleCors::class,
+        \Spatie\Cors\Cors::class,
     ];
 
     /**
@@ -44,12 +44,12 @@ class Kernel extends HttpKernel
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
-        'cors' => \Fruitcake\Cors\HandleCors::class,
+        'user_has_person' => \App\Http\Middleware\UserHasPerson::class,
     ];
 
     /**
      * The priority-sorted list of middleware.
-     * This forces non-global middleware to always be in the given order.
+     * This forcphp artisan vendor:publish --tag="cors"es non-global middleware to always be in the given order.
      * @var array
      */
     protected $middlewarePriority = [
@@ -66,24 +66,12 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middlewareGroups = [
-//        'web' => [
-//            \App\Http\Middleware\EncryptCookies::class,
-//            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-//            \Illuminate\Session\Middleware\StartSession::class,
-//            \Illuminate\Session\Middleware\AuthenticateSession::class,
-//            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-//            \App\Http\Middleware\VerifyCsrfToken::class,
-//            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-//        ],
-
         'api' => [
             'prefer_json:1',
-            'cors'
         ],
 
         'member_api' => [
-            'prefer_json:1',
-            'cors',
+            'api',
             'auth:api',
         ],
 

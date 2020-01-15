@@ -24,7 +24,7 @@ class Handler extends BaseExceptionHandler
      * A list of the exception types that are not reported.
      * @var array
      */
-    protected $dontReport = [
+    protected $dontReport = array(
         UnauthorizedException::class,
         UserNotFoundException::class,
         WrongPasswordException::class,
@@ -35,7 +35,8 @@ class Handler extends BaseExceptionHandler
         VerificationCodeWasSentTooManyTimes::class,
         VerificationCodeAlreadySentRecently::class,
         TextMessageSendingFailed::class,
-    ];
+        UserHasNoPersonException::class,
+    );
 
     /**
      * Returns a list of user-defined exception handlers
@@ -55,6 +56,7 @@ class Handler extends BaseExceptionHandler
             VerificationCodeWasSentTooManyTimes::class => [$this, 'renderAsJson'],
             VerificationCodeAlreadySentRecently::class => [$this, 'renderAsJson'],
             TextMessageSendingFailed::class => [$this, 'renderAsJson'],
+            UserHasNoPersonException::class => [$this, 'renderAsJson'],
         ];
     }
 

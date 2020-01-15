@@ -11,4 +11,5 @@ return [
     'verification_code_was_sent_too_many_times' => 'Вы больше не можете отправить код подтверждения. Сделайте паузу',
     'verification_code_was_sent_recently' => 'Код был отправлен недавно. Подождите немного',
     'text_message_sending_failed' => 'Отправка СМС не удалась',
+    'user_has_no_person_attached' => 'Пользователь не имеет профайла',
 ];

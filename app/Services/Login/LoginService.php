@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Services\Login;
 
-use App\Exceptions\Auth\UnauthorizedException;
 use App\Http\Requests\Auth\DTO\Login;
 use App\Models\User;
 use App\Repository\UserRepository;
@@ -25,7 +24,7 @@ class LoginService
     /**
      * @var UserRepository
      */
-    private $repository;
+    private UserRepository $repository;
 
     /**
      * LoginService constructor.
