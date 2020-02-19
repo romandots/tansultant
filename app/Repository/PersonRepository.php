@@ -130,8 +130,6 @@ class PersonRepository
         $person->email = $dto->email;
         $person->instagram_username = $dto->instagram_username;
         $person->telegram_username = $dto->telegram_username;
-        $person->vk_url = $dto->vk_url;
-        $person->facebook_url = $dto->facebook_url;
         $person->note = $dto->note;
 
         if (null !== $dto->picture) {

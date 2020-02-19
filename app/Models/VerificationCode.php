@@ -32,4 +32,8 @@ class VerificationCode extends Model
     protected $table = self::TABLE;
 
     public const UPDATED_AT = null;
+
+    protected $casts = [
+        'expired_at' => 'datetime'
+    ];
 }

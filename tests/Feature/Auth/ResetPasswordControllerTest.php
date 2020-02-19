@@ -25,7 +25,7 @@ class ResetPasswordControllerTest extends TestCase
     use CreatesFakePerson;
     use WithFaker;
 
-    public const URL = 'user/password/reset';
+    public const URL = '/reset';
 
     public function setUp(): void
     {
@@ -47,8 +47,10 @@ class ResetPasswordControllerTest extends TestCase
         $phoneNumber = $this->faker->e164PhoneNumber;
         $normalizedPhoneNumber = \normalize_phone_number($phoneNumber);
         $user = $this->createFakeUser([
-            'username' => $normalizedPhoneNumber
+            'username' => $phoneNumber
         ]);
+        $user->person->phone = $normalizedPhoneNumber;
+        $user->person->save();
         $originalPassword = $user->password;
 
         $postData = [
@@ -57,12 +59,12 @@ class ResetPasswordControllerTest extends TestCase
 
         // Request username verification
         $this
-            ->post(self::URL, $postData)
-            ->assertStatus(200);
+            ->postJson(self::URL, $postData)
+            ->assertStatus(201);
 
         // Request again
         $this
-            ->post(self::URL, $postData)
+            ->postJson(self::URL, $postData)
             ->assertStatus(400)
             ->assertJson([
                 'error' => 'verification_code_was_sent_recently',
@@ -72,7 +74,7 @@ class ResetPasswordControllerTest extends TestCase
         // Send wrong verification code
         $postData['verification_code'] = 'code';
         $this
-            ->post(self::URL, $postData)
+            ->postJson(self::URL, $postData)
             ->assertStatus(409)
             ->assertJson([
                 'error' => 'verification_code_is_invalid',

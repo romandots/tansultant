@@ -6,11 +6,13 @@ namespace App\Exceptions;
 use App\Exceptions\Auth\UnauthorizedException;
 use App\Services\Login\Exceptions\UserNotFoundException;
 use App\Services\Login\Exceptions\WrongPasswordException;
+use App\Services\PasswordReset\Exceptions\UserHasNoPerson;
 use App\Services\User\Exceptions\OldPasswordInvalidException;
 use App\Services\UserRegister\Exceptions\UserAlreadyRegisteredWithOtherPhoneNumber;
 use App\Services\UserRegister\Exceptions\UserAlreadyRegisteredWithSamePhoneNumber;
 use App\Services\Verify\Exceptions\TextMessageSendingFailed;
 use App\Services\Verify\Exceptions\VerificationCodeAlreadySentRecently;
+use App\Services\Verify\Exceptions\VerificationCodeExpired;
 use App\Services\Verify\Exceptions\VerificationCodeIsInvalid;
 use App\Services\Verify\Exceptions\VerificationCodeWasSentTooManyTimes;
 
@@ -34,7 +36,9 @@ class Handler extends BaseExceptionHandler
         VerificationCodeIsInvalid::class,
         VerificationCodeWasSentTooManyTimes::class,
         VerificationCodeAlreadySentRecently::class,
+        VerificationCodeExpired::class,
         TextMessageSendingFailed::class,
+        UserHasNoPerson::class,
     ];
 
     /**
@@ -54,7 +58,9 @@ class Handler extends BaseExceptionHandler
             VerificationCodeIsInvalid::class => [$this, 'renderAsJson'],
             VerificationCodeWasSentTooManyTimes::class => [$this, 'renderAsJson'],
             VerificationCodeAlreadySentRecently::class => [$this, 'renderAsJson'],
+            VerificationCodeExpired::class => [$this, 'renderAsJson'],
             TextMessageSendingFailed::class => [$this, 'renderAsJson'],
+            UserHasNoPerson::class => [$this, 'renderAsJson'],
         ];
     }
 

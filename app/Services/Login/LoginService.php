@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Services\Login;
 
-use App\Exceptions\Auth\UnauthorizedException;
 use App\Http\Requests\Auth\DTO\Login;
 use App\Models\User;
 use App\Repository\UserRepository;
@@ -39,9 +38,9 @@ class LoginService
     /**
      * @param string $username
      * @param string $password
-     * @return \App\Models\User
+     * @return User
      */
-    private function attemptLogin(string $username, string $password): \App\Models\User
+    private function attemptLogin(string $username, string $password): User
     {
         try {
             $user = $this->repository->findByUsername($username);
@@ -72,9 +71,18 @@ class LoginService
     /**
      * @param User $user
      * @return bool
+     * @throws \Exception
      */
     public function logout(User $user): bool
     {
-        return $user->token()->revoke();
+        $token = $user->token();
+
+        if (null !== $token) {
+            return false;
+        }
+
+        $token->revoke();
+
+        return true;
     }
 }

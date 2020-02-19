@@ -27,9 +27,6 @@ use App\Repository\InstructorRepository;
 use App\Repository\PersonRepository;
 use App\Repository\StudentRepository;
 use App\Repository\UserRepository;
-use App\Services\Verify\Exceptions\VerificationCodeAlreadySentRecently;
-use App\Services\Verify\Exceptions\VerificationCodeIsInvalid;
-use App\Services\Verify\Exceptions\VerificationCodeWasSentTooManyTimes;
 use App\Services\Verify\VerificationService;
 
 class UserRegisterService
@@ -37,32 +34,32 @@ class UserRegisterService
     /**
      * @var UserRepository
      */
-    private $userRepository;
+    private UserRepository $userRepository;
 
     /**
      * @var CustomerRepository
      */
-    private $customerRepository;
+    private CustomerRepository $customerRepository;
 
     /**
      * @var StudentRepository
      */
-    private $studentRepository;
+    private StudentRepository $studentRepository;
 
     /**
      * @var InstructorRepository
      */
-    private $instructorRepository;
+    private InstructorRepository $instructorRepository;
 
     /**
      * @var PersonRepository
      */
-    private $personRepository;
+    private PersonRepository $personRepository;
 
     /**
      * @var VerificationService
      */
-    private $verifyService;
+    private VerificationService $verifyService;
 
     /**
      * UserRegisterService constructor.
@@ -229,23 +226,6 @@ class UserRegisterService
      * and finally registered
      *
      * @param RegisterUser $registerUser
-     * @return bool
-     * @throws VerificationCodeWasSentTooManyTimes
-     * @throws VerificationCodeAlreadySentRecently
-     * @throws VerificationCodeIsInvalid
-     * @throws \Exception
-     */
-    public function verifyUserPhoneNumber(RegisterUser $registerUser): bool
-    {
-        return $this->verifyService->verifyPhoneNumber($registerUser->phone, $registerUser->verification_code);
-    }
-
-    /**
-     * You should call this method iteratively several times
-     * until user is passed all verification steps
-     * and finally registered
-     *
-     * @param RegisterUser $registerUser
      * @return User
      * @throws Exceptions\UserAlreadyRegisteredWithSamePhoneNumber
      * @throws Exceptions\UserAlreadyRegisteredWithOtherPhoneNumber
@@ -253,27 +233,38 @@ class UserRegisterService
      */
     public function registerUser(RegisterUser $registerUser): User
     {
-        // Lookup for anybody with such phone number
-        // Lookup for somebody with exact same name, gender and birth date
-        // Create new Person or update existing one
-        $person = $this->createOrUpdatePerson($registerUser);
+        return \DB::transaction(function () use ($registerUser) {
+            // Lookup for anybody with such phone number
+            // Lookup for somebody with exact same name, gender and birth date
+            // Create new Person or update existing one
+            $person = $this->createOrUpdatePerson($registerUser);
 
-        // Create Instructor or Student
-        switch ($registerUser->user_type) {
-            case RegisterUser::TYPE_INSTRUCTOR:
-                $this->createInstructorIfNotExist($person, $registerUser);
-                break;
-            case RegisterUser::TYPE_STUDENT:
-                $this->createStudentIfNotExist($person, $registerUser);
-                break;
-        }
+            // Create Instructor or Student
+            switch ($registerUser->user_type) {
+                case RegisterUser::TYPE_INSTRUCTOR:
+                    $this->createInstructorIfNotExist($person, $registerUser);
+                    break;
+                case RegisterUser::TYPE_STUDENT:
+                    $this->createStudentIfNotExist($person, $registerUser);
+                    break;
+            }
 
-        // Create User
-        $newUser = $this->createUser($person, $registerUser);
-        $newUser->load('person.instructor', 'person.student', 'person.customer');
+            // Create User
+            $newUser = $this->createUser($person, $registerUser);
 
-        \event(new UserRegisteredEvent($newUser));
+            // Auto approve new students
+            if (RegisterUser::TYPE_STUDENT === $registerUser->user_type) {
+                $this->userRepository->approve($newUser);
+            }
 
-        return $newUser;
+            // Remove verification codes
+            $this->verifyService->cleanUp($person->phone);
+
+            $newUser->load(['person.instructor', 'person.student', 'person.customer', 'person.user']);
+
+            \event(new UserRegisteredEvent($newUser));
+
+            return $newUser;
+        });
     }
 }

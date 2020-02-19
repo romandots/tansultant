@@ -14,5 +14,5 @@ class VerifyPhoneNumber
 {
     public string $phone;
 
-    public string $verification_code;
+    public ?string $verification_code = null;
 }

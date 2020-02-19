@@ -37,15 +37,13 @@ class CreatePeopleTables extends Migration
             $table->text('instagram_username')->nullable();
             $table->text('telegram_username')->nullable();
             $table->text('vk_uid')->nullable();
-            $table->text('vk_url')->nullable();
             $table->text('facebook_uid')->nullable();
-            $table->text('facebook_url')->nullable();
             $table->text('note')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();
 
-            $table->unique(['last_name', 'first_name', 'patronymic_name', 'birth_date'], 'unique_person');
+            $table->unique(['last_name', 'first_name', 'patronymic_name', 'birth_date', 'deleted_at'], 'unique_bio');
         });
 
         \convertPostgresColumnTextToEnum('people', 'gender', ['male', 'female']);

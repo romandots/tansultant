@@ -36,10 +36,10 @@ class InstructorResource extends JsonResource
             'picture' => $this->picture,
             'display' => (bool)$this->display,
             'status' => $this->status,
-            'status_label' => \trans($this->status),
-            'permissions' => $this->getPermissionNames(),
+            'status_label' => \trans('instructor.status.' . $this->status),
             'seen_at' => $this->seen_at ? $this->seen_at->toDateTimeString() : null,
-            'created_at' => $this->created_at->toDateTimeString()
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at ?  $this->updated_at->toDateTimeString() : null,
         ];
     }
 }

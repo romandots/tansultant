@@ -46,10 +46,8 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws UnauthorizedException
      */
-    public function logout(Request $request): \Illuminate\Http\JsonResponse
+    public function logout(Request $request): void
     {
         $this->service->logout($request->user());
-
-        return \json_response('OK', 200);
     }
 }

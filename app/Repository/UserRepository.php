@@ -24,10 +24,10 @@ class UserRepository
 {
     /**
      * @param string $username
-     * @return User|null
+     * @return User
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function findByUsername(string $username): ?User
+    public function findByUsername(string $username): User
     {
         return User::query()
             ->where('username', $username)
@@ -36,10 +36,10 @@ class UserRepository
 
     /**
      * @param string $id
-     * @return User|null
+     * @return User
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function find(string $id): ?User
+    public function find(string $id): User
     {
         return User::query()
             ->where('id', $id)
@@ -49,10 +49,10 @@ class UserRepository
 
     /**
      * @param string $id
-     * @return User|null
+     * @return User
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function findWithDeleted(string $id): ?User
+    public function findWithDeleted(string $id): User
     {
         return User::query()
             ->where('id', $id)
@@ -69,6 +69,7 @@ class UserRepository
     {
         $user = new User();
         $user->id = \uuid();
+        $user->status = User::STATUS_PENDING;
         $user->created_at = Carbon::now();
         $user->updated_at = Carbon::now();
         $user->person_id = $person->id;
@@ -130,7 +131,28 @@ class UserRepository
      */
     public function approve(User $user): void
     {
+        $user->status = User::STATUS_APPROVED;
         $user->approved_at = Carbon::now();
+        $user->updated_at = Carbon::now();
+        $user->save();
+    }
+
+    /**
+     * @param User $user
+     */
+    public function disable(User $user): void
+    {
+        $user->status = User::STATUS_DISABLED;
+        $user->updated_at = Carbon::now();
+        $user->save();
+    }
+
+    /**
+     * @param User $user
+     */
+    public function enable(User $user): void
+    {
+        $user->status = User::STATUS_APPROVED;
         $user->updated_at = Carbon::now();
         $user->save();
     }

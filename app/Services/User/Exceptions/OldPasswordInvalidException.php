@@ -21,6 +21,6 @@ class OldPasswordInvalidException extends UserServiceException
      */
     public function __construct()
     {
-        parent::__construct('old_password_invalid', null, 422);
+        parent::__construct('old_password_invalid', null, 409);
     }
 }

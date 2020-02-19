@@ -1,22 +1,23 @@
 <?php
 /**
- * File: RegisterUserRequest.php
- * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2020-01-8
+ * File: $fileName
+ * Author: Roman Dots <romandots@brainex.co>
+ * Date: 2020-2-19
  * Copyright (c) 2020
  */
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\MemberApi;
+namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\DTO\RegisterUser;
 use App\Models\Person;
 use App\Models\User;
+use App\Models\VerificationCode;
+use App\Repository\VerificationCodeRepository;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Validator;
 
 /**
  * Class RegisterUserRequest
@@ -24,6 +25,17 @@ use Illuminate\Validation\Validator;
  */
 class RegisterUserRequest extends FormRequest
 {
+    private VerificationCodeRepository $verificationCodes;
+
+    /**
+     * RegisterUserRequest constructor.
+     * @param VerificationCodeRepository $verificationCodes
+     */
+    public function __construct(VerificationCodeRepository $verificationCodes)
+    {
+        $this->verificationCodes = $verificationCodes;
+    }
+
     /**
      * @return array
      */
@@ -33,35 +45,32 @@ class RegisterUserRequest extends FormRequest
             'user_type' => [
                 'required',
                 'string',
-                Rule::in(User::TYPES),
+                Rule::in(\array_map(fn(string $type) => \base_classname($type), User::TYPES)),
             ],
-            'phone' => [
+            'verification_code_id' => [
                 'required',
                 'string',
-                'min:9',
-            ],
-            'verification_code' => [
-                'nullable',
-                'string',
+                'uuid',
+                Rule::exists(VerificationCode::TABLE, 'id'),
             ],
             'last_name' => [
-                'nullable',
+                'required',
                 'string',
             ],
             'first_name' => [
-                'nullable',
+                'required',
                 'string',
             ],
             'patronymic_name' => [
-                'nullable',
+                'required',
                 'string',
             ],
             'birth_date' => [
-                'nullable',
+                'required',
                 'date',
             ],
             'gender' => [
-                'nullable',
+                'required',
                 'string',
                 Rule::in(Person::GENDER),
             ],
@@ -75,27 +84,10 @@ class RegisterUserRequest extends FormRequest
                 'string',
             ],
             'password' => [
-                'nullable',
+                'required',
                 'string',
             ],
         ];
-    }
-
-
-    protected function withValidator(Validator $validator): void
-    {
-        $data = $validator->getData();
-
-        if (isset($data['verification_code'])) {
-            $validator->addRules([
-                'last_name' => ['required'],
-                'first_name' => ['required'],
-                'patronymic_name' => ['required'],
-                'birth_date' => ['required'],
-                'gender' => ['required'],
-                'password' => ['required'],
-            ]);
-        }
     }
 
     /**
@@ -107,15 +99,15 @@ class RegisterUserRequest extends FormRequest
 
         $dto = new RegisterUser();
         $dto->user_type = $validated['user_type'];
-        $dto->phone = $validated['phone'];
-        $dto->verification_code = $validated['verification_code'] ?? null;
-        $dto->last_name = $validated['last_name'] ?? null;
-        $dto->first_name = $validated['first_name'] ?? null;
-        $dto->patronymic_name = $validated['patronymic_name'] ?? null;
+        $dto->phone = $this->verificationCodes->findVerifiedById($validated['verification_code_id'])->phone_number;
+        $dto->last_name = $validated['last_name'];
+        $dto->first_name = $validated['first_name'];
+        $dto->patronymic_name = $validated['patronymic_name'];
         $dto->birth_date = isset($validated['birth_date']) ? Carbon::parse($validated['birth_date']) : null;
-        $dto->gender = $validated['gender'] ?? null;
+        $dto->gender = $validated['gender'];
         $dto->email = $validated['email'] ?? null;
-        $dto->password = isset($validated['password']) ? \Hash::make($validated['password']) : null;
+        $dto->description = $validated['description'] ?? null;
+        $dto->password = $validated['password'];
 
         return $dto;
     }

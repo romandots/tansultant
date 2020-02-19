@@ -24,6 +24,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $username
  * @property string $password
  * @property string $person_id
+ * @property string $status [pending, approved, disabled]
  * @property string|null $remember_token
  * @property \Carbon\Carbon|null $approved_at
  * @property \Carbon\Carbon|null $seen_at
@@ -58,6 +59,15 @@ class User extends Authenticatable
         \App\Models\Instructor::class,
         \App\Models\Student::class,
         \App\Models\Customer::class,
+    ];
+
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_DISABLED = 'disabled';
+    public const STATUSES = [
+        self::STATUS_PENDING,
+        self::STATUS_APPROVED,
+        self::STATUS_DISABLED,
     ];
 
     protected $table = self::TABLE;
