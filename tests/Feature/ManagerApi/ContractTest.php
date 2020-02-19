@@ -37,7 +37,6 @@ class ContractTest extends \Tests\TestCase
             'created_at',
             'customer' => [
                 'person',
-                'permissions'
             ]
         ]
     ];
@@ -118,11 +117,10 @@ class ContractTest extends \Tests\TestCase
                             'instagram_username' => $person->instagram_username,
                             'telegram_username' => $person->telegram_username,
                             'vk_uid' => $person->vk_uid,
-                            'vk_url' => $person->vk_url,
                             'facebook_uid' => $person->facebook_uid,
-                            'facebook_url' => $person->facebook_url,
                             'note' => $person->note,
-                            'created_at' => $person->created_at->toDateTimeString()
+                            'created_at' => $person->created_at->toDateTimeString(),
+                            'updated_at' => $person->updated_at->toDateTimeString(),
                         ],
                     ],
                     'status' => 'pending',
@@ -130,6 +128,7 @@ class ContractTest extends \Tests\TestCase
                     'is_terminated' => false,
                     'is_pending' => true,
                     'created_at' => $contract->created_at->toDateTimeString(),
+                    'updated_at' => $contract->updated_at->toDateTimeString(),
                     'signed_at' => $contract->signed_at ? $contract->signed_at->toDateTimeString() : null,
                     'terminated_at' => $contract->terminated_at
                         ? $contract->terminated_at->toDateTimeString() : null,

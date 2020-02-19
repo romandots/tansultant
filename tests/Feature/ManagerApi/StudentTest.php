@@ -143,14 +143,12 @@ class StudentTest extends \Tests\TestCase
                         'instagram_username' => $person->instagram_username,
                         'telegram_username' => $person->telegram_username,
                         'vk_uid' => $person->vk_uid,
-                        'vk_url' => $person->vk_url,
                         'facebook_uid' => $person->facebook_uid,
-                        'facebook_url' => $person->facebook_url,
                         'note' => $person->note,
                         'created_at' => $person->created_at->toDateTimeString()
                     ],
                     'status' => $student->status,
-                    'status_label' => \trans($student->status),
+                    'status_label' => \trans('student.status.' . $student->status),
                     'seen_at' => $student->seen_at->toDateTimeString(),
                     'created_at' => $student->created_at->toDateTimeString()
                 ]
@@ -166,12 +164,10 @@ class StudentTest extends \Tests\TestCase
             'patronymic_name' => $this->faker->firstName,
             'birth_date' => $this->faker->date(),
             'gender' => 'male',
-            'phone' => '+7-999-633-97-76',
+            'phone' => $this->faker->e164PhoneNumber,
             'email' => $this->faker->email,
             'instagram_username' => $this->faker->word,
             'telegram_username' => $this->faker->word,
-            'vk_url' => 'https://vk.com/durov',
-            'facebook_url' => 'https://facebook.com/mark',
             'note' => 'Some testy note',
         ];
 
@@ -191,20 +187,18 @@ class StudentTest extends \Tests\TestCase
                             'patronymic_name' => $data['patronymic_name'],
                             'birth_date' => $data['birth_date'],
                             'gender' => 'male',
-                            'phone' => '79996339776',
+                            'phone' => \normalize_phone_number($data['phone']),
                             'email' => $data['email'],
                             'picture' => null,
                             'picture_thumb' => null,
                             'instagram_username' => $data['instagram_username'],
                             'telegram_username' => $data['telegram_username'],
                             'vk_uid' => null,
-                            'vk_url' => 'https://vk.com/durov',
                             'facebook_uid' => null,
-                            'facebook_url' => 'https://facebook.com/mark',
                             'note' => 'Some testy note',
                         ],
                     'status' => 'potential',
-                    'status_label' => 'potential'
+                    'status_label' => 'Потенциальный'
                 ]
             ]);
     }
@@ -254,9 +248,7 @@ class StudentTest extends \Tests\TestCase
                         'instagram_username' => $person->instagram_username,
                         'telegram_username' => $person->telegram_username,
                         'vk_uid' => $person->vk_uid,
-                        'vk_url' => $person->vk_url,
                         'facebook_uid' => $person->facebook_uid,
-                        'facebook_url' => $person->facebook_url,
                         'note' => $person->note,
                         'created_at' => $person->created_at->toDateTimeString()
                     ]
@@ -300,14 +292,12 @@ class StudentTest extends \Tests\TestCase
                         'instagram_username' => $person->instagram_username,
                         'telegram_username' => $person->telegram_username,
                         'vk_uid' => $person->vk_uid,
-                        'vk_url' => $person->vk_url,
                         'facebook_uid' => $person->facebook_uid,
-                        'facebook_url' => $person->facebook_url,
                         'note' => $person->note,
                         'created_at' => $person->created_at->toDateTimeString()
                     ],
                     'status' => $student->status,
-                    'status_label' => \trans($student->status),
+                    'status_label' => \trans('student.status.' . $student->status),
                     'seen_at' => $student->seen_at->toDateTimeString(),
                     'created_at' => $student->created_at->toDateTimeString()
                 ]

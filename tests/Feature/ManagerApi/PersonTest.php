@@ -35,9 +35,7 @@ class PersonTest extends \Tests\TestCase
             'instagram_username',
             'telegram_username',
             'vk_uid',
-            'vk_url',
             'facebook_uid',
-            'facebook_url',
             'note',
             'created_at'
         ]
@@ -101,9 +99,7 @@ class PersonTest extends \Tests\TestCase
                     'instagram_username' => $person->instagram_username,
                     'telegram_username' => $person->telegram_username,
                     'vk_uid' => $person->vk_uid,
-                    'vk_url' => $person->vk_url,
                     'facebook_uid' => $person->facebook_uid,
-                    'facebook_url' => $person->facebook_url,
                     'note' => $person->note,
                     'created_at' => $person->created_at->toDateTimeString()
                 ]
@@ -136,8 +132,6 @@ class PersonTest extends \Tests\TestCase
             'email' => $this->faker->email,
             'instagram_username' => $this->faker->word,
             'telegram_username' => $this->faker->word,
-            'vk_url' => 'https://vk.com/durov',
-            'facebook_url' => 'https://facebook.com/mark',
             'note' => 'Some testy note',
         ];
 
@@ -159,10 +153,7 @@ class PersonTest extends \Tests\TestCase
                     'picture_thumb' => null,
                     'instagram_username' => $data['instagram_username'],
                     'telegram_username' => $data['telegram_username'],
-                    'vk_uid' => null,
-                    'vk_url' => 'https://vk.com/durov',
                     'facebook_uid' => null,
-                    'facebook_url' => 'https://facebook.com/mark',
                     'note' => 'Some testy note',
                 ],
             ]);
@@ -209,8 +200,6 @@ class PersonTest extends \Tests\TestCase
             'email' => $this->faker->email,
             'instagram_username' => $this->faker->word,
             'telegram_username' => $this->faker->word,
-            'vk_url' => 'https://vk.com/durov',
-            'facebook_url' => 'https://facebook.com/mark',
             'note' => 'Some testy note',
         ];
 
@@ -238,9 +227,7 @@ class PersonTest extends \Tests\TestCase
                     'instagram_username' => $data['instagram_username'],
                     'telegram_username' => $data['telegram_username'],
                     'vk_uid' => $person->vk_uid,
-                    'vk_url' => 'https://vk.com/durov',
                     'facebook_uid' => $person->facebook_uid,
-                    'facebook_url' => 'https://facebook.com/mark',
                     'note' => 'Some testy note',
                 ]
             ]);
