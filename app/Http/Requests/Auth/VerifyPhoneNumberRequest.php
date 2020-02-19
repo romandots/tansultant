@@ -8,8 +8,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\MemberApi;
+namespace App\Http\Requests\Auth;
 
+use App\Http\Requests\MemberApi\DTO;
 use Illuminate\Foundation\Http\FormRequest;
 
 class VerifyPhoneNumberRequest extends FormRequest
@@ -26,7 +27,7 @@ class VerifyPhoneNumberRequest extends FormRequest
                 'min:9',
             ],
             'verification_code' => [
-                'required',
+                'nullable',
                 'string',
             ],
         ];
@@ -37,8 +38,8 @@ class VerifyPhoneNumberRequest extends FormRequest
         $validated = $this->validated();
 
         $dto = new DTO\VerifyPhoneNumber();
-        $dto->phone = $validated['phone'];
-        $dto->verification_code = $validated['verification_code'];
+        $dto->phone = \normalize_phone_number($validated['phone']);
+        $dto->verification_code = $validated['verification_code'] ?? null;
 
         return $dto;
     }

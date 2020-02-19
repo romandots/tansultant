@@ -1,526 +1,832 @@
 openapi: 3.0.0
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/bezpravil/tansultant-api/1.0.0
 info:
-  description: ''
-  version: 1.0.0
-  title: DC API
+  version: "1.0.0"
+  title: Tansultant CRM API
+  description: >-
+    Documentation for Tansultant API
 tags:
-  - name: OAuth
-    description: OAuth аутентификация
-  - name: People
-    description: Люди
-  - name: Users
-    description: Пользователи
-
+  - name: auth
+    description: >-
+      Авторизация и регистрация
+  - name: admin
+    description: >-
+      АПИ для админских приложений и интерфейсов
+  - name: instructor
+    description: >-
+      АПИ для приложения преподавателя
+  - name: student
+    description: >-
+      АПИ для клиентского приложения
+  - name: public
+    description: >-
+      Публичный АПИ для сайта и приложений
+security:
+  - application:
+      - read
+      - write
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-
+  parameters:
+    Page:
+      description: Номер страницы
+      name: page
+      in: query
+      schema:
+        type: integer
+        nullable: true
+        default: 1
+        example: 1
+    PerPage:
+      description: Количество записей на странице
+      name: per_page
+      in: query
+      schema:
+        type: integer
+        nullable: true
+        default: 50
+        example: 50
+    Sort:
+      description: Критерий для сортировки
+      name: sort
+      in: query
+      schema:
+        type: string
+        nullable: true
+        default: 'id'
+        example: 'id'
+    Order:
+      description: Направление сортировки
+      name: order
+      in: query
+      schema:
+        type: string
+        enum: [asc, desc]
+        nullable: true
+        default: 'asc'
+    FilterByUserStatus:
+      description: Фильтровать по статусу пользователя
+      name: status
+      in: query
+      schema:
+        type: string
+        enum: [pending, approved, disabled]
+        nullable: true
+    NewsId:
+      description: ID новости
+      name: news_id
+      in: path
+      required: true
+      schema:
+        type: integer
   schemas:
-    Filters:
+    Token:
+      description: Токен доступа
       type: object
-
-    AccessToken:
-      type: object
-      required:
-        - id
-        - user_id
-        - client_id
-        - name
-        - revoked
-        - created_at
-        - expires_at
       properties:
         id:
           type: string
-          readOnly: true
-          description: Идентификатор токена
+          description: ID токена
         user_id:
-          type: integer
-          readOnly: true
-          description: ID пользователя, которому принадлежит токен
+          type: string
+          format: uuid
+          description: ID пользователя
         client_id:
-          type: integer
-          readOnly: true
-          description: ID клиента (сервиса), которому принадлежит токен
+          type: string
+          description: ID oauth-клиента
         name:
           type: string
-          description: Имя токена (задается пользователем при создании)
+          description: Имя пользователя
+        scopes:
+          type: array
+          description: Скоупы
+          items:
+            type: string
         revoked:
           type: boolean
-          readOnly: true
-          description: Отозван ли токен?
+          description: Отозван?
         created_at:
           type: string
-          format: 'date-time'
-          readOnly: true
-          description: Дата создания токена
+          format: date-time
+          description: Дата создания
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата изменения
         expires_at:
           type: string
-          format: 'date-time'
-          readOnly: true
-          description: Дата истечения токена
-
-    OAuthSuccess:
+          format: date-time
+          description: Дата истечения срока действия
+    PaginationMeta:
+      description: Мета-данные о состоянии пагинации
       type: object
-      required:
-        - token_type
-        - expires_in
-        - access_token
-        - refresh_token
       properties:
-        token_type:
-          type: string
-          enum:
-            - Bearer
-          description: Тип токена
-        expires_in:
+        current_page:
           type: integer
-          description: Срок годности токена
-        access_token:
-          type: string
-          description: Токен
-        refresh_token:
-          type: string
-          description: Рефреш токен
-
-    BaseException:
+          example: 1
+          description: Текущая страница
+        per_page:
+          type: integer
+          example: 20
+          description: Записей на странице
+        last_page:
+          type: integer
+          example: 115
+          description: Последняя страница
+        from:
+          type: integer
+          example: 1
+          description: Порядковый номер начальной записи на текущей странице
+        to:
+          type: integer
+          example: 20
+          description: Порядковый номер последней записи на текущей странице
+        total:
+          type: integer
+          example: 2300
+          description: Всего записей
+    Person:
       type: object
+      description: Профиль
       required:
-        - message
+        - id
+        - name
+        - phone
+        - last_name
+        - first_name
+        - patrinymic_name
+        - gender
+        - birth_date
+        - age
+        - is_user
+        - is_student
+        - is_instructor
+        - is_customer
+        - created_at
+        - updated_at
       properties:
-        message:
+        id:
           type: string
-          description: Сообщение об ошибке
-        data:
-          type: object
-          description: Дополнительные параметры
-
-    OAuthException:
-      allOf:
-        - $ref: '#/components/schemas/BaseException'
-        - properties:
-            message:
-              type: string
-              enum:
-                - invalid_client
-                - invalid_credentials
-                - unsupported_grant_type
-              description: Код ошибки
-            data:
-              properties:
-                "description":
-                  type: string
-                  description: Описание ошибки
-                hint:
-                  type: string
-                  nullable: true
-                  description: Подсказка как исправить ошибку
-
-    ValidationException:
-      allOf:
-        - $ref: '#/components/schemas/BaseException'
-        - properties:
-            data:
-              description: Ключ - имя поля, значение - правило валидации
-              additionalProperties:
-                type: array
-                items:
-                  type: object
-                  required:
-                    - name
-                  properties:
-                    name:
-                      type: string
-                      description: Имя правила
-                    params:
-                      type: array
-                      items:
-                        type: string
-                      description: Параметры правила
-
-    PatchUserRequest:
-      type: object
-      properties:
-        password:
+          format: uuid
+          description: ID профиля
+        name:
           type: string
-          nullable: true
+          description: Отображаемое имя
+          example: Роман Александрович Доц
         phone:
           type: string
-          nullable: true
+          format: phone
+          description: Номер телефона
+          example: '79996339777'
+        email:
+          type: string
+          format: email
+          description: Адрес электронной почты
+          example: ram.d.kreiz@gmail.com
+        last_name:
+          type: string
+          description: Фамилия
+          example: Доц
+        first_name:
+          type: string
+          description: Имя
+          example: Роман
+        patrinymic_name:
+          type: string
+          description: Отчество
+          example: Александрович
+        gender:
+          type: string
+          enum: [male, female]
+          description: Пол
         birth_date:
           type: string
-          nullable: true
+          format: date
+          description: Дата рождения
+        age:
+          type: integer
+          description: Возраст
+          example: 34
         picture:
+          description: Адрес фотографии
           type: string
-          format: binary
-          nullable: true
-        allow_email_notifications:
-          type: boolean
-          nullable: true
-        allow_telegram_notifications:
-          type: boolean
-          nullable: true
+          format: url
+          example: https://via.placeholder.com/600
+        picture_thumb:
+          description: Адрес превью фотографии
+          type: string
+          format: url
+          example: https://via.placeholder.com/200
+        instagram_username:
+          description: Юзернейм в Инстаграм
+          type: string
         telegram_username:
+          description: Юзернейм в Телеграме
           type: string
-          nullable: true
-
-    Department:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          description: ID
-        name:
+        vk_uid:
+          description: ID пользователя в VK
           type: string
-          description: Название
-        parent_id:
-          type: integer
-          nullable: true
-          description: ID родительского отдела
-        supervisor_id:
-          type: integer
-          description: ID руководителя отдела
-        supervisor:
-          $ref: '#/components/schemas/User'
-        parent:
-          $ref: '#/components/schemas/Department'
-        subdepartments:
-          type: array
-          items:
-            $ref: '#/components/schemas/Department'
-          description: Подотделы
-
-    DepartmentExtended:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          description: ID
-        name:
+        facebook_uid:
+          description: ID пользователя в Facebook
           type: string
-          description: Название
-        parent_id:
-          type: integer
-          nullable: true
-          description: ID родительского отдела
-        supervisor_id:
-          type: integer
-          description: ID руководителя отдела
-        supervisor:
-          $ref: '#/components/schemas/User'
-        parent:
-          $ref: '#/components/schemas/Department'
-        subdepartments:
-          type: array
-          items:
-            $ref: '#/components/schemas/Department'
-          description: Подотделы
-        employees:
-          type: array
-          items:
-            $ref: '#/components/schemas/User'
-
-    Role:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        role:
+        note:
+          description: Текстовая заметка о профиле
           type: string
-        title:
-          type: string
-        is_system_role:
+        is_user:
           type: boolean
-          default: false
-
-    RoleExtended:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        title:
-          type: string
-        is_system_role:
+          description: Явялется пользователем системы?
+        is_student:
           type: boolean
-          default: false
-        users:
-          type: array
+          description: Явялется студентом?
+        is_customer:
+          type: boolean
+          description: Явялется плательщиком?
+        is_instructor:
+          type: boolean
+          description: Явялется преподавателем?
+        user_id:
+          type: string
+          format: uuid
           nullable: true
-          items:
-            $ref: '#/components/schemas/User'
-
+          description: ID пользователя системы
+        student_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID студента
+        customer_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID плательщика (клиента)
+        instructor_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID преподавателя
+        created_at:
+          type: string
+          format: date-time
+          description: Дата создания
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата изменения
     User:
       type: object
+      description: Пользователь системы
+      required:
+        - id
+        - name
+        - username
+        - person
+        - is_instructor
+        - is_student
+        - is_customer
+        - roles
+        - permissions
+        - created_at
+        - updated_at
+        - status
       properties:
         id:
-          type: integer
-          format: int64
+          description: ID пользователя
+          format: uuid
+          type: string
         name:
+          description: Отображаемое имя пользователя
           type: string
-          nullable: true
-        first_name:
+          example: Роман Доц
+        username:
+          description: Логин пользователя
           type: string
-          nullable: true
-        last_name:
-          type: string
-          nullable: true
-        patronymic:
-          type: string
-          nullable: true
-        screen_name:
-          type: string
-        email:
-          type: string
-          format: email
-        phone:
-          type: string
-        birth_date:
-          type: string
-          format: date
-        picture:
-          type: string
-          format: url
-        department_id:
-          type: integer
-          nullable: true
-        title:
-          type: string
-          nullable: true
-        is_supervisor:
+          example: '79996339777'
+        is_instructor:
+          description: Пользователь - преподаватель?
           type: boolean
-          default: false
-        allow_email_notifications:
+        is_student:
+          description: Пользователь - студент?
           type: boolean
-          default: true
-        allow_telegram_notifications:
+        is_customer:
+          description: Пользователь - плательщик?
           type: boolean
-          default: false
-        telegram_username:
-          type: string
-          nullable: true
-
-    UserExtended:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-        first_name:
-          type: string
-        last_name:
-          type: string
-        patronymic:
-          type: string
-        screen_name:
-          type: string
-        email:
-          type: string
-          format: email
-        phone:
-          type: string
-        birth_date:
-          type: string
-          format: date
-        picture:
-          type: string
-          format: url
-        department_id:
-          type: integer
-          nullable: true
-        title:
-          type: string
-          nullable: true
-        is_supervisor:
-          type: boolean
-          default: false
-        allow_email_notifications:
-          type: boolean
-          default: true
-        department:
-          $ref: '#/components/schemas/Department'
+        person:
+          $ref: '#/components/schemas/Person'
         roles:
+          description: Список ролей пользователя
           type: array
           items:
-            $ref: '#/components/schemas/Role'
-
-  # Responses
-
-  responses:
-    Department:
-      description: Полная запись отдела
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/DepartmentExtended'
-
-    Departments:
-      description: Коллекция отделов
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/Department'
-
-    Role:
-      description: Полная запись роли
-      content:
-        application/json:
-          schema:
-            type: object
-            items:
-              $ref: '#/components/schemas/RoleExtended'
-
-    Roles:
-      description: Коллекция ролей
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/Role'
-
-    User:
-      description: Запись пользователя
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/UserExtended'
-
-    Users:
-      description: Коллекция пользователей
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
-
-    UnauthenticatedResponse:
-      description: Пользотель не авторизован (не залогинен)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/BaseException'
-
-    ForbiddenResponse:
-      description: У пользователя нет прав на данную операцию
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/BaseException'
-
-    NotFoundResponse:
-      description: Сущность не найдена
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/BaseException'
-
-    ValidationFailedResponse:
-      description: Ошибка валидации
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ValidationException'
-
-    PersonalAccessTokenCreatedResponse:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                $ref: '#/components/schemas/AccessToken'
-              meta:
-                type: object
-                properties:
-                  access_token:
-                    type: string
-                    description: Созданный токен
-
-
+            type: string
+            example: manager
+            description: Роль
+        permissions:
+          description: Список прав пользователя
+          type: array
+          items:
+            type: string
+            example: view-schedule
+            description: Право
+        created_at:
+          description: Дата создания
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата изменения
+        approved_at:
+          description: Дата подтверждения
+          type: string
+          format: date-time
+        seen_at:
+          description: Дата последнего появления в сети
+          type: string
+          format: date-time
+        status:
+          description: Статус пользователя
+          type: string
+          enum: [pending, approved, disabled]
+          example: approved
+    Student:
+      type: object
+      description: Студент
+      required:
+        - id
+        - name
+        - person
+        - customer
+        - status
+        - status_label
+        - created_at
+      properties:
+        id:
+          description: ID пользователя
+          format: uuid
+          type: string
+        name:
+          description: Отображаемое имя пользователя
+          type: string
+          example: Роман Доц
+        person:
+          $ref: '#/components/schemas/Person'
+        customer:
+          $ref: '#/components/schemas/Customer'
+        card_number:
+          description: Номер карты студента
+          type: string
+          example: '9999'
+        status:
+          description: Статус студента
+          type: string
+          enum: [potential, active, recent, former]
+          example: active
+        status_label:
+          description: Название статуса
+          type: string
+          enum: [Потенциальный, Действующий, Недавний, Бывший]
+        created_at:
+          description: Дата создания
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата изменения
+        seen_at:
+          description: Дата последнего появления в сети
+          type: string
+          format: date-time
+    Customer:
+      type: object
+      description: Плательщик (клиент)
+      required:
+        - id
+        - name
+        - person
+        - contract
+        - created_at
+      properties:
+        id:
+          description: ID пользователя
+          format: uuid
+          type: string
+        name:
+          description: Отображаемое имя пользователя
+          type: string
+          example: Роман Доц
+        person:
+          $ref: '#/components/schemas/Person'
+        contract:
+          $ref: '#/components/schemas/Contract'
+        created_at:
+          description: Дата создания
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата изменения
+        seen_at:
+          description: Дата последнего появления в сети
+          type: string
+          format: date-time
+    Contract:
+      description: Договор с клиентом
+      type: object
+    Instructor:
+      type: object
+      description: Преподаватель (инструктор)
+      required:
+        - id
+        - name
+        - person
+        - display
+        - status
+        - status_label
+        - permissions
+        - seen_at
+        - created_at
+      properties:
+        id:
+          description: ID пользователя
+          format: uuid
+          type: string
+        name:
+          description: Отображаемое имя пользователя
+          type: string
+          example: Роман Доц
+        person:
+          $ref: '#/components/schemas/Person'
+        description:
+          description: Описание (био)
+          type: string
+          example: Классный преподаватель
+        picture:
+          description: Адрес фотографии
+          type: string
+          format: url
+          example: https://via.placeholder.com/600
+        display:
+          description: Отображать?
+          type: boolean
+        status:
+          description: Статус преподавателя
+          type: string
+          enum: [hired, freelance, fired]
+          example: active
+        status_label:
+          description: Название статуса
+          type: string
+          enum: [В штате, Вне штата, Уволен]
+        permissions:
+          description: Список прав преподавателя
+          type: array
+          items:
+            type: string
+            example: view-schedule
+            description: Право
+        created_at:
+          description: Дата создания
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата изменения
+        seen_at:
+          description: Дата последнего появления в сети
+          type: string
+          format: date-time
+    PublicNewsList:
+      description: Новости
+      type: array
+      items:
+        $ref: '#/components/schemas/PublicNewsEntry'
+    PublicNewsEntry:
+      description: Новость
+      type: object
+      properties:
+        subject:
+          type: string
+          description: Заголовок
+          example: Новый набор в классе Dance Mix
+        text:
+          type: string
+          description: Текст
+          example: >-
+            Много текста в качестве тела новости
+        attachments:
+          type: array
+          description: Вложения
+          items:
+            type: string
+            format: url
+            example: https://via.placeholder.com/150
+            description: Адрес вложения
+        tags:
+          type: array
+          description: Тэги
+          items:
+            type: string
+            description: Тэг
+            example: hip-hop
+  securitySchemes:
+    application:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: 'http://example.com/oauth/token'
 paths:
-
-  # OAuth
-
-  /oauth/token:
+  # Auth routes
+  /verify:
     post:
-      summary: Получить OAuth (Bearer) токен
-      operationId: getOauthToken
       tags:
-        - OAuth
-      security: []
+        - auth
+      operationId: verifyPhoneNumber
+      summary: Верификация номера телефона
+      description: >-
+        При первом обращении необходимо отправить только номер телефона, чтобы код подтверждения,
+        сгенерированный системой был отправлен на этот номер.
+        Во втором запросе следует также передать полученный код подтверждения.
+        При успешной верификации код будет отмечен как просроченный во избежание повторной проверки,
+        а сервер вернет ID кода верификации, который впоследствии необходимо использовать при регистрации или сбросе пароля.
       requestBody:
-        required: true
         content:
           application/json:
             schema:
               type: object
               required:
-                - grant_type
-                - client_id
-                - client_secret
-                - username
+                - phone
+              properties:
+                phone:
+                  type: string
+                  format: phone
+                  example: '79996339777'
+                  description: Номер телефона
+                verification_code:
+                  type: string
+                  example: '123456'
+                  description: Код подтверждения из СМС
+      responses:
+        200:
+          description: Код подтвержден
+        201:
+          description: Код отправлен
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      verification_code_id:
+                        type: string
+                        format: uuid
+                        description: ID кода подтверждения (используется при регистрации нового пользователя)
+        400:
+          description: >-
+            Ошибка отправки сообщения
+            или таймаут перед повторной отправкой кода
+            или превышено количество попыток
+        404:
+          description: Код еще не был отправлен или просрочен (см. вложенное сообщение)
+        409:
+          description: Неверный код подтверждения
+  /register:
+    post:
+      tags:
+        - auth
+      summary: Регистрация пользователя
+      operationId: registration
+      description: >-
+        Самостоятельная регистрация любого пользователя системы (менеджера, студента, преподавателя).
+        Предварительно нужно вызвать метод подтверждения номера телефона (/verify), чтобы пройти
+        процедуру верификации номера телефона и получить ID кода подтверждения, необходимого для регистрации.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_type
+                - verification_code_id
+                - last_name
+                - first_name
+                - patrinymic_name
+                - gender
+                - birth_date
                 - password
               properties:
-                grant_type:
+                user_type:
                   type: string
-                  enum:
-                    - password
-                  description: Тип авторизации
-                client_id:
-                  type: integer
-                  description: ID сервиса, который выполняет авторизацию (для grant_type password обычно это 2)
-                client_secret:
+                  enum: ['user', 'student', 'instructor']
+                  example: student
+                  description: Тип регистрации (пользователь, студент, инструктор)
+                verification_code_id:
                   type: string
-                  description: Секрет клиента, который выполняет авторизацию
-                username:
+                  format: uuid
+                  description: ID кода подтверждения (для верификации номера телефона)
+                last_name:
                   type: string
-                  description: email пользователя (для grant_type=password)
+                  description: Фамилия
+                  example: Доц
+                first_name:
+                  type: string
+                  description: Имя
+                  example: Роман
+                patrinymic_name:
+                  type: string
+                  description: Отчество
+                  example: Александрович
+                gender:
+                  type: string
+                  enum: [male, female]
+                  description: Пол
+                birth_date:
+                  type: string
+                  format: date
+                  description: Дата рождения
                 password:
                   type: string
-                  description: Пароль пользователя (для grant_type=password)
+                  description: Пароль
       responses:
-        200:
-          description: Успешный вход
+        201:
+          description: Пользователь зарегистрирован
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OAuthSuccess'
-        400:
-          description: Некорректный формат данных
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OAuthException'
-        401:
-          description: Авторизация не выполнена
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OAuthException'
-
-  /oauth/personal-access-tokens:
-    get:
-      summary: Получить список персональных токенов
-      operationId: getPersonalAccessTokens
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+        409:
+          description: Пользователь уже зарегистрирован
+        422:
+          description: Ошибка валидации
+  /auth:
+    post:
+      operationId: login
+      summary: Авторизация
+      description: Вход в систему с помощью логина и пароля
       tags:
-        - OAuth
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  description: Логин (номер телефона)
+                  type: string
+                  example: '79996339777'
+                password:
+                  description: Пароль
+                  type: string
+                  example: 'qwerty'
       responses:
         200:
-          description: Success
+          description: Авторизация успешна
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        $ref: '#/components/schemas/Token'
+                      accessToken:
+                        description: Access token для дальнейших обращений к непубличной части АПИ
+                        type: string
+                        example: 'MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3'
+                        format: base64
+        409:
+          description: Ошибка авторизации
+    delete:
+      operationId: logout
+      summary: Сброс авторизации
+      description: Выйти из системы
+      tags:
+        - auth
+      responses:
+        200:
+          description: Успешно
+        401:
+          description: Пользователь не авторизован
+  /user:
+    get:
+      operationId: getUser
+      summary: Данные пользователя
+      description: Получить данные авторизованного пользователя
+      tags:
+        - auth
+      responses:
+        200:
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+        401:
+          description: Пользователь не авторизован
+  /user/password:
+    patch:
+      operationId: updateUserPassword
+      summary: Смена пароля
+      description: Изменение пароля авторизованного пользователя
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  description: Старый пароль
+                  type: string
+                  example: 'querty'
+                new_password:
+                  description: Новый пароль
+                  type: string
+                  example: 'ytrewq'
+      responses:
+        200:
+          description: Успешно
+        401:
+          description: Пользователь не авторизован
+        409:
+          description: Старый пароль введен неверно
+  /reset:
+    post:
+      operationId: resetUserPassword
+      summary: Сброс пароля
+      description: >-
+        Необходимо передать методу имя пользователя, по которому будет осуществлен поиск пользователя.
+        На номер телефона найденного пользователя будет отправлен код подтверждения.
+        При отправке верного кода подтверждения, будет сгенерирован новый пароль и отправлен в СМС.
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+              properties:
+                username:
+                  type: string
+                  example: '79996339777'
+                  description: Имя пользователя
+                verification_code:
+                  type: string
+                  example: '123456'
+                  description: Код подтверждения из СМС
+      responses:
+        200:
+          description: Пароль сброшен и отправлен в СМС
+        201:
+          description: Код подтверждения отправлен в СМС
+        400:
+          description: >-
+            Ошибка отправки сообщения
+            или таймаут перед повторной отправкой кода
+            или превышено количество попыток
+        404:
+          description: >-
+            Пользователь не найден
+            или у пользователя нет привязанного номера телефона
+            или код подтверждения просрочен (см. вложенное сообщение)
+        409:
+          description: Неверно указан номер кода подтверждения
+
+  # Admin routes
+  /admin/users:
+    get:
+      operationId: adminGetUsers
+      summary: Список пользователей
+      description: >-
+        Возвращает список пользователей системы с учетом фильтра,
+        сортировки и пагинации
+      tags:
+        - admin
+      parameters:
+        - $ref: '#/components/parameters/FilterByUserStatus'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Order'
+      responses:
+        200:
+          description: Успех
           content:
             application/json:
               schema:
@@ -528,146 +834,96 @@ paths:
                 properties:
                   data:
                     type: array
+                    description: Список пользователей
                     items:
-                      $ref: '#/components/schemas/AccessToken'
+                      $ref: '#/components/schemas/User'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
         401:
-          $ref: '#/components/responses/UnauthenticatedResponse'
+          description: Пользователь не авторизован
         403:
-          $ref: '#/components/responses/ForbiddenResponse'
-    post:
-      summary: Создать персональный токен
-      operationId: issuePersonalToken
-      tags:
-        - OAuth
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AccessToken'
-      responses:
-        201:
-          $ref: '#/components/responses/PersonalAccessTokenCreatedResponse'
-        401:
-          $ref: '#/components/responses/UnauthenticatedResponse'
-        403:
-          $ref: '#/components/responses/ForbiddenResponse'
+          description: Доступ запрещен
         422:
-          $ref: '#/components/responses/ValidationFailedResponse'
-
-  /oauth/personal-access-tokens/{token_id}:
-    delete:
-      summary: Отозвать персональный токен
-      operationId: revokePersonalToken
-      tags:
-        - OAuth
-      parameters:
-        - name: token_id
-          required: true
-          in: path
-          schema:
-            type: string
-          description: ID персонального токена
-      responses:
-        200:
-          description: Токен успешно отозван
-        401:
-          $ref: '#/components/responses/UnauthenticatedResponse'
-        403:
-          $ref: '#/components/responses/ForbiddenResponse'
-        404:
-          $ref: '#/components/responses/NotFoundResponse'
-
-  # API
-
-  /api/user:
+          description: Ошибка валидации (для фильтров)
+  /admin/users/{user_id}:
     get:
-      tags:
-        - user
-      summary: Данные текущего пользователя
-      description: Возвращает информацию о пользователе
-      operationId: getUser
-      responses:
-        200:
-          $ref: '#/components/responses/User'
-        401:
-          $ref: '#/components/responses/UnauthenticatedResponse'
-    post:
-      tags:
-        - Users
-      summary: Обновить данные текущего пользователя
-      description: Редактирует данные клиента
-      operationId: patchUser
-      requestBody:
-        required: true
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchUserRequest'
-      responses:
-        200:
-          $ref: '#/components/responses/User'
-        401:
-          $ref: '#/components/responses/UnauthenticatedResponse'
-
-  /api/users:
-    get:
-      tags:
-        - Users
-      summary: Список пользователей
-      description: Возвращает всех пользователей
-      operationId: listUsers
-      parameters:
-        - name: filter
-          in: query
-          required: false
-          description: Фильтр, где ключами явлюятся системные имена полей, а значениями - их значения
-          schema:
-            $ref: '#/components/schemas/Filters'
-      responses:
-        200:
-          $ref: '#/components/responses/Users'
-
-  /api/users/{userId}:
-    get:
-      tags:
-        - Users
+      operationId: adminGetUser
       summary: Данные пользователя
-      description: Возвращает информацию о пользователе
-      operationId: getUserById
+      description: >-
+        Возвращает полные данные пользователя системы
+      tags:
+        - admin
       parameters:
-        - name: userId
+        - name: user_id
           in: path
-          required: true
           description: ID пользователя
+          required: true
           schema:
             type: string
+            format: uuid
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
       responses:
         200:
-          $ref: '#/components/responses/User'
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
         401:
-          $ref: '#/components/responses/UnauthenticatedResponse'
+          description: Пользователь не авторизован
         403:
-          $ref: '#/components/responses/ForbiddenResponse'
+          description: Доступ запрещен
         404:
-          $ref: '#/components/responses/NotFoundResponse'
-    post:
+          description: Запись не найдена
+
+  # Public routes
+  /news:
+    get:
       tags:
-        - Users
-      summary: Создание пользователя
-      description: Создает нового о пользователя
-      operationId: createUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-#            $ref: '#/components/schemas/StoreUserRequest'
+        - public
+      summary: Список последних новостей
+      description: >-
+        Возвращает все новости в обратном хронологическом порядке с учетом
+        пагинации, сортировки и фильтров
+      operationId: getNewsIndex
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Order'
       responses:
-        201:
-          $ref: '#/components/responses/User'
-        401:
-          $ref: '#/components/responses/UnauthenticatedResponse'
-        403:
-          $ref: '#/components/responses/ForbiddenResponse'
+        200:
+          description: Последние новости
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PublicNewsList'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+  /news/{news_id}:
+    get:
+      tags:
+        - public
+      summary: Полная запись новости
+      description: Возвращает объект новости со всеми вложениями, тегами, лайками и просмотрами
+      operationId: getNewsEntry
+      parameters:
+        - $ref: '#/components/parameters/NewsId'
+      responses:
+        200:
+          description: Данные новости
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PublicNewsEntry'
         404:
-          $ref: '#/components/responses/NotFoundResponse'
+          description: Новость не найдена

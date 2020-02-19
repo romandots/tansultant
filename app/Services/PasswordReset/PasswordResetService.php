@@ -39,30 +39,43 @@ class PasswordResetService
      * @throws \App\Services\Verify\Exceptions\VerificationCodeAlreadySentRecently
      * @throws \App\Services\Verify\Exceptions\VerificationCodeIsInvalid
      * @throws \App\Services\Verify\Exceptions\VerificationCodeWasSentTooManyTimes
+     * @throws Exceptions\UserHasNoPerson
      * @throws \Exception
      */
     public function resetPassword(\App\Http\Requests\Auth\DTO\ResetPassword $resetPassword): void
     {
+        $user = $this->userRepository->findByUsername($resetPassword->username);
+
+        if (null === $user->person) {
+            throw new Exceptions\UserHasNoPerson();
+        }
+
+        $phoneNumber = \normalize_phone_number($user->person->phone);
+
         // If no verification code - generate and send it
         if (null === $resetPassword->verification_code) {
-            $this->verificationService->verifyPhoneNumber($resetPassword->username);
+            $this->verificationService->initNewVerificationCode($phoneNumber);
             return;
         }
 
         // Otherwise - check the code
-        $this->verificationService->verifyPhoneNumber($resetPassword->username, $resetPassword->verification_code);
+        $this->verificationService->checkVerificationCode($phoneNumber, $resetPassword->verification_code);
 
         // Phone owner verified (the exception would be thrown otherwise)
-
-        $user = $this->userRepository->findByUsername($resetPassword->username);
 
         $updateUser = new UpdateUser();
         $updateUser->password = $this->generatePassword();
 
-        $this->userRepository->update($user, $updateUser);
+        \DB::transaction(function () use ($user, $updateUser, $phoneNumber) {
+            // Save new password
+            $this->userRepository->update($user, $updateUser);
 
-        // Send SMS with new password
-        $user->person->notify(new PasswordResetSmsNotification($updateUser->password));
+            // Remove verification codes
+            $this->verificationService->cleanUp($phoneNumber);
+
+            // Send SMS with new password
+            $user->person->notify(new PasswordResetSmsNotification($updateUser->password));
+        });
     }
 
     private function generatePassword(): string

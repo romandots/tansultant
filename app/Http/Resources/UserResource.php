@@ -34,15 +34,6 @@ class UserResource extends JsonResource
             'person' => $this->whenLoaded('person', function () {
                 return new PersonResource($this->person);
             }),
-            'instructor' => $this->whenLoaded('instructor', function () {
-                return new InstructorResource($this->instructor);
-            }),
-            'student' => $this->whenLoaded('student', function () {
-                return new StudentResource($this->student);
-            }),
-            'customer' => $this->whenLoaded('customer', function () {
-                return new CustomerResource($this->customer);
-            }),
             'is_instructor' => $this->whenLoaded('instructor', function () {
                 return null !== $this->instructor;
             }),
@@ -52,10 +43,14 @@ class UserResource extends JsonResource
             'is_customer' => $this->whenLoaded('customer', function () {
                 return null !== $this->customer;
             }),
+            'roles' => $this->getRoleNames(),
             'permissions' => $this->getPermissionNames(),
             'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
+            'updated_at' => $this->updated_at ?  $this->updated_at->toDateTimeString() : null,
             'approved_at' => $this->approved_at ? $this->approved_at->toDateTimeString() : null,
             'seen_at' => $this->seen_at ? $this->seen_at->toDateTimeString() : null,
+            'status' => $this->status,
+            'status_label' => \trans('user.status.'.$this->status),
         ];
     }
 }

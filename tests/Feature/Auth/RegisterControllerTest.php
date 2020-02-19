@@ -14,6 +14,7 @@ use App\Events\InstructorCreatedEvent;
 use App\Events\StudentCreatedEvent;
 use App\Events\UserCreatedEvent;
 use App\Events\UserRegisteredEvent;
+use App\Models\Customer;
 use App\Models\Instructor;
 use App\Models\Person;
 use App\Models\Student;
@@ -36,7 +37,6 @@ class RegisterControllerTest extends TestCase
     use WithFaker;
 
     public const REGISTER_URL = 'register';
-    public const VERIFY_URL = 'register/verify';
 
     private VerificationService $verificationService;
 
@@ -51,6 +51,18 @@ class RegisterControllerTest extends TestCase
         $this->verificationService = \app(VerificationService::class);
     }
 
+    private function createFakeVerificationCode(?string $phone = null, ?string $code = null): VerificationCode
+    {
+        return \factory(\App\Models\VerificationCode::class)->create([
+            'id' => \uuid(),
+            'phone_number' => $phone ?? $this->faker->e164PhoneNumber,
+            'verification_code' => $code ?? $this->faker->numerify('####'),
+            'created_at' => Carbon::now(),
+            'expired_at' => Carbon::now()->addMinute(),
+            'verified_at' => Carbon::now()->addSeconds(30),
+        ]);
+    }
+
     /**
      * @param string $userType
      * @dataProvider registerUserData
@@ -59,8 +71,11 @@ class RegisterControllerTest extends TestCase
     {
         Event::fake();
 
+        $phoneNumber = $this->faker->e164PhoneNumber;
+        $verificationCode = $this->createFakeVerificationCode($phoneNumber, '7777');
+
         $postData = [
-            'phone' => $this->faker->e164PhoneNumber,
+            'verification_code_id' => $verificationCode->id,
             'email' => $this->faker->email,
             'last_name' => 'Dots',
             'first_name' => 'Roman',
@@ -80,7 +95,8 @@ class RegisterControllerTest extends TestCase
                         ['name' => 'required']
                     ]
                 ],
-                'message' => 'validation_error',
+                'error' => 'validation_error',
+                'message' => 'Ошибка валидации',
             ]);
 
         // Sending phone with wrong user_type
@@ -94,49 +110,13 @@ class RegisterControllerTest extends TestCase
                         ['name' => 'in']
                     ]
                 ],
-                'message' => 'validation_error',
-            ]);
-
-        // Sending phone with correct user_type
-        $postData['user_type'] = $userType;
-        $this
-            ->post(self::REGISTER_URL, $postData)
-            ->assertStatus(200)
-            ->assertJson([
-                'message' => 'verification_code_sent',
-            ]);
-
-        $this->assertDatabaseHas(VerificationCode::TABLE, [
-            'phone_number' => $postData['phone']
-        ]);
-
-        // Sending phone with wrong verification code
-        $postData['verification_code'] = 'wrong_verification_code';
-        $this
-            ->post(self::REGISTER_URL, $postData)
-            ->assertStatus(409)
-            ->assertJson([
-                'error' => 'verification_code_is_invalid',
-                'message' => 'Код введён неверно',
-            ]);
-
-        /** @var VerificationCode $verificationCode */
-        $verificationCode = VerificationCode::query()
-            ->where('phone_number', $postData['phone'])
-            ->first();
-
-        // Sending verified phone with code without any additional data
-        $this
-            ->post(self::REGISTER_URL, $postData)
-            ->assertStatus(409)
-            ->assertJson([
-                'error' => 'verification_code_is_invalid',
-                'message' => 'Код введён неверно',
+                'error' => 'validation_error',
+                'message' => 'Ошибка валидации',
             ]);
 
         // Sending phone with correct verification code
         $now = Carbon::now();
-        $postData['verification_code'] = $verificationCode->verification_code;
+        $postData['user_type'] = $userType;
         $this
             ->post(self::REGISTER_URL, $postData)
             ->assertStatus(201)
@@ -144,42 +124,38 @@ class RegisterControllerTest extends TestCase
                 'data' =>
                     [
                         'name' => "{$postData['first_name']} {$postData['last_name']}",
-                        'username' => $postData['phone'],
+                        'username' => $phoneNumber,
                         'person' => [
                             'last_name' => $postData['last_name'],
                             'first_name' => $postData['first_name'],
                             'patronymic_name' => $postData['patronymic_name'],
                             'birth_date' => $postData['birth_date'],
                             'gender' => $postData['gender'],
-                            'phone' => $postData['phone'],
+                            'phone' => $phoneNumber,
                             'email' => $postData['email'],
                             'picture' => null,
                             'picture_thumb' => null,
                             'instagram_username' => null,
                             'telegram_username' => null,
                             'vk_uid' => null,
-                            'vk_url' => null,
                             'facebook_uid' => null,
-                            'facebook_url' => null,
                             'note' => null,
-                            'customer' => $userType === Customer::class ? [] : null,
-                            'student' => $userType === Student::class ? [] : null,
-                            'instructor' => $userType === Instructor::class ? [] : null,
-                            'is_customer' => $userType === Customer::class,
-                            'is_student' => $userType === Student::class,
-                            'is_instructor' => $userType === Instructor::class,
-                            'created_at' => $now->toDateTimeString()
+                            'is_customer' => $userType === \base_classname(Customer::class),
+                            'is_student' => $userType === \base_classname(Student::class),
+                            'is_instructor' => $userType === \base_classname(Instructor::class),
+                            'created_at' => $now->toDateTimeString(),
                         ],
                         'permissions' => [],
                         'created_at' => $now->toDateTimeString(),
-                        'approved_at' => null,
-                        'seen_at' => null
+                        'updated_at' => $now->toDateTimeString(),
+                        'approved_at' => $userType === \base_classname(Student::class) ? $now->toDateTimeString() : null,
+                        'seen_at' => null,
                     ]
             ]);
 
         $this->assertDatabaseHas(User::TABLE, [
             'name' => "{$postData['first_name']} {$postData['last_name']}",
-            'username' => $postData['phone'],
+            'username' => $phoneNumber,
             'created_at' => $now->toDateTimeString(),
         ]);
 
@@ -189,7 +165,7 @@ class RegisterControllerTest extends TestCase
             'patronymic_name' => $postData['patronymic_name'],
             'birth_date' => $postData['birth_date'],
             'gender' => $postData['gender'],
-            'phone' => $postData['phone'],
+            'phone' => $phoneNumber,
             'email' => $postData['email'],
             'created_at' => $now->toDateTimeString(),
         ]);
@@ -200,7 +176,7 @@ class RegisterControllerTest extends TestCase
             'patronymic_name' => $postData['patronymic_name'],
             'birth_date' => $postData['birth_date'],
             'gender' => $postData['gender'],
-            'phone' => $postData['phone'],
+            'phone' => $phoneNumber,
             'email' => $postData['email'],
             'created_at' => $now->toDateTimeString(),
         ])->first();
@@ -209,7 +185,7 @@ class RegisterControllerTest extends TestCase
         Event::assertDispatched(UserRegisteredEvent::class);
 
         switch ($userType) {
-            case Student::class:
+            case \base_classname(Student::class):
                 $this->assertDatabaseHas(Student::TABLE, [
                     'name' => 'Dots Roman A.',
                     'person_id' => $person->id,
@@ -217,7 +193,7 @@ class RegisterControllerTest extends TestCase
                 ]);
                 Event::assertDispatched(StudentCreatedEvent::class);
                 break;
-            case Instructor::class:
+            case \base_classname(Instructor::class):
                 $this->assertDatabaseHas(Instructor::TABLE, [
                     'name' => 'Roman Dots',
                     'person_id' => $person->id,
@@ -225,7 +201,7 @@ class RegisterControllerTest extends TestCase
                 ]);
                 Event::assertDispatched(InstructorCreatedEvent::class);
                 break;
-            case User::class:
+            case \base_classname(User::class):
                 break;
             default:
                 throw new \LogicException('Unsupported user type');
@@ -239,8 +215,11 @@ class RegisterControllerTest extends TestCase
      */
     public function testRegisterUserInvalidData(string $userType, array $invalidData): void
     {
+        $phoneNumber = $this->faker->e164PhoneNumber;
+        $verificationCode = $this->createFakeVerificationCode($phoneNumber, '7777');
+
         $postData = [];
-        $postData['phone'] = $this->faker->e164PhoneNumber;
+        $postData['verification_code_id'] = $verificationCode->id;
 
         $this
             ->post(self::REGISTER_URL, $postData)
@@ -251,7 +230,8 @@ class RegisterControllerTest extends TestCase
                         ['name' => 'required']
                     ]
                 ],
-                'message' => 'validation_error',
+                'error' => 'validation_error',
+                'message' => 'Ошибка валидации',
             ]);
 
         $postData['user_type'] = 'wrong_user_type';
@@ -264,44 +244,25 @@ class RegisterControllerTest extends TestCase
                         ['name' => 'in']
                     ]
                 ],
-                'message' => 'validation_error',
+                'error' => 'validation_error',
+                'message' => 'Ошибка валидации',
             ]);
-
-        $postData['user_type'] = $userType;
-
-        $this
-            ->post(self::REGISTER_URL, $postData)
-            ->assertStatus(200)
-            ->assertJson([
-                'message' => 'verification_code_sent',
-            ]);
-
-        $this->assertDatabaseHas(VerificationCode::TABLE, [
-            'phone_number' => $postData['phone']
-        ]);
-
-        /** @var VerificationCode $verificationCode */
-        $verificationCode = VerificationCode::query()
-            ->where('phone_number', $postData['phone'])
-            ->first();
-        $postData['verification_code'] = $verificationCode->verification_code;
-
-        $postData += $invalidData;
 
         $this
             ->post(self::REGISTER_URL, $postData)
             ->assertStatus(422)
             ->assertJson([
-                'message' => 'validation_error',
+                'error' => 'validation_error',
+                'message' => 'Ошибка валидации',
             ]);
     }
 
     public function registerUserData(): array
     {
         return [
-            'User' => [User::class],
-            'Student' => [Student::class],
-            'Instructor' => [Instructor::class],
+            'User' => ['User'],
+            'Student' => ['Student'],
+            'Instructor' => ['Instructor'],
         ];
     }
 
@@ -404,11 +365,16 @@ class RegisterControllerTest extends TestCase
 
     public function testRegisterWithExistingPersonByPhoneNumber(): void
     {
-        $fakePerson = $this->createFakePerson();
+        $phoneNumber = $this->faker->e164PhoneNumber;
+        $normalizedPhone = \normalize_phone_number($phoneNumber);
+        $fakePerson = $this->createFakePerson(['phone' => $normalizedPhone]);
+        $verificationCode = $this->createFakeVerificationCode($phoneNumber, '7777');
+
+        $this->assertDatabaseHas(Person::TABLE, ['phone' => $normalizedPhone]);
 
         $postData = [
-            'user_type' => Student::class,
-            'phone' => $fakePerson->phone,
+            'user_type' => \base_classname(Student::class),
+            'verification_code_id' => $verificationCode->id,
             'email' => $this->faker->email,
             'last_name' => 'Dots',
             'first_name' => 'Roman',
@@ -420,25 +386,12 @@ class RegisterControllerTest extends TestCase
 
         $this
             ->post(self::REGISTER_URL, $postData)
-            ->assertStatus(200)
-            ->assertJson([
-                'message' => 'verification_code_sent',
-            ]);
-
-        /** @var VerificationCode $verificationCode */
-        $verificationCode = VerificationCode::query()
-            ->where('phone_number', $postData['phone'])
-            ->first();
-        $postData['verification_code'] = $verificationCode->verification_code;
-
-        $this
-            ->post(self::REGISTER_URL, $postData)
             ->assertStatus(201)
             ->assertJson([
                 'data' => [
                     'person' => [
                         'id' => $fakePerson->id,
-                        'phone' => $fakePerson->phone,
+                        'phone' => $normalizedPhone,
                         'last_name' => 'Dots',
                         'first_name' => 'Roman',
                         'patronymic_name' => 'A.',
@@ -451,12 +404,18 @@ class RegisterControllerTest extends TestCase
 
     public function testRegisterWithExistingUserByPhoneNumber(): void
     {
+        $phoneNumber = $this->faker->e164PhoneNumber;
+        $normalizedPhone = \normalize_phone_number($phoneNumber);
+        $verificationCode = $this->createFakeVerificationCode($normalizedPhone, '7777');
+
         $fakeUser = $this->createFakeUser();
         $fakePerson = $fakeUser->person;
+        $fakePerson->phone = $normalizedPhone;
+        $fakePerson->save();
 
         $postData = [
-            'user_type' => Student::class,
-            'phone' => $fakePerson->phone,
+            'user_type' => \base_classname(Student::class),
+            'verification_code_id' => $verificationCode->id,
             'email' => $this->faker->email,
             'last_name' => 'Dots',
             'first_name' => 'Roman',
@@ -465,19 +424,6 @@ class RegisterControllerTest extends TestCase
             'gender' => Person::GENDER_MALE,
             'password' => '123456',
         ];
-
-        $this
-            ->post(self::REGISTER_URL, $postData)
-            ->assertStatus(200)
-            ->assertJson([
-                'message' => 'verification_code_sent',
-            ]);
-
-        /** @var VerificationCode $verificationCode */
-        $verificationCode = VerificationCode::query()
-            ->where('phone_number', $postData['phone'])
-            ->first();
-        $postData['verification_code'] = $verificationCode->verification_code;
 
         $this
             ->post(self::REGISTER_URL, $postData)
@@ -490,8 +436,11 @@ class RegisterControllerTest extends TestCase
 
     public function testRegisterWithExistingNameAndBirthDate(): void
     {
+        $phoneNumber = $this->faker->e164PhoneNumber;
+        $normalizedPhone = \normalize_phone_number($phoneNumber);
+        $verificationCode = $this->createFakeVerificationCode($normalizedPhone, '7777');
+
         $postData = [
-            'phone' => $this->faker->e164PhoneNumber,
             'email' => $this->faker->email,
             'last_name' => 'Dots',
             'first_name' => 'Roman',
@@ -502,21 +451,9 @@ class RegisterControllerTest extends TestCase
 
         $fakePerson = $this->createFakePerson($postData);
 
-        $postData['user_type'] = Student::class;
+        $postData['verification_code_id'] = $verificationCode->id;
+        $postData['user_type'] = \base_classname(Student::class);
         $postData['password'] = '123456';
-
-        $this
-            ->post(self::REGISTER_URL, $postData)
-            ->assertStatus(200)
-            ->assertJson([
-                'message' => 'verification_code_sent',
-            ]);
-
-        /** @var VerificationCode $verificationCode */
-        $verificationCode = VerificationCode::query()
-            ->where('phone_number', $postData['phone'])
-            ->first();
-        $postData['verification_code'] = $verificationCode->verification_code;
 
         $this
             ->post(self::REGISTER_URL, $postData)
@@ -525,31 +462,5 @@ class RegisterControllerTest extends TestCase
                 'error' => 'user_already_registered_with_another_phone_number',
                 'message' => 'Пользователь уже зарегистрирован с другим номером телефона',
             ]);
-    }
-
-    public function testCheckVerificationCode(): void
-    {
-        $phone = $this->faker->e164PhoneNumber;
-        $this->verificationService->verifyPhoneNumber($phone);
-
-        $this->assertDatabaseHas(VerificationCode::TABLE, [
-            'phone_number' => $phone
-        ]);
-
-        /** @var VerificationCode $verificationCode */
-        $verificationCode = VerificationCode::query()->where('phone_number', $phone)->first();
-        $code = $verificationCode->verification_code;
-
-        $this
-            ->post(self::VERIFY_URL, ['phone' => $phone, 'verification_code' => 'wrong_code'])
-            ->assertStatus(409)
-            ->assertJson([
-                'error' => 'verification_code_is_invalid',
-                'message' => 'Код введён неверно',
-            ]);
-
-        $this
-            ->post(self::VERIFY_URL, ['phone' => $phone, 'verification_code' => $code])
-            ->assertStatus(200);
     }
 }

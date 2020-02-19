@@ -28,10 +28,12 @@ class PersonResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'name' => \sprintf('%s %s %s', $this->last_name, $this->first_name, $this->patronymic_name),
             'last_name' => $this->last_name,
             'first_name' => $this->first_name,
             'patronymic_name' => $this->patronymic_name,
             'birth_date' => $this->birth_date ?  $this->birth_date->toDateString() : null,
+            'age' => $this->birth_date ?  $this->birth_date->age : null,
             'gender' => $this->gender,
             'phone' => $this->phone,
             'email' => $this->email,
@@ -40,35 +42,34 @@ class PersonResource extends JsonResource
             'instagram_username' => $this->instagram_username,
             'telegram_username' => $this->telegram_username,
             'vk_uid' => $this->vk_uid,
-            'vk_url' => $this->vk_url,
             'facebook_uid' => $this->facebook_uid,
-            'facebook_url' => $this->facebook_url,
             'note' => $this->note,
-            'customer' => $this->whenLoaded('customer', function () {
-                return new CustomerResource($this->customer);
-            }),
-            'student' => $this->whenLoaded('student', function () {
-                return new StudentResource($this->student);
-            }),
-            'instructor' => $this->whenLoaded('instructor', function () {
-                return new InstructorResource($this->instructor);
-            }),
-            'user' => $this->whenLoaded('user', function () {
-                return new UserResource($this->user);
-            }),
-            'is_customer' => $this->whenLoaded('customer', function () {
+            'is_customer' => (bool)$this->whenLoaded('customer', function () {
                 return null !== $this->customer;
-            }),
-            'is_student' => $this->whenLoaded('student', function () {
+            }, false),
+            'is_student' => (bool)$this->whenLoaded('student', function () {
                 return null !== $this->student;
-            }),
-            'is_instructor' => $this->whenLoaded('instructor', function () {
+            }, false),
+            'is_instructor' => (bool)$this->whenLoaded('instructor', function () {
                 return null !== $this->instructor;
-            }),
-            'is_user' => $this->whenLoaded('user', function () {
+            }, false),
+            'is_user' => (bool)$this->whenLoaded('user', function () {
                 return null !== $this->user;
+            }, false),
+            'instructor_id' => $this->whenLoaded('instructor', function () {
+                return null !== $this->instructor ?  $this->instructor->id : null;
             }),
-            'created_at' => $this->created_at->toDateTimeString()
+            'student_id' => $this->whenLoaded('student', function () {
+                return null !== $this->student ?  $this->student->id : null;
+            }),
+            'customer_id' => $this->whenLoaded('customer', function () {
+                return null !== $this->customer ?  $this->customer->id : null;
+            }),
+            'user_id' => $this->whenLoaded('user', function () {
+                return null !== $this->user ?  $this->user->id : null;
+            }),
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
         ];
     }
 }

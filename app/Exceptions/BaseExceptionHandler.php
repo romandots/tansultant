@@ -167,7 +167,8 @@ class BaseExceptionHandler extends ExceptionHandler
     protected function modelNotFoundJson(ModelNotFoundException $exception): JsonResponse
     {
         return \response()->json([
-            'message' => 'entity_not_found',
+            'error' => 'entity_not_found',
+            'message' => \trans('exceptions.entity_not_found'),
             'data' => [
                 'model' => $exception->getModel(),
                 'ids' => $exception->getIds()
@@ -194,7 +195,7 @@ class BaseExceptionHandler extends ExceptionHandler
      * This is overriding of standard laravel's method.
      * @param \Illuminate\Http\Request $request
      * @param \Illuminate\Auth\AuthenticationException $exception
-     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     * @return JsonResponse|\Illuminate\Http\RedirectResponse|Response
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
@@ -230,6 +231,13 @@ class BaseExceptionHandler extends ExceptionHandler
     {
         $errors = \format_validation_errors($exception->validator->failed());
 
-        return response()->json(['message' => 'validation_error', 'data' => $errors], $exception->status);
+        return \response()->json(
+            [
+                'error' => 'validation_error',
+                'message' => \trans('exceptions.validation_error'),
+                'data' => $errors
+            ],
+            $exception->status
+        );
     }
 }

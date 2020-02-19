@@ -27,7 +27,8 @@ class CreateUsersTable extends Migration
         Schema::create('users', static function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->text('name');
-            $table->text('username')->unique();
+            $table->text('username')->index();
+            $table->text('status')->index();
             $table->text('password');
             $table->text('remember_token')->nullable();
             $table->timestamp('created_at');
@@ -35,7 +36,15 @@ class CreateUsersTable extends Migration
             $table->timestamp('seen_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();
+
+            $table->unique(['username', 'deleted_at'], 'unique_username');
         });
+
+        \convertPostgresColumnTextToEnum('users', 'status', [
+            'pending',
+            'approved',
+            'disabled',
+        ]);
     }
 
     /**

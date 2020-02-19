@@ -10,27 +10,25 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\DTO;
 
-use App\Models\Instructor;
-use App\Models\Student;
-
 /**
  * Class RegisterUser
  * @package App\Http\Requests\DTO
  */
 class RegisterUser
 {
-    public const TYPE_INSTRUCTOR = Instructor::class;
-    public const TYPE_STUDENT = Student::class;
+    public const TYPE_INSTRUCTOR = 'Instructor';
+    public const TYPE_STUDENT = 'Student';
+    public const TYPE_USER = 'User';
 
-    public ?string $last_name;
+    public string $last_name;
 
-    public ?string $first_name;
+    public string $first_name;
 
-    public ?string $patronymic_name;
+    public string $patronymic_name;
 
-    public ?\Carbon\Carbon $birth_date;
+    public \Carbon\Carbon $birth_date;
 
-    public ?string $gender;
+    public string $gender;
 
     public string $phone;
 
@@ -45,7 +43,5 @@ class RegisterUser
 
     public string $user_type;
 
-    public ?string $password;
-
-    public ?string $verification_code;
+    public string $password;
 }

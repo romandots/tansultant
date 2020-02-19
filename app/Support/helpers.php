@@ -163,3 +163,13 @@ if (!function_exists('json_response')) {
         );
     }
 }
+
+if (!function_exists('get_status_message')) {
+    function get_status_message(string $status): array
+    {
+        return [
+            'status' => $status,
+            'message' => \trans('statuses.' . $status)
+        ];
+    }
+}

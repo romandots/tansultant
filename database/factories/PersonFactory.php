@@ -28,9 +28,7 @@ $factory->define(\App\Models\Person::class, static function (Faker $faker) {
         'instagram_username' => $username,
         'telegram_username' => $username,
         'vk_uid' => $faker->numerify('#######'),
-        'vk_url' => 'https://vk.com/' . $username,
         'facebook_uid' => $faker->numerify('#######'),
-        'facebook_url' => 'https://facebook.com/' . $username,
         'note' => null,
         'created_at' => \Carbon\Carbon::now(),
         'updated_at' => \Carbon\Carbon::now()
