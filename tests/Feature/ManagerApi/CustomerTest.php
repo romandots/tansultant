@@ -126,14 +126,13 @@ class CustomerTest extends \Tests\TestCase
                         'instagram_username' => $person->instagram_username,
                         'telegram_username' => $person->telegram_username,
                         'vk_uid' => $person->vk_uid,
-                        'vk_url' => $person->vk_url,
                         'facebook_uid' => $person->facebook_uid,
-                        'facebook_url' => $person->facebook_url,
                         'note' => $person->note,
                         'created_at' => $person->created_at->toDateTimeString()
                     ],
                     'seen_at' => $customer->seen_at->toDateTimeString(),
-                    'created_at' => $customer->created_at->toDateTimeString()
+                    'created_at' => $customer->created_at->toDateTimeString(),
+                    'updated_at' => $customer->updated_at->toDateTimeString(),
                 ]
             ]);
     }
@@ -150,8 +149,6 @@ class CustomerTest extends \Tests\TestCase
             'email' => $this->faker->email,
             'instagram_username' => $this->faker->word,
             'telegram_username' => $this->faker->word,
-            'vk_url' => 'https://vk.com/durov',
-            'facebook_url' => 'https://facebook.com/mark',
             'note' => 'Some testy note',
         ];
 
@@ -176,9 +173,7 @@ class CustomerTest extends \Tests\TestCase
                         'instagram_username' => $data['instagram_username'],
                         'telegram_username' => $data['telegram_username'],
                         'vk_uid' => null,
-                        'vk_url' => 'https://vk.com/durov',
                         'facebook_uid' => null,
-                        'facebook_url' => 'https://facebook.com/mark',
                         'note' => 'Some testy note',
                     ],
                 ]
@@ -267,9 +262,7 @@ class CustomerTest extends \Tests\TestCase
                         'instagram_username' => $person->instagram_username,
                         'telegram_username' => $person->telegram_username,
                         'vk_uid' => $person->vk_uid,
-                        'vk_url' => $person->vk_url,
                         'facebook_uid' => $person->facebook_uid,
-                        'facebook_url' => $person->facebook_url,
                         'note' => $person->note,
                         'created_at' => $person->created_at->toDateTimeString()
                     ]

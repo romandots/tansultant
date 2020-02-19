@@ -147,16 +147,15 @@ class InstructorTest extends \Tests\TestCase
                         'instagram_username' => $person->instagram_username,
                         'telegram_username' => $person->telegram_username,
                         'vk_uid' => $person->vk_uid,
-                        'vk_url' => $person->vk_url,
                         'facebook_uid' => $person->facebook_uid,
-                        'facebook_url' => $person->facebook_url,
                         'note' => $person->note,
                         'created_at' => $person->created_at->toDateTimeString()
                     ],
                     'status' => $instructor->status,
-                    'status_label' => \trans($instructor->status),
+                    'status_label' => \trans('instructor.status.' . $instructor->status),
                     'seen_at' => $instructor->seen_at->toDateTimeString(),
-                    'created_at' => $instructor->created_at->toDateTimeString()
+                    'created_at' => $instructor->created_at->toDateTimeString(),
+                    'updated_at' => $instructor->updated_at ?  $instructor->updated_at->toDateTimeString() : null,
                 ]
             ]);
     }
@@ -189,7 +188,7 @@ class InstructorTest extends \Tests\TestCase
             ->assertJson([
                 'data' => [
                     'status' => \App\Models\Instructor::STATUS_HIRED,
-                    'status_label' => \trans(\App\Models\Instructor::STATUS_HIRED),
+                    'status_label' => \trans('instructor.status.' . \App\Models\Instructor::STATUS_HIRED),
                     'description' => 'Some teacher info',
                     'display' => true,
                     'name' => "{$data['first_name']} {$data['last_name']}",
@@ -206,9 +205,7 @@ class InstructorTest extends \Tests\TestCase
                         'instagram_username' => $data['instagram_username'],
                         'telegram_username' => $data['telegram_username'],
                         'vk_uid' => null,
-                        'vk_url' => 'https://vk.com/durov',
                         'facebook_uid' => null,
-                        'facebook_url' => 'https://facebook.com/mark',
                         'note' => 'Some testy note',
                     ],
                 ]
@@ -274,6 +271,7 @@ class InstructorTest extends \Tests\TestCase
                 'data' => [
                     'name' => "{$person->first_name} {$person->last_name}",
                     'status' => \App\Models\Instructor::STATUS_HIRED,
+                    'status_label' => \trans('instructor.status.' . \App\Models\Instructor::STATUS_HIRED),
                     'description' => 'Some teacher info',
                     'display' => true,
                     'person' => [
@@ -290,9 +288,7 @@ class InstructorTest extends \Tests\TestCase
                         'instagram_username' => $person->instagram_username,
                         'telegram_username' => $person->telegram_username,
                         'vk_uid' => $person->vk_uid,
-                        'vk_url' => $person->vk_url,
                         'facebook_uid' => $person->facebook_uid,
-                        'facebook_url' => $person->facebook_url,
                         'note' => $person->note,
                         'created_at' => $person->created_at->toDateTimeString()
                     ]
@@ -327,7 +323,7 @@ class InstructorTest extends \Tests\TestCase
                     'id' => $instructor->id,
                     'name' => $instructor->name,
                     'status' => \App\Models\Instructor::STATUS_FIRED,
-                    'status_label' => \trans(\App\Models\Instructor::STATUS_FIRED),
+                    'status_label' => \trans('instructor.status.' . \App\Models\Instructor::STATUS_FIRED),
                     'description' => 'Some other info',
                     'display' => false,
                     'person' => [
@@ -344,14 +340,13 @@ class InstructorTest extends \Tests\TestCase
                         'instagram_username' => $person->instagram_username,
                         'telegram_username' => $person->telegram_username,
                         'vk_uid' => $person->vk_uid,
-                        'vk_url' => $person->vk_url,
                         'facebook_uid' => $person->facebook_uid,
-                        'facebook_url' => $person->facebook_url,
                         'note' => $person->note,
                         'created_at' => $person->created_at->toDateTimeString()
                     ],
                     'seen_at' => $instructor->seen_at->toDateTimeString(),
-                    'created_at' => $instructor->created_at->toDateTimeString()
+                    'created_at' => $instructor->created_at->toDateTimeString(),
+                    'updated_at' => $instructor->updated_at ?  $instructor->updated_at->toDateTimeString() : null,
                 ]
             ]);
     }

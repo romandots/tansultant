@@ -74,9 +74,7 @@ class UserTest extends \Tests\TestCase
                         'instagram_username' => $this->me->person->instagram_username,
                         'telegram_username' => $this->me->person->telegram_username,
                         'vk_uid' => $this->me->person->vk_uid,
-                        'vk_url' => $this->me->person->vk_url,
                         'facebook_uid' => $this->me->person->facebook_uid,
-                        'facebook_url' => $this->me->person->facebook_url,
                         'note' => $this->me->person->note,
                         'created_at' => $this->me->person->created_at->toDateTimeString()
                     ],
@@ -132,9 +130,7 @@ class UserTest extends \Tests\TestCase
                         'instagram_username' => $person->instagram_username,
                         'telegram_username' => $person->telegram_username,
                         'vk_uid' => $person->vk_uid,
-                        'vk_url' => $person->vk_url,
                         'facebook_uid' => $person->facebook_uid,
-                        'facebook_url' => $person->facebook_url,
                         'note' => $person->note,
                         'created_at' => $person->created_at->toDateTimeString()
                     ],
@@ -172,8 +168,6 @@ class UserTest extends \Tests\TestCase
             'email' => $this->faker->email,
             'instagram_username' => $this->faker->word,
             'telegram_username' => $this->faker->word,
-            'vk_url' => 'https://vk.com/durov',
-            'facebook_url' => 'https://facebook.com/mark',
             'note' => 'Some testy note',
         ];
 
@@ -200,9 +194,7 @@ class UserTest extends \Tests\TestCase
                             'instagram_username' => $data['instagram_username'],
                             'telegram_username' => $data['telegram_username'],
                             'vk_uid' => null,
-                            'vk_url' => 'https://vk.com/durov',
                             'facebook_uid' => null,
-                            'facebook_url' => 'https://facebook.com/mark',
                             'note' => 'Some testy note',
                         ],
                 ]
@@ -239,8 +231,6 @@ class UserTest extends \Tests\TestCase
                     'email' => 'some@email.com',
                     'instagram_username' => 'instaperez',
                     'telegram_username' => 'teleperez',
-                    'vk_url' => 'https://vk.com/durov',
-                    'facebook_url' => 'https://facebook.com/mark',
                     'note' => 'Some testy note',
                 ],
             ],
@@ -256,8 +246,6 @@ class UserTest extends \Tests\TestCase
                     'email' => 'some@email.com',
                     'instagram_username' => 'instaperez',
                     'telegram_username' => 'teleperez',
-                    'vk_url' => 'https://vk.com/durov',
-                    'facebook_url' => 'https://facebook.com/mark',
                     'note' => 'Some testy note',
                 ],
             ],
@@ -273,8 +261,6 @@ class UserTest extends \Tests\TestCase
                     'email' => 'some@email.com',
                     'instagram_username' => 'instaperez',
                     'telegram_username' => 'teleperez',
-                    'vk_url' => 'https://vk.com/durov',
-                    'facebook_url' => 'https://facebook.com/mark',
                     'note' => 'Some testy note',
                 ],
             ],
@@ -290,8 +276,6 @@ class UserTest extends \Tests\TestCase
                     'email' => 'some@email.com',
                     'instagram_username' => 'instaperez',
                     'telegram_username' => 'teleperez',
-                    'vk_url' => 'https://vk.com/durov',
-                    'facebook_url' => 'https://facebook.com/mark',
                     'note' => 'Some testy note',
                 ],
             ],
@@ -307,8 +291,6 @@ class UserTest extends \Tests\TestCase
                     'email' => 'some@email.com',
                     'instagram_username' => 'instaperez',
                     'telegram_username' => 'teleperez',
-                    'vk_url' => 'https://vk.com/durov',
-                    'facebook_url' => 'https://facebook.com/mark',
                     'note' => 'Some testy note',
                 ],
             ],
@@ -324,8 +306,6 @@ class UserTest extends \Tests\TestCase
                     'email' => 'some@email.com',
                     'instagram_username' => 'instaperez',
                     'telegram_username' => 'teleperez',
-                    'vk_url' => 'https://vk.com/durov',
-                    'facebook_url' => 'https://facebook.com/mark',
                     'note' => 'Some testy note',
                 ],
             ],
@@ -341,8 +321,6 @@ class UserTest extends \Tests\TestCase
                     'email' => 'some@email.com',
                     'instagram_username' => 'instaperez',
                     'telegram_username' => 'teleperez',
-                    'vk_url' => 'https://vk.com/durov',
-                    'facebook_url' => 'https://facebook.com/mark',
                     'note' => 'Some testy note',
                 ],
             ],
@@ -397,9 +375,7 @@ class UserTest extends \Tests\TestCase
                         'instagram_username' => $person->instagram_username,
                         'telegram_username' => $person->telegram_username,
                         'vk_uid' => $person->vk_uid,
-                        'vk_url' => $person->vk_url,
                         'facebook_uid' => $person->facebook_uid,
-                        'facebook_url' => $person->facebook_url,
                         'note' => $person->note,
                         'created_at' => $person->created_at->toDateTimeString()
                     ]
@@ -445,9 +421,10 @@ class UserTest extends \Tests\TestCase
 
     /**
      * @param array $data
+     * @param int $statusCode
      * @dataProvider provideInvalidPasswords
      */
-    public function testInvalidUpdatePassword(array $data): void
+    public function testInvalidUpdatePassword(array $data, int $statusCode): void
     {
         $user = $this->createFakeManagerUser(['password' => \Hash::make('123456')]);
 
@@ -456,7 +433,7 @@ class UserTest extends \Tests\TestCase
         $this
             ->actingAs($user, 'api')
             ->patch($url, $data)
-            ->assertStatus(422);
+            ->assertStatus($statusCode);
 
         $user->refresh();
 
@@ -473,12 +450,14 @@ class UserTest extends \Tests\TestCase
                 [
                     'old_password' => '654321',
                     'new_password' => '654321',
-                ]
+                ],
+                409
             ],
             [
                 [
                     'old_password' => '123456',
-                ]
+                ],
+                422
             ]
         ];
     }
@@ -536,9 +515,7 @@ class UserTest extends \Tests\TestCase
                         'instagram_username' => $person->instagram_username,
                         'telegram_username' => $person->telegram_username,
                         'vk_uid' => $person->vk_uid,
-                        'vk_url' => $person->vk_url,
                         'facebook_uid' => $person->facebook_uid,
-                        'facebook_url' => $person->facebook_url,
                         'note' => $person->note,
                         'created_at' => $person->created_at->toDateTimeString()
                     ],

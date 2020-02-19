@@ -40,6 +40,7 @@ class ContractResource extends JsonResource
             'is_terminated' => (bool)$this->terminated_at,
             'is_pending' => null === $this->terminated_at && null === $this->signed_at,
             'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
             'signed_at' => $this->signed_at ? $this->signed_at->toDateTimeString() : null,
             'terminated_at' => $this->terminated_at ? $this->terminated_at->toDateTimeString() : null,
         ];
