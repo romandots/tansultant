@@ -46,4 +46,8 @@ class UserService
 
         $this->userRepository->updatePassword($user, $dto->new_password);
     }
+
+    /**
+     * @todo approve() with user notification
+     */
 }
