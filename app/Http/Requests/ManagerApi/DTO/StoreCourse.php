@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi\DTO;
 
+use App\Models\Instructor;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
@@ -36,9 +37,19 @@ class StoreCourse
     public ?string $description;
 
     /**
-     * @var string|null
+     * @var bool
      */
-    public ?string $age_restrictions;
+    public bool $display;
+
+    /**
+     * Array structure is:
+     *  [
+     *      'from' => (int|null),
+     *      'to' => (int|null)
+     *  ]
+     * @var int[]
+     */
+    public array $age_restrictions;
 
     /**
      * @var UploadedFile|null
@@ -51,9 +62,9 @@ class StoreCourse
     public string $status;
 
     /**
-     * @var string|null
+     * @var Instructor|null
      */
-    public ?string $instructor_id;
+    public ?Instructor $instructor;
 
     /**
      * @var Carbon|null

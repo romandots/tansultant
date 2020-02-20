@@ -16,4 +16,5 @@ return [
     'verification_code_expired' => 'Код подтверждения просрочен. Попробуйте ещё раз',
     'text_message_sending_failed' => 'Отправка СМС не удалась',
     'user_has_no_person' => 'Профиль пользователя не найден',
+    'instructor_status_incompatible' => 'Недопустимы статус инструктора',
 ];

@@ -12,6 +12,7 @@ namespace App\Http\Requests\ManagerApi;
 
 use App\Models\Course;
 use App\Models\Instructor;
+use App\Repository\InstructorRepository;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -22,6 +23,18 @@ use Illuminate\Validation\Rule;
  */
 class StoreCourseRequest extends FormRequest
 {
+    private InstructorRepository $instructorRepository;
+
+    /**
+     * StoreCourseRequest constructor.
+     * @param InstructorRepository $instructorRepository
+     */
+    public function __construct(InstructorRepository $instructorRepository)
+    {
+        parent::__construct();
+        $this->instructorRepository = $instructorRepository;
+    }
+
     /**
      * @return array
      */
@@ -51,9 +64,17 @@ class StoreCourseRequest extends FormRequest
                 'max:' . \config('uploads.max', 10240),
                 'mimes:jpeg,png,pdf'
             ],
-            'age_restrictions' => [
+            'age_restrictions_from' => [
                 'nullable',
-                'string'
+                'int',
+                'min:0',
+                'max:100',
+            ],
+            'age_restrictions_to' => [
+                'nullable',
+                'int',
+                'min:0',
+                'max:100',
             ],
             'instructor_id' => [
                 'nullable',
@@ -84,9 +105,15 @@ class StoreCourseRequest extends FormRequest
         $dto->status = $validated['status'];
         $dto->summary = $validated['summary'] ?? null;
         $dto->description = $validated['description'] ?? null;
+        $dto->display = (bool)$validated['display'];
         $dto->picture = $this->file('picture');
-        $dto->age_restrictions = $validated['age_restrictions'] ?? null;
-        $dto->instructor_id = $validated['instructor_id'] ?? null;
+        $dto->age_restrictions = [
+            'from' => isset($validated['age_restrictions_from']) ? (int)$validated['age_restrictions_from'] : null,
+            'to' => isset($validated['age_restrictions_to']) ? (int)$validated['age_restrictions_to'] : null,
+        ];
+        $dto->instructor = isset($validated['instructor_id']) ?
+            $this->instructorRepository->find($validated['instructor_id'])
+            : null;
         $dto->starts_at = isset($validated['starts_at']) ? Carbon::parse($validated['starts_at']) : null;
         $dto->ends_at = isset($validated['ends_at']) ? Carbon::parse($validated['ends_at']) : null;
         $dto->user = $this->user();

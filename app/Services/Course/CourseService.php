@@ -12,6 +12,7 @@ namespace App\Services\Course;
 
 use App\Http\Requests\ManagerApi\DTO\StoreCourse;
 use App\Models\Course;
+use App\Models\Instructor;
 use App\Models\User;
 use App\Repository\CourseRepository;
 
@@ -35,6 +36,7 @@ class CourseService
      */
     public function create(StoreCourse $store): Course
     {
+        $this->checkInstructorStatus($store);
         $course = $this->repository->create($store);
         \event(new \App\Events\Course\CourseCreatedEvent($course, $store->user));
 
@@ -48,6 +50,7 @@ class CourseService
      */
     public function update(Course $course, StoreCourse $update): void
     {
+        $this->checkInstructorStatus($update);
         $this->repository->update($course, $update);
         \event(new \App\Events\Course\CourseUpdatedEvent($course, $update->user));
     }
@@ -74,5 +77,12 @@ class CourseService
     {
         $this->repository->disable($course);
         \event(new \App\Events\Course\CourseDisabledEvent($course, $user));
+    }
+
+    private function checkInstructorStatus(StoreCourse $course): void
+    {
+        if (Instructor::STATUS_FIRED === $course->instructor->status) {
+            throw new Exceptions\InstructorStatusIncompatible($course->instructor);
+        }
     }
 }
