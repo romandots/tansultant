@@ -107,7 +107,6 @@ class CourseRestoreTest extends TestCase
         $this
             ->actingAs($user, 'api')
             ->post($this->url)
-            ->dump()
             ->assertOk();
 
         $this->assertDatabaseHas(Course::TABLE, [
