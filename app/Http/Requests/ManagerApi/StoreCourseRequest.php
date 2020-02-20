@@ -46,7 +46,7 @@ class StoreCourseRequest extends FormRequest
                 'string'
             ],
             'status' => [
-                'required',
+                'nullable',
                 'string',
                 Rule::in(Course::STATUSES)
             ],
@@ -61,12 +61,6 @@ class StoreCourseRequest extends FormRequest
             'display' => [
                 'nullable',
                 'bool'
-            ],
-            'picture' => [
-                'nullable',
-                'file',
-                'max:' . \config('uploads.max', 10240),
-                'mimes:jpeg,png,pdf'
             ],
             'age_restrictions_from' => [
                 'nullable',
@@ -106,11 +100,10 @@ class StoreCourseRequest extends FormRequest
 
         $dto = new DTO\StoreCourse;
         $dto->name = $validated['name'];
-        $dto->status = $validated['status'];
+        $dto->status = $validated['status'] ?? Course::STATUS_PENDING;
         $dto->summary = $validated['summary'] ?? null;
         $dto->description = $validated['description'] ?? null;
         $dto->display = (bool)($validated['display'] ?? false);
-        $dto->picture = $this->file('picture');
         $dto->age_restrictions = [
             'from' => isset($validated['age_restrictions_from']) ? (int)$validated['age_restrictions_from'] : null,
             'to' => isset($validated['age_restrictions_to']) ? (int)$validated['age_restrictions_to'] : null,

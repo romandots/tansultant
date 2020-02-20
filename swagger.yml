@@ -73,13 +73,38 @@ components:
         type: string
         enum: [pending, approved, disabled]
         nullable: true
+    FilterByCourseStatus:
+      description: Фильтровать по статусу курса
+      name: status
+      in: query
+      schema:
+        type: string
+        enum: [pending, active, disabled]
+        nullable: true
+    FilterByInstructorId:
+      description: Фильтровать по инструктору
+      name: instructor_id
+      in: query
+      schema:
+        type: string
+        format: uuid
+        nullable: true
+    CourseId:
+      description: ID курса
+      name: course_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     NewsId:
       description: ID новости
       name: news_id
       in: path
       required: true
       schema:
-        type: integer
+        type: string
+        format: uuid
   schemas:
     Token:
       description: Токен доступа
@@ -498,6 +523,92 @@ components:
           description: Дата последнего появления в сети
           type: string
           format: date-time
+    Course:
+      type: object
+      description: Курс (класс)
+      required:
+        - id
+        - name
+        - status
+        - status_label
+        - display
+        - instructor
+      properties:
+        id:
+          description: ID курса
+          format: uuid
+          type: string
+        name:
+          description: Название класса
+          type: string
+          example: Dancehall
+        status:
+          description: Статус класса
+          type: string
+          enum: [pending, active, disabled]
+          example: active
+        status_label:
+          description: Название статуса
+          type: string
+          enum: [Идёт набор, Работает, Закрыт]
+          example: Работает
+        summary:
+          description: Короткое описание курса (тизер)
+          type: string
+          example: Описание курса в две-три строки
+        description:
+          description: Полное описание
+          type: string
+          example: Полное и подробное описание курса
+        picture:
+          description: Адрес картинки класса
+          type: string
+          format: url
+          example: https://via.placeholder.com/600
+        picture_thumb:
+          description: Адрес превью картинки класса
+          type: string
+          format: url
+          example: https://via.placeholder.com/200
+        display:
+          description: Отображать?
+          type: boolean
+          example: true
+        age_restrictions:
+          description: Возрастные ограничения
+          type: object
+          properties:
+            from:
+              type: integer
+              nullable: true
+              description: От
+              example: 3
+            to:
+              type: integer
+              nullable: true
+              description: До
+              example:
+        age_restrictions_string:
+          description: Возрастные ограничения (текстовое отображение)
+          type: string
+          example: 3+
+        instructor:
+          $ref: '#/components/schemas/Instructor'
+        created_at:
+          description: Дата создания
+          type: string
+          format: date-time
+          example: 2020-02-20 00:00:00+004UTC
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата изменения
+          example: 2020-02-20 00:00:00+004UTC
+        seen_at:
+          description: Дата последнего появления в сети
+          type: string
+          format: date-time
+          example: 2020-02-20 00:00:00+004UTC
     PublicNewsList:
       description: Новости
       type: array
@@ -621,7 +732,7 @@ paths:
               properties:
                 user_type:
                   type: string
-                  enum: [User, Student, Instructor]
+                  enum: ['User', 'Student', 'Instructor']
                   example: student
                   description: Тип регистрации (пользователь, студент, инструктор)
                 verification_code_id:
@@ -889,6 +1000,298 @@ paths:
           description: Доступ запрещен
         404:
           description: Запись не найдена
+
+  # Admin routes
+  ## Courses
+  /admin/courses:
+    get:
+      operationId: adminListCourses
+      tags:
+        - admin
+      summary: Список курсов
+      description: Метод возвращает список курсов с учетом фильтра, пагинации и сортировки
+      parameters:
+        - $ref: '#/components/parameters/FilterByCourseStatus'
+        - $ref: '#/components/parameters/FilterByInstructorId'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Order'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Course'
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        422:
+          description: Ошибка валидации (в значениях фильтра)
+    post:
+      operationId: adminStoreCourse
+      tags:
+        - admin
+      summary: Создание курса
+      description: Метод создаёт новый курс и возвращает созданный объект
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: Название
+                  example: Dancehall
+                status:
+                  type: string
+                  enum: [pending, active, disabled]
+                  description: Статус
+                  example: active
+                  default: pending
+                  nullable: true
+                summary:
+                  type: string
+                  description: Короткое описание
+                  nullable: true
+                description:
+                  type: string
+                  description: Полное описание
+                  nullable: true
+                display:
+                  type: string
+                  description: Отображать?
+                  nullable: true
+                  default: false
+                age_restrictions_from:
+                  type: integer
+                  description: Возрастное ограничение от
+                  example: 3
+                  nullable: true
+                age_restrictions_to:
+                  type: integer
+                  description: Возрастное ограничение до
+                  example:
+                  nullable: true
+                instructor_id:
+                  type: string
+                  format: uuid
+                  nullable: true
+                  description: ID инструктора
+                starts_at:
+                  type: string
+                  format: date
+                  nullable: true
+                  description: Дата начала работы класса
+                  example: 2020-02-20
+                ends_at:
+                  type: string
+                  format: date
+                  nullable: true
+                  description: Дата окончания работы класса
+                  example:
+      responses:
+        201:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Course'
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        409:
+          description: Недопустимый статус инструктора (см. вложенное сообщение)
+        422:
+          description: Ошибка валидации (см. вложенное сообщение)
+  /admin/courses/{course_id}:
+    get:
+      operationId: adminGetCourse
+      tags:
+        - admin
+      summary: Данные курса (класса)
+      description: Метод возвращает объект курса (класса) по указанному ID
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Course'
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Запись не найдена
+    put:
+      operationId: adminUpdateCourse
+      tags:
+        - admin
+      summary: Изменение курса (класса)
+      description: Метод обновляет данные курса (класса)
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Название
+                  example: Dancehall
+                status:
+                  type: string
+                  enum: [pending, active, disabled]
+                  description: Статус
+                  default: pending
+                  example: active
+                summary:
+                  type: string
+                  description: Короткое описание
+                  nullable: true
+                description:
+                  type: string
+                  description: Полное описание
+                  nullable: true
+                display:
+                  type: string
+                  description: Отображать?
+                  nullable: true
+                  default: false
+                age_restrictions_from:
+                  type: integer
+                  description: Возрастное ограничение от
+                  example: 3
+                  nullable: true
+                age_restrictions_to:
+                  type: integer
+                  description: Возрастное ограничение до
+                  example:
+                  nullable: true
+                instructor_id:
+                  type: string
+                  format: uuid
+                  nullable: true
+                  description: ID инструктора
+                starts_at:
+                  type: string
+                  format: date
+                  nullable: true
+                  description: Дата начала работы класса
+                  example: 2020-02-20
+                ends_at:
+                  type: string
+                  format: date
+                  nullable: true
+                  description: Дата окончания работы класса
+                  example:
+      responses:
+        200:
+          description: Успех
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Запись не найдена
+        409:
+          description: Недопустимый статус инструктора (см. вложенное сообщение)
+        422:
+          description: Ошибка валидации (см. вложенное сообщение)
+    delete:
+      operationId: adminDeleteCourse
+      tags:
+        - admin
+      summary: Удаление курса (класса)
+      description: Метод отмечает курс как удаленный (soft delete)
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        200:
+          description: Курс удален
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Курс не найден
+  /admin/courses/{course_id}/restore:
+    post:
+      operationId: adminRestoreCourse
+      tags:
+        - admin
+      summary: Восстановление удаленного курса (класса)
+      description: Метод убирает отметку от удалении курса
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        200:
+          description: Курс восстановлен
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Курс не найден или не удален
+  /admin/courses/{course_id}/disable:
+    post:
+      operationId: adminDisableCourse
+      tags:
+        - admin
+      summary: Отключение курса (класса)
+      description: Метод меняет статус курса на *Закрыт*
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        200:
+          description: Курс отключен
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Курс не найден или удален
+  /admin/courses/{course_id}/enable:
+    post:
+      operationId: adminEnableCourse
+      tags:
+        - admin
+      summary: Включение курса (класса)
+      description: Метод меняет статус курса на *Работает*
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        200:
+          description: Курс включен
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Курс не найден или удален
+
 
   # Public routes
   /news:
