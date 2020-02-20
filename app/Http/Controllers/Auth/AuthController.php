@@ -45,6 +45,7 @@ class AuthController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      * @throws UnauthorizedException
+     * @throws \Exception
      */
     public function logout(Request $request): void
     {

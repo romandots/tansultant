@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
+use App\Http\Requests\ManagerApi\FilterCoursesRequest;
 use App\Http\Requests\ManagerApi\StoreCourseRequest;
 use App\Http\Requests\ManagerApi\StoreCourseRequest as UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
@@ -29,11 +30,16 @@ class CourseController
         $this->service = $service;
     }
 
-    public function index(): AnonymousResourceCollection
+    public function index(FilterCoursesRequest $request): AnonymousResourceCollection
     {
-        $records = $this->repository->getAll();
+        $filter = $request->getDto();
+        [$count, $records] = $this->repository->getAllFilteredPaginated($filter);
 
-        return CourseResource::collection($records);
+        return CourseResource::collection($records)->additional(
+            [
+                'meta' =>\format_pagination($filter->page, $filter->perPage, $count)
+            ]
+        );
     }
 
     public function show(string $id): CourseResource

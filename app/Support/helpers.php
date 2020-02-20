@@ -173,3 +173,29 @@ if (!function_exists('get_status_message')) {
         ];
     }
 }
+
+if (!function_exists('format_pagination')) {
+    /**
+     * @param int $page
+     * @param int $perPage
+     * @param int $total
+     * @return array
+     */
+    function format_pagination(int $page, int $perPage, int $total): array
+    {
+        $lastPage = (int)\ceil($total / $perPage);
+        $to = $page * $perPage;
+        $from = $to - $perPage + 1;
+        if ($to > $total) {
+            $to = $total;
+        }
+        return [
+            'current_page' => $page,
+            'per_page' => $perPage,
+            'last_page' => $lastPage,
+            'from' => $from,
+            'to' => $to,
+            'total' => $total
+        ];
+    }
+}

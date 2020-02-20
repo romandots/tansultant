@@ -43,6 +43,8 @@ class CourseResource extends JsonResource
             }),
             'starts_at' => $this->starts_at ? $this->starts_at->toDateString() : null,
             'ends_at' => $this->ends_at ? $this->ends_at->toDateString() : null,
+            'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
         ];
     }
 

@@ -12,7 +12,6 @@ namespace Tests\Feature\Api\Course;
 
 use App\Models\Course;
 use App\Services\Permissions\CoursesPermissions;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 use Tests\Traits\CreatesFakeCourse;
 use Tests\Traits\CreatesFakeInstructor;
@@ -48,10 +47,24 @@ class CourseIndexTest extends TestCase
     {
         parent::setUp();
         $this->instructor = $this->createFakeInstructor();
-        $this->courses = \factory(Course::class, 5)->create(['instructor_id' => $this->instructor->id])->all();
-        $this->courses += \factory(Course::class, 5)->create(['status' => Course::STATUS_DISABLED])->all();
-        $this->courses += \factory(Course::class, 5)->create(['status' => Course::STATUS_PENDING])->all();
-        $this->courses += \factory(Course::class, 5)->create(['status' => Course::STATUS_ACTIVE])->all();
+        /** @var \Illuminate\Database\Eloquent\Collection|Course[] $courses */
+        $courses = \array_merge(
+            \factory(Course::class, 5)->create(['instructor_id' => $this->instructor->id])->all(),
+            \factory(Course::class, 5)->create(['status' => Course::STATUS_DISABLED])->all(),
+            \factory(Course::class, 5)->create(['status' => Course::STATUS_PENDING])->all(),
+            \factory(Course::class, 5)->create(['status' => Course::STATUS_ACTIVE])->all()
+        );
+
+        $counter = 0;
+        foreach ($courses as $course) {
+            $course->created_at = $course->created_at->addSeconds($counter);
+            $course->updated_at = $course->updated_at->addSeconds($counter);
+            $course->save();
+            $counter++;
+        }
+
+        $this->courses = Course::query()->orderBy('created_at', 'desc')->get()->all();
+
         $this->userWithPermission = $this->createFakeManagerUser(
             [],
             [
@@ -115,7 +128,10 @@ class CourseIndexTest extends TestCase
     public function testIndexSorting(string $sort, string $order): void
     {
         $expectedData = [];
-        foreach ($this->courses as $course) {
+
+        $courses = Course::query()->orderBy($sort, $order)->get();
+
+        foreach ($courses as $course) {
             $expectedData[] = [
                 'id' => $course->id,
                 'name' => $course->name,
@@ -126,21 +142,6 @@ class CourseIndexTest extends TestCase
                 'status' => $course->status,
             ];
         }
-
-        $expectedData = (new Collection($this->courses))
-            ->sortBy($sort, $order === 'desc' ? SORT_DESC : SORT_ASC)
-            ->map(
-                fn(Course $course) => [
-                    'id' => $course->id,
-                    'name' => $course->name,
-                    'summary' => $course->summary,
-                    'description' => $course->description,
-                    'picture' => $course->picture,
-                    'picture_thumb' => $course->picture_thumb,
-                    'status' => $course->status,
-                ]
-            )
-            ->all();
 
         $this
             ->actingAs($this->userWithPermission, 'api')
@@ -188,8 +189,14 @@ class CourseIndexTest extends TestCase
                 'picture' => $course->picture,
                 'picture_thumb' => $course->picture_thumb,
                 'status' => $course->status,
+                'instructor' => ['id' => $course->instructor_id],
+                'created_at' => $course->created_at->toDateTimeString(),
+                'updated_at' => $course->updated_at->toDateTimeString(),
             ];
         }
+
+        $expectedData = \array_slice($expectedData, -5, 5);
+
         $this
             ->actingAs($this->userWithPermission, 'api')
             ->get(self::URL . '?' . \http_build_query(['page' => 4, 'per_page' => 5]))
@@ -226,7 +233,7 @@ class CourseIndexTest extends TestCase
         }
         $this
             ->actingAs($this->userWithPermission, 'api')
-            ->get(self::URL . '?' . \http_build_query(['instructor_id' => $this->instructor->id]))
+            ->get(self::URL . '?' . \http_build_query(['instructors_ids[]' => $this->instructor->id]))
             ->assertOk()
             ->assertJsonCount(5, 'data')
             ->assertJson(
@@ -260,17 +267,18 @@ class CourseIndexTest extends TestCase
                 ];
             }
         }
+        $totalCount = Course::STATUS_ACTIVE === $status ? 10 : 5;
         $this
             ->actingAs($this->userWithPermission, 'api')
-            ->get(self::URL . '?' . \http_build_query(['status' => $status]))
+            ->get(self::URL . '?' . \http_build_query(['statuses[]' => $status]))
             ->assertOk()
-            ->assertJsonCount(5, 'data')
+            ->assertJsonCount($totalCount, 'data')
             ->assertJson(
                 [
                     'data' => $expectedData,
                     'meta' => [
                         'current_page' => 1,
-                        'total' => 5,
+                        'total' => $totalCount,
                     ]
                 ]
             );

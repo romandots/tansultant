@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Http\Requests\ManagerApi\DTO\FilterCourses;
 use App\Http\Requests\ManagerApi\DTO\StoreCourse as CourseDto;
 use App\Models\Course;
 use Carbon\Carbon;
@@ -30,6 +31,33 @@ class CourseRepository
         return Course::query()
             ->whereNull('deleted_at')
             ->get();
+    }
+
+    /**
+     * @param FilterCourses $filter
+     * @return array [int $count, Collection|Course[] $records]
+     */
+    public function getAllFilteredPaginated(FilterCourses $filter): array
+    {
+        $query = Course::query()
+            ->whereNull('deleted_at');
+
+        if ([] !== $filter->statuses) {
+            $query->whereIn('status', $filter->statuses);
+        }
+        if ([] !== $filter->instructors_ids) {
+            $query->whereIn('instructor_id', $filter->instructors_ids);
+        }
+
+        $count = $query->count();
+
+        $records = $query
+            ->orderBy($filter->sort, $filter->order)
+            ->forPage($filter->page, $filter->perPage)
+            ->with('instructor.person')
+            ->get();
+
+        return [$count, $records];
     }
 
     /**
@@ -69,6 +97,7 @@ class CourseRepository
         $course = new Course;
         $course->id = \uuid();
         $course->created_at = Carbon::now();
+        $course->updated_at = Carbon::now();
         $this->fill($course, $dto);
         $course->save();
 
@@ -144,6 +173,7 @@ class CourseRepository
         $course->deleted_at = Carbon::now();
         $course->save();
     }
+
     /**
      * @param Course $course
      */
