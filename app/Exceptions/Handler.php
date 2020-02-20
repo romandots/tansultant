@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Exceptions;
 
 use App\Exceptions\Auth\UnauthorizedException;
+use App\Services\Course\Exceptions\InstructorStatusIncompatible;
 use App\Services\Login\Exceptions\UserNotFoundException;
 use App\Services\Login\Exceptions\WrongPasswordException;
 use App\Services\PasswordReset\Exceptions\UserHasNoPerson;
@@ -39,6 +40,7 @@ class Handler extends BaseExceptionHandler
         VerificationCodeExpired::class,
         TextMessageSendingFailed::class,
         UserHasNoPerson::class,
+        InstructorStatusIncompatible::class,
     ];
 
     /**
@@ -61,6 +63,7 @@ class Handler extends BaseExceptionHandler
             VerificationCodeExpired::class => [$this, 'renderAsJson'],
             TextMessageSendingFailed::class => [$this, 'renderAsJson'],
             UserHasNoPerson::class => [$this, 'renderAsJson'],
+            InstructorStatusIncompatible::class => [$this, 'renderAsJson'],
         ];
     }
 
