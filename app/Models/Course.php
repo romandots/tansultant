@@ -79,14 +79,17 @@ class Course extends Model
         'starts_at' => 'date',
         'ends_at' => 'date',
         'age_restrictions' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     public $timestamps = [
         'created_at',
         'updated_at',
+        'deleted_at',
         'starts_at',
         'ends_at',
-        'deleted_at'
     ];
 
     /**

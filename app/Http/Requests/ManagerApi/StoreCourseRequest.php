@@ -58,6 +58,10 @@ class StoreCourseRequest extends FormRequest
                 'nullable',
                 'string'
             ],
+            'display' => [
+                'nullable',
+                'bool'
+            ],
             'picture' => [
                 'nullable',
                 'file',
@@ -105,7 +109,7 @@ class StoreCourseRequest extends FormRequest
         $dto->status = $validated['status'];
         $dto->summary = $validated['summary'] ?? null;
         $dto->description = $validated['description'] ?? null;
-        $dto->display = (bool)$validated['display'];
+        $dto->display = (bool)($validated['display'] ?? false);
         $dto->picture = $this->file('picture');
         $dto->age_restrictions = [
             'from' => isset($validated['age_restrictions_from']) ? (int)$validated['age_restrictions_from'] : null,

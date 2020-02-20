@@ -82,6 +82,13 @@ class Instructor extends Model
         'deleted_at'
     ];
 
+    public $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'seen_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Person|null
      */

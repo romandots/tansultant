@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\Course;
 
 use App\Models\Course;
+use App\Models\Instructor;
 use App\Services\Permissions\CoursesPermissions;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -87,9 +88,12 @@ class CourseUpdateTest extends TestCase
      */
     public function testValidationErrors(array $data): void
     {
-        $user = $this->createFakeManagerUser([], [
-            CoursesPermissions::UPDATE
-        ]);
+        $user = $this->createFakeManagerUser(
+            [],
+            [
+                CoursesPermissions::UPDATE
+            ]
+        );
 
         $this
             ->actingAs($user, 'api')
@@ -97,11 +101,55 @@ class CourseUpdateTest extends TestCase
             ->assertStatus(422);
     }
 
+    public function testWithFiredInstructor(): void
+    {
+        $user = $this->createFakeManagerUser(
+            [],
+            [
+                CoursesPermissions::UPDATE
+            ]
+        );
+
+        $instructor = $this->createFakeInstructor(['status' => Instructor::STATUS_FIRED]);
+        $data = [
+            'name' => $this->faker->name,
+            'status' => Course::STATUS_ACTIVE,
+            'summary' => $this->faker->sentence,
+            'description' => $this->faker->text,
+            'picture' => null,
+            'age_restrictions' => '3+',
+            'instructor_id' => $instructor->id,
+            'starts_at' => Carbon::now()->toDateString(),
+            'ends_at' => null,
+        ];
+
+        $this
+            ->actingAs($user, 'api')
+            ->put($this->url, $data)
+            ->assertStatus(409)
+            ->assertJson(
+                [
+                    'error' => 'instructor_status_incompatible',
+                    'message' => 'Недопустимый статус инструктора',
+                    'data' => [
+                        'instructor' => [
+                            'id' => $instructor->id,
+                            'name' => $instructor->name,
+                            'status' => Instructor::STATUS_FIRED,
+                        ]
+                    ]
+                ]
+            );
+    }
+
     public function testSuccess(): void
     {
-        $user = $this->createFakeManagerUser([], [
-            CoursesPermissions::UPDATE
-        ]);
+        $user = $this->createFakeManagerUser(
+            [],
+            [
+                CoursesPermissions::UPDATE
+            ]
+        );
 
         $instructor = $this->createFakeInstructor();
         $data = [
@@ -121,14 +169,16 @@ class CourseUpdateTest extends TestCase
             ->put($this->url, $data)
             ->assertOk()
             ->assertJsonStructure(self::JSON_STRUCTURE)
-            ->assertJson([
-                'data' => [
-                    'name' => $data['name'],
-                    'summary' => $data['summary'],
-                    'description' => $data['description'],
-                    'status' => $data['status'],
+            ->assertJson(
+                [
+                    'data' => [
+                        'name' => $data['name'],
+                        'summary' => $data['summary'],
+                        'description' => $data['description'],
+                        'status' => $data['status'],
+                    ]
                 ]
-            ]);
+            );
     }
 
     /**
