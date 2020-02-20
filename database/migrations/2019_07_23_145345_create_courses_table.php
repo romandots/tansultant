@@ -21,7 +21,7 @@ class CreateCoursesTable extends Migration
             $table->text('name');
             $table->text('summary')->nullable();
             $table->text('description')->nullable();
-            $table->text('age_restrictions')->nullable();
+            $table->json('age_restrictions')->nullable();
             $table->text('picture')->nullable();
             $table->text('picture_thumb')->nullable();
             $table->text('status')->index();
