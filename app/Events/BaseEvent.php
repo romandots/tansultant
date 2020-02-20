@@ -9,7 +9,6 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Class UserRegisteredEvent
  * @package App\Events
  */
 class BaseEvent

@@ -7,7 +7,6 @@ use App\Models\User;
 
 class UserRegisteredEvent extends BaseEvent
 {
-
     public User $user;
 
     public function __construct(User $user)
