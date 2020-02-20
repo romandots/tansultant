@@ -8,21 +8,24 @@ info:
   description: >-
     Documentation for Tansultant API
 tags:
-  - name: auth
+  - name: Auth
     description: >-
       Авторизация и регистрация
-  - name: admin
+  - name: AdminApi
     description: >-
-      АПИ для админских приложений и интерфейсов
-  - name: instructor
-    description: >-
-      АПИ для приложения преподавателя
-  - name: student
+      Непубличный АПИ для управления системой
+  - name: StudentApi
     description: >-
       АПИ для клиентского приложения
-  - name: public
+  - name: PublicApi
     description: >-
       Публичный АПИ для сайта и приложений
+  - name: People
+    description: >-
+      Пользователи, студенты, преподаватели и профили
+  - name: Courses
+    description: >-
+      Курсы (классы) и расписание
 security:
   - application:
       - read
@@ -653,7 +656,7 @@ paths:
   /verify:
     post:
       tags:
-        - auth
+        - Auth
       operationId: verifyPhoneNumber
       summary: Верификация номера телефона
       description: >-
@@ -708,7 +711,7 @@ paths:
   /register:
     post:
       tags:
-        - auth
+        - Auth
       summary: Регистрация пользователя
       operationId: registration
       description: >-
@@ -774,7 +777,7 @@ paths:
                     $ref: '#/components/schemas/User'
         409:
           description: >-
-            Пользователь уже зарегистрирован
+            Пользователь уже зарегистрирован 
             (совпадение по номеру телефона или персональным данным)
         422:
           description: Ошибка валидации (см. вложенное сообщение)
@@ -787,7 +790,7 @@ paths:
         и возвращает oauth2 токен доступа для использования в запросах
         к непубличному АПИ.
       tags:
-        - auth
+        - Auth
       requestBody:
         content:
           application/json:
@@ -827,7 +830,7 @@ paths:
       summary: Сброс авторизации (выход из системы)
       description: Метод отзывает токен авторизованного пользователя
       tags:
-        - auth
+        - Auth
       responses:
         200:
           description: Успешно
@@ -839,7 +842,7 @@ paths:
       summary: Данные пользователя
       description: Метод возвращает данные авторизованного пользователя, включая профиль, роли и права.
       tags:
-        - auth
+        - Auth
       responses:
         200:
           description: Успешно
@@ -857,10 +860,10 @@ paths:
       operationId: updateUserPassword
       summary: Смена пароля авторизованного пользователя
       description: >-
-        Необходимо отправить правильный старый пароль и новый пароль,
+        Необходимо отправить правильный старый пароль и новый пароль, 
         чтобы изменить пароль авторизованного пользователя.
       tags:
-        - auth
+        - Auth
       requestBody:
         content:
           application/json:
@@ -889,13 +892,13 @@ paths:
       description: >-
         Для сброса пароля необходимо выполнить два запроса к данному методу:
 
-        1. Первый запрос должен содержать только ``username``, по которому будет осуществлен поиск пользователя.
+        1. Первый запрос должен содержать только ``username``, по которому будет осуществлен поиск пользователя. 
           На номер телефона найденного пользователя будет отправлен код подтверждения.
 
-        2. Второй запрос должен также содержать ``verification_code``.
+        2. Второй запрос должен также содержать ``verification_code``. 
           При отправке верного кода подтверждения, будет сгенерирован новый пароль и отправлен в СМС.
       tags:
-        - auth
+        - Auth
       requestBody:
         content:
           application/json:
@@ -930,7 +933,7 @@ paths:
         409:
           description: Неверно указан номер кода подтверждения
 
-  # Admin routes
+  # AdminApi routes
   /admin/users:
     get:
       operationId: adminGetUsers
@@ -939,7 +942,8 @@ paths:
         Возвращает список пользователей системы с учетом фильтра,
         сортировки и пагинации
       tags:
-        - admin
+        - AdminApi
+        - People
       parameters:
         - $ref: '#/components/parameters/FilterByUserStatus'
         - $ref: '#/components/parameters/Page'
@@ -974,7 +978,8 @@ paths:
       description: >-
         Возвращает полные данные пользователя системы
       tags:
-        - admin
+        - AdminApi
+        - People
       parameters:
         - name: user_id
           in: path
@@ -1001,13 +1006,14 @@ paths:
         404:
           description: Запись не найдена
 
-  # Admin routes
+  # AdminApi routes
   ## Courses
   /admin/courses:
     get:
       operationId: adminListCourses
       tags:
-        - admin
+        - AdminApi
+        - Courses
       summary: Список курсов
       description: Метод возвращает список курсов с учетом фильтра, пагинации и сортировки
       parameters:
@@ -1038,7 +1044,8 @@ paths:
     post:
       operationId: adminStoreCourse
       tags:
-        - admin
+        - AdminApi
+        - Courses
       summary: Создание курса
       description: Метод создаёт новый курс и возвращает созданный объект
       requestBody:
@@ -1122,7 +1129,8 @@ paths:
     get:
       operationId: adminGetCourse
       tags:
-        - admin
+        - AdminApi
+        - Courses
       summary: Данные курса (класса)
       description: Метод возвращает объект курса (класса) по указанному ID
       parameters:
@@ -1146,7 +1154,8 @@ paths:
     put:
       operationId: adminUpdateCourse
       tags:
-        - admin
+        - AdminApi
+        - Courses
       summary: Изменение курса (класса)
       description: Метод обновляет данные курса (класса)
       parameters:
@@ -1223,7 +1232,8 @@ paths:
     delete:
       operationId: adminDeleteCourse
       tags:
-        - admin
+        - AdminApi
+        - Courses
       summary: Удаление курса (класса)
       description: Метод отмечает курс как удаленный (soft delete)
       parameters:
@@ -1241,7 +1251,8 @@ paths:
     post:
       operationId: adminRestoreCourse
       tags:
-        - admin
+        - AdminApi
+        - Courses
       summary: Восстановление удаленного курса (класса)
       description: Метод убирает отметку от удалении курса
       parameters:
@@ -1259,7 +1270,8 @@ paths:
     post:
       operationId: adminDisableCourse
       tags:
-        - admin
+        - AdminApi
+        - Courses
       summary: Отключение курса (класса)
       description: Метод меняет статус курса на *Закрыт*
       parameters:
@@ -1277,7 +1289,8 @@ paths:
     post:
       operationId: adminEnableCourse
       tags:
-        - admin
+        - AdminApi
+        - Courses
       summary: Включение курса (класса)
       description: Метод меняет статус курса на *Работает*
       parameters:
