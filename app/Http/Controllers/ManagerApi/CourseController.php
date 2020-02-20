@@ -15,6 +15,7 @@ use App\Http\Requests\ManagerApi\StoreCourseRequest as UpdateCourseRequest;
 use App\Http\Resources\CourseResource;
 use App\Repository\CourseRepository;
 use App\Services\Course\CourseService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CourseController
@@ -50,7 +51,7 @@ class CourseController
      */
     public function store(StoreCourseRequest $request): CourseResource
     {
-        $course = $this->repository->create($request->getDto());
+        $course = $this->service->create($request->getDto());
         $course->load('instructor');
 
         return new CourseResource($course);
@@ -65,19 +66,49 @@ class CourseController
     public function update(UpdateCourseRequest $request, string $id): CourseResource
     {
         $course = $this->repository->find($id);
-        $this->repository->update($course, $request->getDto());
+        $this->service->update($course, $request->getDto());
         $course->load('instructor');
 
         return new CourseResource($course);
     }
 
     /**
+     * @param Request $request
      * @param string $id
-     * @throws \Exception
      */
-    public function destroy(string $id): void
+    public function destroy(Request $request, string $id): void
     {
         $course = $this->repository->find($id);
-        $this->repository->delete($course);
+        $this->service->delete($course, $request->user());
+    }
+
+    /**
+     * @param Request $request
+     * @param string $id
+     */
+    public function restore(Request $request, string $id): void
+    {
+        $course = $this->repository->findDeleted($id);
+        $this->service->restore($course, $request->user());
+    }
+
+    /**
+     * @param Request $request
+     * @param string $id
+     */
+    public function disable(Request $request, string $id): void
+    {
+        $course = $this->repository->find($id);
+        $this->service->disable($course, $request->user());
+    }
+
+    /**
+     * @param Request $request
+     * @param string $id
+     */
+    public function enable(Request $request, string $id): void
+    {
+        $course = $this->repository->find($id);
+        $this->service->enable($course, $request->user());
     }
 }

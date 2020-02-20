@@ -17,7 +17,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
 //        \Illuminate\Auth\Events\Registered::class => [
-//            \Illuminate\Auth\Listeners\SendEmailVerificationNotification::class,
+            \Illuminate\Auth\Listeners\SendEmailVerificationNotification::class,
 //        ],
         \App\Events\UserRegisteredEvent::class => [
             //
@@ -31,6 +31,14 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\StudentCreatedEvent::class => [
             //
         ],
+
+        // Courses
+        \App\Events\Course\CourseCreatedEvent::class => [],
+        \App\Events\Course\CourseUpdatedEvent::class => [],
+        \App\Events\Course\CourseDeletedEvent::class => [],
+        \App\Events\Course\CourseRecoveredEvent::class => [],
+        \App\Events\Course\CourseEnabledEvent::class => [],
+        \App\Events\Course\CourseDisabledEvent::class => [],
     ];
 
     /**

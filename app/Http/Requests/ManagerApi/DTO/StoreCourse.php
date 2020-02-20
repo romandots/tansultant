@@ -10,6 +10,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi\DTO;
 
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\UploadedFile;
+
 /**
  * Class Course
  * @package App\Http\Requests\ManagerApi\DTO
@@ -19,45 +23,50 @@ class StoreCourse
     /**
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * @var string|null
      */
-    public $summary;
+    public ?string $summary;
 
     /**
      * @var string|null
      */
-    public $description;
+    public ?string $description;
 
     /**
      * @var string|null
      */
-    public $age_restrictions;
+    public ?string $age_restrictions;
 
     /**
-     * @var \Illuminate\Http\UploadedFile|null
+     * @var UploadedFile|null
      */
-    public $picture;
+    public ?UploadedFile $picture;
 
     /**
      * @var string
      */
-    public $status;
+    public string $status;
 
     /**
      * @var string|null
      */
-    public $instructor_id;
+    public ?string $instructor_id;
 
     /**
-     * @var \Carbon\Carbon|null
+     * @var Carbon|null
      */
-    public $starts_at;
+    public ?Carbon $starts_at;
 
     /**
-     * @var \Carbon\Carbon|null
+     * @var Carbon|null
      */
-    public $ends_at;
+    public ?Carbon $ends_at;
+
+    /**
+     * @var User
+     */
+    public User $user;
 }

@@ -89,6 +89,7 @@ class StoreCourseRequest extends FormRequest
         $dto->instructor_id = $validated['instructor_id'] ?? null;
         $dto->starts_at = isset($validated['starts_at']) ? Carbon::parse($validated['starts_at']) : null;
         $dto->ends_at = isset($validated['ends_at']) ? Carbon::parse($validated['ends_at']) : null;
+        $dto->user = $this->user();
 
         return $dto;
     }

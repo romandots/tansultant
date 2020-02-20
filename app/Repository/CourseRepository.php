@@ -12,7 +12,9 @@ namespace App\Repository;
 
 use App\Http\Requests\ManagerApi\DTO\StoreCourse as CourseDto;
 use App\Models\Course;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Class CourseRepository
@@ -36,7 +38,21 @@ class CourseRepository
      */
     public function find(string $id): Course
     {
-        $course = Course::query()->findOrFail($id);
+        $course = Course::query()
+            ->where('id', $id)
+            ->whereNull('deleted_at')
+            ->firstOrFail();
+        $course->load('instructor');
+
+        return $course;
+    }
+
+    public function findDeleted(string $id): Course
+    {
+        $course = Course::query()
+            ->where('id', $id)
+            ->whereNotNull('deleted_at')
+            ->firstOrFail();
         $course->load('instructor');
 
         return $course;
@@ -52,6 +68,7 @@ class CourseRepository
     {
         $course = new Course;
         $course->id = \uuid();
+        $course->created_at = Carbon::now();
         $this->fill($course, $dto);
         $course->save();
 
@@ -66,19 +83,20 @@ class CourseRepository
     public function update(Course $course, CourseDto $dto): void
     {
         $this->fill($course, $dto);
+        $course->updated_at = Carbon::now();
         $course->save();
     }
 
     /**
-     * @param Course $course
      * @param \Illuminate\Http\UploadedFile $file
+     * @return string|false
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function savePicture(Course $course, \Illuminate\Http\UploadedFile $file): void
+    public function savePicture(\Illuminate\Http\UploadedFile $file)
     {
-        $name = \Hash::make($file->get());
+        $name = Hash::make($file->get());
         $path = $this->getPicturePath($name);
-        $course->picture = $file->storePubliclyAs($path, $name);
+        return $file->storePubliclyAs($path, $name);
     }
 
     /**
@@ -104,7 +122,8 @@ class CourseRepository
         $course->summary = $dto->summary;
         $course->description = $dto->description;
         if (null !== $dto->picture) {
-            $this->savePicture($course, $dto->picture);
+            $picture = $this->savePicture($dto->picture);
+            $course->picture = $picture ?? null;
         }
         $course->age_restrictions = $dto->age_restrictions;
         $course->instructor_id = $dto->instructor_id;
@@ -114,11 +133,40 @@ class CourseRepository
 
     /**
      * @param Course $course
-     * @throws \Exception
-     * @todo delete all future lessons of the course
      */
     public function delete(Course $course): void
     {
-        $course->delete();
+        $course->updated_at = Carbon::now();
+        $course->deleted_at = Carbon::now();
+        $course->save();
+    }
+    /**
+     * @param Course $course
+     */
+    public function restore(Course $course): void
+    {
+        $course->updated_at = Carbon::now();
+        $course->deleted_at = null;
+        $course->save();
+    }
+
+    /**
+     * @param Course $course
+     */
+    public function disable(Course $course): void
+    {
+        $course->updated_at = Carbon::now();
+        $course->status = Course::STATUS_DISABLED;
+        $course->save();
+    }
+
+    /**
+     * @param Course $course
+     */
+    public function enable(Course $course): void
+    {
+        $course->updated_at = Carbon::now();
+        $course->status = Course::STATUS_ACTIVE;
+        $course->save();
     }
 }

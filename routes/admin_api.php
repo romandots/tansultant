@@ -108,6 +108,12 @@ Route::group(['prefix' => 'courses'], static function () {
         ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::UPDATE);
     Route::delete('{id}', 'CourseController@destroy')
         ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::DELETE);
+    Route::delete('{id}', 'CourseController@restore')
+        ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::RESTORE);
+    Route::delete('{id}', 'CourseController@disable')
+        ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::DISABLE);
+    Route::delete('{id}', 'CourseController@enable')
+        ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::ENABLE);
     Route::get('{id}', 'CourseController@show')
         ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::READ);
 });
