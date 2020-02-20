@@ -116,21 +116,23 @@ Route::group(['prefix' => 'courses'], static function () {
         ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::ENABLE);
     Route::get('{id}', 'CourseController@show')
         ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::READ);
+
+    // SCHEDULES
+    Route::group(['prefix' => '{courseId}/schedules'], static function () {
+        Route::get('/', 'ScheduleController@index')
+            ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::READ);
+        Route::post('/', 'ScheduleController@store')
+            ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::CREATE);
+        Route::put('{scheduleId}', 'ScheduleController@update')
+            ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::UPDATE);
+        Route::delete('{scheduleId}', 'ScheduleController@destroy')
+            ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::DELETE);
+    });
 });
 
 // SCHEDULES
 Route::group(['prefix' => 'schedules'], static function () {
     Route::get('date', 'ScheduleController@onDate')
-        ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::READ);
-    Route::get('/', 'ScheduleController@index')
-        ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::READ);
-    Route::post('/', 'ScheduleController@store')
-        ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::CREATE);
-    Route::put('{id}', 'ScheduleController@update')
-        ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::UPDATE);
-    Route::delete('{id}', 'ScheduleController@destroy')
-        ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::DELETE);
-    Route::get('{id}', 'ScheduleController@show')
         ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::READ);
 });
 

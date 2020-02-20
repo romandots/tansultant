@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi\DTO;
 
+use App\Models\User;
+
 /**
  * Class Schedule
  * @package App\Http\Requests\ManagerApi\DTO
@@ -17,32 +19,34 @@ namespace App\Http\Requests\ManagerApi\DTO;
 class StoreSchedule
 {
     /**
-     * @var string
+     * @var string|null
      */
-    public $branch_id;
-
-    /**
-     * @var string
-     */
-    public $classroom_id;
+    public ?string $branch_id;
 
     /**
      * @var string|null
      */
-    public $course_id;
+    public ?string $classroom_id;
+
+    /**
+     * @var string|null
+     */
+    public ?string $course_id;
 
     /**
      * @var string
      */
-    public $weekday;
+    public string $weekday;
 
     /**
      * @var \Carbon\Carbon|null
      */
-    public $starts_at;
+    public ?\Carbon\Carbon $starts_at;
 
     /**
      * @var \Carbon\Carbon|null
      */
-    public $ends_at;
+    public ?\Carbon\Carbon $ends_at;
+
+    public User $user;
 }

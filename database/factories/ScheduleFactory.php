@@ -16,11 +16,14 @@ use Faker\Generator as Faker;
 $factory->define(Schedule::class, static function (Faker $faker) {
     return [
         'id' => \uuid(),
-        'branch_id' => \uuid(),
-        'classroom_id' => \uuid(),
-        'course_id' => \uuid(),
+        'branch_id' => \factory(\App\Models\Branch::class),
+        'classroom_id' => \factory(\App\Models\Classroom::class),
+        'course_id' => \factory(\App\Models\Course::class),
         'starts_at' => $faker->time(),
         'ends_at' => $faker->time(),
-        'weekday' => 'monday',
+        'weekday' => 1,
+        'created_at' => \Carbon\Carbon::now(),
+        'updated_at' => \Carbon\Carbon::now(),
+        'deleted_at' => null,
     ];
 });

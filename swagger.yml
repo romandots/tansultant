@@ -100,6 +100,14 @@ components:
       schema:
         type: string
         format: uuid
+    ScheduleId:
+      description: ID курса
+      name: schedule_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
     NewsId:
       description: ID новости
       name: news_id
@@ -536,6 +544,8 @@ components:
         - status_label
         - display
         - instructor
+        - schedules
+        - schedule_string
       properties:
         id:
           description: ID курса
@@ -597,6 +607,15 @@ components:
           example: 3+
         instructor:
           $ref: '#/components/schemas/Instructor'
+        schedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/Schedule'
+        schedule_string:
+          description: Расписание класса одной строкой
+          type: string
+          nullable: true
+          example: 'ПН, ВТ в 18:00'
         created_at:
           description: Дата создания
           type: string
@@ -612,6 +631,197 @@ components:
           type: string
           format: date-time
           example: 2020-02-20 00:00:00+004UTC
+    Schedule:
+      description: Ячейка расписания
+      type: object
+      required:
+        - id
+        - weekday
+        - starts_at
+        - ends_at
+      properties:
+        id:
+          description: ID ячейки расписания
+          type: string
+          format: uuid
+        weekday:
+          type: string
+          enum: ['1', '2', '3', '4', '5', '6', '7']
+          description: День недели
+          example: 1
+        branch:
+          $ref: '#/components/schemas/Branch'
+        classroom:
+          $ref: '#/components/schemas/Classroom'
+        starts_at:
+          type: string
+          format: time
+          description: Дата начала работы класса
+          example: '18:00'
+        ends_at:
+          type: string
+          format: time
+          description: Дата окончания работы класса
+          example: '19:00'
+    Branch:
+      description: Филиал
+      type: object
+      required:
+        - id
+        - name
+        - number
+        - created_at
+        - updated_at
+      properties:
+        id:
+          description: ID филиала
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Название филиала
+          example: Плаза
+        summary:
+          type: string
+          description: Короткое описание филиала
+          example: Короткое описание филиала
+        description:
+          type: string
+          description: Полное описание филала
+          example: Полное описание филала
+        phone:
+          type: string
+          description: Номер телефона
+          example: '+7-906-432-77-66'
+        email:
+          type: string
+          format: email
+          description: Адрес электронной почты
+          example: mail@bezpravil.net
+        url:
+          type: string
+          format: url
+          description: Адрес сайта или лэндинговой страницы
+          example: 'https://bezpravil.net'
+        vk_url:
+          type: string
+          format: url
+          description: Адрес страницы VK
+          example: 'https://vk.com/bezpravildance'
+        facebook_url:
+          type: string
+          format: url
+          description: Адрес страницы Facebook
+          example: 'https://facebook.com/bezpravil'
+        telegram_username:
+          type: string
+          description: Телеграм-канал
+          example: 'plaza_bezpravil'
+        instagram_username:
+          type: string
+          description: Инстаграм-аккаунт
+          example: 'bezpravildance'
+        address:
+          $ref: '#/components/schemas/Address'
+        number:
+          type: integer
+          description: Порядковый номер (для сортировки)
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+          description: Дата начала работы класса
+          example: '2020-02-20 18:00'
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата окончания работы класса
+          example: '2020-02-20 19:00'
+    Address:
+      description: Адрес
+      type: object
+      required:
+        - country
+        - city
+        - street
+        - building
+        - coordinates
+      properties:
+        country:
+          description: Страна
+          type: string
+          nullable: true
+        city:
+          description: Город
+          type: string
+          nullable: true
+        street:
+          description: Улица
+          type: string
+          nullable: true
+        building:
+          description: Строение
+          type: string
+          nullable: true
+        coordinates:
+          description: Координаты (широта, долгота)
+          type: array
+          nullable: true
+          example: [45.006666, 38.256684]
+          items:
+            type: number
+            description: Широта/Долгота
+    Classroom:
+      description: Аудитория (зал)
+      type: object
+      required:
+        - id
+        - name
+        - branch
+        - number
+        - created_at
+        - updated_at
+      properties:
+        id:
+          description: ID филиала
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Название филиала
+          example: Плаза
+        branch:
+          $ref: '#/components/schemas/Branch'
+        color:
+          type: string
+          description: Цвет (hex или css-совместимое название)
+          example: '#000000'
+        capacity:
+          description: Вместимость зала
+          type: integer
+          example: 25
+        summary:
+          type: string
+          description: Короткое описание филиала
+          example: Короткое описание филиала
+        description:
+          type: string
+          description: Полное описание филала
+          example: Полное описание филала
+        number:
+          type: integer
+          description: Порядковый номер (для сортировки)
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+          description: Дата начала работы класса
+          example: '2020-02-20 18:00'
+        updated_at:
+          type: string
+          format: date-time
+          description: Дата окончания работы класса
+          example: '2020-02-20 19:00'
     PublicNewsList:
       description: Новости
       type: array
@@ -777,7 +987,7 @@ paths:
                     $ref: '#/components/schemas/User'
         409:
           description: >-
-            Пользователь уже зарегистрирован 
+            Пользователь уже зарегистрирован
             (совпадение по номеру телефона или персональным данным)
         422:
           description: Ошибка валидации (см. вложенное сообщение)
@@ -860,7 +1070,7 @@ paths:
       operationId: updateUserPassword
       summary: Смена пароля авторизованного пользователя
       description: >-
-        Необходимо отправить правильный старый пароль и новый пароль, 
+        Необходимо отправить правильный старый пароль и новый пароль,
         чтобы изменить пароль авторизованного пользователя.
       tags:
         - Auth
@@ -892,10 +1102,10 @@ paths:
       description: >-
         Для сброса пароля необходимо выполнить два запроса к данному методу:
 
-        1. Первый запрос должен содержать только ``username``, по которому будет осуществлен поиск пользователя. 
+        1. Первый запрос должен содержать только ``username``, по которому будет осуществлен поиск пользователя.
           На номер телефона найденного пользователя будет отправлен код подтверждения.
 
-        2. Второй запрос должен также содержать ``verification_code``. 
+        2. Второй запрос должен также содержать ``verification_code``.
           При отправке верного кода подтверждения, будет сгенерирован новый пароль и отправлен в СМС.
       tags:
         - Auth
@@ -1305,12 +1515,193 @@ paths:
         404:
           description: Курс не найден или удален
 
+  ## Schedules
+  /admin/courses/{course_id}/schedules:
+    get:
+      operationId: adminListCourseSchedules
+      tags:
+        - AdminApi
+        - Courses
+      summary: Расписание класса
+      description: Метод возвращает список ячеек расписания для выбранного класса
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Schedule'
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Курс не найден
+    post:
+      operationId: adminStoreSchedule
+      tags:
+        - AdminApi
+        - Courses
+      summary: Создание ячейки расписания для курса
+      description: Метод создаёт новую ячейку расписания для выбранного курса
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - weekday
+                - course_id
+                - starts_at
+                - ends_at
+              properties:
+                weekday:
+                  type: string
+                  enum: ['1', '2', '3', '4', '5', '6', '7']
+                  description: День недели
+                  example: 1
+                branch_id:
+                  type: string
+                  format: uuid
+                  description: ID филиала
+                  nullable: true
+                classroom_id:
+                  type: string
+                  format: uuid
+                  description: ID аудитории (место проведения)
+                  nullable: true
+                course_id:
+                  type: string
+                  format: uuid
+                  description: ID курса
+                starts_at:
+                  type: string
+                  format: time
+                  description: Дата начала работы класса
+                  example: '18:00'
+                ends_at:
+                  type: string
+                  format: time
+                  description: Дата окончания работы класса
+                  example: '19:00'
+      responses:
+        201:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Schedule'
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Курс не найден
+        409:
+          description: Выбранное время и место уже заняты
+        422:
+          description: Ошибка валидации (см. вложенное сообщение)
+  /admin/{course_id}/schedules/{schedule_id}:
+    put:
+      operationId: adminUpdateSchedule
+      tags:
+        - AdminApi
+        - Courses
+      summary: Изменение ячейки расписани
+      description: Метод обновляет ячейку расписания
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+        - $ref: '#/components/parameters/ScheduleId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - weekday
+                - course_id
+                - starts_at
+                - ends_at
+              properties:
+                weekday:
+                  type: string
+                  enum: ['1', '2', '3', '4', '5', '6', '7']
+                  description: День недели
+                  example: 1
+                branch_id:
+                  type: string
+                  format: uuid
+                  description: ID филиала
+                  nullable: true
+                classroom_id:
+                  type: string
+                  format: uuid
+                  description: ID аудитории (место проведения)
+                  nullable: true
+                course_id:
+                  type: string
+                  format: uuid
+                  description: ID курса
+                starts_at:
+                  type: string
+                  format: time
+                  description: Дата начала работы класса
+                  example: '18:00'
+                ends_at:
+                  type: string
+                  format: time
+                  description: Дата окончания работы класса
+                  example: '19:00'
+      responses:
+        200:
+          description: Ячейка изменена
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Ячейка расписания не найдена
+        409:
+          description: Время и место занято
+        422:
+          description: Ошибка валидации (см. вложенное сообщение)
+    delete:
+      operationId: adminDeleteSchedule
+      tags:
+        - AdminApi
+        - Courses
+      summary: Удаление ячейки расписания
+      description: Метод удаляет ячейку расписания
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+        - $ref: '#/components/parameters/ScheduleId'
+      responses:
+        200:
+          description: Ячейка расписания удалена
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Ячейка расписания не найдена
 
   # Public routes
   /news:
     get:
       tags:
-        - public
+        - Public
       summary: Список последних новостей
       description: >-
         Возвращает все новости в обратном хронологическом порядке с учетом
@@ -1336,7 +1727,7 @@ paths:
   /news/{news_id}:
     get:
       tags:
-        - public
+        - Public
       summary: Полная запись новости
       description: Возвращает объект новости со всеми вложениями, тегами, лайками и просмотрами
       operationId: getNewsEntry

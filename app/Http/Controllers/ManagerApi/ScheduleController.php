@@ -15,20 +15,24 @@ use App\Http\Requests\ManagerApi\ScheduleOnDateRequest;
 use App\Http\Requests\ManagerApi\StoreScheduleRequest;
 use App\Http\Resources\ScheduleResource;
 use App\Repository\ScheduleRepository;
+use App\Services\Schedule\ScheduleService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class ScheduleController extends Controller
 {
     private ScheduleRepository $repository;
+    private ScheduleService $service;
 
-    public function __construct(ScheduleRepository $repository)
+    public function __construct(ScheduleRepository $repository, ScheduleService $service)
     {
         $this->repository = $repository;
+        $this->service = $service;
     }
 
-    public function index(): AnonymousResourceCollection
+    public function index(string $courseId): AnonymousResourceCollection
     {
-        $schedules = $this->repository->getAll();
+        $schedules = $this->repository->getAllByCourseId($courseId);
 
         return ScheduleResource::collection($schedules);
     }
@@ -36,63 +40,36 @@ class ScheduleController extends Controller
     /**
      * @param StoreScheduleRequest $request
      * @return ScheduleResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      * @throws \Exception
      */
     public function store(StoreScheduleRequest $request): ScheduleResource
     {
-        $schedule = $this->repository->create($request->getDto());
-        $schedule->load('course');
-
-        return new ScheduleResource($schedule);
-    }
-
-    /**
-     * @param string $id
-     * @return ScheduleResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function show(string $id): ScheduleResource
-    {
-        $schedule = $this->repository->find($id);
-        $schedule->load('course');
+        $schedule = $this->service->create($request->getDto());
 
         return new ScheduleResource($schedule);
     }
 
     /**
      * @param StoreScheduleRequest $request
-     * @param string $id
-     * @return ScheduleResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @param string $courseId
+     * @param string $scheduleId
      */
-    public function update(StoreScheduleRequest $request, string $id): ScheduleResource
+    public function update(StoreScheduleRequest $request, string $courseId, string $scheduleId): void
     {
-        $schedule = $this->repository->find($id);
-        $this->repository->update($schedule, $request->getDto());
-        $schedule->load('course');
-
-        return new ScheduleResource($schedule);
+        $schedule = $this->repository->findByIdAndCourseId($scheduleId, $courseId);
+        $this->service->update($schedule, $request->getDto());
     }
 
     /**
-     * @param string $id
+     * @param Request $request
+     * @param string $courseId
+     * @param string $scheduleId
      * @throws \Exception
      */
-    public function destroy(string $id): void
+    public function destroy(Request $request, string $courseId, string $scheduleId): void
     {
-        $schedule = $this->repository->find($id);
-        $this->repository->delete($schedule);
-    }
-
-    /**
-     * @param string $id
-     * @throws \Exception
-     */
-    public function restore(string $id): void
-    {
-        $schedule = $this->repository->findWithDeleted($id);
-        $this->repository->restore($schedule);
+        $schedule = $this->repository->findByIdAndCourseId($scheduleId, $courseId);
+        $this->service->delete($schedule, $request->user());
     }
 
     public function onDate(ScheduleOnDateRequest $request): AnonymousResourceCollection

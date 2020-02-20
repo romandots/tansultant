@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\Schedule;
 
+use App\Models\Course;
 use App\Models\Schedule;
 use App\Services\Permissions\SchedulesPermissions;
 use Tests\TestCase;
@@ -23,14 +24,11 @@ class ScheduleStoreTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = 'admin/schedules';
-
     private const JSON_STRUCTURE = [
         'data' => [
             'id',
-            'branch_id',
-            'classroom_id',
-            'course',
+            'branch',
+            'classroom',
             'starts_at',
             'ends_at',
             'weekday',
@@ -38,19 +36,21 @@ class ScheduleStoreTest extends TestCase
     ];
 
     /**
-     * @var Schedule
-     */
-    private $schedule;
-
-    /**
      * @var string
      */
-    private $url;
+    private string $url;
+
+    /**
+     * @var Course
+     */
+    private Course $course;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->url = self::URL;
+        parent::setUp();
+        $this->course = $this->createFakeCourse();
+        $this->url = 'admin/courses/' . $this->course->id . '/schedules';
     }
 
     public function testAccessDenied(): void
@@ -92,20 +92,13 @@ class ScheduleStoreTest extends TestCase
             SchedulesPermissions::CREATE
         ]);
 
-        $course = $this->createFakeCourse();
-
         $data = [
             'branch_id' => $this->createFakeBranch()->id,
             'classroom_id' => $this->createFakeClassroom()->id,
-            'course_id' => $course->id,
             'starts_at' => $this->faker->time('H:i:00'),
             'ends_at' => $this->faker->time('H:i:00'),
-            'weekday' => 'monday',
+            'weekday' => '1',
         ];
-
-        $responseData = $data;
-        $responseData['course'] = ['id' => $data['course_id']];
-        unset($responseData['course_id']);
 
         $this
             ->actingAs($user, 'api')
@@ -113,8 +106,23 @@ class ScheduleStoreTest extends TestCase
             ->assertStatus(201)
             ->assertJsonStructure(self::JSON_STRUCTURE)
             ->assertJson([
-                'data' => $responseData
+                'data' => [
+                    'branch' => ['id' => $data['branch_id']],
+                    'classroom' => ['id' => $data['classroom_id']],
+                    'starts_at' => $data['starts_at'],
+                    'ends_at' => $data['ends_at'],
+                    'weekday' => '1',
+                ]
             ]);
+
+        $this->assertDatabaseHas(Schedule::TABLE, [
+            'course_id' => $this->course->id,
+            'branch_id' => $data['branch_id'],
+            'classroom_id' => $data['classroom_id'],
+            'starts_at' => $data['starts_at'],
+            'ends_at' => $data['ends_at'],
+            'weekday' => '1',
+        ]);
     }
 
     /**
@@ -123,30 +131,6 @@ class ScheduleStoreTest extends TestCase
     public function provideInvalidData(): array
     {
         return [
-            [
-                [
-                    'classroom_id' => 1,
-                    'starts_at' => '11:00:00',
-                    'ends_at' => '12:00:00',
-                    'weekday' => 'monday',
-                ]
-            ],
-            [
-                [
-                    'branch_id' => 1,
-                    'starts_at' => '11:00:00',
-                    'ends_at' => '12:00:00',
-                    'weekday' => 'monday',
-                ]
-            ],
-            [
-                [
-                    'course_id' => 1,
-                    'starts_at' => '11:00:00',
-                    'ends_at' => '12:00:00',
-                    'weekday' => 'monday',
-                ]
-            ],
             [
                 [
                     'starts_at' => '11:00:00',
@@ -172,6 +156,18 @@ class ScheduleStoreTest extends TestCase
                     'starts_at' => '11:00:00',
                     'ends_at' => '12:00:00',
                     'weekday' => 'buesday',
+                ]
+            ],
+            [
+                [
+                    'ends_at' => '12:00:00',
+                    'weekday' => '1',
+                ]
+            ],
+            [
+                [
+                    'starts_at' => '11:00:00',
+                    'weekday' => '1',
                 ]
             ],
         ];

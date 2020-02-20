@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\Schedule;
 
+use App\Models\Course;
 use App\Models\Schedule;
 use App\Services\Permissions\SchedulesPermissions;
 use Tests\TestCase;
@@ -23,37 +24,27 @@ class ScheduleUpdateTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = 'admin/schedules';
-
-    private const JSON_STRUCTURE = [
-        'data' => [
-            'id',
-            'branch_id',
-            'classroom_id',
-            'course',
-            'starts_at',
-            'ends_at',
-            'weekday',
-        ]
-    ];
-
     /**
-     * @var Schedule
+     * @var Schedule[]
      */
-    private $schedule;
+    private array $schedules;
 
     /**
      * @var string
      */
-    private $url;
+    private string $url;
+
+    /**
+     * @var Course
+     */
+    private Course $course;
 
     public function setUp(): void
     {
         parent::setUp();
-        $instructor = $this->createFakeInstructor();
-        $course = $this->createFakeCourse(['instructor_id' => $instructor->id]);
-        $this->schedule = $this->createFakeSchedule(['course_id' => $course->id]);
-        $this->url = self::URL . '/' . $this->schedule->id;
+        $this->course = $this->createFakeCourse();
+        $this->schedules = \factory(Schedule::class, 3)->create(['course_id' => $this->course->id])->all();
+        $this->url = 'admin/courses/' . $this->course->id . '/schedules/' . $this->schedules[0]->id;
     }
 
     public function testAccessDenied(): void
@@ -95,30 +86,27 @@ class ScheduleUpdateTest extends TestCase
             SchedulesPermissions::UPDATE
         ]);
 
-        $instructor = $this->createFakeInstructor();
-        $course = $this->createFakeCourse(['instructor_id' => $instructor->id]);
-
         $data = [
             'branch_id' => $this->createFakeBranch()->id,
             'classroom_id' => $this->createFakeClassroom()->id,
-            'course_id' => $course->id,
             'starts_at' => $this->faker->time('H:i:00'),
             'ends_at' => $this->faker->time('H:i:00'),
-            'weekday' => 'monday',
+            'weekday' => '1',
         ];
-
-        $responseData = $data;
-        $responseData['course'] = ['id' => $data['course_id']];
-        unset($responseData['course_id']);
 
         $this
             ->actingAs($user, 'api')
             ->put($this->url, $data)
-            ->assertOk()
-            ->assertJsonStructure(self::JSON_STRUCTURE)
-            ->assertJson([
-                'data' => $responseData
-            ]);
+            ->assertStatus(200);
+
+        $this->assertDatabaseHas(Schedule::TABLE, [
+            'course_id' => $this->course->id,
+            'branch_id' => $data['branch_id'],
+            'classroom_id' => $data['classroom_id'],
+            'starts_at' => $data['starts_at'],
+            'ends_at' => $data['ends_at'],
+            'weekday' => '1',
+        ]);
     }
 
     /**

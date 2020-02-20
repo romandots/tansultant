@@ -10,6 +10,10 @@ declare(strict_types=1);
 
 namespace App\Services\Schedule;
 
+use App\Events\Course\CourseScheduleUpdatedEvent;
+use App\Http\Requests\ManagerApi\DTO\StoreSchedule;
+use App\Models\Schedule;
+use App\Models\User;
 use App\Repository\ScheduleRepository;
 
 /**
@@ -29,5 +33,43 @@ class ScheduleService
     public function __construct(ScheduleRepository $repository)
     {
         $this->repository = $repository;
+    }
+
+    /**
+     * @param StoreSchedule $store
+     * @return Schedule
+     * @throws \Exception
+     */
+    public function create(StoreSchedule $store): Schedule
+    {
+        $schedule = $this->repository->create($store);
+        $schedule->load('course', 'branch', 'classroom');
+
+        \event(new CourseScheduleUpdatedEvent($schedule->course, $store->user));
+
+        return $schedule;
+    }
+
+    /**
+     * @param Schedule $schedule
+     * @param StoreSchedule $update
+     */
+    public function update(Schedule $schedule, StoreSchedule $update): void
+    {
+        $this->repository->update($schedule, $update);
+
+        \event(new CourseScheduleUpdatedEvent($schedule->course, $update->user));
+    }
+
+    /**
+     * @param Schedule $schedule
+     * @param User $user
+     * @throws \Exception
+     */
+    public function delete(Schedule $schedule, User $user): void
+    {
+        $this->repository->delete($schedule);
+
+        \event(new CourseScheduleUpdatedEvent($schedule->course, $user));
     }
 }

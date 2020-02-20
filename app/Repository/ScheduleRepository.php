@@ -25,6 +25,19 @@ use Illuminate\Database\Query\Builder;
 class ScheduleRepository
 {
     /**
+     * @param string $courseId
+     * @return Collection|Schedule[]
+     */
+    public function getAllByCourseId(string $courseId): Collection
+    {
+        return Schedule::query()
+            ->where('course_id', $courseId)
+            ->whereNull('deleted_at')
+            ->with('branch', 'classroom')
+            ->get();
+    }
+
+    /**
      * @return Collection|Schedule[]
      */
     public function getAll(): Collection
@@ -49,13 +62,28 @@ class ScheduleRepository
     }
 
     /**
+     * @param string $scheduleId
+     * @param string $courseId
+     * @return Schedule
+     */
+    public function findByIdAndCourseId(string $scheduleId, string $courseId): Schedule
+    {
+        return Schedule::query()
+            ->whereNull('deleted_at')
+            ->where('course_id', $courseId)
+            ->where('id', $scheduleId)
+            ->firstOrFail();
+    }
+
+    /**
      * @param string $id
      * @return Schedule|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function findWithDeleted(string $id): Schedule
+    public function findDeleted(string $id): Schedule
     {
         return Schedule::query()
+            ->whereNotNull('deleted_at')
             ->where('id', $id)
             ->firstOrFail();
     }
@@ -70,6 +98,7 @@ class ScheduleRepository
         $schedule = new Schedule;
         $schedule->id = \uuid();
         $schedule->created_at = Carbon::now();
+        $schedule->updated_at = Carbon::now();
 
         $this->fill($schedule, $dto);
         $schedule->save();
@@ -95,7 +124,9 @@ class ScheduleRepository
      */
     public function delete(Schedule $schedule): void
     {
-        $schedule->delete();
+        $schedule->deleted_at = Carbon::now();
+        $schedule->updated_at = Carbon::now();
+        $schedule->save();
     }
 
     /**
@@ -168,9 +199,11 @@ class ScheduleRepository
 
     /**
      * @param Schedule $schedule
-     * @todo Implement this
      */
     public function restore(Schedule $schedule): void
     {
+        $schedule->deleted_at = null;
+        $schedule->updated_at = Carbon::now();
+        $schedule->save();
     }
 }

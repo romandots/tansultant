@@ -12,7 +12,6 @@ namespace App\Http\Requests\ManagerApi;
 
 use App\Models\Branch;
 use App\Models\Classroom;
-use App\Models\Course;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,6 +23,11 @@ use Illuminate\Validation\Rule;
  */
 class StoreScheduleRequest extends FormRequest
 {
+    private function getCourseId(): string
+    {
+        return (string)$this->route()->parameter('courseId');
+    }
+
     /**
      * @return array
      */
@@ -31,22 +35,16 @@ class StoreScheduleRequest extends FormRequest
     {
         return [
             'branch_id' => [
-                'required',
+                'nullable',
                 'string',
                 'uuid',
                 Rule::exists(Branch::TABLE, 'id'),
             ],
             'classroom_id' => [
-                'required',
+                'nullable',
                 'string',
                 'uuid',
                 Rule::exists(Classroom::TABLE, 'id'),
-            ],
-            'course_id' => [
-                'required',
-                'string',
-                'uuid',
-                Rule::exists(Course::TABLE, 'id'),
             ],
             'starts_at' => [
                 'required',
@@ -72,12 +70,13 @@ class StoreScheduleRequest extends FormRequest
         $validated = $this->validated();
 
         $dto = new DTO\StoreSchedule;
-        $dto->branch_id = $validated['branch_id'];
-        $dto->classroom_id = $validated['classroom_id'];
-        $dto->course_id = $validated['course_id'];
+        $dto->branch_id = $validated['branch_id'] ?? null;
+        $dto->classroom_id = $validated['classroom_id'] ?? null;
+        $dto->course_id = $this->getCourseId();
         $dto->weekday = $validated['weekday'];
-        $dto->starts_at = isset($validated['starts_at']) ? Carbon::parse($validated['starts_at']) : null;
-        $dto->ends_at = isset($validated['ends_at']) ? Carbon::parse($validated['ends_at']) : null;
+        $dto->starts_at = Carbon::parse($validated['starts_at']);
+        $dto->ends_at = Carbon::parse($validated['ends_at']);
+        $dto->user = $this->user();
 
         return $dto;
     }

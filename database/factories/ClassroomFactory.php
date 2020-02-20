@@ -17,7 +17,7 @@ $factory->define(Classroom::class, static function (Faker $faker) {
     return [
         'id' => \uuid(),
         'name' => $faker->randomLetter,
-        'branch_id' => \uuid(),
+        'branch_id' => \factory(\App\Models\Branch::class),
         'color' => $faker->colorName,
         'capacity' => $faker->numberBetween(10, 25),
         'number' => $faker->randomNumber(),

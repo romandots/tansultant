@@ -28,6 +28,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Course|null $course
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Branch|null $branch
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Classroom|null $classroom
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Schedule newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Schedule newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Schedule query()
@@ -55,13 +57,13 @@ class Schedule extends Model
 
     public const TABLE = 'schedules';
 
-    public const MONDAY = 'monday';
-    public const TUESDAY = 'tuesday';
-    public const WEDNESDAY = 'wednesday';
-    public const THURSDAY = 'thursday';
-    public const FRIDAY = 'friday';
-    public const SATURDAY = 'saturday';
-    public const SUNDAY = 'sunday';
+    public const MONDAY = 1;
+    public const TUESDAY = 2;
+    public const WEDNESDAY = 3;
+    public const THURSDAY = 4;
+    public const FRIDAY = 5;
+    public const SATURDAY = 6;
+    public const SUNDAY = 7;
 
     public const WEEKDAYS = [
         self::MONDAY,
@@ -81,5 +83,21 @@ class Schedule extends Model
     public function course(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Branch|null
+     */
+    public function branch(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Classroom|null
+     */
+    public function classroom(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Classroom::class);
     }
 }

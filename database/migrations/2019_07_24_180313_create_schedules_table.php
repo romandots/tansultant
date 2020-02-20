@@ -23,33 +23,28 @@ class CreateSchedulesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('schedules', static function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->text('weekday')->index();
-            $table->time('starts_at')->index();
-            $table->time('ends_at')->index();
-            $table->uuid('branch_id')->index();
-            $table->uuid('classroom_id')->index();
-            $table->uuid('course_id')->nullable()->index();
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at')->nullable();
-            $table->timestamp('deleted_at')->nullable();
+        Schema::create(
+            'schedules',
+            static function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->text('weekday')->index();
+                $table->time('starts_at')->index();
+                $table->time('ends_at')->index();
+                $table->uuid('branch_id')->nullable()->index();
+                $table->uuid('classroom_id')->nullable()->index();
+                $table->uuid('course_id')->nullable()->index();
+                $table->timestamp('created_at');
+                $table->timestamp('updated_at')->nullable();
+                $table->timestamp('deleted_at')->nullable();
 
-            $table->foreign('course_id')
-                ->references('id')
-                ->on(\App\Models\Course::TABLE)
-                ->onDelete('cascade');
-        });
+                $table->foreign('course_id')
+                    ->references('id')
+                    ->on(\App\Models\Course::TABLE)
+                    ->onDelete('cascade');
+            }
+        );
 
-        \convertPostgresColumnTextToEnum('schedules', 'weekday', [
-            'monday',
-            'tuesday',
-            'wednesday',
-            'thursday',
-            'friday',
-            'saturday',
-            'sunday',
-        ]);
+        \convertPostgresColumnTextToEnum('schedules', 'weekday', [1, 2, 3, 4, 5, 6, 7,]);
     }
 
     /**
