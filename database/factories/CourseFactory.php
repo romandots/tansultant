@@ -26,6 +26,6 @@ $factory->define(Course::class, static function (Faker $faker) {
         'age_restrictions' => ['from' => null, 'to' => null],
         'starts_at' => \Carbon\Carbon::now(),
         'ends_at' => \Carbon\Carbon::now()->addYear(),
-        'instructor_id' => \uuid(),
+        'instructor_id' => \factory(\App\Models\Instructor::class),
     ];
 });

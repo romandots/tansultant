@@ -20,7 +20,7 @@ $factory->define(\App\Models\Instructor::class, static function (Faker $faker) {
         'picture' => $faker->imageUrl(),
         'display' => true,
         'status' => $faker->randomElement(\App\Models\Instructor::STATUSES),
-        'person_id' => \uuid(),
+        'person_id' => \factory(\App\Models\Person::class),
         'seen_at' => \Carbon\Carbon::now(),
         'created_at' => \Carbon\Carbon::now(),
         'updated_at' => \Carbon\Carbon::now()
