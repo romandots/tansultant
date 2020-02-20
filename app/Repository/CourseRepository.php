@@ -119,14 +119,18 @@ class CourseRepository
     {
         $course->name = $dto->name;
         $course->status = $dto->status;
+        $course->display = $dto->display;
         $course->summary = $dto->summary;
         $course->description = $dto->description;
         if (null !== $dto->picture) {
             $picture = $this->savePicture($dto->picture);
             $course->picture = $picture ?? null;
         }
-        $course->age_restrictions = $dto->age_restrictions;
-        $course->instructor_id = $dto->instructor_id;
+        $course->age_restrictions = [
+            'from' => $dto->age_restrictions['from'] ?? null,
+            'to' => $dto->age_restrictions['to'] ?? null,
+        ];
+        $course->instructor_id = $dto->instructor->id;
         $course->starts_at = $dto->starts_at;
         $course->ends_at = $dto->ends_at;
     }

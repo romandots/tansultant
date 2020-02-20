@@ -12,7 +12,6 @@ namespace App\Models;
 
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -26,9 +25,10 @@ use Spatie\Permission\Traits\HasRoles;
  * @property bool $display
  * @property string $status [hired|freelance|fired]
  * @property string $person_id
- * @property \Carbon\Carbon $seen_at
+ * @property \Carbon\Carbon|null $seen_at
  * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
  * @property-read \App\Models\Person $person
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
@@ -53,13 +53,11 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static bool|null restore()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Instructor withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Instructor withoutTrashed()
- * @property \Illuminate\Support\Carbon|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Instructor whereDeletedAt($value)
  */
 class Instructor extends Model
 {
     use HasRoles;
-    use SoftDeletes;
     use UsesUuid;
 
     public const TABLE = 'instructors';
@@ -77,8 +75,11 @@ class Instructor extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'seen_at' => 'datetime'
+    public $timestamps = [
+        'created_at',
+        'updated_at',
+        'seen_at',
+        'deleted_at'
     ];
 
     /**

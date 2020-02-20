@@ -34,13 +34,16 @@ class CourseShowTest extends TestCase
             'name',
             'summary',
             'description',
+            'display',
             'picture',
             'picture_thumb',
             'status',
             'status_label',
             'instructor',
+            'age_restrictions',
+            'age_restrictions_string',
             'starts_at',
-            'ends_at'
+            'ends_at',
         ]
     ];
 

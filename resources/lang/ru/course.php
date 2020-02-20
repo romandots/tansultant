@@ -9,7 +9,15 @@
 declare(strict_types=1);
 
 return [
-    'active' => 'Действующий',
-    'pending' => 'Набирается',
-    'disabled' => 'Закрыт',
+    'status' => [
+        'active' => 'Работает',
+        'pending' => 'Идёт набор',
+        'disabled' => 'Закрыт',
+    ],
+    'age_restrictions' => [
+        'from_to' => 'от :from до :to',
+        'from' => ':from+',
+        'to' => 'до :to',
+        'any' => 'без возрастных ограничений',
+    ]
 ];

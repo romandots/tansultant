@@ -12,7 +12,6 @@ namespace App\Models;
 
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Course
@@ -21,7 +20,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $name
  * @property string|null $summary
  * @property string|null $description
- * @property string|null $age_restrictions
+ * @property boolean $display
+ * @property int[] $age_restrictions ['from' => (int|null), 'to' => (int|null)]
  * @property string|null $picture
  * @property string|null $picture_thumb
  * @property string $status [pending|active|disabled]
@@ -78,6 +78,15 @@ class Course extends Model
     protected $casts = [
         'starts_at' => 'date',
         'ends_at' => 'date',
+        'age_restrictions' => 'array',
+    ];
+
+    public $timestamps = [
+        'created_at',
+        'updated_at',
+        'starts_at',
+        'ends_at',
+        'deleted_at'
     ];
 
     /**
