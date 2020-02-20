@@ -54,6 +54,7 @@ class CreateUsersTable extends Migration
      */
     public function down(): void
     {
+        \DB::unprepared('DROP TYPE users_status CASCADE');
         Schema::dropIfExists('users');
     }
 }
