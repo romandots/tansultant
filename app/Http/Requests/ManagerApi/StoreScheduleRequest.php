@@ -13,6 +13,7 @@ namespace App\Http\Requests\ManagerApi;
 use App\Models\Branch;
 use App\Models\Classroom;
 use App\Models\Schedule;
+use App\Repository\ClassroomRepository;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -24,6 +25,18 @@ use Illuminate\Validation\Validator;
  */
 class StoreScheduleRequest extends FormRequest
 {
+    protected ClassroomRepository $classroomRepository;
+
+    /**
+     * StoreScheduleRequest constructor.
+     * @param ClassroomRepository $classroomRepository
+     */
+    public function __construct(ClassroomRepository $classroomRepository)
+    {
+        parent::__construct();
+        $this->classroomRepository = $classroomRepository;
+    }
+
     private function getCourseId(): string
     {
         return (string)$this->route()->parameter('courseId');
@@ -81,9 +94,14 @@ class StoreScheduleRequest extends FormRequest
     {
         $validated = $this->validated();
 
+        $classroom = isset($validated['classroom_id'])
+            ? $this->classroomRepository->find($validated['classroom_id'])
+            : null;
+        $branchId = $validated['branch_id'] ?? null;
+
         $dto = new DTO\StoreSchedule;
-        $dto->branch_id = $validated['branch_id'] ?? null;
-        $dto->classroom_id = $validated['classroom_id'] ?? null;
+        $dto->branch_id = null !== $classroom ? $classroom->branch_id : $branchId;
+        $dto->classroom_id = null !== $classroom ? $classroom->id : null;
         $dto->course_id = $this->getCourseId();
         $dto->weekday = $validated['weekday'];
         $dto->starts_at = Carbon::parse($validated['starts_at']);
