@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Exceptions;
 
 use App\Exceptions\Auth\UnauthorizedException;
+use App\Repository\Exceptions\ScheduleSlotIsOccupied;
 use App\Services\Course\Exceptions\InstructorStatusIncompatible;
 use App\Services\Login\Exceptions\UserNotFoundException;
 use App\Services\Login\Exceptions\WrongPasswordException;
@@ -41,6 +43,7 @@ class Handler extends BaseExceptionHandler
         TextMessageSendingFailed::class,
         UserHasNoPerson::class,
         InstructorStatusIncompatible::class,
+        ScheduleSlotIsOccupied::class,
     ];
 
     /**
@@ -64,6 +67,7 @@ class Handler extends BaseExceptionHandler
             TextMessageSendingFailed::class => [$this, 'renderAsJson'],
             UserHasNoPerson::class => [$this, 'renderAsJson'],
             InstructorStatusIncompatible::class => [$this, 'renderAsJson'],
+            ScheduleSlotIsOccupied::class => [$this, 'renderAsJson'],
         ];
     }
 
@@ -71,7 +75,8 @@ class Handler extends BaseExceptionHandler
      * @param ReadableExceptionInterface $exception
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function renderAsJson(ReadableExceptionInterface $exception): \Illuminate\Http\JsonResponse {
+    protected function renderAsJson(ReadableExceptionInterface $exception): \Illuminate\Http\JsonResponse
+    {
         $output = [
             'error' => $exception->getMessage(),
             'message' => \trans('exceptions.' . $exception->getMessage()),

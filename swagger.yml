@@ -23,6 +23,9 @@ tags:
   - name: People
     description: >-
       Пользователи, студенты, преподаватели и профили
+  - name: Branches
+    description: >-
+      Филиалы и залы
   - name: Courses
     description: >-
       Курсы (классы) и расписание
@@ -103,6 +106,22 @@ components:
     ScheduleId:
       description: ID курса
       name: schedule_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    BranchId:
+      description: ID филиала
+      name: branch_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ClassroomId:
+      description: ID аудитории (зала)
+      name: classroom_id
       in: path
       required: true
       schema:
@@ -685,42 +704,51 @@ components:
           type: string
           description: Короткое описание филиала
           example: Короткое описание филиала
+          nullable: true
         description:
           type: string
           description: Полное описание филала
           example: Полное описание филала
+          nullable: true
         phone:
           type: string
           description: Номер телефона
           example: '+7-906-432-77-66'
+          nullable: true
         email:
           type: string
           format: email
           description: Адрес электронной почты
           example: mail@bezpravil.net
+          nullable: true
         url:
           type: string
           format: url
           description: Адрес сайта или лэндинговой страницы
           example: 'https://bezpravil.net'
+          nullable: true
         vk_url:
           type: string
           format: url
           description: Адрес страницы VK
           example: 'https://vk.com/bezpravildance'
+          nullable: true
         facebook_url:
           type: string
           format: url
           description: Адрес страницы Facebook
           example: 'https://facebook.com/bezpravil'
+          nullable: true
         telegram_username:
           type: string
           description: Телеграм-канал
           example: 'plaza_bezpravil'
+          nullable: true
         instagram_username:
           type: string
           description: Инстаграм-аккаунт
           example: 'bezpravildance'
+          nullable: true
         address:
           $ref: '#/components/schemas/Address'
         number:
@@ -788,26 +816,30 @@ components:
           format: uuid
         name:
           type: string
-          description: Название филиала
+          description: Название
           example: Плаза
         branch:
           $ref: '#/components/schemas/Branch'
+          nullable: true
         color:
           type: string
           description: Цвет (hex или css-совместимое название)
           example: '#000000'
+          nullable: true
         capacity:
           description: Вместимость зала
           type: integer
           example: 25
+          nullable: true
         summary:
           type: string
-          description: Короткое описание филиала
-          example: Короткое описание филиала
+          description: Короткое описание
+          example: Короткое описание
+          nullable: true
         description:
           type: string
-          description: Полное описание филала
-          example: Полное описание филала
+          description: Полное описание
+          example: Полное описание
         number:
           type: integer
           description: Порядковый номер (для сортировки)
@@ -1144,6 +1176,7 @@ paths:
           description: Неверно указан номер кода подтверждения
 
   # AdminApi routes
+  ## Users
   /admin/users:
     get:
       operationId: adminGetUsers
@@ -1613,7 +1646,7 @@ paths:
           description: Выбранное время и место уже заняты
         422:
           description: Ошибка валидации (см. вложенное сообщение)
-  /admin/{course_id}/schedules/{schedule_id}:
+  /admin/courses/{course_id}/schedules/{schedule_id}:
     put:
       operationId: adminUpdateSchedule
       tags:
@@ -1696,6 +1729,466 @@ paths:
           description: Доступ запрещен
         404:
           description: Ячейка расписания не найдена
+
+  ## Branches
+  /admin/branches:
+    get:
+      operationId: adminListBranches
+      tags:
+        - AdminApi
+        - Branches
+      summary: Список филиалов
+      description: Метод возвращает список всех филиалов
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Branch'
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+    post:
+      operationId: adminStoreBranch
+      tags:
+        - AdminApi
+        - Branches
+      summary: Создание филиала
+      description: Метод создаёт новый филиал и возвращает созданный объект
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: Название филиала
+                  example: Плаза
+                summary:
+                  type: string
+                  description: Короткое описание филиала
+                  example: Короткое описание филиала
+                  nullable: true
+                description:
+                  type: string
+                  description: Полное описание филала
+                  example: Полное описание филала
+                  nullable: true
+                phone:
+                  type: string
+                  description: Номер телефона
+                  example: '+7-906-432-77-66'
+                  nullable: true
+                email:
+                  type: string
+                  format: email
+                  description: Адрес электронной почты
+                  example: mail@bezpravil.net
+                  nullable: true
+                url:
+                  type: string
+                  format: url
+                  description: Адрес сайта или лэндинговой страницы
+                  example: 'https://bezpravil.net'
+                  nullable: true
+                vk_url:
+                  type: string
+                  format: url
+                  description: Адрес страницы VK
+                  example: 'https://vk.com/bezpravildance'
+                  nullable: true
+                facebook_url:
+                  type: string
+                  format: url
+                  description: Адрес страницы Facebook
+                  example: 'https://facebook.com/bezpravil'
+                  nullable: true
+                telegram_username:
+                  type: string
+                  description: Телеграм-канал
+                  example: 'plaza_bezpravil'
+                  nullable: true
+                instagram_username:
+                  type: string
+                  description: Инстаграм-аккаунт
+                  example: 'bezpravildance'
+                  nullable: true
+                address:
+                  $ref: '#/components/schemas/Address'
+                  nullable: true
+                number:
+                  type: integer
+                  description: Порядковый номер (для сортировки)
+                  example: 1
+                  nullable: true
+      responses:
+        201:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Branch'
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        422:
+          description: Ошибка валидации (см. вложенное сообщение)
+  /admin/branches/{branch_id}:
+    get:
+      operationId: adminGetBranch
+      tags:
+        - AdminApi
+        - Branches
+      summary: Данные филиала
+      description: Метод возвращает объект филиала по указанному ID
+      parameters:
+        - $ref: '#/components/parameters/BranchId'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Branch'
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Запись не найдена
+    put:
+      operationId: adminUpdateBranch
+      tags:
+        - AdminApi
+        - Branches
+      summary: Изменение филиала
+      description: Метод обновляет данные филиала
+      parameters:
+        - $ref: '#/components/parameters/BranchId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Название филиала
+                  example: Плаза
+                summary:
+                  type: string
+                  description: Короткое описание филиала
+                  example: Короткое описание филиала
+                  nullable: true
+                description:
+                  type: string
+                  description: Полное описание филала
+                  example: Полное описание филала
+                  nullable: true
+                phone:
+                  type: string
+                  description: Номер телефона
+                  example: '+7-906-432-77-66'
+                  nullable: true
+                email:
+                  type: string
+                  format: email
+                  description: Адрес электронной почты
+                  example: mail@bezpravil.net
+                  nullable: true
+                url:
+                  type: string
+                  format: url
+                  description: Адрес сайта или лэндинговой страницы
+                  example: 'https://bezpravil.net'
+                  nullable: true
+                vk_url:
+                  type: string
+                  format: url
+                  description: Адрес страницы VK
+                  example: 'https://vk.com/bezpravildance'
+                  nullable: true
+                facebook_url:
+                  type: string
+                  format: url
+                  description: Адрес страницы Facebook
+                  example: 'https://facebook.com/bezpravil'
+                  nullable: true
+                telegram_username:
+                  type: string
+                  description: Телеграм-канал
+                  example: 'plaza_bezpravil'
+                  nullable: true
+                instagram_username:
+                  type: string
+                  description: Инстаграм-аккаунт
+                  example: 'bezpravildance'
+                  nullable: true
+                address:
+                  $ref: '#/components/schemas/Address'
+                  nullable: true
+                number:
+                  type: integer
+                  description: Порядковый номер (для сортировки)
+                  example: 1
+                  nullable: true
+      responses:
+        200:
+          description: Успех
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Запись не найдена
+        409:
+          description: Недопустимый статус инструктора (см. вложенное сообщение)
+        422:
+          description: Ошибка валидации (см. вложенное сообщение)
+    delete:
+      operationId: adminDeleteBranch
+      tags:
+        - AdminApi
+        - Courses
+      summary: Удаление филиала
+      description: Метод отмечает филиал как удаленный (soft delete)
+      parameters:
+        - $ref: '#/components/parameters/BranchId'
+      responses:
+        200:
+          description: Филиал удален
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Филиал не найден
+  /admin/branches/{branch_id}/restore:
+    post:
+      operationId: adminRestoreBranch
+      tags:
+        - AdminApi
+        - Branches
+      summary: Восстановление филилала
+      description: Метод восстанавливает удаленный филиал
+      parameters:
+        - $ref: '#/components/parameters/BranchId'
+      responses:
+        200:
+          description: Филиал восстановлен
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Удаленный филиал не найдена
+
+  ## Classrooms
+  /admin/branches/{branch_id}/classrooms:
+    get:
+      operationId: adminListBranchClassrooms
+      tags:
+        - AdminApi
+        - Branches
+      summary: Залы (аудитории) филиала
+      description: Метод возвращает список залов для выбранного филиала
+      parameters:
+        - $ref: '#/components/parameters/BranchId'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Classroom'
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Филиал не найден
+    post:
+      operationId: adminStoreBranchClassroom
+      tags:
+        - AdminApi
+        - Branches
+      summary: Создание зала для филиала
+      description: Метод создаёт новую аудиторию (зал) для выбранного филиала
+      parameters:
+        - $ref: '#/components/parameters/BranchId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: Название
+                  example: Плаза
+                color:
+                  type: string
+                  description: Цвет (hex или css-совместимое название)
+                  example: '#000000'
+                  nullable: true
+                capacity:
+                  description: Вместимость зала
+                  type: integer
+                  example: 25
+                  nullable: true
+                summary:
+                  type: string
+                  description: Короткое описание
+                  example: Короткое описание
+                  nullable: true
+                description:
+                  type: string
+                  description: Полное описание
+                  example: Полное описание
+                  nullable: true
+                number:
+                  type: integer
+                  description: Порядковый номер (для сортировки)
+                  example: 1
+                  nullable: true
+      responses:
+        201:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Classroom'
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Филиал не найден
+        422:
+          description: Ошибка валидации (см. вложенное сообщение)
+  /admin/branches/{branch_id}/classrooms/{classroom_id}:
+    put:
+      operationId: adminUpdateBranchClassroom
+      tags:
+        - AdminApi
+        - Branches
+      summary: Изменение зала
+      description: Метод обновляет данные зала
+      parameters:
+        - $ref: '#/components/parameters/BranchId'
+        - $ref: '#/components/parameters/ClassroomId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Название
+                  example: Плаза
+                color:
+                  type: string
+                  description: Цвет (hex или css-совместимое название)
+                  example: '#000000'
+                  nullable: true
+                capacity:
+                  description: Вместимость зала
+                  type: integer
+                  example: 25
+                  nullable: true
+                summary:
+                  type: string
+                  description: Короткое описание
+                  example: Короткое описание
+                  nullable: true
+                description:
+                  type: string
+                  description: Полное описание
+                  example: Полное описание
+                  nullable: true
+                number:
+                  type: integer
+                  description: Порядковый номер (для сортировки)
+                  example: 1
+                  nullable: true
+      responses:
+        200:
+          description: Данные зала обновлены
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Зал не найден
+        422:
+          description: Ошибка валидации (см. вложенное сообщение)
+    delete:
+      operationId: adminDeleteBranchClassroom
+      tags:
+        - AdminApi
+        - Branches
+      summary: Удаление зала
+      description: Метод удаляет зал
+      parameters:
+        - $ref: '#/components/parameters/BranchId'
+        - $ref: '#/components/parameters/ClassroomId'
+      responses:
+        200:
+          description: Зал удален
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Зал не найдена
+  /admin/branches/{branch_id}/classrooms/{classroom_id}/restore:
+    post:
+      operationId: adminRestoreBranchClassroom
+      tags:
+        - AdminApi
+        - Branches
+      summary: Восстановление зала
+      description: Метод восстанавливает удаленный зал
+      parameters:
+        - $ref: '#/components/parameters/BranchId'
+        - $ref: '#/components/parameters/ClassroomId'
+      responses:
+        200:
+          description: Зал восстановлен
+        401:
+          description: Пользователь не авторизован
+        403:
+          description: Доступ запрещен
+        404:
+          description: Удаленный зал не найдена
 
   # Public routes
   /news:

@@ -144,6 +144,43 @@ class ScheduleRepository
     }
 
     /**
+     * @param ScheduleDto $store
+     * @throws Exceptions\ScheduleSlotIsOccupied
+     */
+    public function checkSpace(ScheduleDto $store): void
+    {
+        // We only care about classroom slots
+        if (null === $store->classroom_id) {
+            return;
+        }
+
+        $sql = <<<SQL
+deleted_at IS NULL
+AND weekday = ?
+AND classroom_id = ?
+AND ((starts_at > ? AND starts_at < ?) OR (ends_at > ? AND ends_at < ?))
+SQL;
+
+        $schedules = Schedule::query()
+            ->whereRaw(
+                $sql,
+                [
+                    $store->weekday,
+                    $store->classroom_id,
+                    $store->starts_at,
+                    $store->ends_at,
+                    $store->starts_at,
+                    $store->ends_at
+                ]
+            )
+            ->get();
+
+        if ($schedules->count()) {
+            throw new Exceptions\ScheduleSlotIsOccupied($schedules->toArray());
+        }
+    }
+
+    /**
      * Get schedules for
      *  courses in NOT disabled status
      *  for selected date
@@ -157,23 +194,30 @@ class ScheduleRepository
     public function getSchedulesForDateWithRelations(ScheduleOnDate $dto, ?array $relations = []): Collection
     {
         $query = Schedule::query()//table(Schedule::TABLE)
-            ->where('weekday', $dto->weekday)
-            ->whereIn('course_id', static function (Builder $query) use ($dto) {
-                $query
-                    ->select('id')
-                    ->from(Course::TABLE)
-                    ->where('status', '=', Course::STATUS_ACTIVE)
-                    ->where(static function (Builder $query) use ($dto) {
-                        $query
-                            ->whereNull('starts_at')
-                            ->orWhere('starts_at', '<=', $dto->date);
-                    })
-                    ->where(static function (Builder $query) use ($dto) {
-                        $query
-                            ->whereNull('ends_at')
-                            ->orWhere('ends_at', '>=', $dto->date);
-                    });
-            });
+        ->where('weekday', $dto->weekday)
+            ->whereIn(
+                'course_id',
+                static function (Builder $query) use ($dto) {
+                    $query
+                        ->select('id')
+                        ->from(Course::TABLE)
+                        ->where('status', '=', Course::STATUS_ACTIVE)
+                        ->where(
+                            static function (Builder $query) use ($dto) {
+                                $query
+                                    ->whereNull('starts_at')
+                                    ->orWhere('starts_at', '<=', $dto->date);
+                            }
+                        )
+                        ->where(
+                            static function (Builder $query) use ($dto) {
+                                $query
+                                    ->whereNull('ends_at')
+                                    ->orWhere('ends_at', '>=', $dto->date);
+                            }
+                        );
+                }
+            );
 
         if (null !== $dto->course_id) {
             $query = $query->where('course_id', $dto->course_id);

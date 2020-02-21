@@ -16,6 +16,7 @@ use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 /**
  * Class StoreScheduleRequest
@@ -60,6 +61,17 @@ class StoreScheduleRequest extends FormRequest
                 Rule::in(Schedule::WEEKDAYS),
             ],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(static function (Validator $validator) {
+            $data = $validator->getData();
+            if (isset($data['starts_at'], $data['ends_at']) &&
+                Carbon::parse($data['starts_at'])->gt(Carbon::parse($data['ends_at']))) {
+                    $validator->errors()->add( 'starts_at', 'invalid' );
+                }
+        });
     }
 
     /**

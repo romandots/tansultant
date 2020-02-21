@@ -40,6 +40,7 @@ class ScheduleController extends Controller
     /**
      * @param StoreScheduleRequest $request
      * @return ScheduleResource
+     * @throws \App\Repository\Exceptions\ScheduleSlotIsOccupied
      * @throws \Exception
      */
     public function store(StoreScheduleRequest $request): ScheduleResource
@@ -53,6 +54,8 @@ class ScheduleController extends Controller
      * @param StoreScheduleRequest $request
      * @param string $courseId
      * @param string $scheduleId
+     * @throws \App\Repository\Exceptions\ScheduleSlotIsOccupied
+     * @throws \Exception
      */
     public function update(StoreScheduleRequest $request, string $courseId, string $scheduleId): void
     {
