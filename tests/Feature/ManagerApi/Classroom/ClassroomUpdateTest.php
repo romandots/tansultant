@@ -23,8 +23,6 @@ class ClassroomUpdateTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = 'admin/classrooms';
-
     private const JSON_STRUCTURE = [
         'data' => [
             'id',
@@ -40,19 +38,19 @@ class ClassroomUpdateTest extends TestCase
     /**
      * @var Classroom
      */
-    private $classroom;
+    private Classroom $classroom;
 
     /**
      * @var string
      */
-    private $url;
+    private string $url;
 
     public function setUp(): void
     {
         parent::setUp();
 
         $this->classroom = $this->createFakeClassroom();
-        $this->url = self::URL . '/' . $this->classroom->id;
+        $this->url = 'admin/branches/' . $this->classroom->branch_id . '/classrooms/' . $this->classroom->id;
     }
 
     public function testAccessDenied(): void

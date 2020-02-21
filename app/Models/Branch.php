@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Traits\UsesUuid;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -33,6 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property-read Collection|Classroom[] $classrooms
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Branch newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Branch newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Branch query()
@@ -69,8 +71,14 @@ class Branch extends Model
     ];
 
     protected $casts = [
-        'address' => 'array'
+        'address' => 'array',
+        'deleted_at' => 'datetime',
     ];
 
     protected $table = self::TABLE;
+
+    public function classrooms(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Classroom::class);
+    }
 }

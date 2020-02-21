@@ -23,17 +23,15 @@ class ClassroomDestroyTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = 'admin/classrooms';
-
     /**
      * @var Classroom
      */
-    private $classroom;
+    private Classroom $classroom;
 
     /**
      * @var string
      */
-    private $url;
+    private string $url;
 
     /**
      * @throws \Exception
@@ -43,7 +41,7 @@ class ClassroomDestroyTest extends TestCase
         parent::setUp();
 
         $this->classroom = $this->createFakeClassroom();
-        $this->url = self::URL . '/' . $this->classroom->id;
+        $this->url = 'admin/branches/' . $this->classroom->branch_id . '/classrooms/' . $this->classroom->id;
     }
 
     public function testAccessDenied(): void
