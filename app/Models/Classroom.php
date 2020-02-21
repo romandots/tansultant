@@ -40,6 +40,10 @@ class Classroom extends Model
 
     protected $table = self::TABLE;
 
+    protected $casts = [
+        'deleted_at' => 'datetime',
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Branch
      */

@@ -26,7 +26,7 @@ class ClassroomController extends Controller
         $this->repository = $repository;
     }
 
-    public function index(): AnonymousResourceCollection
+    public function index(string $branchId): AnonymousResourceCollection
     {
         $records = $this->repository->getAll();
 
@@ -35,10 +35,11 @@ class ClassroomController extends Controller
 
     /**
      * @param UpdateClassroomRequest $request
+     * @param string $branchId
      * @return ClassroomResource
      * @throws \Exception
      */
-    public function store(StoreClassroomRequest $request): ClassroomResource
+    public function store(StoreClassroomRequest $request, string $branchId): ClassroomResource
     {
         $record = $this->repository->create($request->getDto());
 
@@ -46,24 +47,24 @@ class ClassroomController extends Controller
     }
 
     /**
-     * @param string $id
+     * @param string $branchId
+     * @param string $classroomId
      * @return ClassroomResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function show(string $id): ClassroomResource
+    public function show(string $branchId, string $classroomId): ClassroomResource
     {
-        $record = $this->repository->find($id);
+        $record = $this->repository->find($classroomId);
 
         return new ClassroomResource($record);
     }
 
     /**
      * @param UpdateClassroomRequest $request
+     * @param string $branchId
      * @param string $id
      * @return ClassroomResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function update(UpdateClassroomRequest $request, string $id): ClassroomResource
+    public function update(UpdateClassroomRequest $request, string $branchId, string $id): ClassroomResource
     {
         $record = $this->repository->find($id);
         $this->repository->update($record, $request->getDto());
@@ -72,23 +73,23 @@ class ClassroomController extends Controller
     }
 
     /**
-     * @param string $id
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @param string $branchId
+     * @param string $classroomId
      * @throws \Exception
      */
-    public function destroy(string $id): void
+    public function destroy(string $branchId, string $classroomId): void
     {
-        $record = $this->repository->find($id);
+        $record = $this->repository->find($classroomId);
         $this->repository->delete($record);
     }
 
     /**
-     * @param string $id
-     * @throws \Exception
+     * @param string $branchId
+     * @param string $classroomId
      */
-    public function restore(string $id): void
+    public function restore(string $branchId, string $classroomId): void
     {
-        $record = $this->repository->findWithDeleted($id);
+        $record = $this->repository->findWithDeleted($classroomId);
         $this->repository->restore($record);
     }
 }

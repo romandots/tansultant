@@ -24,17 +24,15 @@ class ClassroomRecoverTest extends TestCase
 {
     use CreatesFakes;
 
-    protected const URL = 'admin/classrooms';
-
     /**
      * @var Classroom
      */
-    private $classroom;
+    private Classroom $classroom;
 
     /**
      * @var string
      */
-    private $url;
+    private string $url;
 
     /**
      * @throws \Exception
@@ -44,7 +42,7 @@ class ClassroomRecoverTest extends TestCase
         parent::setUp();
 
         $this->classroom = $this->createFakeClassroom(['deleted_at' => Carbon::now()]);
-        $this->url = self::URL . '/' . $this->classroom->id . '/recover';
+        $this->url = 'admin/branches/' . $this->classroom->branch_id . '/classrooms/' . $this->classroom->id . '/restore';
     }
 
     public function testAccessDenied(): void
