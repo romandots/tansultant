@@ -20,24 +20,13 @@ use App\Services\User\Exceptions\OldPasswordInvalidException;
  */
 class UserService
 {
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
+    private UserRepository $userRepository;
 
-    /**
-     * UserService constructor.
-     * @param UserRepository $userRepository
-     */
     public function __construct(UserRepository $userRepository)
     {
         $this->userRepository = $userRepository;
     }
 
-    /**
-     * @param User $user
-     * @param \App\Http\Requests\ManagerApi\DTO\UpdateUserPassword $dto
-     */
     public function updatePassword(User $user, \App\Http\Requests\ManagerApi\DTO\UpdateUserPassword $dto): void
     {
         if (!\Hash::check($dto->old_password, $user->password)) {

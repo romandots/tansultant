@@ -115,7 +115,7 @@ class RegisterUserRequest extends FormRequest
         $dto->birth_date = isset($validated['birth_date']) ? Carbon::parse($validated['birth_date']) : null;
         $dto->gender = $validated['gender'] ?? null;
         $dto->email = $validated['email'] ?? null;
-        $dto->password = isset($validated['password']) ? \Hash::make($validated['password']) : null;
+        $dto->password = $validated['password'] ?? null;
 
         return $dto;
     }

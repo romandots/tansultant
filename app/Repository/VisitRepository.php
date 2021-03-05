@@ -21,20 +21,8 @@ use App\Models\Visit;
  * Class VisitRepository
  * @package App\Repository
  */
-class VisitRepository
+class VisitRepository extends Repository
 {
-    /**
-     * @param string $id
-     * @return Visit|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function find(string $id)
-    {
-        return Visit::query()
-            ->where('id', $id)
-            ->firstOrFail();
-    }
-
     /**
      * @param VisitDto $dto
      * @param User|null $user
@@ -82,12 +70,8 @@ class VisitRepository
         return $visit;
     }
 
-    /**
-     * @param Visit $visit
-     * @throws \Exception
-     */
-    public function delete(Visit $visit): void
+    final protected function getQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        $visit->delete();
+        return Visit::query();
     }
 }
