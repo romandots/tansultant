@@ -30,7 +30,7 @@ class StoreBranchRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
-                Rule::unique(Branch::TABLE)->ignore($this->route()->parameter('id'))
+                Rule::unique(Branch::TABLE)->ignore($this->getId())
             ],
             'summary' => [
                 'nullable',
@@ -139,5 +139,10 @@ class StoreBranchRequest extends FormRequest
         /** @var BranchRepository $repository */
         $repository = \app(BranchRepository::class);
         return $repository->getNextNumberValue();
+    }
+
+    protected function getId(): string
+    {
+        return $this->route()->parameter('id');
     }
 }

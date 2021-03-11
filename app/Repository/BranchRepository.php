@@ -138,6 +138,6 @@ class BranchRepository
      */
     public function getNextNumberValue(): int
     {
-        return (int)(Branch::query()->max('value')) + 1;
+        return (int)(Branch::query()->max('number')) + 1;
     }
 }
