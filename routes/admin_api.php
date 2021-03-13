@@ -42,6 +42,8 @@ Route::group(['prefix' => 'users'], static function () {
 
 // PEOPLE
 Route::group(['prefix' => 'people'], static function () {
+    Route::get('/', 'PersonController@index')
+        ->middleware('permission:' . PersonsPermissions::MANAGE . '|' . PersonsPermissions::READ);
     Route::post('/', 'PersonController@store')
         ->middleware('permission:' . PersonsPermissions::MANAGE . '|' . PersonsPermissions::CREATE);
     Route::get('{id}', 'PersonController@show')

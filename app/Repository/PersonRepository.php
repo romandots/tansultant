@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Http\Requests\DTO\SearchPeople;
+use App\Http\Requests\DTO\SearchPeopleFilter;
 use App\Http\Requests\DTO\StorePerson as PersonDto;
 use App\Models\Person;
 use Carbon\Carbon;
@@ -44,6 +46,58 @@ class PersonRepository
         return Person::query()
             ->where('id', $id)
             ->firstOrFail();
+    }
+
+    private function getFilterQuery(SearchPeopleFilter $filter): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = Person::query();
+
+        if ($filter->query) {
+            $query->where(function (\Illuminate\Database\Eloquent\Builder $query) use ($filter) {
+                $searchQuery = $filter->query . '%';
+                $query
+                    ->where('last_name', 'ILIKE', $searchQuery)
+                    ->orWhere('first_name', 'ILIKE', $searchQuery)
+                    ->orWhere('patronymic_name', 'ILIKE', $searchQuery)
+                    ->orWhere('phone', 'ILIKE', $searchQuery)
+                    ->orWhere('email', 'ILIKE', $searchQuery)
+                    ->orWhere('email', 'ILIKE', $searchQuery)
+                    ->orWhere('note', 'ILIKE', $searchQuery);
+            });
+        }
+
+        if ($filter->gender) {
+            $query->where('gender', '=', $filter->gender);
+        }
+
+        if ($filter->birth_date_from) {
+            $query->where('birth_date', '>=', $filter->birth_date_from);
+        }
+
+        if ($filter->birth_date_to) {
+            $query->where('birth_date', '<=', $filter->birth_date_to);
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param SearchPeople $search
+     * @return Person[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function findByFilter(SearchPeople $search): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->getFilterQuery($search->filter)
+            ->with('instructor', 'customer', 'student', 'user')
+            ->orderBy($search->sort, $search->order)
+            ->offset($search->offset)
+            ->limit($search->limit)
+            ->get();
+    }
+
+    public function countByFilter(SearchPeople $search): int
+    {
+        return $this->getFilterQuery($search->filter)->count();
     }
 
     /**
