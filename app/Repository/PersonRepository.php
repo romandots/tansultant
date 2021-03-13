@@ -50,7 +50,7 @@ class PersonRepository
 
     private function getFilterQuery(SearchPeopleFilter $filter): \Illuminate\Database\Eloquent\Builder
     {
-        $query = Person::query();
+        $query = Person::query()->whereNull('deleted_at');
 
         if ($filter->query) {
             $query->where(function (\Illuminate\Database\Eloquent\Builder $query) use ($filter) {
@@ -60,7 +60,6 @@ class PersonRepository
                     ->orWhere('first_name', 'ILIKE', $searchQuery)
                     ->orWhere('patronymic_name', 'ILIKE', $searchQuery)
                     ->orWhere('phone', 'ILIKE', $searchQuery)
-                    ->orWhere('email', 'ILIKE', $searchQuery)
                     ->orWhere('email', 'ILIKE', $searchQuery)
                     ->orWhere('note', 'ILIKE', $searchQuery);
             });

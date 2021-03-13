@@ -25,9 +25,12 @@ class PersonService
     {
         $totalRecords = $this->repository->countByFilter($searchPeople);
         return [
+            'filter' => (array)$searchPeople->filter,
+            'sort' => $searchPeople->sort,
+            'order' => $searchPeople->order,
             'offset' => $searchPeople->offset,
             'limit' => $searchPeople->limit,
-            'total' => $totalRecords
+            'total' => $totalRecords,
         ];
     }
 }
