@@ -9,7 +9,7 @@
 namespace App\Services\Person;
 
 
-use App\Http\Requests\DTO\SearchPeople;
+use App\Http\Requests\DTO\Contracts\PaginatedInterface;
 use App\Repository\PersonRepository;
 
 class PersonService
@@ -21,16 +21,9 @@ class PersonService
         $this->repository = $repository;
     }
 
-    public function getMeta(SearchPeople $searchPeople): array
+    public function getMeta(PaginatedInterface $searchPeople): array
     {
-        $totalRecords = $this->repository->countByFilter($searchPeople);
-        return [
-            'filter' => (array)$searchPeople->filter,
-            'sort' => $searchPeople->sort,
-            'order' => $searchPeople->order,
-            'offset' => $searchPeople->offset,
-            'limit' => $searchPeople->limit,
-            'total' => $totalRecords,
-        ];
+        $totalRecords = $this->repository->countFiltered($searchPeople->filter);
+        return $searchPeople->getMeta($totalRecords);
     }
 }

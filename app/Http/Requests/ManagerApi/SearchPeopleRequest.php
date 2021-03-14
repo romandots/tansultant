@@ -10,37 +10,31 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
+use App\Http\Requests\DTO\Contracts\FilteredInterface;
 use App\Models\Person;
 use Carbon\Carbon;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class SearchPeopleRequest extends FormRequest
+class SearchPeopleRequest extends FilteredPaginatedFormRequest
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->paginationDto = new \App\Http\Requests\ManagerApi\DTO\SearchPeopleDto();
+        $this->filterDto = new \App\Http\Requests\ManagerApi\DTO\SearchPeopleFilterDto();
+        $this->sortable = [
+            'last_name',
+            'id',
+            'birth_date',
+            'created_at',
+            'updated_at',
+        ];
+    }
+
     public function rules(): array
     {
         return [
-            'query' => [
-                'nullable',
-                'string'
-            ],
-            'offset' => [
-                'nullable',
-                'int'
-            ],
-            'limit' => [
-                'nullable',
-                'int'
-            ],
-            'sort' => [
-                'nullable',
-                'string'
-            ],
-            'order' => [
-                'nullable',
-                'string',
-                Rule::in(['desc', 'asc'])
-            ],
+            ...parent::rules(),
             'birth_date_from' => [
                 'nullable',
                 'string',
@@ -59,22 +53,17 @@ class SearchPeopleRequest extends FormRequest
         ];
     }
 
-    public function getDto(): \App\Http\Requests\DTO\SearchPeople
+    protected function getFilterDto(): FilteredInterface
     {
+        $filter = parent::getFilterDto();
         $validated = $this->validated();
-        $dto = new \App\Http\Requests\DTO\SearchPeople();
-        $dto->offset = (int)($validated['offset'] ?? 0);
-        $dto->limit = (int)($validated['limit'] ?? 20);
-        $dto->sort = $validated['sort'] ?? 'id';
-        $dto->order = $validated['order'] ?? 'asc';
-        $dto->filter = new \App\Http\Requests\DTO\SearchPeopleFilter();
-        $dto->filter->query = $validated['query'] ?? null;
-        $dto->filter->birth_date_from = isset($validated['birth_date_from'])
-            ? Carbon::parse($validated['birth_date_from']) : null;
-        $dto->filter->birth_date_to = isset($validated['birth_date_to'])
-            ? Carbon::parse($validated['birth_date_to']) : null;
-        $dto->filter->gender = $validated['gender'] ?? null;
 
-        return $dto;
+        $filter->birth_date_from = isset($validated['birth_date_from'])
+            ? Carbon::parse($validated['birth_date_from']) : null;
+        $filter->birth_date_to = isset($validated['birth_date_to'])
+            ? Carbon::parse($validated['birth_date_to']) : null;
+        $filter->gender = $validated['gender'] ?? null;
+
+        return $filter;
     }
 }

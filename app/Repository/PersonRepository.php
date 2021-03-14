@@ -10,60 +10,44 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Http\Requests\DTO\SearchPeople;
-use App\Http\Requests\DTO\SearchPeopleFilter;
+use App\Http\Requests\DTO\Contracts\FilteredInterface;
+use App\Http\Requests\DTO\Contracts\PaginatedInterface;
 use App\Http\Requests\DTO\StorePerson as PersonDto;
+use App\Http\Requests\ManagerApi\DTO\SearchPeopleDto;
+use App\Http\Requests\ManagerApi\DTO\SearchPeopleFilterDto;
 use App\Models\Person;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Uuid;
 
 /**
  * Class PersonRepository
  * @package App\Repository
  */
-class PersonRepository
+class PersonRepository extends Repository
 {
-    /**
-     * @param string $id
-     * @return Person|null
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function find(string $id): ?Person
+    public const WITH_SOFT_DELETES = true;
+    public const SEARCHABLE_ATTRIBUTES = [
+        'last_name',
+        'first_name',
+        'patronymic_name',
+        'phone',
+        'email',
+        'note',
+    ];
+
+    protected function getQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return Person::query()
-            ->where('id', $id)
-            ->whereNull('deleted_at')
-            ->firstOrFail();
+        return Person::query();
     }
 
     /**
-     * @param string $id
-     * @return Person|null
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @param FilteredInterface|SearchPeopleFilterDto $filter
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function findWithDeleted(string $id): ?Person
+    protected function getFilterQuery(FilteredInterface $filter): \Illuminate\Database\Eloquent\Builder
     {
-        return Person::query()
-            ->where('id', $id)
-            ->firstOrFail();
-    }
-
-    private function getFilterQuery(SearchPeopleFilter $filter): \Illuminate\Database\Eloquent\Builder
-    {
-        $query = Person::query()->whereNull('deleted_at');
-
-        if ($filter->query) {
-            $query->where(function (\Illuminate\Database\Eloquent\Builder $query) use ($filter) {
-                $searchQuery = $filter->query . '%';
-                $query
-                    ->where('last_name', 'ILIKE', $searchQuery)
-                    ->orWhere('first_name', 'ILIKE', $searchQuery)
-                    ->orWhere('patronymic_name', 'ILIKE', $searchQuery)
-                    ->orWhere('phone', 'ILIKE', $searchQuery)
-                    ->orWhere('email', 'ILIKE', $searchQuery)
-                    ->orWhere('note', 'ILIKE', $searchQuery);
-            });
-        }
+        $query = parent::getFilterQuery($filter);
 
         if ($filter->gender) {
             $query->where('gender', '=', $filter->gender);
@@ -81,22 +65,30 @@ class PersonRepository
     }
 
     /**
-     * @param SearchPeople $search
-     * @return Person[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @param string $id
+     * @return Model|Person
      */
-    public function findByFilter(SearchPeople $search): \Illuminate\Database\Eloquent\Collection
+    public function find(string $id): Model
     {
-        return $this->getFilterQuery($search->filter)
-            ->with('instructor', 'customer', 'student', 'user')
-            ->orderBy($search->sort, $search->order)
-            ->offset($search->offset)
-            ->limit($search->limit)
-            ->get();
+        return parent::find($id);
     }
 
-    public function countByFilter(SearchPeople $search): int
+    /**
+     * @param string $id
+     * @return Model|Person
+     */
+    public function findTrashed(string $id): Model
     {
-        return $this->getFilterQuery($search->filter)->count();
+        return parent::findTrashed($id);
+    }
+
+    /**
+     * @param PaginatedInterface|SearchPeopleDto $search
+     * @return Person[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function findFilteredPaginated(PaginatedInterface $search): \Illuminate\Database\Eloquent\Collection
+    {
+        return parent::findFilteredPaginated($search, ['instructor', 'customer', 'student', 'user']);
     }
 
     /**

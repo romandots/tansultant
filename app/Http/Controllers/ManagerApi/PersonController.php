@@ -52,7 +52,7 @@ class PersonController extends Controller
     public function index(SearchPeopleRequest $request): AnonymousResourceCollection
     {
         $searchPeople = $request->getDto();
-        $people = $this->personRepository->findByFilter($searchPeople);
+        $people = $this->personRepository->findFilteredPaginated($searchPeople);
         $meta = $this->personService->getMeta($searchPeople);
 
         return PersonResource::collection($people)->additional(['meta' => $meta]);
