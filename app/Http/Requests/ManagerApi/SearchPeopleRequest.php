@@ -33,8 +33,7 @@ class SearchPeopleRequest extends FilteredPaginatedFormRequest
 
     public function rules(): array
     {
-        return [
-            ...parent::rules(),
+        return \array_merge(parent::rules(), [
             'birth_date_from' => [
                 'nullable',
                 'string',
@@ -50,7 +49,7 @@ class SearchPeopleRequest extends FilteredPaginatedFormRequest
                 'string',
                 Rule::in(Person::GENDER)
             ],
-        ];
+        ]);
     }
 
     protected function getFilterDto(): FilteredInterface
