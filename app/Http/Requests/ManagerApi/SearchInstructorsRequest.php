@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\ManagerApi;
 
 use App\Http\Requests\DTO\Contracts\FilteredInterface;
+use App\Http\Requests\ManagerApi\DTO\SearchInstructorsFilterDto;
 use App\Models\Instructor;
 use Illuminate\Validation\Rule;
 
@@ -26,32 +27,36 @@ class SearchInstructorsRequest extends FilteredPaginatedFormRequest
 
     public function rules(): array
     {
-        return array_merge(parent::rules(), [
-            'statuses' => [
-                'nullable',
-                'array',
-            ],
-            'statuses.*' => [
-                'required_with:statuses',
-                'string',
-                Rule::in(Instructor::STATUSES),
-            ],
-            'display' => [
-                'nullable',
-                'boolean',
-            ],
-        ]);
+        return array_merge(
+            parent::rules(),
+            [
+                'statuses' => [
+                    'nullable',
+                    'array',
+                ],
+                'statuses.*' => [
+                    'required_with:statuses',
+                    'string',
+                    Rule::in(Instructor::STATUSES),
+                ],
+                'display' => [
+                    'nullable',
+                    'boolean',
+                ],
+            ]
+        );
     }
 
     protected function getFilterDto(): FilteredInterface
     {
         $filter = parent::getFilterDto();
-        $validated = $this->validated();
+        if (!$filter instanceof SearchInstructorsFilterDto) {
+            return $filter;
+        }
 
-        $filter->statuses = isset($validated['statuses'])
-            ? (array)$validated['statuses'] : null;
-        $filter->display = isset($validated['display'])
-            ? (bool)$validated['display'] : null;
+        $validated = $this->validated();
+        $filter->statuses = isset($validated['statuses']) ? (array)$validated['statuses'] : null;
+        $filter->display = isset($validated['display']) ? (bool)$validated['display'] : null;
 
         return $filter;
     }

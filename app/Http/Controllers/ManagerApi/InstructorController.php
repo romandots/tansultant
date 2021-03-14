@@ -44,7 +44,7 @@ class InstructorController extends Controller
     public function index(SearchInstructorsRequest $request): AnonymousResourceCollection
     {
         $search = $request->getDto();
-        $collection = $this->instructorRepository->findByFilter($search);
+        $collection = $this->instructorRepository->findFilteredPaginated($search);
         $totalRecords = $this->instructorRepository->countFiltered($search->filter);
         $meta = $search->getMeta($totalRecords);
 
