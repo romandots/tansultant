@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Http\Requests\DTO\Contracts\FilteredInterface;
 use App\Http\Requests\DTO\StoreInstructor;
+use App\Http\Requests\ManagerApi\DTO\SearchInstructorsFilterDto;
 use App\Models\Instructor;
 use App\Models\Person;
 use Carbon\Carbon;
@@ -19,16 +21,36 @@ use Carbon\Carbon;
  * Class InstructorRepository
  * @package App\Repository
  */
-class InstructorRepository
+class InstructorRepository extends Repository
 {
-    /**
-     * @param string $id
-     * @return Instructor|null
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function find(string $id): ?Instructor
+    public const WITH_SOFT_DELETES = true;
+    public const SEARCHABLE_ATTRIBUTES = [
+        'name',
+        'description',
+    ];
+
+    protected function getQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return Instructor::query()->findOrFail($id);
+        return Instructor::query();
+    }
+
+    /**
+     * @param FilteredInterface|SearchInstructorsFilterDto $filter
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    protected function getFilterQuery(FilteredInterface $filter): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getFilterQuery($filter);
+
+        if ($filter->statuses) {
+            $query->whereIn('status', $filter->statuses);
+        }
+
+        if ($filter->display) {
+            $query->where('display', $filter->display);
+        }
+
+        return $query;
     }
 
     /**
@@ -68,14 +90,5 @@ class InstructorRepository
             $instructor->status = $dto->status;
         }
         $instructor->save();
-    }
-
-    /**
-     * @param Instructor $instructor
-     * @throws \Exception
-     */
-    public function delete(Instructor $instructor): void
-    {
-        $instructor->delete();
     }
 }
