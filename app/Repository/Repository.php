@@ -75,7 +75,24 @@ abstract class Repository
 
     public function delete(Model $model): void
     {
+        if (self::WITH_SOFT_DELETES) {
+            $model->deleted_at = \Carbon\Carbon::now();
+            $model->updated_at = \Carbon\Carbon::now();
+            $model->save();
+            return;
+        }
+
         $model->delete();
+    }
+
+    public function restore(Model $person): void
+    {
+        if (!self::WITH_SOFT_DELETES) {
+            return;
+        }
+        $person->deleted_at = null;
+        $person->updated_at = Carbon::now();
+        $person->save();
     }
 
     public function forceDelete(Model $model): void

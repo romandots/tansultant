@@ -86,9 +86,10 @@ class PersonRepository extends Repository
      * @param PaginatedInterface|SearchPeopleDto $search
      * @return Person[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
-    public function findFilteredPaginated(PaginatedInterface $search): \Illuminate\Database\Eloquent\Collection
+    public function findFilteredPaginated(PaginatedInterface $search, array $withRelations = []): \Illuminate\Database\Eloquent\Collection
     {
-        return parent::findFilteredPaginated($search, ['instructor', 'customer', 'student', 'user']);
+        $withRelations = $withRelations === [] ? ['instructor', 'customer', 'student', 'user'] : $withRelations;
+        return parent::findFilteredPaginated($search, $withRelations);
     }
 
     /**
@@ -199,28 +200,6 @@ class PersonRepository extends Repository
         if (null !== $dto->picture) {
             $this->savePicture($person, $dto->picture);
         }
-    }
-
-    /**
-     * @param Person $person
-     * @throws \Exception
-     */
-    public function delete(Person $person): void
-    {
-        $person->deleted_at = Carbon::now();
-        $person->updated_at = Carbon::now();
-        $person->save();
-    }
-
-    /**
-     * @param Person $person
-     * @throws \Exception
-     */
-    public function restore(Person $person): void
-    {
-        $person->deleted_at = null;
-        $person->updated_at = Carbon::now();
-        $person->save();
     }
 
     /**
