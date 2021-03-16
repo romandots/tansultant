@@ -11,10 +11,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Http\Controllers\Controller;
+use App\Services\Person\PersonService;
+use App\Http\Requests\ManagerApi\SearchPeopleRequest;
 use App\Http\Requests\ManagerApi\StorePersonRequest;
 use App\Http\Requests\ManagerApi\StorePersonRequest as UpdatePersonRequest;
 use App\Http\Resources\PersonResource;
 use App\Repository\PersonRepository;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * @todo test picture upload
@@ -22,10 +25,12 @@ use App\Repository\PersonRepository;
 class PersonController extends Controller
 {
     private PersonRepository $personRepository;
+    private PersonService $personService;
 
-    public function __construct(PersonRepository $personRepository)
+    public function __construct(PersonRepository $personRepository, PersonService $personService)
     {
         $this->personRepository = $personRepository;
+        $this->personService = $personService;
     }
 
     /**
@@ -35,9 +40,22 @@ class PersonController extends Controller
      */
     public function store(StorePersonRequest $request): PersonResource
     {
-        $person = $this->personRepository->create($request->getDto());
+        $person = $this->personRepository->createFromDto($request->getDto());
 
         return new PersonResource($person);
+    }
+
+    /**
+     * @param SearchPeopleRequest $request
+     * @return AnonymousResourceCollection
+     */
+    public function index(SearchPeopleRequest $request): AnonymousResourceCollection
+    {
+        $searchPeople = $request->getDto();
+        $people = $this->personRepository->findFilteredPaginated($searchPeople);
+        $meta = $this->personService->getMeta($searchPeople);
+
+        return PersonResource::collection($people)->additional(['meta' => $meta]);
     }
 
     /**

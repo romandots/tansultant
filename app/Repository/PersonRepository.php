@@ -10,40 +10,86 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Http\Requests\DTO\Contracts\FilteredInterface;
+use App\Http\Requests\DTO\Contracts\PaginatedInterface;
 use App\Http\Requests\DTO\StorePerson as PersonDto;
+use App\Http\Requests\ManagerApi\DTO\SearchPeopleDto;
+use App\Http\Requests\ManagerApi\DTO\SearchPeopleFilterDto;
 use App\Models\Person;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Ramsey\Uuid\Uuid;
 
 /**
  * Class PersonRepository
  * @package App\Repository
  */
-class PersonRepository
+class PersonRepository extends Repository
 {
-    /**
-     * @param string $id
-     * @return Person|null
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function find(string $id): ?Person
+    public const WITH_SOFT_DELETES = true;
+    public const SEARCHABLE_ATTRIBUTES = [
+        'last_name',
+        'first_name',
+        'patronymic_name',
+        'phone',
+        'email',
+        'note',
+    ];
+
+    protected function getQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return Person::query()
-            ->where('id', $id)
-            ->whereNull('deleted_at')
-            ->firstOrFail();
+        return Person::query();
+    }
+
+    /**
+     * @param FilteredInterface|SearchPeopleFilterDto $filter
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    protected function getFilterQuery(FilteredInterface $filter): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getFilterQuery($filter);
+
+        if ($filter->gender) {
+            $query->where('gender', '=', $filter->gender);
+        }
+
+        if ($filter->birth_date_from) {
+            $query->where('birth_date', '>=', $filter->birth_date_from);
+        }
+
+        if ($filter->birth_date_to) {
+            $query->where('birth_date', '<=', $filter->birth_date_to);
+        }
+
+        return $query;
     }
 
     /**
      * @param string $id
-     * @return Person|null
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @return Model|Person
      */
-    public function findWithDeleted(string $id): ?Person
+    public function find(string $id): Model
     {
-        return Person::query()
-            ->where('id', $id)
-            ->firstOrFail();
+        return parent::find($id);
+    }
+
+    /**
+     * @param string $id
+     * @return Model|Person
+     */
+    public function findTrashed(string $id): Model
+    {
+        return parent::findTrashed($id);
+    }
+
+    /**
+     * @param PaginatedInterface|SearchPeopleDto $search
+     * @return Person[]|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function findFilteredPaginated(PaginatedInterface $search, array $withRelations = []): \Illuminate\Database\Eloquent\Collection
+    {
+        $withRelations = $withRelations === [] ? ['instructor', 'customer', 'student', 'user'] : $withRelations;
+        return parent::findFilteredPaginated($search, $withRelations);
     }
 
     /**
@@ -85,14 +131,31 @@ class PersonRepository
             ->first();
     }
 
+    public function create(array $data): Person
+    {
+        $person = new Person();
+        $person->id = \uuid();
+        $person->created_at = Carbon::now();
+        $person->updated_at = Carbon::now();
+        $person->last_name = $data['last_name'] ?? null;
+        $person->first_name = $data['first_name'] ?? null;
+        $person->patronymic_name = $data['patronymic_name'] ?? null;
+        $person->gender = $data['gender'] ?? null;
+        $person->birth_date = isset($data['birth_date']) ? Carbon::parse($data['birth_date']) : null;
+        $person->phone = $data['phone'] ?? null;
+        $person->save();
+
+        return $person;
+    }
+
     /**
      * @param PersonDto $dto
      * @return Person
      * @throws \Exception
      */
-    public function create(PersonDto $dto): Person
+    public function createFromDto(PersonDto $dto): Person
     {
-        $person = new Person;
+        $person = new Person();
         $person->id = \uuid();
         $person->created_at = Carbon::now();
         $person->updated_at = Carbon::now();
@@ -135,28 +198,6 @@ class PersonRepository
         if (null !== $dto->picture) {
             $this->savePicture($person, $dto->picture);
         }
-    }
-
-    /**
-     * @param Person $person
-     * @throws \Exception
-     */
-    public function delete(Person $person): void
-    {
-        $person->deleted_at = Carbon::now();
-        $person->updated_at = Carbon::now();
-        $person->save();
-    }
-
-    /**
-     * @param Person $person
-     * @throws \Exception
-     */
-    public function restore(Person $person): void
-    {
-        $person->deleted_at = null;
-        $person->updated_at = Carbon::now();
-        $person->save();
     }
 
     /**

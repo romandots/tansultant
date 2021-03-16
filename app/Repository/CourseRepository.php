@@ -63,6 +63,7 @@ class CourseRepository
     /**
      * @param string $id
      * @return \Illuminate\Database\Eloquent\Model|Course
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function find(string $id): Course
     {
@@ -94,7 +95,7 @@ class CourseRepository
      */
     public function create(CourseDto $dto): Course
     {
-        $course = new Course;
+        $course = new Course();
         $course->id = \uuid();
         $course->created_at = Carbon::now();
         $course->updated_at = Carbon::now();
@@ -113,6 +114,24 @@ class CourseRepository
     {
         $this->fill($course, $dto);
         $course->updated_at = Carbon::now();
+        $course->save();
+    }
+
+    public function setPending(Course $course): void
+    {
+        $course->status = Course::STATUS_PENDING;
+        $course->save();
+    }
+
+    public function setActive(Course $course): void
+    {
+        $course->status = Course::STATUS_ACTIVE;
+        $course->save();
+    }
+
+    public function setDisabled(Course $course): void
+    {
+        $course->status = Course::STATUS_DISABLED;
         $course->save();
     }
 

@@ -42,6 +42,8 @@ Route::group(['prefix' => 'users'], static function () {
 
 // PEOPLE
 Route::group(['prefix' => 'people'], static function () {
+    Route::get('/', 'PersonController@index')
+        ->middleware('permission:' . PersonsPermissions::MANAGE . '|' . PersonsPermissions::READ);
     Route::post('/', 'PersonController@store')
         ->middleware('permission:' . PersonsPermissions::MANAGE . '|' . PersonsPermissions::CREATE);
     Route::get('{id}', 'PersonController@show')
@@ -70,6 +72,8 @@ Route::group(['prefix' => 'students'], static function () {
 Route::group(['prefix' => 'instructors'], static function () {
     Route::post('from_person', 'InstructorController@createFromPerson')
         ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::CREATE);
+    Route::get('/', 'InstructorController@index')
+        ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::READ);
     Route::post('/', 'InstructorController@store')
         ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::CREATE);
     Route::get('{id}', 'InstructorController@show')

@@ -11,7 +11,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Traits\UsesUuid;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Tags\HasTags;
 
 /**
  * Class Course
@@ -25,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $picture
  * @property string|null $picture_thumb
  * @property string $status [pending|active|disabled]
+ * @property bool $is_working
  * @property string|null $instructor_id
  * @property \Carbon\Carbon|null $starts_at
  * @property \Carbon\Carbon|null $ends_at
@@ -55,11 +59,16 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Course whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Course withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Course withoutTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Course withAnyTags($tags, string $type = null)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Course withAllTagsOfAnyType($tags)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\Course withAnyTagsOfAnyType($tags)
  * @mixin \Eloquent
  */
 class Course extends Model
 {
+    use SoftDeletes;
     use UsesUuid;
+    use HasTags;
 
     public const TABLE = 'courses';
 
@@ -84,6 +93,36 @@ class Course extends Model
     public $timestamps = [
         'deleted_at',
     ];
+
+    /**
+     * Check if course is active
+     * according to starts_at and ends_at dates
+     *
+     * @return bool
+     */
+    public function isInPeriod(): bool
+    {
+        $now = Carbon::now()->toDateString();
+        return (null === $this->starts_at || $this->starts_at->lessThanOrEqualTo($now))
+            && (null === $this->ends_at || $this->ends_at->greaterThanOrEqualTo($now));
+    }
+
+    /**
+     * Check if course is active
+     * according to starts_at and ends_at dates
+     * and status
+     *
+     * @return bool
+     */
+    public function isWorking(): bool
+    {
+        return self::STATUS_ACTIVE === $this->status && $this->isInPeriod();
+    }
+
+    public function getIsWorkingAttribute(): bool
+    {
+        return $this->isWorking();
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Instructor|null

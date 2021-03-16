@@ -57,8 +57,7 @@ class CourseController
      */
     public function store(StoreCourseRequest $request): CourseResource
     {
-        $course = $this->service->create($request->getDto());
-        $course->load('instructor');
+        $course = $this->service->create($request->getDto(), $request->user());
 
         return new CourseResource($course);
     }
@@ -68,12 +67,12 @@ class CourseController
      * @param string $id
      * @return CourseResource
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function update(UpdateCourseRequest $request, string $id): CourseResource
     {
         $course = $this->repository->find($id);
-        $this->service->update($course, $request->getDto());
-        $course->load('instructor');
+        $this->service->update($course, $request->getDto(), $request->user());
 
         return new CourseResource($course);
     }
@@ -81,6 +80,8 @@ class CourseController
     /**
      * @param Request $request
      * @param string $id
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Exception
      */
     public function destroy(Request $request, string $id): void
     {
@@ -91,16 +92,7 @@ class CourseController
     /**
      * @param Request $request
      * @param string $id
-     */
-    public function restore(Request $request, string $id): void
-    {
-        $course = $this->repository->findDeleted($id);
-        $this->service->restore($course, $request->user());
-    }
-
-    /**
-     * @param Request $request
-     * @param string $id
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function disable(Request $request, string $id): void
     {
@@ -111,10 +103,11 @@ class CourseController
     /**
      * @param Request $request
      * @param string $id
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function enable(Request $request, string $id): void
     {
         $course = $this->repository->find($id);
-        $this->service->enable($course, $request->user());
+        $this->service->disable($course, $request->user());
     }
 }

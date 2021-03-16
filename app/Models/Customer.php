@@ -48,6 +48,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereDeletedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer withoutTrashed()
+ * @property-read int|null $permissions_count
+ * @property-read int|null $roles_count
  */
 class Customer extends Model
 {

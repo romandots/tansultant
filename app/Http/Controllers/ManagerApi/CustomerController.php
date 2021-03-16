@@ -45,7 +45,7 @@ class CustomerController extends Controller
     {
         /** @var Customer $customer */
         $customer = DB::transaction(function () use ($request) {
-            $person = $this->personRepository->create($request->getPersonDto());
+            $person = $this->personRepository->createFromDto($request->getPersonDto());
             $customer = $this->customerRepository->create($person);
             $this->contractRepository->create($customer->id);
 

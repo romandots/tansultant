@@ -24,7 +24,7 @@ class LoginService
     /**
      * @var UserRepository
      */
-    private $repository;
+    private UserRepository $repository;
 
     /**
      * LoginService constructor.

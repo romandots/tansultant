@@ -18,4 +18,5 @@ return [
     'user_has_no_person' => 'Профиль пользователя не найден',
     'instructor_status_incompatible' => 'Недопустимый статус инструктора',
     'schedule_slot_is_occupied' => 'Выбранное время в данном зале занято',
+    'user_has_no_person_attached' => 'Пользователь не имеет профайла',
 ];

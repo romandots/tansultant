@@ -28,6 +28,7 @@ class ClassroomResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'branch_id' => $this->branch_id,
+            'branch' => $this->branch ? new BranchResource($this->branch) : null,
             'color' => $this->color,
             'capacity' => $this->capacity,
             'number' => $this->number,

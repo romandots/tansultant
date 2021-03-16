@@ -10,11 +10,17 @@ declare(strict_types=1);
 
 namespace App\Services\Course;
 
+use App\Events\CourseCreatedEvent;
+use App\Events\CourseDeletedEvent;
+use App\Events\CourseDisabledEvent;
+use App\Events\CourseEnabledEvent;
+use App\Events\CourseUpdatedEvent;
 use App\Http\Requests\ManagerApi\DTO\StoreCourse;
 use App\Models\Course;
-use App\Models\Instructor;
-use App\Models\User;
+use App\Models\Genre;
 use App\Repository\CourseRepository;
+use App\Services\LogRecord\LogRecordService;
+use Illuminate\Foundation\Auth\User;
 
 /**
  * Class CourseService
@@ -22,67 +28,112 @@ use App\Repository\CourseRepository;
  */
 class CourseService
 {
-    protected CourseRepository $repository;
+    private CourseRepository $repository;
 
-    public function __construct(CourseRepository $repository)
+    private LogRecordService $actions;
+
+    public function __construct(CourseRepository $repository, LogRecordService $actions)
     {
         $this->repository = $repository;
+        $this->actions = $actions;
     }
 
     /**
-     * @param StoreCourse $store
+     * @param StoreCourse $dto
+     * @param User $user
      * @return Course
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Exception
      */
-    public function create(StoreCourse $store): Course
+    public function create(StoreCourse $dto, User $user): Course
     {
-        $this->checkInstructorStatus($store);
-        $course = $this->repository->create($store);
-        \event(new \App\Events\Course\CourseCreatedEvent($course, $store->user));
+        $course = $this->repository->create($dto);
+        $course->syncTagsWithType($dto->genres, Genre::class);
+        $course->load('instructor');
+
+        $this->actions->logCreate($user, $course);
+
+        \event(new CourseCreatedEvent($course));
 
         return $course;
     }
 
     /**
      * @param Course $course
-     * @param StoreCourse $update
+     * @param StoreCourse $dto
+     * @param User $user
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Exception
      */
-    public function update(Course $course, StoreCourse $update): void
+    public function update(Course $course, StoreCourse $dto, User $user): void
     {
-        $this->checkInstructorStatus($update);
-        $this->repository->update($course, $update);
-        \event(new \App\Events\Course\CourseUpdatedEvent($course, $update->user));
+        $oldCourse = clone $course;
+        $this->repository->update($course, $dto);
+        $course->syncTagsWithType($dto->genres, Genre::class);
+        $course->load('instructor');
+
+        $this->actions->logUpdate($user, $course, $oldCourse);
+
+        \event(new CourseUpdatedEvent($course));
     }
 
-    public function delete(Course $course, User $user): void
-    {
-        $this->repository->delete($course);
-        \event(new \App\Events\Course\CourseDeletedEvent($course, $user));
-    }
-
-    public function restore(Course $course, User $user): void
-    {
-        $this->repository->restore($course);
-        \event(new \App\Events\Course\CourseRecoveredEvent($course, $user));
-    }
-
+    /**
+     * Set course status to pending or active (according to working dates)
+     *
+     * @param Course $course
+     * @param User $user
+     * @throws \Exception
+     */
     public function enable(Course $course, User $user): void
     {
-        $this->repository->enable($course);
-        \event(new \App\Events\Course\CourseEnabledEvent($course, $user));
+        $oldCourse = clone $course;
+
+        if ($course->isInPeriod()) {
+            $this->repository->setActive($course);
+        } else {
+            $this->repository->setPending($course);
+        }
+
+         $this->actions->logEnable($user, $course, $oldCourse);
+
+        \event(new CourseEnabledEvent($course));
     }
 
+    /**
+     * Set course status to disabled
+     *
+     * @param Course $course
+     * @param User $user
+     * @throws \Exception
+     */
     public function disable(Course $course, User $user): void
     {
-        $this->repository->disable($course);
-        \event(new \App\Events\Course\CourseDisabledEvent($course, $user));
+        $oldCourse = clone $course;
+
+        if ($course->isInPeriod()) {
+            $this->repository->setActive($course);
+        } else {
+            $this->repository->setPending($course);
+        }
+
+        $this->actions->logDisable($user, $course, $oldCourse);
+
+        \event(new CourseDisabledEvent($course));
     }
 
-    private function checkInstructorStatus(StoreCourse $course): void
+    /**
+     * @param Course $course
+     * @param User $user
+     * @throws \Exception
+     */
+    public function delete(Course $course, User $user): void
     {
-        if (Instructor::STATUS_FIRED === $course->instructor->status) {
-            throw new Exceptions\InstructorStatusIncompatible($course->instructor);
-        }
+        $oldCourse = clone $course;
+
+        $this->repository->delete($course);
+
+        $this->actions->logDelete($user, $oldCourse);
+
+        \event(new CourseDeletedEvent($course));
     }
 }

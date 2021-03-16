@@ -21,24 +21,9 @@ use Illuminate\Http\UploadedFile;
  */
 class StoreCourse
 {
-    /**
-     * @var string
-     */
     public string $name;
-
-    /**
-     * @var string|null
-     */
-    public ?string $summary;
-
-    /**
-     * @var string|null
-     */
-    public ?string $description;
-
-    /**
-     * @var bool
-     */
+    public ?string $summary = null;
+    public ?string $description = null;
     public bool $display;
 
     /**
@@ -51,33 +36,23 @@ class StoreCourse
      */
     public array $age_restrictions;
 
-    /**
-     * @var UploadedFile|null
-     */
-    public ?UploadedFile $picture;
+    public ?\Illuminate\Http\UploadedFile $picture = null;
 
     /**
      * @var string
      */
     public string $status;
 
-    /**
-     * @var Instructor|null
-     */
     public ?Instructor $instructor;
 
-    /**
-     * @var Carbon|null
-     */
-    public ?Carbon $starts_at;
+    public ?\Carbon\Carbon $starts_at = null;
+
+    public ?\Carbon\Carbon $ends_at = null;
 
     /**
-     * @var Carbon|null
+     * @var string[]
      */
-    public ?Carbon $ends_at;
+    public array $genres = [];
 
-    /**
-     * @var User
-     */
     public User $user;
 }

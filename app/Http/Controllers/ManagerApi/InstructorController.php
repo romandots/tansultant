@@ -12,12 +12,14 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ManagerApi\AttachInstructorRequest;
+use App\Http\Requests\ManagerApi\SearchInstructorsRequest;
 use App\Http\Requests\ManagerApi\StoreInstructorRequest;
 use App\Http\Requests\ManagerApi\UpdateInstructorRequest;
 use App\Http\Resources\InstructorResource;
 use App\Models\Instructor;
 use App\Repository\InstructorRepository;
 use App\Repository\PersonRepository;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 
 class InstructorController extends Controller
@@ -35,11 +37,25 @@ class InstructorController extends Controller
         $this->personRepository = $personRepository;
     }
 
+    /**
+     * @param SearchInstructorsRequest $request
+     * @return AnonymousResourceCollection
+     */
+    public function index(SearchInstructorsRequest $request): AnonymousResourceCollection
+    {
+        $search = $request->getDto();
+        $collection = $this->instructorRepository->findFilteredPaginated($search);
+        $totalRecords = $this->instructorRepository->countFiltered($search->filter);
+        $meta = $search->getMeta($totalRecords);
+
+        return InstructorResource::collection($collection)->additional(['meta' => $meta]);
+    }
+
     public function store(StoreInstructorRequest $request): InstructorResource
     {
         /** @var Instructor $instructor */
         $instructor = DB::transaction(function () use ($request) {
-            $person = $this->personRepository->create($request->getPersonDto());
+            $person = $this->personRepository->createFromDto($request->getPersonDto());
             return $this->instructorRepository->createFromPerson($person, $request->getInstructorDto());
         });
         $instructor->load('person');

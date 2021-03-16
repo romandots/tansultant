@@ -36,7 +36,7 @@ class StudentController extends Controller
     {
         /** @var Student $student */
         $student = DB::transaction(function () use ($request) {
-            $person = $this->personRepository->create($request->getPersonDto());
+            $person = $this->personRepository->createFromDto($request->getPersonDto());
             return $this->studentRepository->createFromPerson($person, $request->getStudentDto());
         });
         $student->load('customer', 'person');

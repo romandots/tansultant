@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
+use App\Models\Genre;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -36,11 +37,13 @@ class CourseResource extends JsonResource
             'display' => $this->display,
             'picture' => $this->picture,
             'picture_thumb' => $this->picture_thumb,
-            'age_restrictions' => $this->age_restrictions,
+            'age_restrictions_from' => $this->age_restrictions_from,
+            'age_restrictions_to' => $this->age_restrictions_to,
             'age_restrictions_string' => $this->getAgeRestrictionsString($this->age_restrictions),
             'instructor' => $this->whenLoaded('instructor', function () {
                 return new InstructorResource($this->instructor);
             }),
+            'genres' => $this->tagsWithType(Genre::class)->pluck('name')->all(),
             'starts_at' => $this->starts_at ? $this->starts_at->toDateString() : null,
             'ends_at' => $this->ends_at ? $this->ends_at->toDateString() : null,
             'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,

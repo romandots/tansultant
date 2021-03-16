@@ -29,7 +29,7 @@ class Handler extends BaseExceptionHandler
      * A list of the exception types that are not reported.
      * @var array
      */
-    protected $dontReport = [
+    protected $dontReport = array(
         UnauthorizedException::class,
         UserNotFoundException::class,
         WrongPasswordException::class,
@@ -42,9 +42,11 @@ class Handler extends BaseExceptionHandler
         VerificationCodeExpired::class,
         TextMessageSendingFailed::class,
         UserHasNoPerson::class,
+        UserHasNoPersonException::class,
         InstructorStatusIncompatible::class,
         ScheduleSlotIsOccupied::class,
     ];
+    );
 
     /**
      * Returns a list of user-defined exception handlers
@@ -68,6 +70,7 @@ class Handler extends BaseExceptionHandler
             UserHasNoPerson::class => [$this, 'renderAsJson'],
             InstructorStatusIncompatible::class => [$this, 'renderAsJson'],
             ScheduleSlotIsOccupied::class => [$this, 'renderAsJson'],
+            UserHasNoPersonException::class => [$this, 'renderAsJson'],
         ];
     }
 

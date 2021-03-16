@@ -37,9 +37,9 @@ class StorePerson
     public \Carbon\Carbon $birth_date;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $gender;
+    public ?string $gender;
 
     /**
      * @var string|null

@@ -31,6 +31,15 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Classroom newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Classroom query()
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Classroom whereBranchId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Classroom whereCapacity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Classroom whereColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Classroom whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Classroom whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Classroom whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Classroom whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Classroom whereNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Classroom whereUpdatedAt($value)
  */
 class Classroom extends Model
 {
