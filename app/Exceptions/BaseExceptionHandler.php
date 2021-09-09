@@ -20,6 +20,7 @@ use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Exceptions\UnauthorizedException as SpatieAuthorizationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Throwable;
 
 /**
  * Class BaseExceptionHandler
@@ -86,19 +87,19 @@ class BaseExceptionHandler extends ExceptionHandler
      * @param \Exception $exception
      * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
      */
-    public function render($request, \Exception $exception)
+    public function render($request, Throwable $e)
     {
         $needJson = $request->expectsJson() || $this->isApiRequest($request);
 
         if ($needJson) {
             foreach ($this->computedHandlers as $key => $handler) {
-                if ($exception instanceof $key) {
-                    return $handler($exception, $request);
+                if ($e instanceof $key) {
+                    return $handler($e, $request);
                 }
             }
         }
 
-        return parent::render($request, $exception);
+        return parent::render($request, $e);
     }
 
     /**
