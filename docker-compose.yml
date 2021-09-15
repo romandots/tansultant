@@ -12,11 +12,13 @@ services:
     environment:
       PHP_IDE_CONFIG: "serverName=docker-server"
   db:
-    image: postgres
+    build:
+      dockerfile: Dockerfile
+      context: ./docker/postgres
     restart: always
-    environment:
-      POSTGRES_PASSWORD: example
     ports:
       - 5432:5432
+    volumes:
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
   redis:
     image: "redis:alpine"
