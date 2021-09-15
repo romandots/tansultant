@@ -45,11 +45,10 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): UserResource
     {
-        /** @var User $user */
-        $user = DB::transaction(function () use ($request) {
-            $person = $this->personRepository->createFromDto($request->getPersonDto());
-            return $this->userRepository->createFromPerson($person, $request->getUserDto());
-        });
+        $userDto = $request->getUserDto();
+        $personDto = $request->getPersonDto();
+
+        $user = $this->userService->createUser($userDto, $personDto);
         $user->load('person');
 
         return new UserResource($user);
@@ -65,7 +64,7 @@ class UserController extends Controller
     {
         $dto = $request->getDto();
         $person = $this->personRepository->find($dto->person_id);
-        $user = $this->userRepository->createFromPerson($person, $dto);
+        $user = $this->userService->createUserForExistingPerson($person, $dto);
         $user->load('person');
 
         return new UserResource($user);
@@ -93,7 +92,7 @@ class UserController extends Controller
     public function update(string $id, UpdateUserRequest $request): UserResource
     {
         $user = $this->userRepository->find($id);
-        $this->userRepository->update($user, $request->getDto());
+        $this->userService->update($user, $request->getDto());
         $user->load('person');
 
         return new UserResource($user);
@@ -107,6 +106,6 @@ class UserController extends Controller
     public function destroy(string $id): void
     {
         $user = $this->userRepository->find($id);
-        $this->userRepository->delete($user);
+        $this->userService->delete($user);
     }
 }

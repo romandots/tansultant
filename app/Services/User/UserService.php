@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace App\Services\User;
 
+use App\Events\UserCreatedEvent;
 use App\Models\User;
+use App\Repository\PersonRepository;
 use App\Repository\UserRepository;
 use App\Services\User\Exceptions\OldPasswordInvalidException;
 
@@ -21,10 +23,42 @@ use App\Services\User\Exceptions\OldPasswordInvalidException;
 class UserService
 {
     private UserRepository $userRepository;
+    private PersonRepository $personRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, PersonRepository $personRepository)
     {
         $this->userRepository = $userRepository;
+        $this->personRepository = $personRepository;
+    }
+
+    public function createUser(
+        \App\Http\Requests\ManagerApi\DTO\StoreUser $userDto,
+        \App\Http\Requests\DTO\StorePerson $personDto
+    ): User {
+        $user = \DB::transaction(function () use ($userDto, $personDto) {
+            $person = $this->personRepository->createFromDto($personDto);
+            return $this->userRepository->createFromPerson($person, $userDto);
+        });
+
+        event(new UserCreatedEvent($user));
+
+        return $user;
+    }
+
+    public function createUserForExistingPerson(
+        \App\Models\Person $person,
+        \App\Http\Requests\ManagerApi\DTO\StoreUser $userDto
+    ): User {
+        $user = $this->userRepository->createFromPerson($person, $userDto);
+
+        event(new UserCreatedEvent($user));
+
+        return $user;
+    }
+
+    public function update(User $user, \App\Http\Requests\ManagerApi\DTO\UpdateUser $updateUserDto): void
+    {
+        $this->userRepository->update($user, $updateUserDto);
     }
 
     public function updatePassword(User $user, \App\Http\Requests\ManagerApi\DTO\UpdateUserPassword $dto): void
@@ -36,7 +70,8 @@ class UserService
         $this->userRepository->updatePassword($user, $dto->new_password);
     }
 
-    /**
-     * @todo approve() with user notification
-     */
+    public function delete(User $user): void
+    {
+        $this->userRepository->delete($user);
+    }
 }
