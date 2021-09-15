@@ -3,9 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Person;
-use App\Services\User\UserService;
 
-class CreateUser extends UserCommand
+class UserCreateCommand extends UserCommand
 {
     protected $signature = 'user:create {username} {password}';
     protected $description = 'Creates user with password';

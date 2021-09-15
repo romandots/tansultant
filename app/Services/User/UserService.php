@@ -31,6 +31,11 @@ class UserService
         $this->personRepository = $personRepository;
     }
 
+    public function getUserRepository(): UserRepository
+    {
+        return $this->userRepository;
+    }
+
     public function createUser(
         \App\Http\Requests\ManagerApi\DTO\StoreUser $userDto,
         \App\Http\Requests\DTO\StorePerson $personDto
