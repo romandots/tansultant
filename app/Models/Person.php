@@ -140,8 +140,8 @@ class Person extends Model
             'patronymic_name' => $this->patronymic_name,
             'initials' => \sprintf(
                 '%s. %s.',
-                \mb_substr($this->first_name, 0, 1),
-                \mb_substr($this->patronymic_name, 0, 1)
+                \mb_substr((string)$this->first_name, 0, 1),
+                \mb_substr((string)$this->patronymic_name, 0, 1)
             ),
         ];
     }

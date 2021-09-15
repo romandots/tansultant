@@ -187,7 +187,7 @@ class PersonRepository extends Repository
         $person->last_name = $dto->last_name;
         $person->first_name = $dto->first_name;
         $person->patronymic_name = $dto->patronymic_name;
-        $person->birth_date = $dto->birth_date;
+        $person->birth_date = isset($dto->birth_date) ? $dto->birth_date : null;
         $person->gender = $dto->gender;
         $person->phone = $dto->phone;
         $person->email = $dto->email;

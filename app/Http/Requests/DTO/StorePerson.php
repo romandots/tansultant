@@ -32,14 +32,14 @@ class StorePerson
     public ?string $patronymic_name = null;
 
     /**
-     * @var \Carbon\Carbon
+     * @var \Carbon\Carbon|null
      */
     public \Carbon\Carbon $birth_date;
 
     /**
      * @var string|null
      */
-    public ?string $gender;
+    public ?string $gender = null;
 
     /**
      * @var string|null

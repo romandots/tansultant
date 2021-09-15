@@ -12,32 +12,9 @@ class InstallApp extends Command
 {
     public const ADMIN_USERNAME = 'admin';
 
-    /**
-     * The name and signature of the console command.
-     * @var string
-     */
     protected $signature = 'install:app';
-
-    /**
-     * The console command description.
-     * @var string
-     */
     protected $description = 'Install app: seed permissions and create admin user';
 
-    /**
-     * Create a new command instance.
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
-     * Execute the console command.
-     * @param PersonRepository $repository
-     * @throws \Exception
-     */
     public function handle(PersonRepository $repository): void
     {
         $this->info('Seeding all data');
@@ -73,7 +50,8 @@ class InstallApp extends Command
                 'person_id' => $person->id,
                 'name' => "{$lastName} {$firstName}",
                 'username' => self::ADMIN_USERNAME,
-                'password' => \Hash::make($password ?? '12345678')
+                'password' => \Hash::make($password ?? '12345678'),
+                'status' => User::STATUS_APPROVED,
             ]);
         $user->assignRole(\App\Services\Permissions\UserRoles::ADMIN);
 
