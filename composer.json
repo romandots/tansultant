@@ -15,7 +15,7 @@
         "doctrine/dbal": "^3.1.0",
         "fideloper/proxy": "4.4.*",
         "fruitcake/laravel-cors": "^2.0",
-        "laravel/framework": "8.60.*",
+        "laravel/framework": "8.61.*",
         "laravel/passport": "10.1.*",
         "laravel/tinker": "2.6.*",
         "nutnet/laravel-sms": "0.10.*",
