@@ -14,13 +14,10 @@ use App\Exceptions\Auth\UnauthorizedException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Services\Login\LoginService;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    use AuthenticatesUsers;
-
     private LoginService $service;
 
     public function __construct(LoginService $service)

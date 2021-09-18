@@ -5,18 +5,14 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\VerifyPhoneNumberRequest;
-use App\Services\UserRegister\UserRegisterService;
 use App\Services\Verify\Exceptions\TextMessageSendingFailed;
 use App\Services\Verify\Exceptions\VerificationCodeAlreadySentRecently;
 use App\Services\Verify\Exceptions\VerificationCodeIsInvalid;
 use App\Services\Verify\Exceptions\VerificationCodeWasSentTooManyTimes;
 use App\Services\Verify\VerificationService;
-use Illuminate\Foundation\Auth\VerifiesEmails;
 
 class VerificationController extends Controller
 {
-    use VerifiesEmails;
-
     private VerificationService $verificationService;
 
     public function __construct(VerificationService $verificationService) {
