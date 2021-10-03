@@ -103,7 +103,10 @@ class StoreScheduleRequest extends FormRequest
         $dto->branch_id = null !== $classroom ? $classroom->branch_id : $branchId;
         $dto->classroom_id = null !== $classroom ? $classroom->id : null;
         $dto->course_id = $this->getCourseId();
-        $dto->weekday = $validated['weekday'];
+        $dto->cycle = $validated['cycle'];
+        $dto->weekday = $validated['weekday'] ?? null;
+        $dto->from_date = isset($validated['from_date']) ? Carbon::parse($validated['from_date']) : null;
+        $dto->to_date = isset($validated['to_date']) ? Carbon::parse($validated['to_date']) : null;
         $dto->starts_at = Carbon::parse($validated['starts_at']);
         $dto->ends_at = Carbon::parse($validated['ends_at']);
         $dto->user = $this->user();

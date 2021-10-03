@@ -18,7 +18,10 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App
  * @property string $id
+ * @property string $cycle
  * @property string $weekday
+ * @property \Illuminate\Support\Carbon $from_date
+ * @property \Illuminate\Support\Carbon $to_date
  * @property \Illuminate\Support\Carbon $starts_at
  * @property \Illuminate\Support\Carbon $ends_at
  * @property string $branch_id
@@ -56,6 +59,18 @@ class Schedule extends Model
     use UsesUuid;
 
     public const TABLE = 'schedules';
+
+    public const CYCLE_ONCE = 'once';
+    public const CYCLE_EVERY_MONTH = 'month';
+    public const CYCLE_EVERY_WEEK = 'week';
+    public const CYCLE_EVERY_DAY = 'day';
+
+    public const CYCLES = [
+        self::CYCLE_ONCE,
+        self::CYCLE_EVERY_MONTH,
+        self::CYCLE_EVERY_WEEK,
+        self::CYCLE_EVERY_DAY,
+    ];
 
     public const MONDAY = 1;
     public const TUESDAY = 2;

@@ -44,8 +44,6 @@ class ScheduleService
      */
     public function create(StoreSchedule $store): Schedule
     {
-        $this->repository->checkSpace($store);
-
         $schedule = $this->repository->create($store);
         $schedule->load('course', 'branch', 'classroom');
 
@@ -60,7 +58,6 @@ class ScheduleService
      */
     public function update(Schedule $schedule, StoreSchedule $update): void
     {
-        $this->repository->checkSpace($update);
         $this->repository->update($schedule, $update);
 
         \event(new CourseScheduleUpdatedEvent($schedule->course, $update->user));
@@ -76,5 +73,10 @@ class ScheduleService
         $this->repository->delete($schedule);
 
         \event(new CourseScheduleUpdatedEvent($schedule->course, $user));
+    }
+
+    public function getRepository(): ScheduleRepository
+    {
+        return $this->repository;
     }
 }

@@ -26,7 +26,7 @@ class ScheduleRepository
 {
     /**
      * @param string $courseId
-     * @return Collection|Schedule[]
+     * @return Collection<Schedule>
      */
     public function getAllByCourseId(string $courseId): Collection
     {
@@ -38,7 +38,7 @@ class ScheduleRepository
     }
 
     /**
-     * @return Collection|Schedule[]
+     * @return Collection<Schedule>
      */
     public function getAll(): Collection
     {
@@ -144,43 +144,6 @@ class ScheduleRepository
     }
 
     /**
-     * @param ScheduleDto $store
-     * @throws Exceptions\ScheduleSlotIsOccupied
-     */
-    public function checkSpace(ScheduleDto $store): void
-    {
-        // We only care about classroom slots
-        if (null === $store->classroom_id) {
-            return;
-        }
-
-        $sql = <<<SQL
-deleted_at IS NULL
-AND weekday = ?
-AND classroom_id = ?
-AND ((starts_at > ? AND starts_at < ?) OR (ends_at > ? AND ends_at < ?))
-SQL;
-
-        $schedules = Schedule::query()
-            ->whereRaw(
-                $sql,
-                [
-                    $store->weekday,
-                    $store->classroom_id,
-                    $store->starts_at,
-                    $store->ends_at,
-                    $store->starts_at,
-                    $store->ends_at
-                ]
-            )
-            ->get();
-
-        if ($schedules->count()) {
-            throw new Exceptions\ScheduleSlotIsOccupied($schedules->toArray());
-        }
-    }
-
-    /**
      * Get schedules for
      *  courses in NOT disabled status
      *  for selected date
@@ -189,7 +152,7 @@ SQL;
      *  branch_id (optional)
      * @param ScheduleOnDate $dto
      * @param string[]|null $relations
-     * @return Collection|Schedule[]
+     * @return Collection<Schedule>
      */
     public function getSchedulesForDateWithRelations(ScheduleOnDate $dto, ?array $relations = []): Collection
     {

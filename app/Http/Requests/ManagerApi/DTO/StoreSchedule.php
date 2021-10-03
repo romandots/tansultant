@@ -18,34 +18,22 @@ use App\Models\User;
  */
 class StoreSchedule
 {
-    /**
-     * @var string|null
-     */
     public ?string $branch_id;
 
-    /**
-     * @var string|null
-     */
     public ?string $classroom_id;
 
-    /**
-     * @var string|null
-     */
     public ?string $course_id;
 
-    /**
-     * @var string
-     */
-    public string $weekday;
+    public string $cycle;
 
-    /**
-     * @var \Carbon\Carbon|null
-     */
+    public ?string $weekday;
+
+    public ?\Carbon\Carbon $from_date;
+
+    public ?\Carbon\Carbon $to_date;
+
     public ?\Carbon\Carbon $starts_at;
 
-    /**
-     * @var \Carbon\Carbon|null
-     */
     public ?\Carbon\Carbon $ends_at;
 
     public User $user;

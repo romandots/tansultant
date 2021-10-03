@@ -27,7 +27,10 @@ class CreateSchedulesTable extends Migration
             'schedules',
             static function (Blueprint $table) {
                 $table->uuid('id')->primary();
-                $table->text('weekday')->index();
+                $table->text('cycle')->index();
+                $table->text('weekday')->index()->nullable();
+                $table->date('from_date')->index()->nullable();
+                $table->date('to_date')->index()->nullable();
                 $table->time('starts_at')->index();
                 $table->time('ends_at')->index();
                 $table->uuid('branch_id')->nullable()->index();
@@ -44,6 +47,12 @@ class CreateSchedulesTable extends Migration
             }
         );
 
+        \convertPostgresColumnTextToEnum('schedules', 'cycle', [
+            'once',
+            'month',
+            'week',
+            'day',
+        ]);
         \convertPostgresColumnTextToEnum('schedules', 'weekday', [1, 2, 3, 4, 5, 6, 7,]);
     }
 
@@ -53,6 +62,7 @@ class CreateSchedulesTable extends Migration
      */
     public function down(): void
     {
+        \DB::unprepared('DROP TYPE schedules_cycle CASCADE');
         \DB::unprepared('DROP TYPE schedules_weekday CASCADE');
         Schema::dropIfExists('schedules');
     }
