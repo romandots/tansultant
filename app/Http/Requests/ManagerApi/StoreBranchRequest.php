@@ -141,7 +141,7 @@ class StoreBranchRequest extends FormRequest
         return $repository->getNextNumberValue();
     }
 
-    protected function getId(): string
+    protected function getId(): ?string
     {
         return $this->route()->parameter('id');
     }
