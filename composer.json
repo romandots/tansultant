@@ -1,10 +1,10 @@
 {
-    "name": "laravel/laravel",
+    "name": "romandots/tansultant",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Tansultant CRM",
     "keywords": [
-        "framework",
-        "laravel"
+        "crm",
+        "tansultant"
     ],
     "license": "MIT",
     "require": {
