@@ -30,7 +30,7 @@ class UserRepository
     public function findByUsername(string $username): User
     {
         return User::query()
-            ->where('username', $username)
+            ->where('username', 'ilike', $username)
             ->firstOrFail();
     }
 

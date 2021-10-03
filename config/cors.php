@@ -14,8 +14,8 @@ return [
     | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     |
     */
-    'paths' => ['/user',],
-    'allowed_methods' => ['*'],
+    'paths' => ['*'],
+    'allowed_methods' => ['GET', 'POST', 'PUT', 'OPTIONS', 'PATCH', 'DELETE'],
     'allowed_origins' => ['*'],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
