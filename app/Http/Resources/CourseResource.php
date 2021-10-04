@@ -58,15 +58,15 @@ class CourseResource extends JsonResource
         $to = $ageRestrictions['to'] ?? null;
 
         if ($from && $to) {
-            return \trans('course.age_restrictions.from_to', $from, $to);
+            return \trans('course.age_restrictions.from_to', ['from' => $from, 'to' => $to]);
         }
 
         if ($from) {
-            return \trans('course.age_restrictions.from', $from);
+            return \trans('course.age_restrictions.from', ['from' => $from]);
         }
 
         if ($to) {
-            return \trans('course.age_restrictions.to', $to);
+            return \trans('course.age_restrictions.to', ['to' => $to]);
         }
 
         return \trans('course.age_restrictions.any');
