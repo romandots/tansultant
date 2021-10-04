@@ -178,7 +178,7 @@ class CourseRepository
             'from' => $dto->age_restrictions['from'] ?? null,
             'to' => $dto->age_restrictions['to'] ?? null,
         ];
-        $course->instructor_id = $dto->instructor->id;
+        $course->instructor_id = $dto->instructor?->id;
         $course->starts_at = $dto->starts_at;
         $course->ends_at = $dto->ends_at;
     }
