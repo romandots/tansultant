@@ -15,6 +15,10 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('ping', function () {
+    return 'OK';
+});
+
 Route::group(['prefix' => 'branches'], static function () {
     Route::get('/', 'BranchController@index');
     Route::get('{id}', 'BranchController@show');
