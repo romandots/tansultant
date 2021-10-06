@@ -11,7 +11,7 @@ declare(strict_types=1);
 return [
     'status' => [
         'active' => 'Работает',
-        'pending' => 'Идёт набор',
+        'pending' => 'Идёт предварительный набор',
         'disabled' => 'Закрыт',
     ],
     'age_restrictions' => [
