@@ -138,6 +138,15 @@ Route::group(['prefix' => 'courses'], static function () {
 Route::group(['prefix' => 'schedules'], static function () {
     Route::get('date', 'ScheduleController@onDate')
         ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::READ);
+    Route::post('/', 'ScheduleController@store')
+        ->middleware('permission:' .
+            SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::CREATE);
+    Route::put('{id}', 'ScheduleController@update')
+        ->middleware('permission:' .
+            SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::UPDATE);
+    Route::delete('{id}', 'ScheduleController@destroy')
+        ->middleware('permission:' .
+            SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::DELETE);
 });
 
 // LESSONS

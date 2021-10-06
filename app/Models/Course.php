@@ -12,7 +12,9 @@ namespace App\Models;
 
 use App\Models\Traits\UsesUuid;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Tags\HasTags;
 
@@ -36,6 +38,7 @@ use Spatie\Tags\HasTags;
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Instructor|null $instructor
+ * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Collection<Schedule>|null $schedules
  * @package App\Models
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Course newModelQuery()
@@ -93,6 +96,11 @@ class Course extends Model
     public $timestamps = [
         'deleted_at',
     ];
+
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class)->whereNull('deleted_at');
+    }
 
     /**
      * Check if course is active

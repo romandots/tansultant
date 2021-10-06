@@ -41,14 +41,14 @@ class ScheduleController extends Controller
         return new ScheduleResource($schedule);
     }
 
-    public function update(StoreScheduleRequest $request, string $courseId, string $scheduleId): void
+    public function update(StoreScheduleRequest $request, string $scheduleId): void
     {
-        $this->schedules->findAndUpdate($scheduleId, $courseId, $request->getDto());
+        $this->schedules->findAndUpdate($scheduleId, $request->getDto());
     }
 
-    public function destroy(Request $request, string $courseId, string $scheduleId): void
+    public function destroy(Request $request, string $scheduleId): void
     {
-        $this->schedules->findAndDelete($scheduleId, $courseId, $request->user());
+        $this->schedules->findAndDelete($scheduleId, $request->user());
     }
 
     public function onDate(ScheduleOnDateRequest $request): AnonymousResourceCollection

@@ -12,6 +12,7 @@ namespace App\Http\Requests\ManagerApi;
 
 use App\Models\Branch;
 use App\Models\Classroom;
+use App\Models\Course;
 use App\Models\Schedule;
 use App\Repository\ClassroomRepository;
 use Carbon\Carbon;
@@ -37,28 +38,31 @@ class StoreScheduleRequest extends FormRequest
         $this->classroomRepository = $classroomRepository;
     }
 
-    private function getCourseId(): string
-    {
-        return (string)$this->route()->parameter('courseId');
-    }
-
     /**
      * @return array
      */
     public function rules(): array
     {
         return [
-            'branch_id' => [
-                'nullable',
+            'course_id' => [
+                'required',
                 'string',
                 'uuid',
-                Rule::exists(Branch::TABLE, 'id'),
+                Rule::exists(Course::TABLE, 'id'),
             ],
             'classroom_id' => [
-                'nullable',
+                'required',
                 'string',
                 'uuid',
                 Rule::exists(Classroom::TABLE, 'id'),
+            ],
+            'from_date' => [
+                'required_unless:cycle,' . Schedule::CYCLE_EVERY_WEEK,
+                'regex:/\d{4}-\d{1,2}-\d{1,2}$/i',
+            ],
+            'to_date' => [
+                'nullable',
+                'regex:/\d{4}-\d{1,2}-\d{1,2}$/i',
             ],
             'starts_at' => [
                 'required',
@@ -68,9 +72,15 @@ class StoreScheduleRequest extends FormRequest
                 'required',
                 'regex:/\d{1,2}:\d{1,2}(:\d{1,2})?.+$/i',
             ],
-            'weekday' => [
+            'cycle' => [
                 'required',
                 'string',
+                Rule::in(Schedule::CYCLES),
+            ],
+            'weekday' => [
+                'nullable',
+                'required_if:cycle,' . Schedule::CYCLE_EVERY_WEEK,
+                'int',
                 Rule::in(Schedule::WEEKDAYS),
             ],
         ];
@@ -102,7 +112,7 @@ class StoreScheduleRequest extends FormRequest
         $dto = new DTO\StoreSchedule;
         $dto->branch_id = null !== $classroom ? $classroom->branch_id : $branchId;
         $dto->classroom_id = null !== $classroom ? $classroom->id : null;
-        $dto->course_id = $this->getCourseId();
+        $dto->course_id = $validated['course_id'];
         $dto->cycle = $validated['cycle'];
         $dto->weekday = $validated['weekday'] ?? null;
         $dto->from_date = isset($validated['from_date']) ? Carbon::parse($validated['from_date']) : null;

@@ -63,14 +63,13 @@ class ScheduleRepository
 
     /**
      * @param string $scheduleId
-     * @param string $courseId
      * @return Schedule
      */
-    public function findByIdAndCourseId(string $scheduleId, string $courseId): Schedule
+    public function findById(string $scheduleId): Schedule
     {
         return Schedule::query()
             ->whereNull('deleted_at')
-            ->where('course_id', $courseId)
+//            ->where('course_id', $courseId)
             ->where('id', $scheduleId)
             ->firstOrFail();
     }
@@ -138,7 +137,10 @@ class ScheduleRepository
         $schedule->branch_id = $dto->branch_id;
         $schedule->classroom_id = $dto->classroom_id;
         $schedule->course_id = $dto->course_id;
+        $schedule->cycle = $dto->cycle;
         $schedule->weekday = $dto->weekday;
+        $schedule->from_date = $dto->from_date;
+        $schedule->to_date = $dto->to_date;
         $schedule->starts_at = $dto->starts_at;
         $schedule->ends_at = $dto->ends_at;
     }

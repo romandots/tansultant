@@ -36,9 +36,9 @@ class ScheduleFacade
         return $this->service->getRepository();
     }
 
-    public function findAndUpdate(string $scheduleId, string $courseId, StoreSchedule $storeSchedule): void
+    public function findAndUpdate(string $scheduleId, StoreSchedule $storeSchedule): void
     {
-        $schedule = $this->getRepository()->findByIdAndCourseId($scheduleId, $courseId);
+        $schedule = $this->getRepository()->findById($scheduleId);
         $this->service->update($schedule, $storeSchedule);
     }
 
@@ -48,9 +48,9 @@ class ScheduleFacade
      * @param User $user
      * @throws \Exception
      */
-    public function findAndDelete(string $scheduleId, string $courseId, User $user): void
+    public function findAndDelete(string $scheduleId, User $user): void
     {
-        $schedule = $this->getRepository()->findByIdAndCourseId($scheduleId, $courseId);
+        $schedule = $this->getRepository()->findById($scheduleId);
         $this->service->delete($schedule, $user);
     }
 
