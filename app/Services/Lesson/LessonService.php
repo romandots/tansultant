@@ -11,7 +11,9 @@ declare(strict_types=1);
 namespace App\Services\Lesson;
 
 use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
+use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\Schedule;
 use App\Repository\CourseRepository;
 use App\Repository\LessonRepository;
 use App\Services\Intent\IntentService;
@@ -27,17 +29,17 @@ class LessonService
     /**
      * @var LessonRepository
      */
-    private $repository;
+    private LessonRepository $repository;
 
     /**
      * @var CourseRepository
      */
-    private $courseRepository;
+    private CourseRepository $courseRepository;
 
     /**
      * @var IntentService
      */
-    private $intentService;
+    private IntentService $intentService;
 
     /**
      * @var VisitService
@@ -63,6 +65,37 @@ class LessonService
         $this->visitService = $visitService;
     }
 
+    public function getRepository(): LessonRepository
+    {
+        return $this->repository;
+    }
+
+    private function getDateAndTime(Carbon $date, Carbon $time): Carbon
+    {
+        return $date->clone()
+            ->setHour($time->hour)
+            ->setMinute($time->minute);
+    }
+
+    public function createFromScheduleOnDate(Schedule $schedule, Carbon $date): Lesson
+    {
+        $startTime = $this->getDateAndTime($date, Carbon::parse($schedule->starts_at));
+        $endTime =  $this->getDateAndTime($date, Carbon::parse($schedule->ends_at));
+
+        $dto = new LessonDto();
+        $dto->schedule_id = $schedule->id;
+        $dto->instructor_id = $schedule->course->instructor_id;
+        $dto->course_id = $schedule->course_id;
+        $dto->classroom_id = $schedule->classroom_id;
+        $dto->branch_id = $schedule->branch_id;
+        $dto->starts_at = $startTime;
+        $dto->ends_at = $endTime;
+        $dto->type = Lesson::TYPE_LESSON;
+        $dto->name = $this->generateCourseLessonName($schedule->course);
+
+        return $this->repository->create($dto);
+    }
+
     /**
      * @param LessonDto $dto
      * @return Lesson
@@ -70,23 +103,17 @@ class LessonService
      */
     public function createFromDto(LessonDto $dto): Lesson
     {
-        switch ($dto->type) {
-            case Lesson::TYPE_LESSON:
-                $course = $this->courseRepository->find($dto->course_id);
-                $name = \sprintf(
-                    '%s %s',
-                    \trans('lesson.' . Lesson::TYPE_LESSON),
-                    $course->name
-                );
-                if (null === $dto->instructor_id) {
-                    $dto->instructor_id = $course->instructor_id;
-                }
-                break;
-            default:
-                $name = \trans('lesson.' . Lesson::TYPE_LESSON);
+        if ($dto->type === Lesson::TYPE_LESSON) {
+            $course = $this->courseRepository->find($dto->course_id);
+            $dto->name = $this->generateCourseLessonName($course);
+            if (null === $dto->instructor_id) {
+                $dto->instructor_id = $course->instructor_id;
+            }
+        } else {
+            $dto->name = \trans('lesson.' . Lesson::TYPE_LESSON);
         }
 
-        return $this->repository->create($name, $dto);
+        return $this->repository->create($dto);
     }
 
     /**
@@ -165,5 +192,24 @@ class LessonService
         }
 
         $this->repository->book($lesson);
+    }
+
+    private function generateCourseLessonName(Course $course): string
+    {
+        return \sprintf(
+            '%s %s',
+            \trans('lesson.' . Lesson::TYPE_LESSON),
+            $course->name
+        );
+    }
+
+    public function checkIfScheduleLessonExist(Schedule $schedule, Carbon $date): bool
+    {
+        $startTime = $this->getDateAndTime($date, Carbon::parse($schedule->starts_at));
+        $endTime =  $this->getDateAndTime($date, Carbon::parse($schedule->ends_at));
+
+        return $this->repository->checkIfScheduleLessonExist(
+            $schedule->id, $startTime->toDateTimeString(), $endTime->toDateTimeString()
+        );
     }
 }

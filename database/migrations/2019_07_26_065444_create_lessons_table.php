@@ -72,6 +72,7 @@ class CreateLessonsTable extends Migration
             'passed',
             'canceled',
             'closed',
+            'checked_out',
         ]);
     }
 

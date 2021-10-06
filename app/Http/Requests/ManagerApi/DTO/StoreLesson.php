@@ -16,38 +16,13 @@ namespace App\Http\Requests\ManagerApi\DTO;
  */
 class StoreLesson
 {
-    /**
-     * @var string|null
-     */
-    public $course_id;
-
-    /**
-     * @var string|null
-     */
-    public $instructor_id;
-
-    /**
-     * @var string
-     */
-    public $branch_id;
-
-    /**
-     * @var string
-     */
-    public $classroom_id;
-
-    /**
-     * @var string
-     */
-    public $type;
-
-    /**
-     * @var \Carbon\Carbon
-     */
-    public $starts_at;
-
-    /**
-     * @var \Carbon\Carbon
-     */
-    public $ends_at;
+    public string $name;
+    public ?string $course_id;
+    public ?string $instructor_id;
+    public string $branch_id;
+    public string $classroom_id;
+    public ?string $schedule_id;
+    public string $type;
+    public \Carbon\Carbon $starts_at;
+    public \Carbon\Carbon $ends_at;
 }

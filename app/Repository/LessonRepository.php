@@ -13,6 +13,7 @@ namespace App\Repository;
 use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
 use App\Http\Requests\ManagerApi\DTO\GetLessonsOnDate;
 use App\Models\Lesson;
+use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -33,16 +34,17 @@ class LessonRepository
     }
 
     /**
-     * @param $name
      * @param LessonDto $dto
      * @return Lesson
      * @throws \Exception
      */
-    public function create(string $name, LessonDto $dto): Lesson
+    public function create(LessonDto $dto): Lesson
     {
         $lesson = new Lesson;
         $lesson->id = \uuid();
-        $lesson->name = $name;
+        $lesson->name = $dto->name;
+        $lesson->schedule_id = $dto->schedule_id;
+        $lesson->course_id = $dto->course_id;
         $lesson->status = Lesson::STATUS_BOOKED;
         $this->fill($lesson, $dto);
         $lesson->save();
@@ -78,7 +80,6 @@ class LessonRepository
     {
         $lesson->branch_id = $dto->branch_id;
         $lesson->classroom_id = $dto->classroom_id;
-        $lesson->course_id = $dto->course_id;
         $lesson->instructor_id = $dto->instructor_id;
         $lesson->starts_at = $dto->starts_at;
         $lesson->ends_at = $dto->ends_at;
@@ -159,5 +160,14 @@ class LessonRepository
         $lesson->status = Lesson::STATUS_BOOKED;
         $lesson->canceled_at = null;
         $lesson->save();
+    }
+
+    public function checkIfScheduleLessonExist(string $scheduleId, string $startTimeStamp, string $endTimeStamp): bool
+    {
+        return Lesson::query()
+            ->where('schedule_id', $scheduleId)
+            ->where('starts_at', $startTimeStamp)
+            ->where('ends_at', $endTimeStamp)
+            ->exists();
     }
 }
