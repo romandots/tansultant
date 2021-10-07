@@ -19,20 +19,20 @@ class LessonsFiltered
     /**
      * @var \Carbon\Carbon
      */
-    public $date;
+    public \Carbon\Carbon $date;
 
     /**
      * @var string|null
      */
-    public $branch_id;
+    public ?string $branch_id;
 
     /**
      * @var string|null
      */
-    public $classroom_id;
+    public ?string $classroom_id;
 
     /**
      * @var string|null
      */
-    public $course_id;
+    public ?string $course_id;
 }

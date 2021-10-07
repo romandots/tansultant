@@ -15,12 +15,18 @@ class LessonFacade
     protected LessonRepository $repository;
     protected LessonService $service;
     protected LessonGenerator $generator;
+    protected LessonManager $manager;
 
-    public function __construct(LessonRepository $repository, LessonService $service, LessonGenerator $generator)
-    {
+    public function __construct(
+        LessonRepository $repository,
+        LessonService $service,
+        LessonGenerator $generator,
+        LessonManager $manager
+    ) {
         $this->repository = $repository;
         $this->service = $service;
         $this->generator = $generator;
+        $this->manager = $manager;
     }
 
     public function find(string $id): Lesson
@@ -65,8 +71,7 @@ class LessonFacade
      */
     public function getLessonsFiltered(LessonsFiltered $lessonsFiltered): Collection
     {
-        return $this->repository
-            ->getLessonsFiltered($lessonsFiltered, ['instructor', 'course', 'controller']);
+        return $this->service->getLessonsFiltered($lessonsFiltered);
     }
 
     public function getLessonsOnDate(LessonsOnDate $lessonsOnDate): Collection

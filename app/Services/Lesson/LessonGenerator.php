@@ -19,6 +19,11 @@ class LessonGenerator extends BaseService
         $this->scheduleRepository = $repository;
     }
 
+    protected function getLoggerPrefix(): string
+    {
+        return __CLASS__;
+    }
+
     /**
      * @param Collection<Schedule> $schedules
      * @param Carbon $date
@@ -40,11 +45,6 @@ class LessonGenerator extends BaseService
         if ($count > 0) {
             $this->debug("{$count} lessons generated", $lessonsIds);
         }
-    }
-
-    protected function getLoggerPrefix(): string
-    {
-        return __CLASS__;
     }
 
     public function generateCourseLessonsOnDate(Carbon $date, string $courseId): void

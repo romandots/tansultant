@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Services\Lesson;
 
+use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
 use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
 use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
 use App\Jobs\GenerateLessonsOnDateJob;
@@ -29,25 +30,8 @@ use Illuminate\Support\Collection;
  */
 class LessonService
 {
-    /**
-     * @var LessonRepository
-     */
     private LessonRepository $repository;
-
-    /**
-     * @var CourseRepository
-     */
     private CourseRepository $courseRepository;
-
-    /**
-     * @var IntentService
-     */
-    private IntentService $intentService;
-
-    /**
-     * @var VisitService
-     */
-    private $visitService;
 
     /**
      * LessonController constructor.
@@ -58,14 +42,10 @@ class LessonService
      */
     public function __construct(
         LessonRepository $repository,
-        CourseRepository $courseRepository,
-        IntentService $intentService,
-        VisitService $visitService
+        CourseRepository $courseRepository
     ) {
         $this->repository = $repository;
         $this->courseRepository = $courseRepository;
-        $this->intentService = $intentService;
-        $this->visitService = $visitService;
     }
 
     public function getRepository(): LessonRepository
@@ -119,84 +99,6 @@ class LessonService
         return $this->repository->create($dto);
     }
 
-    /**
-     * Close lesson:
-     * - Update intents
-     * - Change status
-     * @param Lesson $lesson
-     * @throws Exceptions\LessonAlreadyClosedException
-     * @throws Exceptions\LessonNotPassedYetException
-     * @throws Exceptions\LessonNotCompletelyPaidException
-     */
-    public function close(Lesson $lesson): void
-    {
-        $now = Carbon::now();
-        if ($lesson->starts_at->gt($now) || $lesson->ends_at->gt($now)) {
-            throw new Exceptions\LessonNotPassedYetException();
-        }
-
-        if ($lesson->status === Lesson::STATUS_CLOSED) {
-            throw new Exceptions\LessonAlreadyClosedException();
-        }
-
-        if (false === $this->visitService->visitsArePaid($lesson->visits)) {
-            throw new Exceptions\LessonNotCompletelyPaidException();
-        }
-
-        $this->intentService->updateIntents($lesson->visits, $lesson->intents);
-
-        $this->repository->close($lesson);
-    }
-
-    /**
-     * @param Lesson $lesson
-     * @throws Exceptions\LessonNotClosedException
-     */
-    public function open(Lesson $lesson): void
-    {
-        if ($lesson->status !== Lesson::STATUS_CLOSED) {
-            throw new Exceptions\LessonNotClosedException();
-        }
-
-        $this->repository->open($lesson);
-    }
-
-    /**
-     * @param Lesson $lesson
-     * @throws Exceptions\LessonAlreadyCanceledException
-     * @throws Exceptions\LessonAlreadyClosedException
-     * @throws Exceptions\LessonHasVisitsException
-     */
-    public function cancel(Lesson $lesson): void
-    {
-        if ($lesson->status === Lesson::STATUS_CANCELED) {
-            throw new Exceptions\LessonAlreadyCanceledException();
-        }
-
-        if ($lesson->status === Lesson::STATUS_CLOSED) {
-            throw new Exceptions\LessonAlreadyClosedException();
-        }
-
-        if (0 !== $lesson->visits->count()) {
-            throw new Exceptions\LessonHasVisitsException();
-        }
-
-        $this->repository->cancel($lesson);
-    }
-
-    /**
-     * @param Lesson $lesson
-     * @throws Exceptions\LessonNotCanceledYetException
-     */
-    public function book(Lesson $lesson): void
-    {
-        if ($lesson->status !== Lesson::STATUS_CANCELED) {
-            throw new Exceptions\LessonNotCanceledYetException();
-        }
-
-        $this->repository->book($lesson);
-    }
-
     private function generateCourseLessonName(Course $course): string
     {
         return \sprintf(
@@ -226,5 +128,17 @@ class LessonService
         dispatch($job);
 
         return $this->repository->getLessonsOnDate($lessonsOnDate->date);
+    }
+
+    /**
+     * @param LessonsFiltered $lessonsFiltered
+     * @return Collection<Lesson>
+     */
+    public function getLessonsFiltered(LessonsFiltered $lessonsFiltered): Collection
+    {
+        $job = new GenerateLessonsOnDateJob($lessonsFiltered->date);
+        dispatch($job);
+
+        return $this->repository->getLessonsFiltered($lessonsFiltered, ['instructor', 'course', 'controller']);
     }
 }
