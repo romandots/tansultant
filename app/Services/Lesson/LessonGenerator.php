@@ -2,9 +2,11 @@
 
 namespace App\Services\Lesson;
 
+use App\Models\Schedule;
 use App\Repository\ScheduleRepository;
 use App\Services\BaseService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 class LessonGenerator extends BaseService
 {
@@ -17,15 +19,12 @@ class LessonGenerator extends BaseService
         $this->scheduleRepository = $repository;
     }
 
-    protected function getLoggerPrefix(): string
+    /**
+     * @param Collection<Schedule> $schedules
+     * @param Carbon $date
+     */
+    public function generateLessonsBySchedules(Collection $schedules, Carbon $date): void
     {
-        return __CLASS__;
-    }
-
-    public function generateCourseLessonsOnDate(Carbon $date, string $courseId): void
-    {
-        $this->debug("Generating lessons for course #{$courseId} on date {$date->format('Y-m-d')}");
-        $schedules = $this->scheduleRepository->getSchedulesForCourseOnDate($courseId, $date);
         $lessonsIds = [];
         foreach ($schedules as $schedule) {
             if ($this->service->checkIfScheduleLessonExist($schedule, $date)) {
@@ -41,5 +40,24 @@ class LessonGenerator extends BaseService
         if ($count > 0) {
             $this->debug("{$count} lessons generated", $lessonsIds);
         }
+    }
+
+    protected function getLoggerPrefix(): string
+    {
+        return __CLASS__;
+    }
+
+    public function generateCourseLessonsOnDate(Carbon $date, string $courseId): void
+    {
+        $this->debug("Generating lessons for course #{$courseId} on date {$date->format('Y-m-d')}");
+        $schedules = $this->scheduleRepository->getSchedulesForCourseOnDate($courseId, $date);
+        $this->generateLessonsBySchedules($schedules, $date);
+    }
+
+    public function generateLessonsOnDate(Carbon $date): void
+    {
+        $this->debug("Generating lessons on date {$date->format('Y-m-d')}");
+        $schedules = $this->scheduleRepository->getSchedulesOnDate($date);
+        $this->generateLessonsBySchedules($schedules, $date);
     }
 }

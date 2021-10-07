@@ -11,10 +11,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Http\Requests\ManagerApi\ChangeLessonInstructorRequest;
-use App\Http\Requests\ManagerApi\LessonsOnDateRequest;
+use App\Http\Requests\ManagerApi\LessonsFilteredRequest;
 use App\Http\Requests\ManagerApi\StoreLessonRequest;
 use App\Http\Requests\ManagerApi\StoreLessonRequest as UpdateLessonRequest;
-use App\Http\Resources\LessonResource;
+use App\Http\Resources\PublicApi\LessonResource;
 use App\Repository\LessonRepository;
 use App\Services\Lesson\LessonFacade;
 use App\Services\Lesson\LessonService;
@@ -68,9 +68,9 @@ class LessonController
         $this->lessons->findAndDelete($id);
     }
 
-    public function onDate(LessonsOnDateRequest $request): AnonymousResourceCollection
+    public function search(LessonsFilteredRequest $request): AnonymousResourceCollection
     {
-        $lessons = $this->lessons->getLessonsForDate($request->getDto());
+        $lessons = $this->lessons->getLessonsFiltered($request->getDto());
         return LessonResource::collection($lessons);
     }
 

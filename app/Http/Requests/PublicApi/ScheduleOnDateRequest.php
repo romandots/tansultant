@@ -57,9 +57,9 @@ class ScheduleOnDateRequest extends FormRequest
     }
 
     /**
-     * @return DTO\ScheduleOnDate
+     * @return \App\Http\Requests\ManagerApi\DTO\ScheduleOnDate
      */
-    public function getDto(): DTO\ScheduleOnDate
+    public function getDto(): \App\Http\Requests\ManagerApi\DTO\ScheduleOnDate
     {
         $validated = $this->validated();
 
@@ -74,7 +74,7 @@ class ScheduleOnDateRequest extends FormRequest
             throw new \LogicException('Weekday is unusual', ['weekday' => $weekday]);
         }
 
-        $dto = new DTO\ScheduleOnDate;
+        $dto = new \App\Http\Requests\ManagerApi\DTO\ScheduleOnDate;
         $dto->date = $date;
         $dto->weekday = $weekday;
         $dto->branch_id = $validated['branch_id'] ?? null;

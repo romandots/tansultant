@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
-use App\Http\Requests\ManagerApi\DTO\GetLessonsOnDate;
+use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
 use App\Models\Lesson;
 use App\Models\Schedule;
 use Carbon\Carbon;
@@ -96,10 +96,27 @@ class LessonRepository
     }
 
     /**
-     * @param GetLessonsOnDate $dto
-     * @return Collection|Lesson[]
+     * @param Carbon $date
+     * @param array $relations
+     * @return Collection<Lesson>
      */
-    public function getLessonsForDate(GetLessonsOnDate $dto): Collection
+    public function getLessonsOnDate(Carbon $date, array $relations = []): Collection
+    {
+        return Lesson::query()
+            ->whereNull('deleted_at')
+            ->whereRaw('DATE(starts_at) = ?', [$date->toDateString()])
+            ->distinct()
+            ->orderBy('starts_at')
+            ->get()
+            ->load($relations);
+    }
+
+    /**
+     * @param LessonsFiltered $dto
+     * @param array $relations
+     * @return Collection<Lesson>
+     */
+    public function getLessonsFiltered(LessonsFiltered $dto, array $relations = []): Collection
     {
         $query = Lesson::query()
             ->whereRaw('DATE(starts_at) = ?', [$dto->date]);
@@ -119,7 +136,8 @@ class LessonRepository
         return $query
             ->distinct()
             ->orderBy('starts_at')
-            ->get();
+            ->get()
+            ->load($relations);
     }
 
     /**

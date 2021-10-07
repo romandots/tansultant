@@ -11,6 +11,8 @@ declare(strict_types=1);
 namespace App\Services\Lesson;
 
 use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
+use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
+use App\Jobs\GenerateLessonsOnDateJob;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Schedule;
@@ -19,6 +21,7 @@ use App\Repository\LessonRepository;
 use App\Services\Intent\IntentService;
 use App\Services\Visit\VisitService;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * Class LessonService
@@ -211,5 +214,17 @@ class LessonService
         return $this->repository->checkIfScheduleLessonExist(
             $schedule->id, $startTime->toDateTimeString(), $endTime->toDateTimeString()
         );
+    }
+
+    /**
+     * @param LessonsOnDate $lessonsOnDate
+     * @return Collection<Lesson>
+     */
+    public function getLessonsOnDate(LessonsOnDate $lessonsOnDate): Collection
+    {
+        $job = new GenerateLessonsOnDateJob($lessonsOnDate->date);
+        dispatch($job);
+
+        return $this->repository->getLessonsOnDate($lessonsOnDate->date);
     }
 }

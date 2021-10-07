@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Http\Requests\ManagerApi\DTO\StoreSchedule as ScheduleDto;
-use App\Http\Requests\PublicApi\DTO\ScheduleOnDate;
+use App\Http\Requests\ManagerApi\DTO\ScheduleOnDate;
 use App\Models\Course;
 use App\Models\Schedule;
 use Carbon\Carbon;
@@ -223,9 +223,25 @@ class ScheduleRepository
      */
     public function getSchedulesForCourseOnDate(string $courseId, Carbon $date): Collection
     {
+        return $this->getQueryForDate($date)
+            ->where('course_id', $courseId)
+            ->get();
+    }
+
+    /**
+     * @param Carbon $date
+     * @return Collection<Schedule>
+     */
+    public function getSchedulesOnDate(Carbon $date): Collection
+    {
+        return $this->getQueryForDate($date)
+            ->get();
+    }
+
+    private function getQueryForDate($date): Builder
+    {
         return Schedule::query()
             ->whereNull('deleted_at')
-            ->where('course_id', $courseId)
             ->where(function (Builder $query) use ($date) {
                 $query
                     ->where('from_date', '<=', $date->toDateString())
@@ -257,7 +273,6 @@ class ScheduleRepository
                         $query
                             ->where('cycle', Schedule::CYCLE_EVERY_DAY);
                     });
-            })
-            ->get();
+            });
     }
 }

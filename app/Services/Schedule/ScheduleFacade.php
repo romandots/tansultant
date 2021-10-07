@@ -3,7 +3,7 @@
 namespace App\Services\Schedule;
 
 use App\Http\Requests\ManagerApi\DTO\StoreSchedule;
-use App\Http\Requests\PublicApi\DTO\ScheduleOnDate;
+use App\Http\Requests\ManagerApi\DTO\ScheduleOnDate;
 use App\Models\Schedule;
 use App\Models\User;
 use App\Repository\ScheduleRepository;

@@ -10,17 +10,17 @@ declare(strict_types=1);
 
 namespace App\Services\Course;
 
-use App\Events\CourseCreatedEvent;
-use App\Events\CourseDeletedEvent;
-use App\Events\CourseDisabledEvent;
-use App\Events\CourseEnabledEvent;
-use App\Events\CourseUpdatedEvent;
+use App\Events\Course\CourseCreatedEvent;
+use App\Events\Course\CourseDeletedEvent;
+use App\Events\Course\CourseDisabledEvent;
+use App\Events\Course\CourseEnabledEvent;
+use App\Events\Course\CourseUpdatedEvent;
 use App\Http\Requests\ManagerApi\DTO\StoreCourse;
 use App\Models\Course;
 use App\Models\Genre;
+use App\Models\User;
 use App\Repository\CourseRepository;
 use App\Services\LogRecord\LogRecordService;
-use Illuminate\Foundation\Auth\User;
 
 /**
  * Class CourseService
@@ -53,7 +53,7 @@ class CourseService
 
         $this->actions->logCreate($user, $course);
 
-        \event(new CourseCreatedEvent($course));
+        \event(new CourseCreatedEvent($course, $user));
 
         return $course;
     }
@@ -74,7 +74,7 @@ class CourseService
 
         $this->actions->logUpdate($user, $course, $oldCourse);
 
-        \event(new CourseUpdatedEvent($course));
+        \event(new CourseUpdatedEvent($course, $user));
     }
 
     /**
@@ -96,7 +96,7 @@ class CourseService
 
          $this->actions->logEnable($user, $course, $oldCourse);
 
-        \event(new CourseEnabledEvent($course));
+        \event(new CourseEnabledEvent($course, $user));
     }
 
     /**
@@ -118,7 +118,7 @@ class CourseService
 
         $this->actions->logDisable($user, $course, $oldCourse);
 
-        \event(new CourseDisabledEvent($course));
+        \event(new CourseDisabledEvent($course, $user));
     }
 
     /**
@@ -134,6 +134,6 @@ class CourseService
 
         $this->actions->logDelete($user, $oldCourse);
 
-        \event(new CourseDeletedEvent($course));
+        \event(new CourseDeletedEvent($course, $user));
     }
 }

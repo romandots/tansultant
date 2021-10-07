@@ -1,21 +1,26 @@
 <?php
 /**
- * File: ScheduleOnDate.php
+ * File: LessonsOnDate.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-12-4
+ * Date: 2019-07-26
  * Copyright (c) 2019
  */
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\PublicApi\DTO;
+namespace App\Http\Requests\ManagerApi\DTO;
 
 /**
- * Class ScheduleOnDate
+ * Class LessonsOnDate
  * @package App\Http\Requests\ManagerApi\DTO
  */
-class ScheduleOnDate
+class LessonsFiltered
 {
+    /**
+     * @var \Carbon\Carbon
+     */
+    public $date;
+
     /**
      * @var string|null
      */
@@ -30,14 +35,4 @@ class ScheduleOnDate
      * @var string|null
      */
     public $course_id;
-
-    /**
-     * @var \Carbon\Carbon
-     */
-    public $date;
-
-    /**
-     * @var \Carbon\Carbon
-     */
-    public $weekday;
 }

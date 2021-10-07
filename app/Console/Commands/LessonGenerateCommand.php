@@ -14,8 +14,15 @@ class LessonGenerateCommand extends LessonCommand
     {
         $date = Carbon::parse($this->argument('date'));
         $courseId = $this->argument('courseId');
-        $this->info("Generating lessons for course #{$courseId} on {$date->toFormattedDateString()}");
-        $this->lessons->generateCourseLessonsOnDate($date, $courseId);
+
+        if ($courseId) {
+            $this->info("Generating lessons for course #{$courseId} on {$date->toFormattedDateString()}");
+            $this->lessons->generateCourseLessonsOnDate($date, $courseId);
+        } else {
+            $this->info("Generating lessons on {$date->toFormattedDateString()}");
+            $this->lessons->generateLessonsOnDate($date);
+        }
+
         $this->info('Done!');
     }
 }

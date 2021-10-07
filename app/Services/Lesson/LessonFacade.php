@@ -2,9 +2,9 @@
 
 namespace App\Services\Lesson;
 
-use App\Http\Requests\ManagerApi\DTO\GetLessonsOnDate;
+use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
 use App\Http\Requests\ManagerApi\DTO\StoreLesson;
-use App\Models\Course;
+use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
 use App\Models\Lesson;
 use App\Repository\LessonRepository;
 use Carbon\Carbon;
@@ -60,14 +60,18 @@ class LessonFacade
     }
 
     /**
-     * @param GetLessonsOnDate $getLessonsOnDate
+     * @param LessonsFiltered $lessonsFiltered
      * @return Collection<Lesson>
      */
-    public function getLessonsForDate(GetLessonsOnDate $getLessonsOnDate): Collection
+    public function getLessonsFiltered(LessonsFiltered $lessonsFiltered): Collection
     {
         return $this->repository
-            ->getLessonsForDate($getLessonsOnDate)
-            ->load('instructor', 'course', 'controller');
+            ->getLessonsFiltered($lessonsFiltered, ['instructor', 'course', 'controller']);
+    }
+
+    public function getLessonsOnDate(LessonsOnDate $lessonsOnDate): Collection
+    {
+        return $this->service->getLessonsOnDate($lessonsOnDate);
     }
 
     public function findAndClose(string $id): Lesson
@@ -105,5 +109,10 @@ class LessonFacade
     public function generateCourseLessonsOnDate(Carbon $date, string $courseId): void
     {
         $this->generator->generateCourseLessonsOnDate($date, $courseId);
+    }
+
+    public function generateLessonsOnDate(Carbon $date): void
+    {
+        $this->generator->generateLessonsOnDate($date);
     }
 }
