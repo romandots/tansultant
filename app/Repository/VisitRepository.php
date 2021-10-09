@@ -23,6 +23,18 @@ use App\Models\Visit;
  */
 class VisitRepository extends Repository
 {
+    public const WITH_SOFT_DELETES = false;
+    public const SEARCHABLE_ATTRIBUTES = [];
+
+    protected function getSearchableAttributes(): array
+    {
+        return self::SEARCHABLE_ATTRIBUTES;
+    }
+
+    protected function withSoftDeletes(): bool
+    {
+        return self::WITH_SOFT_DELETES;
+    }
     /**
      * @param VisitDto $dto
      * @param User|null $user

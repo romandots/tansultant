@@ -8,23 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class Repository
 {
-    public const WITH_SOFT_DELETES = false;
-    public const SEARCHABLE_ATTRIBUTES = [];
-
+    abstract protected function getSearchableAttributes(): array;
+    abstract protected function withSoftDeletes(): bool;
     abstract protected function getQuery(): \Illuminate\Database\Eloquent\Builder;
 
     protected function getFilterQuery(FilteredInterface $filter): \Illuminate\Database\Eloquent\Builder
     {
         $query = $this->getQuery();
 
-        if (self::WITH_SOFT_DELETES && !$filter->withDeleted()) {
+        if ($this->withSoftDeletes() && !$filter->withDeleted()) {
             $query->whereNull('deleted_at');
         }
 
-        if ($filter->query && count(self::SEARCHABLE_ATTRIBUTES) > 0) {
+        if ($filter->query && count($this->getSearchableAttributes()) > 0) {
             $query->where(function (\Illuminate\Database\Eloquent\Builder $query) use ($filter) {
                 $searchQuery = $filter->getQuery() . '%';
-                $attributes = self::SEARCHABLE_ATTRIBUTES;
+                $attributes = $this->getSearchableAttributes();
                 $firstAttribute = array_shift($attributes);
                 $query->where($firstAttribute, 'ILIKE', $searchQuery);
                 foreach ($attributes as $attribute) {
@@ -54,7 +53,7 @@ abstract class Repository
     public function find(string $id): Model
     {
         $query = $this->getQuery();
-        if (self::WITH_SOFT_DELETES) {
+        if ($this->withSoftDeletes()) {
             $query->whereNull('deleted_at');
         }
         return $query
@@ -65,7 +64,7 @@ abstract class Repository
     public function findTrashed(string $id): Model
     {
         $query = $this->getQuery();
-        if (self::WITH_SOFT_DELETES) {
+        if ($this->withSoftDeletes()) {
             $query->whereNotNull('deleted_at');
         }
         return $query
@@ -75,7 +74,7 @@ abstract class Repository
 
     public function delete(Model $model): void
     {
-        if (self::WITH_SOFT_DELETES) {
+        if ($this->withSoftDeletes()) {
             $model->deleted_at = \Carbon\Carbon::now();
             $model->updated_at = \Carbon\Carbon::now();
             $model->save();
@@ -87,7 +86,7 @@ abstract class Repository
 
     public function restore(Model $person): void
     {
-        if (!self::WITH_SOFT_DELETES) {
+        if (!$this->withSoftDeletes()) {
             return;
         }
         $person->deleted_at = null;
@@ -97,7 +96,7 @@ abstract class Repository
 
     public function forceDelete(Model $model): void
     {
-        if (!self::WITH_SOFT_DELETES) {
+        if (!$this->withSoftDeletes()) {
             $model->delete();
             return;
         }
