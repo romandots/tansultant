@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Services\Lesson;
 
+use App\Http\Requests\DTO\Contracts\PaginatedInterface;
 use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
 use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
 use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
@@ -140,5 +141,16 @@ class LessonService
         dispatch($job);
 
         return $this->repository->getLessonsFiltered($lessonsFiltered, ['instructor', 'course', 'controller']);
+    }
+
+    public function search(PaginatedInterface $searchParams, array $relations = []): Collection
+    {
+        return $this->repository->findFilteredPaginated($searchParams, $relations);
+    }
+
+    public function getMeta(PaginatedInterface $searchParams): array
+    {
+        $totalRecords = $this->repository->countFiltered($searchParams->filter);
+        return $searchParams->getMeta($totalRecords);
     }
 }

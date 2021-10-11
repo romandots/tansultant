@@ -12,12 +12,11 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Http\Requests\ManagerApi\ChangeLessonInstructorRequest;
 use App\Http\Requests\ManagerApi\LessonsFilteredRequest;
+use App\Http\Requests\ManagerApi\SearchLessonsRequest;
 use App\Http\Requests\ManagerApi\StoreLessonRequest;
 use App\Http\Requests\ManagerApi\StoreLessonRequest as UpdateLessonRequest;
-use App\Http\Resources\PublicApi\LessonResource;
-use App\Repository\LessonRepository;
+use App\Http\Resources\ManagerApi\LessonResource;
 use App\Services\Lesson\LessonFacade;
-use App\Services\Lesson\LessonService;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class LessonController
@@ -27,6 +26,16 @@ class LessonController
     public function __construct(LessonFacade $lessons)
     {
         $this->lessons = $lessons;
+    }
+
+    public function index(SearchLessonsRequest $request): AnonymousResourceCollection
+    {
+
+        $searchLessons = $request->getDto();
+        $lessons = $this->lessons->search($searchLessons, ['course', 'classroom', 'branch', 'instructor']);
+        $meta = $this->lessons->getMeta($searchLessons);
+
+        return LessonResource::collection($lessons)->additional(['meta' => $meta]);
     }
 
     public function show(string $id): LessonResource

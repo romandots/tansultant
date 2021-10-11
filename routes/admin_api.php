@@ -142,6 +142,8 @@ Route::group(['prefix' => 'lessons'], static function () {
     Route::get('/', 'LessonController@search')
         ->middleware('permission:' .
             LessonsPermissions::MANAGE . '|' . LessonsPermissions::READ);
+    Route::get('/', 'LessonController@index')
+        ->middleware('permission:' . LessonsPermissions::MANAGE . '|' . LessonsPermissions::READ);
     Route::post('/', 'LessonController@store')
         ->middleware('permission:' .
             LessonsPermissions::MANAGE . '|' . LessonsPermissions::CREATE);
