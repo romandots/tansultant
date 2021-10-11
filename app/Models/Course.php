@@ -12,6 +12,7 @@ namespace App\Models;
 
 use App\Models\Traits\UsesUuid;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -99,7 +100,19 @@ class Course extends Model
 
     public function schedules(): HasMany
     {
-        return $this->hasMany(Schedule::class)->whereNull('deleted_at');
+        $date = Carbon::now()->toDateString();
+        return $this->hasMany(Schedule::class)
+            ->whereNull('deleted_at')
+            ->where(function (Builder $query) use ($date) {
+                $query
+                    ->where('from_date', '<=', $date)
+                    ->orWhereNull('from_date');
+            })
+            ->where(function (Builder $query) use ($date) {
+                $query
+                    ->where('to_date', '>', $date)
+                    ->orWhereNull('to_date');
+            });
     }
 
     /**

@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\PublicApi;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -34,19 +34,15 @@ class LessonResource extends JsonResource
             'type' => $this->type,
             'type_label' => \trans('lesson.' . $this->type),
             'instructor' => $this->whenLoaded('instructor', function () {
-                return new InstructorResource($this->instructor);
+                return $this->instructor->name;
             }),
             'course' => $this->whenLoaded('course', function () {
-                return new CourseResource($this->course);
+                return $this->course->name;
             }),
-            'controller' => $this->whenLoaded('controller', function () {
-                return new UserResource($this->controller);
-            }),
-            'starts_at' => $this->starts_at ? $this->starts_at->toDateTimeString() : null,
-            'ends_at' => $this->ends_at ? $this->ends_at->toDateTimeString() : null,
-            'closed_at' => $this->closed_at ? $this->closed_at->toDateTimeString() : null,
-            'canceled_at' => $this->canceled_at ? $this->canceled_at->toDateTimeString() : null,
-            'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
+            'starts_at' => $this->starts_at?->toDateTimeString(),
+            'ends_at' => $this->ends_at?->toDateTimeString(),
+            'is_closed' => (bool)$this->closed_at,
+            'is_canceled' => (bool)$this->canceled_at,
         ];
     }
 }

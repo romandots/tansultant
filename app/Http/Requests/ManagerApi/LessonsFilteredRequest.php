@@ -22,7 +22,7 @@ use Illuminate\Validation\Rule;
  * Class LessonsOnDateRequest
  * @package App\Http\Requests\Api
  */
-class LessonsOnDateRequest extends FormRequest
+class LessonsFilteredRequest extends FormRequest
 {
     /**
      * @return array
@@ -56,9 +56,9 @@ class LessonsOnDateRequest extends FormRequest
     }
 
     /**
-     * @return DTO\GetLessonsOnDate
+     * @return DTO\LessonsFiltered
      */
-    public function getDto(): DTO\GetLessonsOnDate
+    public function getDto(): DTO\LessonsFiltered
     {
         $validated = $this->validated();
 
@@ -67,7 +67,7 @@ class LessonsOnDateRequest extends FormRequest
             throw new InvalidDateException('date', $date);
         }
 
-        $dto = new DTO\GetLessonsOnDate;
+        $dto = new DTO\LessonsFiltered;
         $dto->date = $date;
         $dto->branch_id = $validated['branch_id'] ?? null;
         $dto->classroom_id = $validated['classroom_id'] ?? null;

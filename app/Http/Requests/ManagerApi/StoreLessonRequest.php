@@ -77,7 +77,7 @@ class StoreLessonRequest extends FormRequest
     {
         $validated = $this->validated();
 
-        $dto = new DTO\StoreLesson;
+        $dto = new DTO\StoreLesson();
         $dto->classroom_id = $validated['classroom_id'] ?? null;
         $dto->course_id = $validated['course_id'] ?? null;
         $dto->branch_id = $validated['branch_id'] ?? null;

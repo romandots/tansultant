@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\PublicApi\DTO;
+namespace App\Http\Requests\ManagerApi\DTO;
 
 /**
  * Class ScheduleOnDate
@@ -19,25 +19,25 @@ class ScheduleOnDate
     /**
      * @var string|null
      */
-    public $branch_id;
+    public ?string $branch_id;
 
     /**
      * @var string|null
      */
-    public $classroom_id;
+    public ?string $classroom_id;
 
     /**
      * @var string|null
      */
-    public $course_id;
+    public ?string $course_id;
 
     /**
      * @var \Carbon\Carbon
      */
-    public $date;
+    public \Carbon\Carbon $date;
 
     /**
-     * @var \Carbon\Carbon
+     * @var int
      */
-    public $weekday;
+    public int $weekday;
 }

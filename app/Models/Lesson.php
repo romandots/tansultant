@@ -94,13 +94,15 @@ class Lesson extends Model
     public const STATUS_PASSED = 'passed';
     public const STATUS_CANCELED = 'canceled';
     public const STATUS_CLOSED = 'closed';
+    public const STATUS_CHECKED_OUT = 'checked_out';
 
     public const STATUSES = [
         self::STATUS_BOOKED,
         self::STATUS_ONGOING,
         self::STATUS_PASSED,
         self::STATUS_CANCELED,
-        self::STATUS_CLOSED
+        self::STATUS_CLOSED,
+        self::STATUS_CHECKED_OUT,
     ];
 
     protected $table = self::TABLE;

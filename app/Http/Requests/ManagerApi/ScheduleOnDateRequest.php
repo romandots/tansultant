@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Http\Requests\PublicApi\DTO\ScheduleOnDate;
+use App\Http\Requests\ManagerApi\DTO\ScheduleOnDate;
 use App\Models\Branch;
 use App\Models\Classroom;
 use App\Models\Course;

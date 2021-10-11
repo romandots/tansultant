@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\PublicApi\LessonResource;
 use App\Models\Intent;
 use App\Models\Lesson;
 use Illuminate\Http\Resources\Json\JsonResource;
