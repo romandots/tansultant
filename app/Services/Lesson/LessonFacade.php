@@ -2,6 +2,7 @@
 
 namespace App\Services\Lesson;
 
+use App\Http\Requests\DTO\Contracts\PaginatedInterface;
 use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
 use App\Http\Requests\ManagerApi\DTO\StoreLesson;
 use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
@@ -19,10 +20,11 @@ class LessonFacade
 
     public function __construct(
         LessonRepository $repository,
-        LessonService $service,
-        LessonGenerator $generator,
-        LessonManager $manager
-    ) {
+        LessonService    $service,
+        LessonGenerator  $generator,
+        LessonManager    $manager
+    )
+    {
         $this->repository = $repository;
         $this->service = $service;
         $this->generator = $generator;
@@ -119,5 +121,15 @@ class LessonFacade
     public function generateLessonsOnDate(Carbon $date): void
     {
         $this->generator->generateLessonsOnDate($date);
+    }
+
+    public function search(PaginatedInterface $searchParams, array $relations = []): Collection
+    {
+        return $this->service->search($searchParams, $relations);
+    }
+
+    public function getMeta(PaginatedInterface $searchParams): array
+    {
+        return $this->service->getMeta($searchParams);
     }
 }

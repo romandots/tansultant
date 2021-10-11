@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
 use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
+use App\Http\Requests\ManagerApi\DTO\SearchLessonsFilterDto;
+use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
 use App\Models\Lesson;
-use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -21,8 +21,10 @@ use Illuminate\Database\Eloquent\Collection;
  * Class LessonRepository
  * @package App\Repository
  */
-class LessonRepository
+class LessonRepository extends Repository
 {
+    private const SEARCHABLE_ATTRIBUTES = ['name'];
+
     /**
      * @param string $id
      * @return \Illuminate\Database\Eloquent\Model|Lesson
@@ -84,15 +86,6 @@ class LessonRepository
         $lesson->starts_at = $dto->starts_at;
         $lesson->ends_at = $dto->ends_at;
         $lesson->type = $dto->type;
-    }
-
-    /**
-     * @param Lesson $lesson
-     * @throws \Exception
-     */
-    public function delete(Lesson $lesson): void
-    {
-        $lesson->delete();
     }
 
     /**
@@ -187,5 +180,20 @@ class LessonRepository
             ->where('starts_at', $startTimeStamp)
             ->where('ends_at', $endTimeStamp)
             ->exists();
+    }
+
+    protected function getSearchableAttributes(): array
+    {
+        return self::SEARCHABLE_ATTRIBUTES;
+    }
+
+    protected function withSoftDeletes(): bool
+    {
+        return true;
+    }
+
+    protected function getQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return Lesson::query();
     }
 }

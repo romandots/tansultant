@@ -35,13 +35,13 @@ class LogRecordService
      * Universal log method
      * creates log record for action
      *
-     * @param \Illuminate\Foundation\Auth\User|User $user
+     * @param User $user
      * @param string $action
      * @param object|string $objectOrClassName
      * @param object|null $oldValue
      * @throws \Exception
      */
-    private function log(User $user, string $action, $objectOrClassName, ?object $oldValue = null): void
+    private function log(User $user, string $action, object|string $objectOrClassName, ?object $oldValue = null): void
     {
         $className = \is_object($objectOrClassName) ? \get_class($objectOrClassName) : $objectOrClassName;
         $messageKey = "log_record.{$className}.{$action}";
@@ -88,7 +88,7 @@ class LogRecordService
      * @param object $restoredObject
      * @throws \Exception
      */
-    public function logRestore(User $user, $restoredObject): void
+    public function logRestore(User $user, object $restoredObject): void
     {
         $this->log($user, LogRecord::ACTION_RESTORE, $restoredObject);
     }
