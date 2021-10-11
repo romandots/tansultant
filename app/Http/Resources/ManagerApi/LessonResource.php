@@ -51,6 +51,7 @@ class LessonResource extends JsonResource
             'ends_at' => $this->ends_at?->toDateTimeString(),
             'closed_at' => $this->closed_at?->toDateTimeString(),
             'canceled_at' => $this->canceled_at?->toDateTimeString(),
+            'checked_out_at' => $this->checked_out_at?->toDateTimeString(),
             'created_at' => $this->created_at?->toDateTimeString(),
         ];
     }

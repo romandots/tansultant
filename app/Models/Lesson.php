@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon $ends_at
  * @property \Carbon\Carbon|null $closed_at
  * @property \Carbon\Carbon|null $canceled_at
+ * @property \Carbon\Carbon|null $checked_out_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property \Carbon\Carbon|null $deleted_at
@@ -112,6 +113,7 @@ class Lesson extends Model
         'ends_at' => 'datetime',
         'closed_at' => 'datetime',
         'canceled_at' => 'datetime',
+        'checked_out_at' => 'datetime',
     ];
 
     /**
@@ -128,6 +130,14 @@ class Lesson extends Model
     public function schedule(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Schedule::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Classroom|null
+     */
+    public function classroom(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Classroom::class);
     }
 
     /**

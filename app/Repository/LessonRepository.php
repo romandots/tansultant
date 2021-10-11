@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class LessonRepository extends Repository
 {
-    private const SEARCHABLE_ATTRIBUTES = ['name'];
+    public const SEARCHABLE_ATTRIBUTES = ['name'];
 
     /**
      * @param string $id

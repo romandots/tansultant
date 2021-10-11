@@ -32,7 +32,7 @@ class LessonController
     {
 
         $searchLessons = $request->getDto();
-        $lessons = $this->lessons->search($searchLessons, []);
+        $lessons = $this->lessons->search($searchLessons, ['course', 'classroom', 'branch', 'instructor']);
         $meta = $this->lessons->getMeta($searchLessons);
 
         return LessonResource::collection($lessons)->additional(['meta' => $meta]);
