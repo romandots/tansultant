@@ -4,13 +4,14 @@ namespace App\Repository;
 
 use App\Http\Requests\DTO\Contracts\FilteredInterface;
 use App\Http\Requests\DTO\Contracts\PaginatedInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class Repository
 {
-    abstract protected function getSearchableAttributes(): array;
-    abstract protected function withSoftDeletes(): bool;
-    abstract protected function getQuery(): \Illuminate\Database\Eloquent\Builder;
+    abstract public function getSearchableAttributes(): array;
+    abstract public function withSoftDeletes(): bool;
+    abstract public function getQuery(): \Illuminate\Database\Eloquent\Builder;
 
     protected function getFilterQuery(FilteredInterface $filter): \Illuminate\Database\Eloquent\Builder
     {
@@ -107,5 +108,10 @@ abstract class Repository
             return;
         }
         $model->forceDelete();
+    }
+
+    public function getAll(): Collection
+    {
+        return $this->getQuery()->get();
     }
 }
