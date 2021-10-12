@@ -36,6 +36,11 @@ abstract class BaseRepository
         return $query;
     }
 
+    public function getSuggestQuery(FilteredInterface $filter): \Illuminate\Database\Eloquent\Builder
+    {
+        return $this->getFilterQuery($filter);
+    }
+
     public function countFiltered(FilteredInterface $search): int
     {
         return $this->getFilterQuery($search)->count();

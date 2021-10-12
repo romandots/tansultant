@@ -43,9 +43,11 @@ abstract class BaseService
         $dto = $this->makeSearchFilterDto();
         $dto->query = $query;
         $dto->with_deleted = false;
-        $records = $this->getRepository()->findFiltered($dto);
 
-        $result = $records
+        $result = $this->getRepository()
+            ->getSuggestQuery($dto)
+            ->limit(10)
+            ->get()
             ->map(function (Model $record) use ($additionalFields, $labelField, $valueField) {
                 assert(is_a($record, $this->getModelClassName()));
                 try {

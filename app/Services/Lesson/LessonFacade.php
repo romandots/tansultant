@@ -2,16 +2,16 @@
 
 namespace App\Services\Lesson;
 
-use App\Http\Requests\DTO\Contracts\PaginatedInterface;
 use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
 use App\Http\Requests\ManagerApi\DTO\StoreLesson;
 use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
 use App\Models\Lesson;
-use App\Repository\LessonRepository;
 use App\Repository\BaseRepository;
+use App\Repository\LessonRepository;
 use App\Services\BaseFacade;
 use App\Services\BaseService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class LessonFacade extends BaseFacade
@@ -44,9 +44,9 @@ class LessonFacade extends BaseFacade
         return $this->service;
     }
 
-    public function find(string $id): Lesson
+    public function find(string $id, array $relations = []): Model
     {
-        return $this->repository->find($id)->load('instructor', 'course', 'controller');
+        return parent::find($id, ['instructor', 'course', 'controller']);
     }
 
     public function createFromDto(StoreLesson $storeLesson): Lesson

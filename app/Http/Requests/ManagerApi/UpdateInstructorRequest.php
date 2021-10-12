@@ -13,10 +13,6 @@ namespace App\Http\Requests\ManagerApi;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-/**
- * Class UpdateInstructorRequest
- * @package App\Http\Requests\Api
- */
 class UpdateInstructorRequest extends FormRequest
 {
     /**

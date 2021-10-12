@@ -29,17 +29,17 @@ class InstructorRepository extends BaseRepository
         'description',
     ];
 
-    protected function getSearchableAttributes(): array
+    public function getSearchableAttributes(): array
     {
         return self::SEARCHABLE_ATTRIBUTES;
     }
 
-    protected function withSoftDeletes(): bool
+    public function withSoftDeletes(): bool
     {
         return self::WITH_SOFT_DELETES;
     }
 
-    protected function getQuery(): \Illuminate\Database\Eloquent\Builder
+    public function getQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return Instructor::query();
     }
@@ -52,11 +52,11 @@ class InstructorRepository extends BaseRepository
     {
         $query = parent::getFilterQuery($filter);
 
-        if ($filter->statuses) {
+        if (isset($filter->statuses) && !empty($filter->statuses)) {
             $query->whereIn('status', $filter->statuses);
         }
 
-        if ($filter->display) {
+        if (isset($filter->display) && !empty($filter->display)) {
             $query->where('display', $filter->display);
         }
 

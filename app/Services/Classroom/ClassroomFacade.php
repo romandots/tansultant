@@ -35,28 +35,11 @@ class ClassroomFacade extends BaseFacade
         return $this->service->create($storeClassroom);
     }
 
-    public function find(string $classroomId): Classroom
-    {
-        return $this->repository->find($classroomId);
-    }
-
     public function findAndUpdate(string $id, \App\Http\Requests\ManagerApi\DTO\Classroom $classroomDto): Classroom
     {
         $record = $this->repository->find($id);
         $this->service->update($record, $classroomDto);
 
         return $record;
-    }
-
-    public function findAndDelete(string $classroomId): void
-    {
-        $record = $this->repository->find($classroomId);
-        $this->service->delete($record);
-    }
-
-    public function restore(string $classroomId): void
-    {
-        $record = $this->repository->findWithDeleted($classroomId);
-        $this->repository->restore($record);
     }
 }

@@ -10,111 +10,60 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\ManagerApi\AttachInstructorRequest;
-use App\Http\Requests\ManagerApi\SearchInstructorsRequest;
+use App\Http\Controllers\AdminController;
 use App\Http\Requests\ManagerApi\StoreInstructorRequest;
 use App\Http\Requests\ManagerApi\UpdateInstructorRequest;
 use App\Http\Resources\InstructorResource;
-use App\Models\Instructor;
-use App\Repository\InstructorRepository;
-use App\Repository\PersonRepository;
+use App\Services\BaseFacade;
+use App\Services\Instructor\InstructorFacade;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 
-class InstructorController extends Controller
+class InstructorController extends AdminController
 {
-    private PersonRepository $personRepository;
+    protected InstructorFacade $facade;
 
-    /**
-     * @var InstructorRepository
-     */
-    private InstructorRepository $instructorRepository;
-
-    public function __construct(InstructorRepository $instructorRepository, PersonRepository $personRepository)
+    public function __construct(InstructorFacade $facade)
     {
-        $this->instructorRepository = $instructorRepository;
-        $this->personRepository = $personRepository;
+        $this->facade = $facade;
     }
 
-    /**
-     * @param SearchInstructorsRequest $request
-     * @return AnonymousResourceCollection
-     */
-    public function index(SearchInstructorsRequest $request): AnonymousResourceCollection
+    public function getFacade(): BaseFacade
     {
-        $search = $request->getDto();
-        $collection = $this->instructorRepository->findFilteredPaginated($search);
-        $totalRecords = $this->instructorRepository->countFiltered($search->filter);
-        $meta = $search->getMeta($totalRecords);
+        return $this->facade;
+    }
 
-        return InstructorResource::collection($collection)->additional(['meta' => $meta]);
+    public function makeResource(Model $record): JsonResource
+    {
+        return new InstructorResource($record);
+    }
+
+    public function makeResourceCollection(Collection $collection): AnonymousResourceCollection
+    {
+        return InstructorResource::collection($collection);
+    }
+
+    protected function getSearchRelations(): array
+    {
+        return ['person'];
+    }
+
+    protected function getSingleRecordRelations(): array
+    {
+        return ['person'];
     }
 
     public function store(StoreInstructorRequest $request): InstructorResource
     {
-        /** @var Instructor $instructor */
-        $instructor = DB::transaction(function () use ($request) {
-            $person = $this->personRepository->createFromDto($request->getPersonDto());
-            return $this->instructorRepository->createFromPerson($person, $request->getInstructorDto());
-        });
-        $instructor->load('person');
-
+        $instructor = $this->facade->create($request->getDto());
         return new InstructorResource($instructor);
     }
 
-    /**
-     * @param AttachInstructorRequest $request
-     * @return InstructorResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Exception
-     */
-    public function createFromPerson(AttachInstructorRequest $request): InstructorResource
-    {
-        $instructor = $request->getDto();
-        $person = $this->personRepository->find($request->person_id);
-        $instructor = $this->instructorRepository->createFromPerson($person, $instructor);
-        $instructor->load('person');
-
-        return new InstructorResource($instructor);
-    }
-
-    /**
-     * @param string $id
-     * @return InstructorResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function show(string $id): InstructorResource
-    {
-        $instructor = $this->instructorRepository->find($id);
-        $instructor->load('person');
-
-        return new InstructorResource($instructor);
-    }
-
-    /**
-     * @param string $id
-     * @param UpdateInstructorRequest $request
-     * @return InstructorResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
     public function update(string $id, UpdateInstructorRequest $request): InstructorResource
     {
-        $instructor = $this->instructorRepository->find($id);
-        $this->instructorRepository->update($instructor, $request->getDto());
-        $instructor->load('person');
-
+        $instructor = $this->facade->findAndUpdate($id, $request->getDto());
         return new InstructorResource($instructor);
-    }
-
-    /**
-     * @param string $id
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Exception
-     */
-    public function destroy(string $id): void
-    {
-        $instructor = $this->instructorRepository->find($id);
-        $this->instructorRepository->delete($instructor);
     }
 }

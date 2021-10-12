@@ -45,8 +45,13 @@ abstract class AdminController extends Controller
 
     public function show(string $id): JsonResource
     {
-        $record = $this->getFacade()->find($id);
+        $record = $this->getFacade()->find($id, $this->getSingleRecordRelations());
         return $this->makeResource($record);
+    }
+
+    protected function getSingleRecordRelations(): array
+    {
+        return [];
     }
 
     public function destroy(string $id): void

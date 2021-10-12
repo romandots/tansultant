@@ -3,9 +3,9 @@
 namespace App\Services;
 
 use App\Http\Requests\DTO\Contracts\PaginatedInterface;
-use App\Http\Requests\ManagerApi\FilteredPaginatedFormRequest;
 use App\Repository\BaseRepository;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseFacade
 {
@@ -41,5 +41,22 @@ abstract class BaseFacade
     public function getMeta(PaginatedInterface $searchParams): array
     {
         return $this->getService()->getMeta($searchParams);
+    }
+
+    public function find(string $id, array $relations = []): Model
+    {
+        return $this->getRepository()->find($id);
+    }
+
+    public function findAndDelete(string $id): void
+    {
+        $record = $this->getRepository()->find($id);
+        $this->service->delete($record);
+    }
+
+    public function restore(string $id): void
+    {
+        $record = $this->getRepository()->findTrashed($id);
+        $this->getRepository()->restore($record);
     }
 }

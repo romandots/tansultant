@@ -70,9 +70,9 @@ Route::group(['prefix' => 'students'], static function () {
 
 // INSTRUCTORS
 Route::group(['prefix' => 'instructors'], static function () {
-    Route::post('from_person', 'InstructorController@createFromPerson')
-        ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::CREATE);
-    Route::get('/', 'InstructorController@index')
+    Route::get('/suggest', 'InstructorController@suggest')
+        ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::READ);
+    Route::get('/', 'InstructorController@search')
         ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::READ);
     Route::post('/', 'InstructorController@store')
         ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::CREATE);
