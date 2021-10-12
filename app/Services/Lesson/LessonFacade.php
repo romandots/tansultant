@@ -8,10 +8,13 @@ use App\Http\Requests\ManagerApi\DTO\StoreLesson;
 use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
 use App\Models\Lesson;
 use App\Repository\LessonRepository;
+use App\Repository\Repository;
+use App\Services\BaseFacade;
+use App\Services\BaseService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
-class LessonFacade
+class LessonFacade extends BaseFacade
 {
     protected LessonRepository $repository;
     protected LessonService $service;
@@ -29,6 +32,16 @@ class LessonFacade
         $this->service = $service;
         $this->generator = $generator;
         $this->manager = $manager;
+    }
+
+    public function getRepository(): Repository
+    {
+        return $this->repository;
+    }
+
+    public function getService(): BaseService
+    {
+        return $this->service;
     }
 
     public function find(string $id): Lesson
@@ -121,15 +134,5 @@ class LessonFacade
     public function generateLessonsOnDate(Carbon $date): void
     {
         $this->generator->generateLessonsOnDate($date);
-    }
-
-    public function search(PaginatedInterface $searchParams, array $relations = []): Collection
-    {
-        return $this->service->search($searchParams, $relations);
-    }
-
-    public function getMeta(PaginatedInterface $searchParams): array
-    {
-        return $this->service->getMeta($searchParams);
     }
 }

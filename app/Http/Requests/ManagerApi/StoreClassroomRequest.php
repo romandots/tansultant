@@ -55,13 +55,13 @@ class StoreClassroomRequest extends FormRequest
     }
 
     /**
-     * @return DTO\Classroom
+     * @return \App\Http\Requests\ManagerApi\DTO\Classroom
      */
-    public function getDto(): DTO\Classroom
+    public function getDto(): \App\Http\Requests\ManagerApi\DTO\Classroom
     {
         $valid = $this->validated();
 
-        $dto = new DTO\Classroom;
+        $dto = new \App\Http\Requests\ManagerApi\DTO\Classroom;
         $dto->name = $valid['name'];
         $dto->branch_id = $valid['branch_id'];
         $dto->color = $valid['color'] ?? null;

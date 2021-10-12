@@ -42,6 +42,9 @@ class LessonResource extends JsonResource
             'course' => $this->whenLoaded('course', function () {
                 return new CourseResource($this->course);
             }),
+            'classroom' => $this->whenLoaded('classroom', function () {
+                return new ClassroomResource($this->classroom);
+            }),
             'controller' => $this->whenLoaded('controller', function () {
                 return new UserResource($this->controller);
             }),

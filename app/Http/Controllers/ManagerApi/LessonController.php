@@ -10,16 +10,21 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
+use App\Http\Controllers\AdminController;
 use App\Http\Requests\ManagerApi\ChangeLessonInstructorRequest;
 use App\Http\Requests\ManagerApi\LessonsFilteredRequest;
 use App\Http\Requests\ManagerApi\SearchLessonsRequest;
 use App\Http\Requests\ManagerApi\StoreLessonRequest;
 use App\Http\Requests\ManagerApi\StoreLessonRequest as UpdateLessonRequest;
 use App\Http\Resources\ManagerApi\LessonResource;
+use App\Services\BaseFacade;
 use App\Services\Lesson\LessonFacade;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 
-class LessonController
+class LessonController extends AdminController
 {
     protected LessonFacade $lessons;
 
@@ -28,21 +33,24 @@ class LessonController
         $this->lessons = $lessons;
     }
 
-    public function index(SearchLessonsRequest $request): AnonymousResourceCollection
+    public function getFacade(): BaseFacade
     {
-
-        $searchLessons = $request->getDto();
-        $lessons = $this->lessons->search($searchLessons, ['course', 'classroom', 'branch', 'instructor']);
-        $meta = $this->lessons->getMeta($searchLessons);
-
-        return LessonResource::collection($lessons)->additional(['meta' => $meta]);
+        return $this->lessons;
     }
 
-    public function show(string $id): LessonResource
+    public function makeResource(Model $record): JsonResource
     {
-        $lesson = $this->lessons->find($id);
+        return new LessonResource($record);
+    }
 
-        return new LessonResource($lesson);
+    public function makeResourceCollection(Collection $collection): AnonymousResourceCollection
+    {
+        return LessonResource::collection($collection);
+    }
+
+    protected function getSearchRelations(): array
+    {
+        return ['course', 'classroom', 'instructor'];
     }
 
     /**
@@ -66,21 +74,6 @@ class LessonController
     {
         $lesson = $this->lessons->findAndChangeInstructor($id, $request->instructor_id);
         return new LessonResource($lesson);
-    }
-
-    /**
-     * @param string $id
-     * @throws \Exception
-     */
-    public function destroy(string $id): void
-    {
-        $this->lessons->findAndDelete($id);
-    }
-
-    public function search(LessonsFilteredRequest $request): AnonymousResourceCollection
-    {
-        $lessons = $this->lessons->getLessonsFiltered($request->getDto());
-        return LessonResource::collection($lessons);
     }
 
     /**

@@ -39,6 +39,9 @@ class LessonResource extends JsonResource
             'course' => $this->whenLoaded('course', function () {
                 return $this->course->name;
             }),
+            'classroom' => $this->whenLoaded('classroom', function () {
+                return $this->classroom->name;
+            }),
             'starts_at' => $this->starts_at?->toDateTimeString(),
             'ends_at' => $this->ends_at?->toDateTimeString(),
             'is_closed' => (bool)$this->closed_at,

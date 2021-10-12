@@ -31,7 +31,7 @@ class StoreLessonRequest extends FormRequest
     {
         return [
             'classroom_id' => [
-                'nullable',
+                'required',
                 'string',
                 'uuid',
                 Rule::exists(Classroom::TABLE, 'id')
@@ -42,30 +42,24 @@ class StoreLessonRequest extends FormRequest
                 'uuid',
                 Rule::exists(Course::TABLE, 'id')
             ],
-            'branch_id' => [
-                'nullable',
-                'string',
-                'uuid',
-                Rule::exists(Branch::TABLE, 'id')
-            ],
             'instructor_id' => [
-                'nullable',
+                'required_when:type,' . Lesson::TYPE_LESSON,
                 'string',
                 'uuid',
                 Rule::exists(Instructor::TABLE, 'id')
             ],
             'type' => [
-                'nullable',
+                'required',
                 'string',
                 Rule::in(Lesson::TYPES)
             ],
             'starts_at' => [
                 'required',
-                'date_format:"Y-m-d H:i"',
+                'date_format:"Y-m-d H:i:s"',
             ],
             'ends_at' => [
                 'required',
-                'date_format:"Y-m-d H:i"',
+                'date_format:"Y-m-d H:i:s"',
             ],
         ];
     }
@@ -80,7 +74,7 @@ class StoreLessonRequest extends FormRequest
         $dto = new DTO\StoreLesson();
         $dto->classroom_id = $validated['classroom_id'] ?? null;
         $dto->course_id = $validated['course_id'] ?? null;
-        $dto->branch_id = $validated['branch_id'] ?? null;
+//        $dto->branch_id = $validated['branch_id'] ?? null;
         $dto->instructor_id = $validated['instructor_id'] ?? null;
         $dto->type = $validated['type'] ?? Lesson::TYPE_LESSON;
         $dto->starts_at = \Carbon\Carbon::parse($validated['starts_at']);

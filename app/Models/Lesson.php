@@ -40,6 +40,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\User $controller
  * @property-read \App\Models\Course $course
  * @property-read \App\Models\Instructor $instructor
+ * @property-read \App\Models\Classroom $classroom
  * @property-read \App\Models\Schedule|null $schedule
  * @property-read \App\Models\Branch|null $branch
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Intent[] $intents

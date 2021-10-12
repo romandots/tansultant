@@ -25,16 +25,14 @@ use JetBrains\PhpStorm\Pure;
 
 class ClassroomController extends AdminController
 {
-    private ClassroomFacade $classrooms;
-
-    public function __construct(ClassroomRepository $repository, ClassroomFacade $classrooms)
-    {
-        $this->classrooms = $classrooms;
-    }
+    private ClassroomFacade $facade;
 
     public function getFacade(): BaseFacade
     {
-        return $this->classrooms;
+        if (!isset($this->facade)) {
+            $this->facade = app(ClassroomFacade::class);
+        }
+        return $this->facade;
     }
 
     #[Pure] public function makeResource(Model $record): JsonResource
@@ -49,11 +47,13 @@ class ClassroomController extends AdminController
 
     public function store(StoreClassroomRequest $request): JsonResource
     {
-        return $this->_store($request);
+        $record = $this->facade->create($request->getDto());
+        return $this->makeResource($record);
     }
 
     public function update(UpdateClassroomRequest $request, string $id): JsonResource
     {
-        return $this->_update($request, $id);
+        $record = $this->facade->findAndUpdate($id, $request->getDto());
+        return $this->makeResource($record);
     }
 }

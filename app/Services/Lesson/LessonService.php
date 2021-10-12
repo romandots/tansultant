@@ -10,43 +10,57 @@ declare(strict_types=1);
 
 namespace App\Services\Lesson;
 
-use App\Http\Requests\DTO\Contracts\PaginatedInterface;
+use App\Http\Requests\DTO\FilteredDto;
 use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
+use App\Http\Requests\ManagerApi\DTO\SearchLessonsFilterDto;
 use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
 use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
 use App\Jobs\GenerateLessonsOnDateJob;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Schedule;
+use App\Repository\ClassroomRepository;
 use App\Repository\CourseRepository;
 use App\Repository\LessonRepository;
-use App\Services\Intent\IntentService;
-use App\Services\Visit\VisitService;
+use App\Services\BaseService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class LessonService
  * @package App\Services\Lesson
  */
-class LessonService
+class LessonService extends BaseService
 {
     private LessonRepository $repository;
     private CourseRepository $courseRepository;
+    private ClassroomRepository $classroomRepository;
 
     /**
      * LessonController constructor.
      * @param LessonRepository $repository
      * @param CourseRepository $courseRepository
-     * @param IntentService $intentService
-     * @param VisitService $visitService
+     * @param ClassroomRepository $classroomRepository
      */
     public function __construct(
         LessonRepository $repository,
-        CourseRepository $courseRepository
+        CourseRepository $courseRepository,
+        ClassroomRepository $classroomRepository
     ) {
         $this->repository = $repository;
         $this->courseRepository = $courseRepository;
+        $this->classroomRepository = $classroomRepository;
+    }
+
+    public function getModelClassName(): string
+    {
+        return Lesson::class;
+    }
+
+    #[Pure] public function makeSearchFilterDto(): FilteredDto
+    {
+        return new SearchLessonsFilterDto();
     }
 
     public function getRepository(): LessonRepository
@@ -97,6 +111,9 @@ class LessonService
             $dto->name = \trans('lesson.' . Lesson::TYPE_LESSON);
         }
 
+        $dto->branch_id = $this->getBranchIdByClassroomId($dto->classroom_id);
+        $dto->schedule_id = null;
+
         return $this->repository->create($dto);
     }
 
@@ -143,14 +160,8 @@ class LessonService
         return $this->repository->getLessonsFiltered($lessonsFiltered, ['instructor', 'course', 'controller']);
     }
 
-    public function search(PaginatedInterface $searchParams, array $relations = []): Collection
+    private function getBranchIdByClassroomId(string $classroomId): string
     {
-        return $this->repository->findFilteredPaginated($searchParams, $relations);
-    }
-
-    public function getMeta(PaginatedInterface $searchParams): array
-    {
-        $totalRecords = $this->repository->countFiltered($searchParams->filter);
-        return $searchParams->getMeta($totalRecords);
+        return $this->classroomRepository->getBranchIdByClassroomId($classroomId);
     }
 }
