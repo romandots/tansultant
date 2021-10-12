@@ -9,8 +9,12 @@ use Illuminate\Database\Eloquent\Collection;
 
 abstract class BaseFacade
 {
-    abstract public function getRepository(): BaseRepository;
     abstract public function getService(): BaseService;
+
+    public function getRepository(): BaseRepository
+    {
+        return $this->getService()->getRepository();
+    }
 
     public function suggest(
         ?string $query,

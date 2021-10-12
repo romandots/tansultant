@@ -11,13 +11,13 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ClassroomFacade extends BaseFacade
 {
-    private ClassroomRepository $repository;
-    private ClassroomService $service;
+    protected ClassroomRepository $repository;
+    protected ClassroomService $service;
 
-    public function __construct(ClassroomService $service)
+    public function __construct(ClassroomRepository $repository, ClassroomService $service)
     {
+        $this->repository = $repository;
         $this->service = $service;
-        $this->repository = $service->getRepository();
     }
 
     public function getRepository(): BaseRepository
