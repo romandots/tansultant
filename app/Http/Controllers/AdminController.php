@@ -4,14 +4,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ManagerApi\FilteredPaginatedFormRequest;
-use App\Http\Requests\ManagerApi\SearchLessonsRequest;
-use App\Http\Requests\ManagerApi\StoreClassroomRequest;
-use App\Http\Requests\ManagerApi\StoreClassroomRequest as UpdateClassroomRequest;
-use App\Http\Resources\ManagerApi\ClassroomResource;
+use App\Http\Requests\ManagerApi\SuggestRequest;
 use App\Http\Resources\ManagerApi\LessonResource;
 use App\Services\BaseFacade;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
@@ -40,6 +36,11 @@ abstract class AdminController extends Controller
     protected function getSearchRelations(): array
     {
         return [];
+    }
+
+    public function suggest(SuggestRequest $request): array
+    {
+        return $this->getFacade()->suggest($request->getQuery());
     }
 
     public function show(string $id): JsonResource
