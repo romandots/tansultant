@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\PublicApi\DTO;
+namespace App\Http\Requests\ManagerApi\DTO;
 
 /**
  * Class Classroom
