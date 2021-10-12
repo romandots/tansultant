@@ -13,7 +13,9 @@ namespace App\Http\Controllers\ManagerApi;
 use App\Http\Controllers\AdminController;
 use App\Http\Requests\ManagerApi\StoreClassroomRequest;
 use App\Http\Requests\ManagerApi\StoreClassroomRequest as UpdateClassroomRequest;
+use App\Http\Requests\ManagerApi\SuggestRequest;
 use App\Http\Resources\ManagerApi\ClassroomResource;
+use App\Models\Classroom;
 use App\Repository\ClassroomRepository;
 use App\Services\BaseFacade;
 use App\Services\Classroom\ClassroomFacade;
@@ -27,11 +29,13 @@ class ClassroomController extends AdminController
 {
     private ClassroomFacade $facade;
 
+    public function __construct(ClassroomFacade $facade)
+    {
+        $this->facade = $facade;
+    }
+
     public function getFacade(): BaseFacade
     {
-        if (!isset($this->facade)) {
-            $this->facade = app(ClassroomFacade::class);
-        }
         return $this->facade;
     }
 
@@ -55,5 +59,23 @@ class ClassroomController extends AdminController
     {
         $record = $this->facade->findAndUpdate($id, $request->getDto());
         return $this->makeResource($record);
+    }
+
+    public function suggest(SuggestRequest $request): array
+    {
+        $extraFields = [
+            'branch' => function (Classroom $classroom) {
+                return $classroom->branch->name;
+            },
+            'branch_id' => 'branch_id',
+        ];
+        return $this->facade->suggest(
+            $request->getQuery(),
+            function(Classroom $classroom) {
+                return sprintf('%s (%s)', $classroom->name, $classroom->branch->name);
+            },
+            'id',
+            $extraFields
+        );
     }
 }
