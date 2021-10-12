@@ -10,11 +10,21 @@ use Illuminate\Support\Collection;
 
 abstract class BaseService
 {
-    use WithLogger;
+    use WithLogger, WithCache;
 
     abstract public function getRepository(): BaseRepository;
     abstract public function getModelClassName(): string;
     abstract public function makeSearchFilterDto(): FilteredDto;
+
+    protected function getLoggerPrefix(): string
+    {
+        return base_classname($this->getModelClassName());
+    }
+
+    protected function getCachePrefix(): string
+    {
+        return base_classname($this->getModelClassName());
+    }
 
     public function suggest(
         ?string $query,
@@ -22,12 +32,20 @@ abstract class BaseService
         string|\Closure $valueField = 'id',
         array $additionalFields = []
     ): array {
+        $cacheKey = 'suggest_' . md5($query);
+        $cached = $this->getFromCache($cacheKey);
+
+        if (null !== $cached) {
+            $this->debug('Suggest loaded from cache');
+            return $cached;
+        }
+
         $dto = $this->makeSearchFilterDto();
         $dto->query = $query;
         $dto->with_deleted = false;
         $records = $this->getRepository()->findFiltered($dto);
 
-        return $records
+        $result = $records
             ->map(function (Model $record) use ($additionalFields, $labelField, $valueField) {
                 assert(is_a($record, $this->getModelClassName()));
                 try {
@@ -70,6 +88,10 @@ abstract class BaseService
                 return $set;
             })
             ->toArray();
+
+        $this->storeInCache($cacheKey, $result, 60);
+
+        return $result;
     }
 
     public function search(PaginatedInterface $searchParams, array $relations = []): Collection
@@ -82,5 +104,4 @@ abstract class BaseService
         $totalRecords = $this->getRepository()->countFiltered($searchParams->filter);
         return $searchParams->getMeta($totalRecords);
     }
-
 }
