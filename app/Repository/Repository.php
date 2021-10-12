@@ -40,10 +40,16 @@ abstract class Repository
         return $this->getFilterQuery($search)->count();
     }
 
+    public function findFiltered(FilteredInterface $filter, array $withRelations = []): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->getFilterQuery($filter)
+            ->with($withRelations)
+            ->get();
+    }
+
     public function findFilteredPaginated(PaginatedInterface $search, array $withRelations = []): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->getFilterQuery($search->filter)
-            ->with($withRelations)
+        return $this->findFiltered($search->filter, $withRelations)
             ->orderBy($search->sort, $search->order)
             ->offset($search->offset)
             ->limit($search->limit)
