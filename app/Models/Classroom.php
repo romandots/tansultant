@@ -12,6 +12,7 @@ namespace App\Models;
 
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Classroom
@@ -43,6 +44,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Classroom extends Model
 {
+    use SoftDeletes;
     use UsesUuid;
 
     public const TABLE = 'classrooms';
@@ -59,5 +61,10 @@ class Classroom extends Model
     public function branch(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }
