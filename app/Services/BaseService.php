@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Http\Requests\DTO\Contracts\PaginatedInterface;
 use App\Http\Requests\DTO\FilteredDto;
 use App\Repository\Repository;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 abstract class BaseService
 {
@@ -73,4 +75,16 @@ abstract class BaseService
             })
             ->toArray();
     }
+
+    public function search(PaginatedInterface $searchParams, array $relations = []): Collection
+    {
+        return $this->getRepository()->findFilteredPaginated($searchParams, $relations);
+    }
+
+    public function getMeta(PaginatedInterface $searchParams): array
+    {
+        $totalRecords = $this->getRepository()->countFiltered($searchParams->filter);
+        return $searchParams->getMeta($totalRecords);
+    }
+
 }

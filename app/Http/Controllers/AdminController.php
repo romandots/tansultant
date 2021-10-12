@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ManagerApi\FilteredPaginatedFormRequest;
+use App\Http\Requests\ManagerApi\SearchLessonsRequest;
 use App\Http\Requests\ManagerApi\StoreClassroomRequest;
 use App\Http\Requests\ManagerApi\StoreClassroomRequest as UpdateClassroomRequest;
 use App\Http\Resources\ManagerApi\ClassroomResource;
+use App\Http\Resources\ManagerApi\LessonResource;
 use App\Services\BaseFacade;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
@@ -26,33 +28,23 @@ abstract class AdminController extends Controller
         return $this->makeResourceCollection($records);
     }
 
-//    public function search(FilteredPaginatedFormRequest $request): AnonymousResourceCollection
-//    {
-//        $records = $this->getFacade()->search($request, $this->getSearchRelations());
-//
-//        return ClassroomResource::collection($records);
-//    }
+    public function search(FilteredPaginatedFormRequest $request): AnonymousResourceCollection
+    {
+        $searchLessons = $request->getDto();
+        $lessons = $this->getFacade()->search($searchLessons, $this->getSearchRelations());
+        $meta = $this->getFacade()->getMeta($searchLessons);
+
+        return LessonResource::collection($lessons)->additional(['meta' => $meta]);
+    }
 
     protected function getSearchRelations(): array
     {
         return [];
     }
 
-    protected function _store(FormRequest $request): JsonResource
-    {
-        $record = $this->getFacade()->create($request->getDto());
-        return $this->makeResource($record);
-    }
-
     public function show(string $id): JsonResource
     {
         $record = $this->getFacade()->find($id);
-        return $this->makeResource($record);
-    }
-
-    protected function _update(FormRequest $request, string $id): JsonResource
-    {
-        $record = $this->getFacade()->findAndUpdate($id, $request->getDto());
         return $this->makeResource($record);
     }
 

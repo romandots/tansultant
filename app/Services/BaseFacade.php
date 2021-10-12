@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Requests\DTO\Contracts\PaginatedInterface;
 use App\Http\Requests\ManagerApi\FilteredPaginatedFormRequest;
 use App\Repository\Repository;
 use Illuminate\Database\Eloquent\Collection;
@@ -26,5 +27,15 @@ abstract class BaseFacade
     public function getAll(): Collection
     {
         return $this->getRepository()->getAll();
+    }
+
+    public function search(PaginatedInterface $searchParams, array $relations = []): \Illuminate\Support\Collection
+    {
+        return $this->getService()->search($searchParams, $relations);
+    }
+
+    public function getMeta(PaginatedInterface $searchParams): array
+    {
+        return $this->getService()->getMeta($searchParams);
     }
 }
