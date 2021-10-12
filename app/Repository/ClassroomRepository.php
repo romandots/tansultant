@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Collection;
 /**
  * Class ClassroomRepository
  */
-class ClassroomRepository extends Repository
+class ClassroomRepository extends BaseRepository
 {
     public const SEARCHABLE_ATTRIBUTES = ['name'];
 

@@ -4,7 +4,7 @@ namespace App\Services\Classroom;
 
 use App\Models\Classroom;
 use App\Repository\ClassroomRepository;
-use App\Repository\Repository;
+use App\Repository\BaseRepository;
 use App\Services\BaseFacade;
 use App\Services\BaseService;
 use Illuminate\Database\Eloquent\Collection;
@@ -20,7 +20,7 @@ class ClassroomFacade extends BaseFacade
         $this->repository = $service->getRepository();
     }
 
-    public function getRepository(): Repository
+    public function getRepository(): BaseRepository
     {
         return $this->repository;
     }

@@ -21,7 +21,7 @@ use Carbon\Carbon;
  * Class InstructorRepository
  * @package App\Repository
  */
-class InstructorRepository extends Repository
+class InstructorRepository extends BaseRepository
 {
     public const WITH_SOFT_DELETES = true;
     public const SEARCHABLE_ATTRIBUTES = [

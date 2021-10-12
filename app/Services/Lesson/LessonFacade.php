@@ -8,7 +8,7 @@ use App\Http\Requests\ManagerApi\DTO\StoreLesson;
 use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
 use App\Models\Lesson;
 use App\Repository\LessonRepository;
-use App\Repository\Repository;
+use App\Repository\BaseRepository;
 use App\Services\BaseFacade;
 use App\Services\BaseService;
 use Carbon\Carbon;
@@ -34,7 +34,7 @@ class LessonFacade extends BaseFacade
         $this->manager = $manager;
     }
 
-    public function getRepository(): Repository
+    public function getRepository(): BaseRepository
     {
         return $this->repository;
     }

@@ -21,7 +21,7 @@ use App\Models\Visit;
  * Class VisitRepository
  * @package App\Repository
  */
-class VisitRepository extends Repository
+class VisitRepository extends BaseRepository
 {
     public const WITH_SOFT_DELETES = false;
     public const SEARCHABLE_ATTRIBUTES = [];

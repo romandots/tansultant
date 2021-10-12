@@ -24,7 +24,7 @@ use Ramsey\Uuid\Uuid;
  * Class PersonRepository
  * @package App\Repository
  */
-class PersonRepository extends Repository
+class PersonRepository extends BaseRepository
 {
     public const WITH_SOFT_DELETES = true;
     public const SEARCHABLE_ATTRIBUTES = [

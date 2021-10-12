@@ -7,7 +7,7 @@ use App\Http\Requests\DTO\Contracts\PaginatedInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-abstract class Repository
+abstract class BaseRepository
 {
     abstract public function getSearchableAttributes(): array;
     abstract public function withSoftDeletes(): bool;

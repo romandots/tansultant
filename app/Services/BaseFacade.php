@@ -4,12 +4,12 @@ namespace App\Services;
 
 use App\Http\Requests\DTO\Contracts\PaginatedInterface;
 use App\Http\Requests\ManagerApi\FilteredPaginatedFormRequest;
-use App\Repository\Repository;
+use App\Repository\BaseRepository;
 use Illuminate\Database\Eloquent\Collection;
 
 abstract class BaseFacade
 {
-    abstract public function getRepository(): Repository;
+    abstract public function getRepository(): BaseRepository;
     abstract public function getService(): BaseService;
 
     public function suggest(

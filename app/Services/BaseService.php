@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Http\Requests\DTO\Contracts\PaginatedInterface;
 use App\Http\Requests\DTO\FilteredDto;
-use App\Repository\Repository;
+use App\Repository\BaseRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -12,7 +12,7 @@ abstract class BaseService
 {
     use WithLogger;
 
-    abstract public function getRepository(): Repository;
+    abstract public function getRepository(): BaseRepository;
     abstract public function getModelClassName(): string;
     abstract public function makeSearchFilterDto(): FilteredDto;
 
