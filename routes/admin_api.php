@@ -139,9 +139,6 @@ Route::group(['prefix' => 'schedules'], static function () {
 
 // LESSONS
 Route::group(['prefix' => 'lessons'], static function () {
-    Route::get('/', 'LessonController@search')
-        ->middleware('permission:' .
-            LessonsPermissions::MANAGE . '|' . LessonsPermissions::READ);
     Route::get('/', 'LessonController@index')
         ->middleware('permission:' . LessonsPermissions::MANAGE . '|' . LessonsPermissions::READ);
     Route::post('/', 'LessonController@store')
@@ -221,6 +218,8 @@ Route::group(['prefix' => 'branches'], static function () {
 
 // CLASSROOMS
 Route::group(['prefix' => 'classrooms'], static function () {
+    Route::get('/suggest', 'ClassroomController@suggest')
+        ->middleware('permission:' . ClassroomsPermissions::MANAGE . '|' . ClassroomsPermissions::READ);
     Route::get('/', 'ClassroomController@index')
         ->middleware('permission:' . ClassroomsPermissions::MANAGE . '|' . ClassroomsPermissions::READ);
     Route::get('{classroomId}', 'ClassroomController@show')
