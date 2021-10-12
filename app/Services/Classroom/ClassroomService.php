@@ -5,6 +5,7 @@ namespace App\Services\Classroom;
 use App\Http\Requests\DTO\FilteredDto;
 use App\Http\Requests\ManagerApi\DTO\SearchLessonsFilterDto;
 use App\Models\Classroom;
+use App\Repository\BaseRepository;
 use App\Repository\ClassroomRepository;
 use App\Services\BaseService;
 use JetBrains\PhpStorm\Pure;
@@ -18,7 +19,7 @@ class ClassroomService extends BaseService
         $this->repository = $repository;
     }
 
-    public function getRepository(): ClassroomRepository
+    public function getRepository(): BaseRepository
     {
         return $this->repository;
     }

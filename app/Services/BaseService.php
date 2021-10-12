@@ -27,10 +27,6 @@ abstract class BaseService
         $dto->with_deleted = false;
         $records = $this->getRepository()->findFiltered($dto);
 
-        if (is_string($labelField) && is_string($valueField) && [] === $additionalFields) {
-            return $records->pluck($labelField, $valueField)->toArray();
-        }
-
         return $records
             ->map(function (Model $record) use ($additionalFields, $labelField, $valueField) {
                 assert(is_a($record, $this->getModelClassName()));
