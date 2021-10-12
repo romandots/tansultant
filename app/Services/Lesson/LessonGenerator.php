@@ -5,11 +5,14 @@ namespace App\Services\Lesson;
 use App\Models\Schedule;
 use App\Repository\ScheduleRepository;
 use App\Services\BaseService;
+use App\Services\WithLogger;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
-class LessonGenerator extends BaseService
+class LessonGenerator
 {
+    use WithLogger;
+
     protected LessonService $service;
     protected ScheduleRepository $scheduleRepository;
 

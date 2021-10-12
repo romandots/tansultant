@@ -8,10 +8,13 @@ use App\Repository\LessonRepository;
 use App\Services\BaseService;
 use App\Services\Intent\IntentService;
 use App\Services\Visit\VisitService;
+use App\Services\WithLogger;
 use Carbon\Carbon;
 
-class LessonManager extends BaseService
+class LessonManager
 {
+    use WithLogger;
+
     private LessonRepository $repository;
     private IntentService $intentService;
     private VisitService $visitService;

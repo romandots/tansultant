@@ -26,12 +26,12 @@ class VisitRepository extends BaseRepository
     public const WITH_SOFT_DELETES = false;
     public const SEARCHABLE_ATTRIBUTES = [];
 
-    protected function getSearchableAttributes(): array
+    public function getSearchableAttributes(): array
     {
         return self::SEARCHABLE_ATTRIBUTES;
     }
 
-    protected function withSoftDeletes(): bool
+    public function withSoftDeletes(): bool
     {
         return self::WITH_SOFT_DELETES;
     }
@@ -82,7 +82,7 @@ class VisitRepository extends BaseRepository
         return $visit;
     }
 
-    final protected function getQuery(): \Illuminate\Database\Eloquent\Builder
+    final public function getQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return Visit::query();
     }

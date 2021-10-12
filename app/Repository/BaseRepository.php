@@ -23,7 +23,7 @@ abstract class BaseRepository
 
         if ($filter->query && count($this->getSearchableAttributes()) > 0) {
             $query->where(function (\Illuminate\Database\Eloquent\Builder $query) use ($filter) {
-                $searchQuery = $filter->getQuery() . '%';
+                $searchQuery = '%' . $filter->getQuery() . '%';
                 $attributes = $this->getSearchableAttributes();
                 $firstAttribute = array_shift($attributes);
                 $query->where($firstAttribute, 'ILIKE', $searchQuery);

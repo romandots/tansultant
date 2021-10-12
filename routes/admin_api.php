@@ -139,7 +139,9 @@ Route::group(['prefix' => 'schedules'], static function () {
 
 // LESSONS
 Route::group(['prefix' => 'lessons'], static function () {
-    Route::get('/', 'LessonController@index')
+    Route::get('/suggest', 'LessonController@suggest')
+        ->middleware('permission:' . LessonsPermissions::MANAGE . '|' . LessonsPermissions::READ);
+    Route::get('/', 'LessonController@search')
         ->middleware('permission:' . LessonsPermissions::MANAGE . '|' . LessonsPermissions::READ);
     Route::post('/', 'LessonController@store')
         ->middleware('permission:' .

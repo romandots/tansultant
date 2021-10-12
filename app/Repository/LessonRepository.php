@@ -182,17 +182,17 @@ class LessonRepository extends BaseRepository
             ->exists();
     }
 
-    protected function getSearchableAttributes(): array
+    public function getSearchableAttributes(): array
     {
         return self::SEARCHABLE_ATTRIBUTES;
     }
 
-    protected function withSoftDeletes(): bool
+    public function withSoftDeletes(): bool
     {
         return true;
     }
 
-    protected function getQuery(): \Illuminate\Database\Eloquent\Builder
+    public function getQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return Lesson::query();
     }

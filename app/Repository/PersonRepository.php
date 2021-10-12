@@ -36,17 +36,17 @@ class PersonRepository extends BaseRepository
         'note',
     ];
 
-    protected function getSearchableAttributes(): array
+    public function getSearchableAttributes(): array
     {
         return self::SEARCHABLE_ATTRIBUTES;
     }
 
-    protected function withSoftDeletes(): bool
+    public function withSoftDeletes(): bool
     {
         return self::WITH_SOFT_DELETES;
     }
 
-    protected function getQuery(): \Illuminate\Database\Eloquent\Builder
+    public function getQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return Person::query();
     }
