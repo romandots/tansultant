@@ -1,5 +1,6 @@
 {
-    "name": "romandots/tansultant",
+    "name": "tansultant/api",
+    "version": "alpha",
     "type": "project",
     "description": "Tansultant CRM",
     "keywords": [
@@ -8,28 +9,14 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.0.10",
+        "php": "^8.1.4",
         "ext-json": "*",
         "ext-pdo": "*",
-        "barryvdh/laravel-ide-helper": "^2.10.0",
-        "doctrine/dbal": "^3.1.0",
-        "fideloper/proxy": "4.4.*",
-        "fruitcake/laravel-cors": "^2.0",
-        "laravel/framework": "8.61.*",
-        "laravel/passport": "10.1.*",
-        "laravel/tinker": "2.6.*",
-        "nutnet/laravel-sms": "0.10.*",
+        "laravel/laravel": "^9.1",
+        "laravel/passport": "^10.4",
         "predis/predis": "^1.1",
-        "spatie/laravel-permission": "5.1.*",
-        "spatie/laravel-tags": "4.0.4.*",
-        "zelenin/smsru": "5.*"
-    },
-    "require-dev": {
-        "filp/whoops": "*",
-        "fzaninotto/faker": "*",
-        "mockery/mockery": "*",
-        "nunomaduro/collision": "*",
-        "phpunit/phpunit": "*"
+        "spatie/laravel-permission": "^5.5",
+        "spatie/laravel-tags": "^4.3"
     },
     "config": {
         "optimize-autoloader": true,
@@ -71,5 +58,11 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ]
+    },
+    "require-dev": {
+        "fzaninotto/faker": "^1.5",
+        "mockery/mockery": "^1.5",
+        "nunomaduro/collision": "^6.2",
+        "phpunit/phpunit": "^9.5"
     }
 }

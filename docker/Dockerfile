@@ -1,4 +1,4 @@
-FROM php:8.0-fpm
+FROM php:8.1.4-fpm-buster
 
 EXPOSE 9009
 
@@ -25,15 +25,15 @@ RUN apt-get update -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN  pecl install xdebug redis \
+RUN pecl install xdebug redis \
     && docker-php-ext-enable xdebug \
     && docker-php-ext-enable redis \
     && docker-php-ext-install pgsql \
     && docker-php-ext-install pdo_pgsql
 
-ADD ./docker/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
-ADD ./docker/nginx.conf /etc/nginx/sites-enabled/default
-ADD ./docker/entrypoint.sh /tmp/entrypoint.sh
+ADD ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+ADD ./nginx.conf /etc/nginx/sites-enabled/default
+ADD ./entrypoint.sh /tmp/entrypoint.sh
 RUN chmod 777 /tmp/entrypoint.sh
 
 RUN mv /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
