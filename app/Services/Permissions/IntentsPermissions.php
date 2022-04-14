@@ -14,7 +14,7 @@ namespace App\Services\Permissions;
  * Class IntentsPermissions
  * @package App\Services\Permissions
  */
-class IntentsPermissions
+class IntentsPermissions extends Permissions
 {
     public const MANAGE = 'manage_intents';
     public const CREATE = 'create_intents';

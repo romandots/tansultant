@@ -21,13 +21,13 @@ trait CreatesFakeContract
      * @param array|null $attributes
      * @return Contract
      */
-    private function createFakeContract(?array $attributes = []): Contract
+    protected function createFakeContract(?array $attributes = []): Contract
     {
         if (!isset($attributes['customer_id'])) {
             $customer = $this->createFakeCustomer();
             $attributes['customer_id'] = $customer->id;
         }
 
-        return \factory(Contract::class)->create($attributes);
+        return Contract::factory()->create($attributes);
     }
 }

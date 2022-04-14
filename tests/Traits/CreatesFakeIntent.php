@@ -28,7 +28,7 @@ trait CreatesFakeIntent
      * @param User|null $manager
      * @return Intent
      */
-    private function createFakeIntent(
+    protected function createFakeIntent(
         ?array $attributes = [],
         ?Lesson $lesson = null,
         ?Student $student = null,
@@ -53,6 +53,6 @@ trait CreatesFakeIntent
             $attributes['manager_id'] = $manager->id;
         }
 
-        return \factory(Intent::class)->create($attributes);
+        return Intent::factory()->create($attributes);
     }
 }

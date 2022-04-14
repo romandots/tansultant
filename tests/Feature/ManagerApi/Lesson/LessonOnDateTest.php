@@ -94,6 +94,7 @@ class LessonOnDateTest extends TestCase
      */
     public function testValidationErrors(array $params): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             LessonsPermissions::READ
         ]);
@@ -106,6 +107,7 @@ class LessonOnDateTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             LessonsPermissions::READ
         ]);

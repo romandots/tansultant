@@ -44,7 +44,7 @@ class ResetPasswordControllerTest extends TestCase
     {
         Event::fake();
 
-        $phoneNumber = $this->faker->e164PhoneNumber;
+        $phoneNumber = $this->faker->phoneNumber;
         $normalizedPhoneNumber = \normalize_phone_number($phoneNumber);
         $user = $this->createFakeUser([
             'username' => $phoneNumber

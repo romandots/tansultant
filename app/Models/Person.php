@@ -11,6 +11,7 @@ namespace App\Models;
 
 use App\Models\Traits\Notifiable;
 use App\Models\Traits\UsesUuid;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Tags\HasTags;
 
@@ -77,6 +78,7 @@ class Person extends Model
     use UsesUuid;
     use Notifiable;
     use HasTags;
+    use HasFactory;
 
     public const TABLE = 'people';
 

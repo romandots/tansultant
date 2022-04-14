@@ -49,9 +49,9 @@ class ScheduleStoreTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        parent::setUp();
+        $this->artisan('db:seed');
         $this->course = $this->createFakeCourse();
-        $this->url = 'admin/courses/' . $this->course->id . '/schedules';
+        $this->url = 'admin/schedules';
     }
 
     public function testAccessDenied(): void
@@ -102,7 +102,7 @@ class ScheduleStoreTest extends TestCase
         $classroom = $this->createFakeClassroom();
 
         // Occupy slot
-        \factory(Schedule::class)->create(
+        Schedule::factory()->create(
             [
                 'branch_id' => $branch->id,
                 'classroom_id' => $classroom->id,
@@ -113,7 +113,7 @@ class ScheduleStoreTest extends TestCase
             ]
         );
 
-        \factory(Schedule::class)->create(
+        Schedule::factory()->create(
             [
                 'branch_id' => $branch->id,
                 'classroom_id' => $classroom->id,

@@ -61,6 +61,7 @@ class IntentDestroyTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             IntentsPermissions::DELETE
         ]);

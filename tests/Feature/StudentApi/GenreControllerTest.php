@@ -30,6 +30,7 @@ class GenreControllerTest extends TestCase
     {
         parent::setUp();
 
+        $this->artisan('db:seed');
         $this->user = $this->createFakeUser([], [], [UserRoles::STUDENT]);
         $this->actingAs($this->user);
 

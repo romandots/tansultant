@@ -22,13 +22,13 @@ trait CreatesFakeInstructor
      * @param array $attributes
      * @return Instructor
      */
-    private function createFakeInstructor(array $attributes = []): Instructor
+    protected function createFakeInstructor(array $attributes = []): Instructor
     {
         if (!isset($attributes['person_id'])) {
             $person = $this->createFakePerson();
             $attributes['person_id'] = $person->id;
         }
 
-        return \factory(Instructor::class)->create($attributes);
+        return Instructor::factory()->create($attributes);
     }
 }

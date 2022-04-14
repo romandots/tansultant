@@ -1,31 +1,39 @@
 <?php
-declare(strict_types=1);
 
-/* @var \Illuminate\Database\Eloquent\Factory  $factory */
+namespace Database\Factories;
 
 use App\Models\Branch;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Branch::class, static function (Faker $faker) {
-    return [
-        'id' => \uuid(),
-        'name' => $faker->name,
-        'summary' => $faker->sentence,
-        'description' => $faker->text,
-        'address' => [
-            'country' => 'Россия',
-            'city' => 'Россия',
-            'street' => $faker->streetName,
-            'building' => $faker->numerify('###/#'),
-            'coordinates' => [$faker->numerify('45,#####'), $faker->numerify('38,#####')],
-        ],
-        'phone' => $faker->phoneNumber,
-        'email' => $faker->email,
-        'url' => $faker->url,
-        'vk_url' => $faker->url,
-        'facebook_url' => $faker->url,
-        'telegram_username' => $faker->word,
-        'instagram_username' => $faker->word,
-        'number' => null
-    ];
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Branch>
+ */
+class BranchFactory extends Factory
+{
+    protected $model = Branch::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition()
+    {
+        return [
+                'id' => $this->faker->uuid(),
+                'name' => $this->faker->name(),
+                'summary' => $this->faker->words(10, true),
+                'description' => $this->faker->words(20, true),
+                'address' => [
+                    'country' => 'Россия',
+                    'city' => 'Россия',
+                    'street' => 'Гагарина',
+                    'building' => $this->faker->numerify('###/#'),
+                    'coordinates' => [$this->faker->numerify('45,#####'), $this->faker->numerify('38,#####')],
+                ],
+                'phone' => $this->faker->phoneNumber,
+                'email' => $this->faker->word . '@' . $this->faker->word . '.com',
+                'number' => null
+            ];
+    }
+}

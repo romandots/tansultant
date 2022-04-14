@@ -5,7 +5,8 @@ namespace App\Providers;
 
 use App\Services\TextMessaging\TextMessagingService;
 use App\Services\TextMessaging\TextMessagingServiceInterface;
-use Illuminate\Contracts\Foundation\Application;
+use Faker\Generator;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Nutnet\LaravelSms\SmsSender;
 

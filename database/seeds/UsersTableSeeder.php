@@ -7,6 +7,8 @@
  */
 declare(strict_types=1);
 
+namespace Database\Seeders;
+
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -18,7 +20,7 @@ class UsersTableSeeder extends Seeder
     /**
      * Seed the application's database.
      * @return void
-     * @throws Exception
+     * @throws \Exception
      */
     public function run(): void
     {

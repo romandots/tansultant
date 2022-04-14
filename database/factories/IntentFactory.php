@@ -1,24 +1,32 @@
 <?php
-/**
- * File: IntentFactory.php
- * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-28
- * Copyright (c) 2019
- */
 declare(strict_types=1);
 
-/* @var \Illuminate\Database\Eloquent\Factory  $factory */
+namespace Database\Factories;
 
-use App\Models\Intent;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Intent::class, static function (Faker $faker) {
-    return [
-        'id' => \uuid(),
-        'student_id' => \uuid(),
-        'manager_id' => \uuid(),
-        'event_type' => \App\Models\Lesson::class,
-        'event_id' => \uuid(),
-        'status' => Intent::STATUS_EXPECTING,
-    ];
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Classroom>
+ */
+class IntentFactory extends Factory
+{
+    protected $model = \App\Models\Intent::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     * @throws \Exception
+     */
+    public function definition()
+    {
+        return [
+            'id' => \uuid(),
+            'student_id' => \uuid(),
+            'manager_id' => \uuid(),
+            'event_type' => \App\Models\Lesson::class,
+            'event_id' => \uuid(),
+            'status' => \App\Models\Intent::STATUS_EXPECTING,
+        ];
+    }
+}

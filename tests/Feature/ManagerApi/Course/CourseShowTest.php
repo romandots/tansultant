@@ -40,7 +40,8 @@ class CourseShowTest extends TestCase
             'status',
             'status_label',
             'instructor',
-            'age_restrictions',
+            'age_restrictions_from',
+            'age_restrictions_to',
             'age_restrictions_string',
             'starts_at',
             'ends_at',
@@ -84,6 +85,7 @@ class CourseShowTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             CoursesPermissions::READ
         ]);

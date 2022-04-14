@@ -1,39 +1,35 @@
 <?php
-/**
- * File: UserFactory.php
- * Author: Roman Dots <romandots@brainex.co>
- * Date: 2020-2-19
- * Copyright (c) 2020
- */
-
 declare(strict_types=1);
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Models\User;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-/*
-|--------------------------------------------------------------------------
-| Model Factories
-|--------------------------------------------------------------------------
-|
-| This directory should contain each of the model factory definitions for
-| your application. Factories provide a convenient way to generate new
-| model instances for testing / seeding your application's database.
-|
-*/
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Classroom>
+ */
+class UserFactory extends Factory
+{
+    protected $model = \App\Models\User::class;
 
-$factory->define(User::class, function (Faker $faker) {
-    return [
-        'id' => \uuid(),
-        'name' => $faker->name,
-        'username' => $faker->unique()->name,
-        'status' => User::STATUS_APPROVED,
-        'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-        'remember_token' => Str::random(10),
-        'approved_at' => now(),
-        'seen_at' => now(),
-    ];
-});
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     * @throws \Exception
+     */
+    public function definition()
+    {
+        return [
+            'id' => \uuid(),
+            'name' => $this->faker->name,
+            'username' => $this->faker->unique()->name,
+            'status' => \App\Models\User::STATUS_APPROVED,
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'remember_token' => Str::random(10),
+            'approved_at' => now(),
+            'seen_at' => now(),
+        ];
+    }
+}

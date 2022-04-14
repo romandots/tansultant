@@ -51,11 +51,11 @@ class RegisterControllerTest extends TestCase
         $this->verificationService = \app(VerificationService::class);
     }
 
-    private function createFakeVerificationCode(?string $phone = null, ?string $code = null): VerificationCode
+    protected function createFakeVerificationCode(?string $phone = null, ?string $code = null): VerificationCode
     {
-        return \factory(\App\Models\VerificationCode::class)->create([
+        return \App\Models\VerificationCode::factory()->create([
             'id' => \uuid(),
-            'phone_number' => $phone ?? $this->faker->e164PhoneNumber,
+            'phone_number' => $phone ?? $this->faker->phoneNumber,
             'verification_code' => $code ?? $this->faker->numerify('####'),
             'created_at' => Carbon::now(),
             'expired_at' => Carbon::now()->addMinute(),
@@ -71,7 +71,7 @@ class RegisterControllerTest extends TestCase
     {
         Event::fake();
 
-        $phoneNumber = $this->faker->e164PhoneNumber;
+        $phoneNumber = $this->faker->phoneNumber;
         $verificationCode = $this->createFakeVerificationCode($phoneNumber, '7777');
 
         $postData = [
@@ -131,7 +131,7 @@ class RegisterControllerTest extends TestCase
                             'patronymic_name' => $postData['patronymic_name'],
                             'birth_date' => $postData['birth_date'],
                             'gender' => $postData['gender'],
-                            'phone' => $phoneNumber,
+                            'phone' => \phone_format($phoneNumber),
                             'email' => $postData['email'],
                             'picture' => null,
                             'picture_thumb' => null,
@@ -215,7 +215,7 @@ class RegisterControllerTest extends TestCase
      */
     public function testRegisterUserInvalidData(string $userType, array $invalidData): void
     {
-        $phoneNumber = $this->faker->e164PhoneNumber;
+        $phoneNumber = $this->faker->phoneNumber;
         $verificationCode = $this->createFakeVerificationCode($phoneNumber, '7777');
 
         $postData = [];
@@ -365,7 +365,7 @@ class RegisterControllerTest extends TestCase
 
     public function testRegisterWithExistingPersonByPhoneNumber(): void
     {
-        $phoneNumber = $this->faker->e164PhoneNumber;
+        $phoneNumber = $this->faker->phoneNumber;
         $normalizedPhone = \normalize_phone_number($phoneNumber);
         $fakePerson = $this->createFakePerson(['phone' => $normalizedPhone]);
         $verificationCode = $this->createFakeVerificationCode($phoneNumber, '7777');
@@ -391,7 +391,7 @@ class RegisterControllerTest extends TestCase
                 'data' => [
                     'person' => [
                         'id' => $fakePerson->id,
-                        'phone' => $normalizedPhone,
+                        'phone' => \phone_format($normalizedPhone),
                         'last_name' => 'Dots',
                         'first_name' => 'Roman',
                         'patronymic_name' => 'A.',
@@ -404,7 +404,7 @@ class RegisterControllerTest extends TestCase
 
     public function testRegisterWithExistingUserByPhoneNumber(): void
     {
-        $phoneNumber = $this->faker->e164PhoneNumber;
+        $phoneNumber = $this->faker->phoneNumber;
         $normalizedPhone = \normalize_phone_number($phoneNumber);
         $verificationCode = $this->createFakeVerificationCode($normalizedPhone, '7777');
 
@@ -436,7 +436,7 @@ class RegisterControllerTest extends TestCase
 
     public function testRegisterWithExistingNameAndBirthDate(): void
     {
-        $phoneNumber = $this->faker->e164PhoneNumber;
+        $phoneNumber = $this->faker->phoneNumber;
         $normalizedPhone = \normalize_phone_number($phoneNumber);
         $verificationCode = $this->createFakeVerificationCode($normalizedPhone, '7777');
 

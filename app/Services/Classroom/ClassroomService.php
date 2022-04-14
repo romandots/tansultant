@@ -50,4 +50,10 @@ class ClassroomService extends BaseService
         $this->repository->delete($record);
         //event(ClassroomDeletedEvent)
     }
+
+    public function restore(Classroom $record): void
+    {
+        $this->repository->restore($record);
+        //event(ClassroomDeletedEvent)
+    }
 }

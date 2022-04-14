@@ -7,6 +7,8 @@
  */
 declare(strict_types=1);
 
+namespace Database\Seeders;
+
 use App\Repository\BranchRepository;
 use App\Repository\ClassroomRepository;
 use Illuminate\Database\Seeder;

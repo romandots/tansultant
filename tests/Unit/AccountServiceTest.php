@@ -50,7 +50,7 @@ class AccountServiceTest extends TestCase
     {
         parent::setUp();
         $this->service = $this->app->get(AccountService::class);
-        $this->branch = \factory(Branch::class)->create();
+        $this->branch = Branch::factory()->create();
     }
 
     /**

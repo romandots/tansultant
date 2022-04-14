@@ -19,8 +19,8 @@ trait CreatesFakePerson
      * @param array|null $attributes
      * @return \App\Models\Person
      */
-    private function createFakePerson(array $attributes = []): \App\Models\Person
+    protected function createFakePerson(array $attributes = []): \App\Models\Person
     {
-        return \factory(\App\Models\Person::class)->create($attributes);
+        return \App\Models\Person::factory()->create($attributes);
     }
 }

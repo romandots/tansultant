@@ -66,6 +66,7 @@ class BranchRecoverTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             BranchesPermissions::DELETE
         ]);

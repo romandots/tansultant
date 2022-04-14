@@ -106,6 +106,7 @@ class VisitStoreTest extends TestCase
      */
     public function testValidationErrors(array $data): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             VisitsPermissions::CREATE
         ]);
@@ -118,6 +119,7 @@ class VisitStoreTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             VisitsPermissions::CREATE
         ]);

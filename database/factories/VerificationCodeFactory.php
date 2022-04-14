@@ -1,24 +1,32 @@
 <?php
-/**
- * File: VerificationCodeFactory.php
- * Author: Roman Dots <romandots@brainex.co>
- * Date: 2020-2-19
- * Copyright (c) 2020
- */
 declare(strict_types=1);
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use Carbon\Carbon;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(\App\Models\VerificationCode::class, function (Faker $faker) {
-    return [
-        'id' => $faker->uuid,
-        'phone_number' => $faker->e164PhoneNumber,
-        'verification_code' => $faker->numerify('####'),
-        'created_at' => Carbon::now(),
-        'expired_at' => Carbon::now()->addMinute(),
-        'verified_at' => null,
-    ];
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Classroom>
+ */
+class VerificationCodeFactory extends Factory
+{
+    protected $model = \App\Models\VerificationCode::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     * @throws \Exception
+     */
+    public function definition()
+    {
+        return [
+            'id' => $this->faker->uuid,
+            'phone_number' => $this->faker->phoneNumber,
+            'verification_code' => $this->faker->numerify('####'),
+            'created_at' => \Carbon\Carbon::now(),
+            'expired_at' => \Carbon\Carbon::now()->addMinute(),
+            'verified_at' => null,
+        ];
+    }
+}

@@ -28,7 +28,7 @@ trait CreatesFakeVisit
      * @param array|null $attributes
      * @return Visit
      */
-    private function createFakeLessonVisit(
+    protected function createFakeLessonVisit(
         ?Lesson $lesson = null,
         ?Student $student = null,
         ?User $manager = null,
@@ -43,6 +43,6 @@ trait CreatesFakeVisit
         $attributes['manager_id'] = $manager->id;
         $attributes['payment_id'] = null;
 
-        return \factory(Visit::class)->create($attributes);
+        return Visit::factory()->create($attributes);
     }
 }

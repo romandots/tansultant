@@ -32,7 +32,7 @@ trait CreatesFakeLesson
      * @param Schedule|null $schedule
      * @return Lesson
      */
-    private function createFakeLesson(
+    protected function createFakeLesson(
         ?array $attributes = [],
         ?Course $course = null,
         ?Classroom $classroom = null,
@@ -65,6 +65,6 @@ trait CreatesFakeLesson
             $attributes['schedule_id'] = $attributes['schedule_id'] ?? $schedule->id;
         }
 
-        return \factory(Lesson::class)->create($attributes);
+        return Lesson::factory()->create($attributes);
     }
 }

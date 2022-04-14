@@ -1,25 +1,32 @@
 <?php
-/**
- * File: ClassroomFactory.php
- * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-31
- * Copyright (c) 2019
- */
 
-declare(strict_types=1);
-
-/* @var \Illuminate\Database\Eloquent\Factory  $factory */
+namespace Database\Factories;
 
 use App\Models\Classroom;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Classroom::class, static function (Faker $faker) {
-    return [
-        'id' => \uuid(),
-        'name' => $faker->randomLetter,
-        'branch_id' => \factory(\App\Models\Branch::class),
-        'color' => $faker->colorName,
-        'capacity' => $faker->numberBetween(10, 25),
-        'number' => $faker->randomNumber(),
-    ];
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Classroom>
+ */
+class ClassroomFactory extends Factory
+{
+    protected $model = Classroom::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     * @throws \Exception
+     */
+    public function definition()
+    {
+        return [
+            'id' => \uuid(),
+            'name' => $this->faker->randomLetter,
+            'branch_id' => \App\Models\Branch::factory(),
+            'color' => $this->faker->colorName,
+            'capacity' => $this->faker->numberBetween(10, 25),
+            'number' => $this->faker->randomNumber(),
+        ];
+    }
+}

@@ -22,8 +22,8 @@ trait CreatesFakeBranch
      * @param array|null $attributes
      * @return Branch
      */
-    private function createFakeBranch(?array $attributes = []): Branch
+    protected function createFakeBranch(?array $attributes = []): Branch
     {
-        return \factory(Branch::class)->create($attributes);
+        return Branch::factory()->create($attributes);
     }
 }

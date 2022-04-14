@@ -1,31 +1,38 @@
 <?php
-/**
- * File: CourseFactory.php
- * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-23
- * Copyright (c) 2019
- */
-
 declare(strict_types=1);
 
-/* @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Models\Course;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Course::class, static function (Faker $faker) {
-    return [
-        'id' => \uuid(),
-        'name' => $faker->name,
-        'status' => Course::STATUS_ACTIVE,
-        'summary' => $faker->sentence,
-        'description' => $faker->text,
-        'display' => true,
-        'picture' => $faker->imageUrl(),
-        'picture_thumb' => $faker->imageUrl(),
-        'age_restrictions' => ['from' => null, 'to' => null],
-        'starts_at' => \Carbon\Carbon::now(),
-        'ends_at' => \Carbon\Carbon::now()->addYear(),
-        'instructor_id' => \factory(\App\Models\Instructor::class),
-    ];
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Classroom>
+ */
+class CourseFactory extends Factory
+{
+    protected $model = \App\Models\Course::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     * @throws \Exception
+     */
+    public function definition()
+    {
+        return [
+            'id' => \uuid(),
+            'name' => $this->faker->name,
+            'status' => \App\Models\Course::STATUS_ACTIVE,
+            'summary' => $this->faker->words(10, true),
+            'description' => $this->faker->words(20, true),
+            'display' => true,
+            'picture' => 'http://some.ur/to/picture.jpg',
+            'picture_thumb' => 'http://some.ur/to/picture.thumb.jpg',
+            'age_restrictions' => ['from' => null, 'to' => null],
+            'starts_at' => \Carbon\Carbon::now(),
+            'ends_at' => \Carbon\Carbon::now()->addYear(),
+            'instructor_id' => \App\Models\Instructor::factory(),
+        ];
+    }
+}

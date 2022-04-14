@@ -14,6 +14,7 @@ use App\Models\Traits\UsesUuid;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -73,6 +74,7 @@ class Course extends Model
     use SoftDeletes;
     use UsesUuid;
     use HasTags;
+    use HasFactory;
 
     public const TABLE = 'courses';
 
