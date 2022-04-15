@@ -1,0 +1,49 @@
+version: '3'
+services:
+  api:
+    build:
+      context: ./docker/
+    image: api
+    ports:
+      - 80:80
+    volumes:
+      - ./:/app
+    environment:
+      PHP_IDE_CONFIG: "serverName=docker-server"
+      DB_NAME: tansultant
+      DB_USER: tansultant
+      DB_PASSWORD: tansultant
+    depends_on:
+      - db
+      - redis
+  queue:
+    image: api
+    volumes:
+      - ./:/app
+    entrypoint: php artisan queue:work --verbose --tries=3 --timeout=60
+    depends_on:
+      - api
+  scheduler:
+    image: api
+    volumes:
+      - ./:/app
+    entrypoint: sh -c "while true; do php artisan schedule:run --verbose & sleep 60; done"
+    depends_on:
+      - api
+  db:
+    image: postgres:14.2
+    ports:
+      - 5432:5432
+    volumes:
+      - ./docker/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: tansultant
+      POSTGRES_USER: tansultant
+      POSTGRES_PASSWORD: tansultant
+  redis:
+    image: "redis:alpine"
+  proxy:
+    image: nginx:latest
+    volumes:
+      - ./docker/nginx/conf:/etc/nginx/
+      - ./docker/nginx/logs:/var/log/nginx
