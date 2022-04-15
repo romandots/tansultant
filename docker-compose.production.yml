@@ -8,6 +8,7 @@ services:
       - 80:80
     volumes:
       - ./:/app
+      - ./docker/logs/laravel:/app/storage/logs
     environment:
       PHP_IDE_CONFIG: "serverName=docker-server"
       DB_NAME: tansultant
@@ -46,4 +47,4 @@ services:
     image: nginx:latest
     volumes:
       - ./docker/nginx/conf:/etc/nginx/
-      - ./docker/nginx/logs:/var/log/nginx
+      - ./docker/logs/nginx:/var/log/nginx
