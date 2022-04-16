@@ -7,11 +7,6 @@ services:
     restart: always
     ports:
       - "8000:80"
-    environment:
-      VUE_APP_NAME: "ШТБП"
-      VUE_APP_URL: http://localhost
-      VUE_APP_MEMBER_API_URL: http://localhost:8080/admin
-      VUE_APP_PUBLIC_API_URL: http://localhost:8080
   api:
     restart: always
   queue:
