@@ -18,7 +18,7 @@ services:
   proxy:
     image: nginx:latest
     volumes:
-      - ./docker/nginx/sites-enabled:/etc/nginx/sites-enabled/
+      - ./docker/nginx/sites-enabled:/etc/nginx/conf.d/
       - ./docker/nginx/certs:/etc/nginx/certs/
       - ./docker/logs/nginx:/var/log/nginx
     restart: always
