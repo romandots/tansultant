@@ -6,7 +6,7 @@ services:
       dockerfile: DockerfileProduction
     restart: always
     ports:
-      - 80:8080
+      - 80:80
   api:
     restart: always
     ports:
