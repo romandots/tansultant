@@ -45,11 +45,4 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 WORKDIR /app
 
-RUN composer install
-RUN chmod -R 777 storage/logs
-RUN chmod -R 777 storage/framework
-RUN php artisan migrate
-RUN php artisan key:generate
-RUN php artisan passport:install
-
 ENTRYPOINT /tmp/entrypoint.sh
