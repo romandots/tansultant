@@ -5,8 +5,6 @@ services:
       context: ../manager-app
       dockerfile: DockerfileProduction
     restart: always
-    ports:
-      - "80:80"
   api:
     restart: always
   queue:
