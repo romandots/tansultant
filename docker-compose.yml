@@ -1,13 +1,25 @@
 version: '3'
 services:
+  app:
+    build:
+      context: ../manager-app/
+      dockerfile: Dockerfile
+    volumes:
+      - ../manager-app/:/manager-app
+      - /manager-app/node_modules
+    ports:
+      - "80:8080"
+    depends_on:
+      - api
   api:
     build:
-      context: ./docker/
+      context: ./
     image: api
     ports:
-      - 8100:80
+      - "8080:80"
     volumes:
       - ./:/app
+      - /app/vendor
       - ./docker/logs/laravel:/app/storage/logs
     environment:
       PHP_IDE_CONFIG: "serverName=docker-server"
@@ -34,7 +46,7 @@ services:
   db:
     image: postgres:14.2
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - ./docker/data:/var/lib/postgresql/data
     environment:

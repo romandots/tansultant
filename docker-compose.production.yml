@@ -1,50 +1,24 @@
 version: '3'
 services:
+  app:
+    restart: always
+    ports:
+      - 80:8080
   api:
-    build:
-      context: ./docker/
-    image: api
+    restart: always
     ports:
-      - 80:80
-    volumes:
-      - ./:/app
-      - ./docker/logs/laravel:/app/storage/logs
-    environment:
-      PHP_IDE_CONFIG: "serverName=docker-server"
-      DB_NAME: tansultant
-      DB_USER: tansultant
-      DB_PASSWORD: tansultant
-    depends_on:
-      - db
-      - redis
+      - 8080:80
   queue:
-    image: api
-    volumes:
-      - ./:/app
-    entrypoint: php artisan queue:work --verbose --tries=3 --timeout=60
-    depends_on:
-      - api
+    restart: always
   scheduler:
-    image: api
-    volumes:
-      - ./:/app
-    entrypoint: sh -c "while true; do php artisan schedule:run --verbose & sleep 60; done"
-    depends_on:
-      - api
+    restart: always
   db:
-    image: postgres:14.2
-    ports:
-      - 5432:5432
-    volumes:
-      - ./docker/data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: tansultant
-      POSTGRES_USER: tansultant
-      POSTGRES_PASSWORD: tansultant
+    restart: always
   redis:
-    image: "redis:alpine"
+    restart: always
   proxy:
     image: nginx:latest
     volumes:
       - ./docker/nginx/conf:/etc/nginx/
       - ./docker/logs/nginx:/var/log/nginx
+    restart: always
