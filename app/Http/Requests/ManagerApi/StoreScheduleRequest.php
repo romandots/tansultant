@@ -13,6 +13,8 @@ namespace App\Http\Requests\ManagerApi;
 use App\Models\Branch;
 use App\Models\Classroom;
 use App\Models\Course;
+use App\Models\Enum\ScheduleCycle;
+use App\Models\Enum\Weekday;
 use App\Models\Schedule;
 use App\Repository\ClassroomRepository;
 use Carbon\Carbon;
@@ -57,7 +59,7 @@ class StoreScheduleRequest extends FormRequest
                 Rule::exists(Classroom::TABLE, 'id'),
             ],
             'from_date' => [
-                'required_unless:cycle,' . Schedule::CYCLE_EVERY_WEEK,
+                'required_unless:cycle,' . ScheduleCycle::EVERY_WEEK,
                 'regex:/\d{4}-\d{1,2}-\d{1,2}$/i',
             ],
             'to_date' => [
@@ -75,13 +77,13 @@ class StoreScheduleRequest extends FormRequest
             'cycle' => [
                 'required',
                 'string',
-                Rule::in(Schedule::CYCLES),
+                Rule::in(ScheduleCycle::cases()),
             ],
             'weekday' => [
                 'nullable',
-                'required_if:cycle,' . Schedule::CYCLE_EVERY_WEEK,
+                'required_if:cycle,' . ScheduleCycle::EVERY_WEEK,
                 'int',
-                Rule::in(Schedule::WEEKDAYS),
+                Rule::in(Weekday::cases()),
             ],
         ];
     }

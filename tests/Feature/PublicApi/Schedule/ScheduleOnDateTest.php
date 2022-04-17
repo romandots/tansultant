@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Tests\Feature\PublicApi\Schedule;
 
 use App\Models\Course;
+use App\Models\Enum\Weekday;
 use App\Models\Schedule;
 use App\Services\Permissions\SchedulesPermissions;
 use Tests\TestCase;
@@ -112,7 +113,7 @@ class ScheduleOnDateTest extends TestCase
             'course_id' => $course1->id,
             'starts_at' => '9:00',
             'ends_at' => '10:00',
-            'weekday' => Schedule::MONDAY,
+            'weekday' => Weekday::MONDAY,
             'branch_id' => $branchId1,
             'classroom_id' => $classroomId
         ]);
@@ -120,7 +121,7 @@ class ScheduleOnDateTest extends TestCase
             'course_id' => $course1->id,
             'starts_at' => '11:00',
             'ends_at' => '12:00',
-            'weekday' => Schedule::MONDAY,
+            'weekday' => Weekday::MONDAY,
             'branch_id' => $branchId1,
             'classroom_id' => $classroomId
         ]);
@@ -128,13 +129,13 @@ class ScheduleOnDateTest extends TestCase
             'course_id' => $course1->id,
             'starts_at' => '11:00',
             'ends_at' => '12:00',
-            'weekday' => Schedule::TUESDAY,
+            'weekday' => Weekday::TUESDAY,
             'branch_id' => $branchId1,
             'classroom_id' => $classroomId
         ]);
         $schedule1_3 = $this->createFakeSchedule([
             'course_id' => $course1->id,
-            'weekday' => Schedule::TUESDAY,
+            'weekday' => Weekday::TUESDAY,
             'starts_at' => '13:00',
             'ends_at' => '14:00',
             'branch_id' => $branchId1,
@@ -145,7 +146,7 @@ class ScheduleOnDateTest extends TestCase
             'course_id' => $course2->id,
             'starts_at' => '11:00',
             'ends_at' => '12:00',
-            'weekday' => Schedule::MONDAY,
+            'weekday' => Weekday::MONDAY,
             'branch_id' => $branchId2,
             'classroom_id' => $classroomId
         ]);
@@ -153,7 +154,7 @@ class ScheduleOnDateTest extends TestCase
             'course_id' => $course2->id,
             'starts_at' => '12:00',
             'ends_at' => '13:00',
-            'weekday' => Schedule::MONDAY,
+            'weekday' => Weekday::MONDAY,
             'branch_id' => $branchId2,
             'classroom_id' => $classroomId
         ]);
@@ -161,7 +162,7 @@ class ScheduleOnDateTest extends TestCase
             'course_id' => $course2->id,
             'starts_at' => '12:00',
             'ends_at' => '13:00',
-            'weekday' => Schedule::TUESDAY,
+            'weekday' => Weekday::TUESDAY,
             'branch_id' => $branchId2,
             'classroom_id' => $classroomId
         ]);
@@ -169,7 +170,7 @@ class ScheduleOnDateTest extends TestCase
             'course_id' => $course2->id,
             'starts_at' => '13:30',
             'ends_at' => '14:30',
-            'weekday' => Schedule::TUESDAY,
+            'weekday' => Weekday::TUESDAY,
             'branch_id' => $branchId2,
             'classroom_id' => $classroomId
         ]);
@@ -178,7 +179,7 @@ class ScheduleOnDateTest extends TestCase
             'course_id' => $course3->id,
             'starts_at' => '11:00',
             'ends_at' => '12:00',
-            'weekday' => Schedule::MONDAY,
+            'weekday' => Weekday::MONDAY,
             'branch_id' => $branchId2,
             'classroom_id' => $classroomId
         ]);
@@ -186,7 +187,7 @@ class ScheduleOnDateTest extends TestCase
             'course_id' => $course3->id,
             'starts_at' => '12:00',
             'ends_at' => '13:00',
-            'weekday' => Schedule::MONDAY,
+            'weekday' => Weekday::MONDAY,
             'branch_id' => $branchId2,
             'classroom_id' => $classroomId
         ]);

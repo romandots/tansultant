@@ -13,6 +13,7 @@ namespace App\Repository;
 use App\Http\Requests\ManagerApi\DTO\StoreSchedule as ScheduleDto;
 use App\Http\Requests\ManagerApi\DTO\ScheduleOnDate;
 use App\Models\Course;
+use App\Models\Enum\ScheduleCycle;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -256,22 +257,22 @@ class ScheduleRepository
                 $query
                     ->where(function (Builder $query) use ($date) {
                         $query
-                            ->where('cycle', Schedule::CYCLE_ONCE)
+                            ->where('cycle', ScheduleCycle::ONCE)
                             ->where('from_date', $date->toDateString());
                     })
                     ->orWhere(function (Builder $query) use ($date) {
                         $query
-                            ->where('cycle', Schedule::CYCLE_EVERY_WEEK)
+                            ->where('cycle', ScheduleCycle::EVERY_WEEK)
                             ->where('weekday', (string)$date->dayOfWeekIso);
                     })
                     ->orWhere(function (Builder $query) use ($date) {
                         $query
-                            ->where('cycle', Schedule::CYCLE_EVERY_MONTH)
+                            ->where('cycle', ScheduleCycle::EVERY_MONTH)
                             ->whereRaw('EXTRACT (DAY FROM from_date::date) = ?', [$date->day]);
                     })
                     ->orWhere(function (Builder $query) {
                         $query
-                            ->where('cycle', Schedule::CYCLE_EVERY_DAY);
+                            ->where('cycle', ScheduleCycle::EVERY_DAY);
                     });
             });
     }

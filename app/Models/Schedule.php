@@ -62,36 +62,6 @@ class Schedule extends Model
 
     public const TABLE = 'schedules';
 
-    public const CYCLE_ONCE = 'once';
-    public const CYCLE_EVERY_MONTH = 'month';
-    public const CYCLE_EVERY_WEEK = 'week';
-    public const CYCLE_EVERY_DAY = 'day';
-
-    public const CYCLES = [
-        self::CYCLE_ONCE,
-        self::CYCLE_EVERY_MONTH,
-        self::CYCLE_EVERY_WEEK,
-        self::CYCLE_EVERY_DAY,
-    ];
-
-    public const MONDAY = 1;
-    public const TUESDAY = 2;
-    public const WEDNESDAY = 3;
-    public const THURSDAY = 4;
-    public const FRIDAY = 5;
-    public const SATURDAY = 6;
-    public const SUNDAY = 7;
-
-    public const WEEKDAYS = [
-        self::MONDAY,
-        self::TUESDAY,
-        self::WEDNESDAY,
-        self::THURSDAY,
-        self::FRIDAY,
-        self::SATURDAY,
-        self::SUNDAY,
-    ];
-
     protected $table = self::TABLE;
 
     /**

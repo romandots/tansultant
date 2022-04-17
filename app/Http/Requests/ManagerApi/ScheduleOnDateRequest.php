@@ -14,6 +14,7 @@ use App\Http\Requests\ManagerApi\DTO\ScheduleOnDate;
 use App\Models\Branch;
 use App\Models\Classroom;
 use App\Models\Course;
+use App\Models\Enum\Weekday;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidDateException;
@@ -69,10 +70,10 @@ class ScheduleOnDateRequest extends FormRequest
             throw new InvalidDateException('date', $date);
         }
 
-        $weekday = \mb_strtolower(\weekday($date));
+        $weekday = $date->dayOfWeekIso;
 
-        if (!\in_array($weekday, Schedule::WEEKDAYS, true)) {
-            throw new \LogicException('Weekday is unusual', ['weekday' => $weekday]);
+        if (!\in_array($weekday, Weekday::cases(), true)) {
+            throw new \LogicException('Weekday is unusual: ' . $weekday);
         }
 
 

@@ -22,7 +22,7 @@ class ScheduleFactory extends Factory
     {
         return [
             'id' => \uuid(),
-            'cycle' => \App\Models\Schedule::CYCLE_EVERY_WEEK,
+            'cycle' => \App\Models\Enum\ScheduleCycle::EVERY_WEEK,
             'branch_id' => \App\Models\Branch::factory(),
             'classroom_id' => \App\Models\Classroom::factory(),
             'course_id' => \App\Models\Course::factory(),
