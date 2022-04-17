@@ -26,11 +26,18 @@ services:
       - ./:/app
       - /app/vendor
       - ./docker/logs/laravel:/app/storage/logs
+    env_file:
+      - ./docker/.env
     environment:
       PHP_IDE_CONFIG: "serverName=docker-server"
-      DB_NAME: tansultant
-      DB_USER: tansultant
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: tansultant
+      DB_USERNAME: tansultant
       DB_PASSWORD: tansultant
+      REDIS_HOST: redis
+      REDIS_PASSWORD: null
+      REDIS_PORT: 6379
     depends_on:
       - db
       - redis

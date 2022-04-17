@@ -8,11 +8,11 @@ use App\Repository\PersonRepository;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
-class InstallApp extends Command
+class AppInstall extends Command
 {
     public const ADMIN_USERNAME = 'admin';
 
-    protected $signature = 'install:app';
+    protected $signature = 'app:install';
     protected $description = 'Install app: seed permissions and create admin user';
 
     public function handle(PersonRepository $repository): void
