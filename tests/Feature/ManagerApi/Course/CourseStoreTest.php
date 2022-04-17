@@ -31,7 +31,6 @@ class CourseStoreTest extends TestCase
     use CreatesFakeInstructor;
     use CreatesFakePerson;
     use CreatesFakeUser;
-    use WithFaker;
 
     protected const URL = 'admin/courses';
 
@@ -93,6 +92,7 @@ class CourseStoreTest extends TestCase
      */
     public function testValidationErrors(array $data): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser(
             [],
             [
@@ -108,6 +108,7 @@ class CourseStoreTest extends TestCase
 
     public function testWithFiredInstructor(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser(
             [],
             [
@@ -119,8 +120,8 @@ class CourseStoreTest extends TestCase
         $data = [
             'name' => $this->faker->name,
             'status' => Course::STATUS_ACTIVE,
-            'summary' => $this->faker->sentence,
-            'description' => $this->faker->text,
+            'summary' => $this->faker->words(10, true),
+            'description' => $this->faker->words(10, true),
             'picture' => null,
             'age_restrictions' => '3+',
             'instructor_id' => $instructor->id,
@@ -149,6 +150,7 @@ class CourseStoreTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser(
             [],
             [
@@ -160,8 +162,8 @@ class CourseStoreTest extends TestCase
         $data = [
             'name' => $this->faker->name,
             'status' => Course::STATUS_ACTIVE,
-            'summary' => $this->faker->sentence,
-            'description' => $this->faker->text,
+            'summary' => $this->faker->words(10, true),
+            'description' => $this->faker->words(10, true),
             'picture' => null,
             'age_restrictions_from' => 3,
             'instructor_id' => $instructor->id,

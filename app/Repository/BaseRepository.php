@@ -4,27 +4,27 @@ namespace App\Repository;
 
 use App\Http\Requests\DTO\Contracts\FilteredInterface;
 use App\Http\Requests\DTO\Contracts\PaginatedInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-abstract class Repository
+abstract class BaseRepository
 {
-    public const WITH_SOFT_DELETES = false;
-    public const SEARCHABLE_ATTRIBUTES = [];
-
-    abstract protected function getQuery(): \Illuminate\Database\Eloquent\Builder;
+    abstract public function getSearchableAttributes(): array;
+    abstract public function withSoftDeletes(): bool;
+    abstract public function getQuery(): \Illuminate\Database\Eloquent\Builder;
 
     protected function getFilterQuery(FilteredInterface $filter): \Illuminate\Database\Eloquent\Builder
     {
         $query = $this->getQuery();
 
-        if (self::WITH_SOFT_DELETES && !$filter->withDeleted()) {
+        if ($this->withSoftDeletes() && !$filter->withDeleted()) {
             $query->whereNull('deleted_at');
         }
 
-        if ($filter->query && count(self::SEARCHABLE_ATTRIBUTES) > 0) {
+        if ($filter->query && count($this->getSearchableAttributes()) > 0) {
             $query->where(function (\Illuminate\Database\Eloquent\Builder $query) use ($filter) {
-                $searchQuery = $filter->getQuery() . '%';
-                $attributes = self::SEARCHABLE_ATTRIBUTES;
+                $searchQuery = '%' . $filter->getQuery() . '%';
+                $attributes = $this->getSearchableAttributes();
                 $firstAttribute = array_shift($attributes);
                 $query->where($firstAttribute, 'ILIKE', $searchQuery);
                 foreach ($attributes as $attribute) {
@@ -36,15 +36,26 @@ abstract class Repository
         return $query;
     }
 
+    public function getSuggestQuery(FilteredInterface $filter): \Illuminate\Database\Eloquent\Builder
+    {
+        return $this->getFilterQuery($filter);
+    }
+
     public function countFiltered(FilteredInterface $search): int
     {
         return $this->getFilterQuery($search)->count();
     }
 
+    public function findFiltered(FilteredInterface $filter, array $withRelations = []): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->getFilterQuery($filter)
+            ->with($withRelations)
+            ->get();
+    }
+
     public function findFilteredPaginated(PaginatedInterface $search, array $withRelations = []): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->getFilterQuery($search->filter)
-            ->with($withRelations)
+        return $this->findFiltered($search->filter, $withRelations)
             ->orderBy($search->sort, $search->order)
             ->offset($search->offset)
             ->limit($search->limit)
@@ -54,7 +65,7 @@ abstract class Repository
     public function find(string $id): Model
     {
         $query = $this->getQuery();
-        if (self::WITH_SOFT_DELETES) {
+        if ($this->withSoftDeletes()) {
             $query->whereNull('deleted_at');
         }
         return $query
@@ -65,7 +76,7 @@ abstract class Repository
     public function findTrashed(string $id): Model
     {
         $query = $this->getQuery();
-        if (self::WITH_SOFT_DELETES) {
+        if ($this->withSoftDeletes()) {
             $query->whereNotNull('deleted_at');
         }
         return $query
@@ -75,7 +86,7 @@ abstract class Repository
 
     public function delete(Model $model): void
     {
-        if (self::WITH_SOFT_DELETES) {
+        if ($this->withSoftDeletes()) {
             $model->deleted_at = \Carbon\Carbon::now();
             $model->updated_at = \Carbon\Carbon::now();
             $model->save();
@@ -87,7 +98,7 @@ abstract class Repository
 
     public function restore(Model $person): void
     {
-        if (!self::WITH_SOFT_DELETES) {
+        if (!$this->withSoftDeletes()) {
             return;
         }
         $person->deleted_at = null;
@@ -97,10 +108,15 @@ abstract class Repository
 
     public function forceDelete(Model $model): void
     {
-        if (!self::WITH_SOFT_DELETES) {
+        if (!$this->withSoftDeletes()) {
             $model->delete();
             return;
         }
         $model->forceDelete();
+    }
+
+    public function getAll(): Collection
+    {
+        return $this->getQuery()->get();
     }
 }

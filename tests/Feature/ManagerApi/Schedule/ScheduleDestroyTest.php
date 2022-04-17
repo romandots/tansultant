@@ -42,9 +42,10 @@ class ScheduleDestroyTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->course = $this->createFakeCourse();
-        $this->schedules = \factory(Schedule::class, 3)->create(['course_id' => $this->course->id])->all();
-        $this->url = 'admin/courses/' . $this->course->id . '/schedules/' . $this->schedules[0]->id;
+        $this->schedules = Schedule::factory()->create(['course_id' => $this->course->id]);
+        $this->url = 'admin/schedules/' . $this->schedules[0]->id;
     }
 
     public function testAccessDenied(): void

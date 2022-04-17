@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Traits\UsesUuid;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
@@ -57,7 +58,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class Student extends Model
 {
-    use HasRoles, SoftDeletes, UsesUuid;
+    use HasRoles, SoftDeletes, UsesUuid, HasFactory;
 
     public const TABLE = 'students';
 

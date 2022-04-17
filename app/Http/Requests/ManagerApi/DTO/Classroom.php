@@ -1,8 +1,8 @@
 <?php
 /**
- * File: LessonsOnDate.php
+ * File: Classroom.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-26
+ * Date: 2019-07-31
  * Copyright (c) 2019
  */
 
@@ -11,28 +11,33 @@ declare(strict_types=1);
 namespace App\Http\Requests\ManagerApi\DTO;
 
 /**
- * Class LessonsOnDate
+ * Class Classroom
  * @package App\Http\Requests\ManagerApi\DTO
  */
-class GetLessonsOnDate
+class Classroom
 {
     /**
-     * @var \Carbon\Carbon
+     * @var string
      */
-    public $date;
+    public $name;
 
     /**
-     * @var string|null
+     * @var int
      */
     public $branch_id;
 
     /**
      * @var string|null
      */
-    public $classroom_id;
+    public $color;
 
     /**
-     * @var string|null
+     * @var int|null
      */
-    public $course_id;
+    public $capacity;
+
+    /**
+     * @var int|null
+     */
+    public $number;
 }

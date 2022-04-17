@@ -42,7 +42,7 @@ class VerificationControllerTest extends TestCase
 
     public function testVerifyPhone(): void
     {
-        $phone = $this->faker->e164PhoneNumber;
+        $phone = $this->faker->phoneNumber;
         $normalizedPhone = \normalize_phone_number($phone);
 
         $this

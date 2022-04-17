@@ -10,81 +10,72 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\AdminController;
 use App\Http\Requests\ManagerApi\StoreClassroomRequest;
 use App\Http\Requests\ManagerApi\StoreClassroomRequest as UpdateClassroomRequest;
+use App\Http\Requests\ManagerApi\SuggestRequest;
 use App\Http\Resources\ManagerApi\ClassroomResource;
+use App\Models\Classroom;
 use App\Repository\ClassroomRepository;
+use App\Services\BaseFacade;
+use App\Services\Classroom\ClassroomFacade;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
+use JetBrains\PhpStorm\Pure;
 
-class ClassroomController extends Controller
+class ClassroomController extends AdminController
 {
-    private ClassroomRepository $repository;
+    private ClassroomFacade $facade;
 
-    public function __construct(ClassroomRepository $repository)
+    public function __construct(ClassroomFacade $facade)
     {
-        $this->repository = $repository;
+        $this->facade = $facade;
     }
 
-    public function index(): AnonymousResourceCollection
+    public function getFacade(): BaseFacade
     {
-        $records = $this->repository->getAll();
-
-        return ClassroomResource::collection($records);
+        return $this->facade;
     }
 
-    /**
-     * @param UpdateClassroomRequest $request
-     * @return ClassroomResource
-     * @throws \Exception
-     */
-    public function store(StoreClassroomRequest $request): ClassroomResource
+    #[Pure] public function makeResource(Model $record): JsonResource
     {
-        $record = $this->repository->create($request->getDto());
-
         return new ClassroomResource($record);
     }
 
-    /**
-     * @param string $classroomId
-     * @return ClassroomResource
-     */
-    public function show(string $classroomId): ClassroomResource
+    public function makeResourceCollection(Collection $collection): AnonymousResourceCollection
     {
-        $record = $this->repository->find($classroomId);
-
-        return new ClassroomResource($record);
+        return ClassroomResource::collection($collection);
     }
 
-    /**
-     * @param UpdateClassroomRequest $request
-     * @param string $id
-     * @return ClassroomResource
-     */
-    public function update(UpdateClassroomRequest $request, string $id): ClassroomResource
+    public function store(StoreClassroomRequest $request): JsonResource
     {
-        $record = $this->repository->find($id);
-        $this->repository->update($record, $request->getDto());
-
-        return new ClassroomResource($record);
+        $record = $this->facade->create($request->getDto());
+        return $this->makeResource($record);
     }
 
-    /**
-     * @param string $classroomId
-     * @throws \Exception
-     */
-    public function destroy(string $classroomId): void
+    public function update(UpdateClassroomRequest $request, string $id): JsonResource
     {
-        $record = $this->repository->find($classroomId);
-        $this->repository->delete($record);
+        $record = $this->facade->findAndUpdate($id, $request->getDto());
+        return $this->makeResource($record);
     }
 
-    /**
-     * @param string $classroomId
-     */
-    public function restore(string $classroomId): void
+    public function suggest(SuggestRequest $request): array
     {
-        $record = $this->repository->findWithDeleted($classroomId);
-        $this->repository->restore($record);
+        $extraFields = [
+            'branch' => function (Classroom $classroom) {
+                return $classroom->branch->name;
+            },
+            'branch_id' => 'branch_id',
+        ];
+        return $this->facade->suggest(
+            $request->getQuery(),
+            function(Classroom $classroom) {
+                return sprintf('%s (%s)', $classroom->name, $classroom->branch->name);
+            },
+            'id',
+            $extraFields
+        );
     }
 }

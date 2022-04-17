@@ -1,22 +1,62 @@
 version: '3'
 services:
-  tansultant:
+  app:
+    environment:
+      VUE_APP_NAME: "ШТБП"
+      VUE_APP_URL: http://localhost
+      VUE_APP_MEMBER_API_URL: http://localhost:8080/admin
+      VUE_APP_PUBLIC_API_URL: http://localhost:8080
     build:
-      dockerfile: docker/Dockerfile
-      context: ./
+      context: ../manager-app/
+      dockerfile: Dockerfile
+    volumes:
+      - ../manager-app/:/manager-app
+      - /manager-app/node_modules
     ports:
-      - 8100:80
+      - "80:8080"
+    depends_on:
+      - api
+  api:
+    build:
+      context: ./
+    image: api
+    ports:
+      - "8080:80"
     volumes:
       - ./:/app
-    restart: always
+      - /app/vendor
+      - ./docker/logs/laravel:/app/storage/logs
     environment:
       PHP_IDE_CONFIG: "serverName=docker-server"
+      DB_NAME: tansultant
+      DB_USER: tansultant
+      DB_PASSWORD: tansultant
+    depends_on:
+      - db
+      - redis
+  queue:
+    image: api
+    volumes:
+      - ./:/app
+    entrypoint: php artisan queue:work --verbose --tries=3 --timeout=60
+    depends_on:
+      - api
+  scheduler:
+    image: api
+    volumes:
+      - ./:/app
+    entrypoint: sh -c "while true; do php artisan schedule:run --verbose & sleep 60; done"
+    depends_on:
+      - api
   db:
-    build:
-      dockerfile: Dockerfile
-      context: ./docker/postgres
-    restart: always
+    image: postgres:14.2
     ports:
-      - 5432:5432
+      - "5432:5432"
+    volumes:
+      - ../data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: tansultant
+      POSTGRES_USER: tansultant
+      POSTGRES_PASSWORD: tansultant
   redis:
     image: "redis:alpine"

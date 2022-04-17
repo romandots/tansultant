@@ -42,7 +42,7 @@ class ClassroomRecoverTest extends TestCase
         parent::setUp();
 
         $this->classroom = $this->createFakeClassroom(['deleted_at' => Carbon::now()]);
-        $this->url = 'admin/branches/' . $this->classroom->branch_id . '/classrooms/' . $this->classroom->id . '/restore';
+        $this->url = 'admin/classrooms/' . $this->classroom->id . '/restore';
     }
 
     public function testAccessDenied(): void
@@ -64,6 +64,7 @@ class ClassroomRecoverTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             ClassroomsPermissions::DELETE
         ]);

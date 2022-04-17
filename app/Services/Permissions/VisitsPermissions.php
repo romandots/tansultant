@@ -14,7 +14,7 @@ namespace App\Services\Permissions;
  * Class VisitsPermissions
  * @package App\Services\Permissions
  */
-class VisitsPermissions
+class VisitsPermissions extends Permissions
 {
     public const MANAGE = 'manage_visits';
     public const CREATE = 'create_visits';

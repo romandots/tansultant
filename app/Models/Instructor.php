@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Traits\UsesUuid;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -59,6 +60,7 @@ class Instructor extends Model
 {
     use HasRoles;
     use UsesUuid;
+    use HasFactory;
 
     public const TABLE = 'instructors';
 

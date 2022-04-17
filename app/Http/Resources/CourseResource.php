@@ -47,7 +47,9 @@ class CourseResource extends JsonResource
                 return new InstructorResource($this->instructor);
             }),
             'genres' => $this->tagsWithType(Genre::class)->pluck('name')->all(),
-            'schedules' => ScheduleResource::collection($this->schedules),
+            'schedules' => $this->whenLoaded('instructor', function () {
+                ScheduleResource::collection($this->schedules);
+            }),
             'starts_at' => $this->starts_at?->toDateString(),
             'ends_at' => $this->ends_at?->toDateString(),
             'created_at' => $this->created_at?->toDateTimeString(),

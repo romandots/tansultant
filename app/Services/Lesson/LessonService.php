@@ -10,57 +10,88 @@ declare(strict_types=1);
 
 namespace App\Services\Lesson;
 
+use App\Http\Requests\DTO\FilteredDto;
+use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
+use App\Http\Requests\ManagerApi\DTO\SearchLessonsFilterDto;
 use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
+use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
+use App\Jobs\GenerateLessonsOnDateJob;
+use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\Schedule;
+use App\Repository\ClassroomRepository;
 use App\Repository\CourseRepository;
 use App\Repository\LessonRepository;
-use App\Services\Intent\IntentService;
-use App\Services\Visit\VisitService;
+use App\Services\BaseService;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class LessonService
  * @package App\Services\Lesson
  */
-class LessonService
+class LessonService extends BaseService
 {
-    /**
-     * @var LessonRepository
-     */
-    private $repository;
-
-    /**
-     * @var CourseRepository
-     */
-    private $courseRepository;
-
-    /**
-     * @var IntentService
-     */
-    private $intentService;
-
-    /**
-     * @var VisitService
-     */
-    private $visitService;
+    private LessonRepository $repository;
+    private CourseRepository $courseRepository;
+    private ClassroomRepository $classroomRepository;
 
     /**
      * LessonController constructor.
      * @param LessonRepository $repository
      * @param CourseRepository $courseRepository
-     * @param IntentService $intentService
-     * @param VisitService $visitService
+     * @param ClassroomRepository $classroomRepository
      */
     public function __construct(
         LessonRepository $repository,
         CourseRepository $courseRepository,
-        IntentService $intentService,
-        VisitService $visitService
+        ClassroomRepository $classroomRepository
     ) {
         $this->repository = $repository;
         $this->courseRepository = $courseRepository;
-        $this->intentService = $intentService;
-        $this->visitService = $visitService;
+        $this->classroomRepository = $classroomRepository;
+    }
+
+    public function getModelClassName(): string
+    {
+        return Lesson::class;
+    }
+
+    #[Pure] public function makeSearchFilterDto(): FilteredDto
+    {
+        return new SearchLessonsFilterDto();
+    }
+
+    public function getRepository(): LessonRepository
+    {
+        return $this->repository;
+    }
+
+    private function getDateAndTime(Carbon $date, Carbon $time): Carbon
+    {
+        return $date->clone()
+            ->setHour($time->hour)
+            ->setMinute($time->minute);
+    }
+
+    public function createFromScheduleOnDate(Schedule $schedule, Carbon $date): Lesson
+    {
+        $startTime = $this->getDateAndTime($date, Carbon::parse($schedule->starts_at));
+        $endTime =  $this->getDateAndTime($date, Carbon::parse($schedule->ends_at));
+
+        $dto = new LessonDto();
+        $dto->schedule_id = $schedule->id;
+        $dto->instructor_id = $schedule->course->instructor_id;
+        $dto->course_id = $schedule->course_id;
+        $dto->classroom_id = $schedule->classroom_id;
+        $dto->branch_id = $schedule->branch_id;
+        $dto->starts_at = $startTime;
+        $dto->ends_at = $endTime;
+        $dto->type = Lesson::TYPE_LESSON;
+        $dto->name = $this->generateCourseLessonName($schedule->course);
+
+        return $this->repository->create($dto);
     }
 
     /**
@@ -70,100 +101,67 @@ class LessonService
      */
     public function createFromDto(LessonDto $dto): Lesson
     {
-        switch ($dto->type) {
-            case Lesson::TYPE_LESSON:
-                $course = $this->courseRepository->find($dto->course_id);
-                $name = \sprintf(
-                    '%s %s',
-                    \trans('lesson.' . Lesson::TYPE_LESSON),
-                    $course->name
-                );
-                if (null === $dto->instructor_id) {
-                    $dto->instructor_id = $course->instructor_id;
-                }
-                break;
-            default:
-                $name = \trans('lesson.' . Lesson::TYPE_LESSON);
+        if ($dto->type === Lesson::TYPE_LESSON) {
+            $course = $this->courseRepository->find($dto->course_id);
+            $dto->name = $this->generateCourseLessonName($course);
+            if (null === $dto->instructor_id) {
+                $dto->instructor_id = $course->instructor_id;
+            }
+        } else {
+            $dto->name = \trans('lesson.' . Lesson::TYPE_LESSON);
         }
 
-        return $this->repository->create($name, $dto);
+        $dto->branch_id = $this->getBranchIdByClassroomId($dto->classroom_id);
+        $dto->schedule_id = null;
+
+        return $this->repository->create($dto);
+    }
+
+    private function generateCourseLessonName(Course $course): string
+    {
+        return \sprintf(
+            '%s %s',
+            \trans('lesson.' . Lesson::TYPE_LESSON),
+            $course->name
+        );
+    }
+
+    public function checkIfScheduleLessonExist(Schedule $schedule, Carbon $date): bool
+    {
+        $startTime = $this->getDateAndTime($date, Carbon::parse($schedule->starts_at));
+        $endTime =  $this->getDateAndTime($date, Carbon::parse($schedule->ends_at));
+
+        return $this->repository->checkIfScheduleLessonExist(
+            $schedule->id, $startTime->toDateTimeString(), $endTime->toDateTimeString()
+        );
     }
 
     /**
-     * Close lesson:
-     * - Update intents
-     * - Change status
-     * @param Lesson $lesson
-     * @throws Exceptions\LessonAlreadyClosedException
-     * @throws Exceptions\LessonNotPassedYetException
-     * @throws Exceptions\LessonNotCompletelyPaidException
+     * @param LessonsOnDate $lessonsOnDate
+     * @return Collection<Lesson>
      */
-    public function close(Lesson $lesson): void
+    public function getLessonsOnDate(LessonsOnDate $lessonsOnDate): Collection
     {
-        $now = Carbon::now();
-        if ($lesson->starts_at->gt($now) || $lesson->ends_at->gt($now)) {
-            throw new Exceptions\LessonNotPassedYetException();
-        }
+        $job = new GenerateLessonsOnDateJob($lessonsOnDate->date);
+        dispatch($job);
 
-        if ($lesson->status === Lesson::STATUS_CLOSED) {
-            throw new Exceptions\LessonAlreadyClosedException();
-        }
-
-        if (false === $this->visitService->visitsArePaid($lesson->visits)) {
-            throw new Exceptions\LessonNotCompletelyPaidException();
-        }
-
-        $this->intentService->updateIntents($lesson->visits, $lesson->intents);
-
-        $this->repository->close($lesson);
+        return $this->repository->getLessonsOnDate($lessonsOnDate->date);
     }
 
     /**
-     * @param Lesson $lesson
-     * @throws Exceptions\LessonNotClosedException
+     * @param LessonsFiltered $lessonsFiltered
+     * @return Collection<Lesson>
      */
-    public function open(Lesson $lesson): void
+    public function getLessonsFiltered(LessonsFiltered $lessonsFiltered): Collection
     {
-        if ($lesson->status !== Lesson::STATUS_CLOSED) {
-            throw new Exceptions\LessonNotClosedException();
-        }
+        $job = new GenerateLessonsOnDateJob($lessonsFiltered->date);
+        dispatch($job);
 
-        $this->repository->open($lesson);
+        return $this->repository->getLessonsFiltered($lessonsFiltered, ['instructor', 'course', 'controller']);
     }
 
-    /**
-     * @param Lesson $lesson
-     * @throws Exceptions\LessonAlreadyCanceledException
-     * @throws Exceptions\LessonAlreadyClosedException
-     * @throws Exceptions\LessonHasVisitsException
-     */
-    public function cancel(Lesson $lesson): void
+    private function getBranchIdByClassroomId(string $classroomId): string
     {
-        if ($lesson->status === Lesson::STATUS_CANCELED) {
-            throw new Exceptions\LessonAlreadyCanceledException();
-        }
-
-        if ($lesson->status === Lesson::STATUS_CLOSED) {
-            throw new Exceptions\LessonAlreadyClosedException();
-        }
-
-        if (0 !== $lesson->visits->count()) {
-            throw new Exceptions\LessonHasVisitsException();
-        }
-
-        $this->repository->cancel($lesson);
-    }
-
-    /**
-     * @param Lesson $lesson
-     * @throws Exceptions\LessonNotCanceledYetException
-     */
-    public function book(Lesson $lesson): void
-    {
-        if ($lesson->status !== Lesson::STATUS_CANCELED) {
-            throw new Exceptions\LessonNotCanceledYetException();
-        }
-
-        $this->repository->book($lesson);
+        return $this->classroomRepository->getBranchIdByClassroomId($classroomId);
     }
 }

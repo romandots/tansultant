@@ -21,7 +21,7 @@ use Carbon\Carbon;
  * Class InstructorRepository
  * @package App\Repository
  */
-class InstructorRepository extends Repository
+class InstructorRepository extends BaseRepository
 {
     public const WITH_SOFT_DELETES = true;
     public const SEARCHABLE_ATTRIBUTES = [
@@ -29,7 +29,17 @@ class InstructorRepository extends Repository
         'description',
     ];
 
-    protected function getQuery(): \Illuminate\Database\Eloquent\Builder
+    public function getSearchableAttributes(): array
+    {
+        return self::SEARCHABLE_ATTRIBUTES;
+    }
+
+    public function withSoftDeletes(): bool
+    {
+        return self::WITH_SOFT_DELETES;
+    }
+
+    public function getQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return Instructor::query();
     }
@@ -42,11 +52,11 @@ class InstructorRepository extends Repository
     {
         $query = parent::getFilterQuery($filter);
 
-        if ($filter->statuses) {
+        if (isset($filter->statuses) && !empty($filter->statuses)) {
             $query->whereIn('status', $filter->statuses);
         }
 
-        if ($filter->display) {
+        if (isset($filter->display) && !empty($filter->display)) {
             $query->where('display', $filter->display);
         }
 

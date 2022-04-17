@@ -54,7 +54,7 @@ class CourseRepository
         $records = $query
             ->orderBy($filter->sort, $filter->order)
             ->forPage($filter->page, $filter->perPage)
-            ->with('instructor.person')
+            ->with('instructor.person', 'schedule')
             ->get();
 
         return [$count, $records];

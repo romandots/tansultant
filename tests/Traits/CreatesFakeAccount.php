@@ -28,9 +28,9 @@ trait CreatesFakeAccount
      * @param array|null $attributes
      * @return Account
      */
-    private function createFakeAccount(?array $attributes = []): Account
+    protected function createFakeAccount(?array $attributes = []): Account
     {
-        return \factory(Account::class)->create($attributes);
+        return Account::factory()->create($attributes);
     }
 
     /**
@@ -39,7 +39,7 @@ trait CreatesFakeAccount
      * @param array|null $attributes
      * @return Account
      */
-    private function createFakeAccountWithBalance(int $amount, ?User $user = null, ?array $attributes = []): Account
+    protected function createFakeAccountWithBalance(int $amount, ?User $user = null, ?array $attributes = []): Account
     {
         $account = $this->createFakeAccount($attributes);
         $user = $user ?: $this->createFakeUser();
@@ -57,7 +57,7 @@ trait CreatesFakeAccount
      * @param array|null $attributes
      * @return Account
      */
-    private function createFakeStudentAccount(Student $student, ?array $attributes = []): Account
+    protected function createFakeStudentAccount(Student $student, ?array $attributes = []): Account
     {
         $attributes['owner_type'] = Student::class;
         $attributes['owner_id'] = $student->id;
@@ -71,7 +71,7 @@ trait CreatesFakeAccount
      * @param array|null $attributes
      * @return Account
      */
-    private function createFakeInstructorAccount(Instructor $instructor, ?array $attributes = []): Account
+    protected function createFakeInstructorAccount(Instructor $instructor, ?array $attributes = []): Account
     {
         $attributes['owner_type'] = Instructor::class;
         $attributes['owner_id'] = $instructor->id;
@@ -85,7 +85,7 @@ trait CreatesFakeAccount
      * @param array|null $attributes
      * @return Account
      */
-    private function createFakeSavingsAccount(Branch $branch, ?array $attributes = []): Account
+    protected function createFakeSavingsAccount(Branch $branch, ?array $attributes = []): Account
     {
         $attributes['owner_type'] = Branch::class;
         $attributes['owner_id'] = $branch->id;
@@ -99,7 +99,7 @@ trait CreatesFakeAccount
      * @param array|null $attributes
      * @return Account
      */
-    private function createFakeOperationalAccount(Branch $branch, ?array $attributes = []): Account
+    protected function createFakeOperationalAccount(Branch $branch, ?array $attributes = []): Account
     {
         $attributes['owner_type'] = Branch::class;
         $attributes['owner_id'] = $branch->id;

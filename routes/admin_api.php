@@ -70,9 +70,9 @@ Route::group(['prefix' => 'students'], static function () {
 
 // INSTRUCTORS
 Route::group(['prefix' => 'instructors'], static function () {
-    Route::post('from_person', 'InstructorController@createFromPerson')
-        ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::CREATE);
-    Route::get('/', 'InstructorController@index')
+    Route::get('/suggest', 'InstructorController@suggest')
+        ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::READ);
+    Route::get('/', 'InstructorController@search')
         ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::READ);
     Route::post('/', 'InstructorController@store')
         ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::CREATE);
@@ -120,23 +120,11 @@ Route::group(['prefix' => 'courses'], static function () {
         ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::ENABLE);
     Route::get('{id}', 'CourseController@show')
         ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::READ);
-
-    // SCHEDULES
-    Route::group(['prefix' => '{courseId}/schedules'], static function () {
-        Route::get('/', 'ScheduleController@index')
-            ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::READ);
-        Route::post('/', 'ScheduleController@store')
-            ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::CREATE);
-        Route::put('{scheduleId}', 'ScheduleController@update')
-            ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::UPDATE);
-        Route::delete('{scheduleId}', 'ScheduleController@destroy')
-            ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::DELETE);
-    });
 });
 
 // SCHEDULES
 Route::group(['prefix' => 'schedules'], static function () {
-    Route::get('date', 'ScheduleController@onDate')
+    Route::get('/', 'ScheduleController@index')
         ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::READ);
     Route::post('/', 'ScheduleController@store')
         ->middleware('permission:' .
@@ -151,9 +139,10 @@ Route::group(['prefix' => 'schedules'], static function () {
 
 // LESSONS
 Route::group(['prefix' => 'lessons'], static function () {
-    Route::get('date', 'LessonController@onDate')
-        ->middleware('permission:' .
-            LessonsPermissions::MANAGE . '|' . LessonsPermissions::READ);
+    Route::get('/suggest', 'LessonController@suggest')
+        ->middleware('permission:' . LessonsPermissions::MANAGE . '|' . LessonsPermissions::READ);
+    Route::get('/', 'LessonController@search')
+        ->middleware('permission:' . LessonsPermissions::MANAGE . '|' . LessonsPermissions::READ);
     Route::post('/', 'LessonController@store')
         ->middleware('permission:' .
             LessonsPermissions::MANAGE . '|' . LessonsPermissions::CREATE);
@@ -231,6 +220,8 @@ Route::group(['prefix' => 'branches'], static function () {
 
 // CLASSROOMS
 Route::group(['prefix' => 'classrooms'], static function () {
+    Route::get('/suggest', 'ClassroomController@suggest')
+        ->middleware('permission:' . ClassroomsPermissions::MANAGE . '|' . ClassroomsPermissions::READ);
     Route::get('/', 'ClassroomController@index')
         ->middleware('permission:' . ClassroomsPermissions::MANAGE . '|' . ClassroomsPermissions::READ);
     Route::get('{classroomId}', 'ClassroomController@show')

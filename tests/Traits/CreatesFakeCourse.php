@@ -24,12 +24,12 @@ trait CreatesFakeCourse
      * @param Instructor|null $instructor
      * @return Course
      */
-    private function createFakeCourse(array $attributes = [], ?Instructor $instructor = null): Course
+    protected function createFakeCourse(array $attributes = [], ?Instructor $instructor = null): Course
     {
         if (!isset($attributes['instructor_id'])) {
             $instructor = $instructor ?? $this->createFakeInstructor();
             $attributes['instructor_id'] = $attributes['instructor_id'] ?? $instructor->id;
         }
-        return \factory(Course::class)->create($attributes);
+        return Course::factory()->create($attributes);
     }
 }

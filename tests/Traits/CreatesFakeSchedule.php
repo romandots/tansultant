@@ -26,7 +26,7 @@ trait CreatesFakeSchedule
      * @param Classroom|null $classroom
      * @return Schedule
      */
-    private function createFakeSchedule(
+    protected function createFakeSchedule(
         array $attributes = [],
         ?Course $course = null,
         ?Classroom $classroom = null
@@ -43,6 +43,6 @@ trait CreatesFakeSchedule
             $attributes['branch_id'] = $attributes['branch_id'] ?? $classroom->branch_id;
         }
 
-        return \factory(Schedule::class)->create($attributes);
+        return Schedule::factory()->create($attributes);
     }
 }

@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Traits\UsesUuid;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -33,12 +34,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon $ends_at
  * @property \Carbon\Carbon|null $closed_at
  * @property \Carbon\Carbon|null $canceled_at
+ * @property \Carbon\Carbon|null $checked_out_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property \Carbon\Carbon|null $deleted_at
  * @property-read \App\Models\User $controller
  * @property-read \App\Models\Course $course
  * @property-read \App\Models\Instructor $instructor
+ * @property-read \App\Models\Classroom $classroom
  * @property-read \App\Models\Schedule|null $schedule
  * @property-read \App\Models\Branch|null $branch
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Intent[] $intents
@@ -76,6 +79,7 @@ class Lesson extends Model
 {
     use SoftDeletes;
     use UsesUuid;
+    use HasFactory;
 
     public const TABLE = 'lessons';
 
@@ -94,13 +98,15 @@ class Lesson extends Model
     public const STATUS_PASSED = 'passed';
     public const STATUS_CANCELED = 'canceled';
     public const STATUS_CLOSED = 'closed';
+    public const STATUS_CHECKED_OUT = 'checked_out';
 
     public const STATUSES = [
         self::STATUS_BOOKED,
         self::STATUS_ONGOING,
         self::STATUS_PASSED,
         self::STATUS_CANCELED,
-        self::STATUS_CLOSED
+        self::STATUS_CLOSED,
+        self::STATUS_CHECKED_OUT,
     ];
 
     protected $table = self::TABLE;
@@ -110,6 +116,7 @@ class Lesson extends Model
         'ends_at' => 'datetime',
         'closed_at' => 'datetime',
         'canceled_at' => 'datetime',
+        'checked_out_at' => 'datetime',
     ];
 
     /**
@@ -126,6 +133,14 @@ class Lesson extends Model
     public function schedule(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Schedule::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Classroom|null
+     */
+    public function classroom(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Classroom::class);
     }
 
     /**

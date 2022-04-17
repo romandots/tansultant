@@ -50,7 +50,7 @@ class ClassroomShowTest extends TestCase
         parent::setUp();
 
         $this->classroom = $this->createFakeClassroom();
-        $this->url = 'admin/branches/' . $this->classroom->branch_id . '/classrooms/' . $this->classroom->id;
+        $this->url = 'admin/classrooms/' . $this->classroom->id;
     }
 
     public function testAccessDenied(): void
@@ -72,6 +72,7 @@ class ClassroomShowTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             ClassroomsPermissions::READ
         ]);

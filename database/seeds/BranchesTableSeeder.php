@@ -7,6 +7,8 @@
  */
 declare(strict_types=1);
 
+namespace Database\Seeders;
+
 use App\Repository\BranchRepository;
 use App\Repository\ClassroomRepository;
 use Illuminate\Database\Seeder;
@@ -58,7 +60,7 @@ class BranchesTableSeeder extends Seeder
         try {
             \App\Models\Classroom::query()->firstOrFail();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
-            $classroom = new \App\Http\Requests\PublicApi\DTO\Classroom;
+            $classroom = new \App\Http\Requests\ManagerApi\DTO\Classroom;
             $classroom->name = 'Зал А';
             $classroom->branch_id = $branch->id;
 

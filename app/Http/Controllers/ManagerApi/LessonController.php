@@ -10,32 +10,47 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
+use App\Http\Controllers\AdminController;
 use App\Http\Requests\ManagerApi\ChangeLessonInstructorRequest;
-use App\Http\Requests\ManagerApi\LessonsOnDateRequest;
+use App\Http\Requests\ManagerApi\LessonsFilteredRequest;
+use App\Http\Requests\ManagerApi\SearchLessonsRequest;
 use App\Http\Requests\ManagerApi\StoreLessonRequest;
 use App\Http\Requests\ManagerApi\StoreLessonRequest as UpdateLessonRequest;
-use App\Http\Resources\LessonResource;
-use App\Repository\LessonRepository;
-use App\Services\Lesson\LessonService;
+use App\Http\Resources\ManagerApi\LessonResource;
+use App\Services\BaseFacade;
+use App\Services\Lesson\LessonFacade;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 
-class LessonController
+class LessonController extends AdminController
 {
-    protected LessonRepository $repository;
-    protected LessonService $service;
+    protected LessonFacade $lessons;
 
-    public function __construct(LessonRepository $repository, LessonService $service)
+    public function __construct(LessonFacade $lessons)
     {
-        $this->repository = $repository;
-        $this->service = $service;
+        $this->lessons = $lessons;
     }
 
-    public function show(string $id): LessonResource
+    public function getFacade(): BaseFacade
     {
-        $lesson = $this->repository->find($id);
-        $lesson->load('instructor', 'course', 'controller');
+        return $this->lessons;
+    }
 
-        return new LessonResource($lesson);
+    public function makeResource(Model $record): JsonResource
+    {
+        return new LessonResource($record);
+    }
+
+    public function makeResourceCollection(Collection $collection): AnonymousResourceCollection
+    {
+        return LessonResource::collection($collection);
+    }
+
+    protected function getSearchRelations(): array
+    {
+        return ['course', 'classroom', 'instructor'];
     }
 
     /**
@@ -45,46 +60,20 @@ class LessonController
      */
     public function store(StoreLessonRequest $request): LessonResource
     {
-        $lesson = $this->service->createFromDto($request->getDto());
-        $lesson->load('instructor', 'course', 'controller');
-
+        $lesson = $this->lessons->createFromDto($request->getDto());
         return new LessonResource($lesson);
     }
 
     public function update(UpdateLessonRequest $request, string $id): LessonResource
     {
-        $lesson = $this->repository->find($id);
-        $this->repository->update($lesson, $request->getDto());
-        $lesson->load('instructor', 'course', 'controller');
-
+        $lesson = $this->lessons->findAndUpdate($id, $request->getDto());
         return new LessonResource($lesson);
     }
 
     public function changeInstructor(ChangeLessonInstructorRequest $request, string $id): LessonResource
     {
-        $lesson = $this->repository->find($id);
-        $this->repository->updateInstructor($lesson, $request->instructor_id);
-        $lesson->load('instructor', 'course', 'controller');
-
+        $lesson = $this->lessons->findAndChangeInstructor($id, $request->instructor_id);
         return new LessonResource($lesson);
-    }
-
-    /**
-     * @param string $id
-     * @throws \Exception
-     */
-    public function destroy(string $id): void
-    {
-        $lesson = $this->repository->find($id);
-        $this->repository->delete($lesson);
-    }
-
-    public function onDate(LessonsOnDateRequest $request): AnonymousResourceCollection
-    {
-        $lessons = $this->repository->getLessonsForDate($request->getDto());
-        $lessons->load('instructor', 'course', 'controller');
-
-        return LessonResource::collection($lessons);
     }
 
     /**
@@ -94,9 +83,7 @@ class LessonController
      */
     public function close(string $id): LessonResource
     {
-        $lesson = $this->repository->find($id);
-        $this->service->close($lesson);
-
+        $lesson = $this->lessons->findAndClose($id);
         return new LessonResource($lesson);
     }
 
@@ -107,9 +94,7 @@ class LessonController
      */
     public function open(string $id): LessonResource
     {
-        $lesson = $this->repository->find($id);
-        $this->service->open($lesson);
-
+        $lesson = $this->lessons->findAndOpen($id);
         return new LessonResource($lesson);
     }
 
@@ -120,9 +105,7 @@ class LessonController
      */
     public function cancel(string $id): LessonResource
     {
-        $lesson = $this->repository->find($id);
-        $this->service->cancel($lesson);
-
+        $lesson = $this->lessons->findAndCancel($id);
         return new LessonResource($lesson);
     }
 
@@ -133,9 +116,7 @@ class LessonController
      */
     public function book(string $id): LessonResource
     {
-        $lesson = $this->repository->find($id);
-        $this->repository->book($lesson);
-
+        $lesson = $this->lessons->findAndBook($id);
         return new LessonResource($lesson);
     }
 }

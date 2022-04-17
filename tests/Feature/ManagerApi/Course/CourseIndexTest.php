@@ -46,14 +46,15 @@ class CourseIndexTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->instructor = $this->createFakeInstructor();
         /** @var \Illuminate\Database\Eloquent\Collection|Course[] $courses */
-        $courses = \array_merge(
-            \factory(Course::class, 5)->create(['instructor_id' => $this->instructor->id])->all(),
-            \factory(Course::class, 5)->create(['status' => Course::STATUS_DISABLED])->all(),
-            \factory(Course::class, 5)->create(['status' => Course::STATUS_PENDING])->all(),
-            \factory(Course::class, 5)->create(['status' => Course::STATUS_ACTIVE])->all()
-        );
+        $courses = [
+            Course::factory()->create(['instructor_id' => $this->instructor->id]),
+            Course::factory()->create(['status' => Course::STATUS_DISABLED]),
+            Course::factory()->create(['status' => Course::STATUS_PENDING]),
+            Course::factory()->create(['status' => Course::STATUS_ACTIVE])
+        ];
 
         $counter = 0;
         foreach ($courses as $course) {

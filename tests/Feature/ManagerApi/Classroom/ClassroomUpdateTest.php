@@ -50,7 +50,7 @@ class ClassroomUpdateTest extends TestCase
         parent::setUp();
 
         $this->classroom = $this->createFakeClassroom();
-        $this->url = 'admin/branches/' . $this->classroom->branch_id . '/classrooms/' . $this->classroom->id;
+        $this->url = 'admin/classrooms/' . $this->classroom->id;
     }
 
     public function testAccessDenied(): void
@@ -76,6 +76,7 @@ class ClassroomUpdateTest extends TestCase
      */
     public function testValidationErrors(array $data): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             ClassroomsPermissions::UPDATE
         ]);
@@ -88,6 +89,7 @@ class ClassroomUpdateTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             ClassroomsPermissions::UPDATE
         ]);

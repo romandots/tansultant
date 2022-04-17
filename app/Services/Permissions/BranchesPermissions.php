@@ -14,7 +14,7 @@ namespace App\Services\Permissions;
  * Class BranchesPermissions
  * @package App\Services\Permissions
  */
-class BranchesPermissions
+class BranchesPermissions extends Permissions
 {
     public const MANAGE = 'manage_branches';
     public const CREATE = 'create_branches';

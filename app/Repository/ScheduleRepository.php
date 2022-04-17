@@ -11,12 +11,12 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Http\Requests\ManagerApi\DTO\StoreSchedule as ScheduleDto;
-use App\Http\Requests\PublicApi\DTO\ScheduleOnDate;
+use App\Http\Requests\ManagerApi\DTO\ScheduleOnDate;
 use App\Models\Course;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class ScheduleRepository
@@ -214,5 +214,65 @@ class ScheduleRepository
         $schedule->deleted_at = null;
         $schedule->updated_at = Carbon::now();
         $schedule->save();
+    }
+
+    /**
+     * @param string $courseId
+     * @param Carbon $date
+     * @return Collection<Schedule>
+     */
+    public function getSchedulesForCourseOnDate(string $courseId, Carbon $date): Collection
+    {
+        return $this->getQueryForDate($date)
+            ->where('course_id', $courseId)
+            ->get();
+    }
+
+    /**
+     * @param Carbon $date
+     * @return Collection<Schedule>
+     */
+    public function getSchedulesOnDate(Carbon $date): Collection
+    {
+        return $this->getQueryForDate($date)
+            ->get();
+    }
+
+    private function getQueryForDate($date): Builder
+    {
+        return Schedule::query()
+            ->whereNull('deleted_at')
+            ->where(function (Builder $query) use ($date) {
+                $query
+                    ->where('from_date', '<=', $date->toDateString())
+                    ->orWhereNull('from_date');
+            })
+            ->where(function (Builder $query) use ($date) {
+                $query
+                    ->where('to_date', '>', $date->toDateString())
+                    ->orWhereNull('to_date');
+            })
+            ->where(function (Builder $query) use ($date) {
+                $query
+                    ->where(function (Builder $query) use ($date) {
+                        $query
+                            ->where('cycle', Schedule::CYCLE_ONCE)
+                            ->where('from_date', $date->toDateString());
+                    })
+                    ->orWhere(function (Builder $query) use ($date) {
+                        $query
+                            ->where('cycle', Schedule::CYCLE_EVERY_WEEK)
+                            ->where('weekday', (string)$date->dayOfWeekIso);
+                    })
+                    ->orWhere(function (Builder $query) use ($date) {
+                        $query
+                            ->where('cycle', Schedule::CYCLE_EVERY_MONTH)
+                            ->whereRaw('EXTRACT (DAY FROM from_date::date) = ?', [$date->day]);
+                    })
+                    ->orWhere(function (Builder $query) {
+                        $query
+                            ->where('cycle', Schedule::CYCLE_EVERY_DAY);
+                    });
+            });
     }
 }

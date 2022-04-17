@@ -39,6 +39,7 @@ class UserTest extends \Tests\TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->me = $this->createFakeManagerUser([], [
             UsersPermissions::CREATE,
             UsersPermissions::READ,

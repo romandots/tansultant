@@ -41,6 +41,7 @@ class StudentTest extends \Tests\TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $this->me = $this->createFakeManagerUser([], [
             StudentsPermissions::CREATE,
             StudentsPermissions::READ,
@@ -164,7 +165,7 @@ class StudentTest extends \Tests\TestCase
             'patronymic_name' => $this->faker->firstName,
             'birth_date' => $this->faker->date(),
             'gender' => 'male',
-            'phone' => $this->faker->e164PhoneNumber,
+            'phone' => $this->faker->phoneNumber,
             'email' => $this->faker->email,
             'instagram_username' => $this->faker->word,
             'telegram_username' => $this->faker->word,

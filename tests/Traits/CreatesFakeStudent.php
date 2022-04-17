@@ -21,7 +21,7 @@ trait CreatesFakeStudent
      * @param array|null $attributes
      * @return Student
      */
-    private function createFakeStudent(array $attributes = []): Student
+    protected function createFakeStudent(array $attributes = []): Student
     {
         if (!isset($attributes['person_id'])) {
             $person = $this->createFakePerson();
@@ -29,6 +29,6 @@ trait CreatesFakeStudent
         }
         $attributes['customer_id'] = null;
 
-        return \factory(Student::class)->create($attributes);
+        return Student::factory()->create($attributes);
     }
 }

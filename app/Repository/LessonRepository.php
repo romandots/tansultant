@@ -10,8 +10,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
+use App\Http\Requests\ManagerApi\DTO\SearchLessonsFilterDto;
 use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
-use App\Http\Requests\ManagerApi\DTO\GetLessonsOnDate;
 use App\Models\Lesson;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -20,8 +21,10 @@ use Illuminate\Database\Eloquent\Collection;
  * Class LessonRepository
  * @package App\Repository
  */
-class LessonRepository
+class LessonRepository extends BaseRepository
 {
+    public const SEARCHABLE_ATTRIBUTES = ['name'];
+
     /**
      * @param string $id
      * @return \Illuminate\Database\Eloquent\Model|Lesson
@@ -33,16 +36,17 @@ class LessonRepository
     }
 
     /**
-     * @param $name
      * @param LessonDto $dto
      * @return Lesson
      * @throws \Exception
      */
-    public function create(string $name, LessonDto $dto): Lesson
+    public function create(LessonDto $dto): Lesson
     {
         $lesson = new Lesson;
         $lesson->id = \uuid();
-        $lesson->name = $name;
+        $lesson->name = $dto->name;
+        $lesson->schedule_id = $dto->schedule_id;
+        $lesson->course_id = $dto->course_id;
         $lesson->status = Lesson::STATUS_BOOKED;
         $this->fill($lesson, $dto);
         $lesson->save();
@@ -78,7 +82,6 @@ class LessonRepository
     {
         $lesson->branch_id = $dto->branch_id;
         $lesson->classroom_id = $dto->classroom_id;
-        $lesson->course_id = $dto->course_id;
         $lesson->instructor_id = $dto->instructor_id;
         $lesson->starts_at = $dto->starts_at;
         $lesson->ends_at = $dto->ends_at;
@@ -86,19 +89,27 @@ class LessonRepository
     }
 
     /**
-     * @param Lesson $lesson
-     * @throws \Exception
+     * @param Carbon $date
+     * @param array $relations
+     * @return Collection<Lesson>
      */
-    public function delete(Lesson $lesson): void
+    public function getLessonsOnDate(Carbon $date, array $relations = []): Collection
     {
-        $lesson->delete();
+        return Lesson::query()
+            ->whereNull('deleted_at')
+            ->whereRaw('DATE(starts_at) = ?', [$date->toDateString()])
+            ->distinct()
+            ->orderBy('starts_at')
+            ->get()
+            ->load($relations);
     }
 
     /**
-     * @param GetLessonsOnDate $dto
-     * @return Collection|Lesson[]
+     * @param LessonsFiltered $dto
+     * @param array $relations
+     * @return Collection<Lesson>
      */
-    public function getLessonsForDate(GetLessonsOnDate $dto): Collection
+    public function getLessonsFiltered(LessonsFiltered $dto, array $relations = []): Collection
     {
         $query = Lesson::query()
             ->whereRaw('DATE(starts_at) = ?', [$dto->date]);
@@ -118,7 +129,8 @@ class LessonRepository
         return $query
             ->distinct()
             ->orderBy('starts_at')
-            ->get();
+            ->get()
+            ->load($relations);
     }
 
     /**
@@ -159,5 +171,29 @@ class LessonRepository
         $lesson->status = Lesson::STATUS_BOOKED;
         $lesson->canceled_at = null;
         $lesson->save();
+    }
+
+    public function checkIfScheduleLessonExist(string $scheduleId, string $startTimeStamp, string $endTimeStamp): bool
+    {
+        return Lesson::query()
+            ->where('schedule_id', $scheduleId)
+            ->where('starts_at', $startTimeStamp)
+            ->where('ends_at', $endTimeStamp)
+            ->exists();
+    }
+
+    public function getSearchableAttributes(): array
+    {
+        return self::SEARCHABLE_ATTRIBUTES;
+    }
+
+    public function withSoftDeletes(): bool
+    {
+        return true;
+    }
+
+    public function getQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return Lesson::query();
     }
 }

@@ -83,6 +83,7 @@ class LessonStoreTest extends TestCase
      */
     public function testValidationErrors(array $data): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             LessonsPermissions::CREATE
         ]);
@@ -95,6 +96,7 @@ class LessonStoreTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             LessonsPermissions::CREATE
         ]);

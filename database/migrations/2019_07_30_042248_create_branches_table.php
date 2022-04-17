@@ -41,6 +41,13 @@ class CreateBranchesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::table('schedules', static function (Blueprint $table) {
+            $table->foreign('branch_id')
+                ->references('id')
+                ->on(\App\Models\Branch::TABLE)
+                ->onDelete('cascade');
+        });
     }
 
     /**

@@ -39,6 +39,7 @@ class CreateLessonsTable extends Migration
             $table->timestamp('ends_at')->index();
             $table->timestamp('closed_at')->nullable()->index();
             $table->timestamp('canceled_at')->nullable()->index();
+            $table->timestamp('checked_out_at')->nullable()->index();
             $table->timestamps();
             $table->softDeletes();
 
@@ -72,6 +73,7 @@ class CreateLessonsTable extends Migration
             'passed',
             'canceled',
             'closed',
+            'checked_out',
         ]);
     }
 

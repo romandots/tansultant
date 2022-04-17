@@ -57,6 +57,7 @@ class CourseRestoreTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->artisan('db:seed');
         $instructor = $this->createFakeInstructor();
         $this->deletedCourse = $this->createFakeCourse(['instructor_id' => $instructor->id, 'deleted_at' => Carbon::now()]);
         $this->url = self::URL . '/' . $this->deletedCourse->id . '/restore';

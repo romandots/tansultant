@@ -14,7 +14,7 @@ namespace App\Services\Permissions;
  * Class SchedulesPermissions
  * @package App\Services\Permissions
  */
-class SchedulesPermissions
+class SchedulesPermissions extends Permissions
 {
     public const MANAGE = 'manage_schedules';
     public const CREATE = 'create_schedules';

@@ -21,8 +21,20 @@ use App\Models\Visit;
  * Class VisitRepository
  * @package App\Repository
  */
-class VisitRepository extends Repository
+class VisitRepository extends BaseRepository
 {
+    public const WITH_SOFT_DELETES = false;
+    public const SEARCHABLE_ATTRIBUTES = [];
+
+    public function getSearchableAttributes(): array
+    {
+        return self::SEARCHABLE_ATTRIBUTES;
+    }
+
+    public function withSoftDeletes(): bool
+    {
+        return self::WITH_SOFT_DELETES;
+    }
     /**
      * @param VisitDto $dto
      * @param User|null $user
@@ -70,7 +82,7 @@ class VisitRepository extends Repository
         return $visit;
     }
 
-    final protected function getQuery(): \Illuminate\Database\Eloquent\Builder
+    final public function getQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return Visit::query();
     }

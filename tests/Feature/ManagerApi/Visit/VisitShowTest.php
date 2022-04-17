@@ -83,6 +83,7 @@ class VisitShowTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             VisitsPermissions::READ
         ]);

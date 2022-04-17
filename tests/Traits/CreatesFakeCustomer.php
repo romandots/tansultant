@@ -20,13 +20,13 @@ trait CreatesFakeCustomer
      * @param array|null $attributes
      * @return \App\Models\Customer
      */
-    private function createFakeCustomer(array $attributes = []): \App\Models\Customer
+    protected function createFakeCustomer(array $attributes = []): \App\Models\Customer
     {
         if (!isset($attributes['person_id'])) {
             $person = $this->createFakePerson();
             $attributes['person_id'] = $person->id;
         }
 
-        return \factory(\App\Models\Customer::class)->create($attributes);
+        return \App\Models\Customer::factory()->create($attributes);
     }
 }

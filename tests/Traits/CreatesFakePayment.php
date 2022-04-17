@@ -26,7 +26,7 @@ trait CreatesFakePayment
      * @param array|null $attributes
      * @return Payment
      */
-    private function createFakePayment(?int $amount = null, ?Account $account = null, ?array $attributes = []): Payment
+    protected function createFakePayment(?int $amount = null, ?Account $account = null, ?array $attributes = []): Payment
     {
         if (null !== $amount) {
             $attributes['amount'] = $amount;
@@ -44,7 +44,7 @@ trait CreatesFakePayment
             $attributes['user_id'] = $this->createFakeUser()->id;
         }
 
-        return \factory(Payment::class)->create($attributes);
+        return Payment::factory()->create($attributes);
     }
 
     /**
@@ -55,7 +55,7 @@ trait CreatesFakePayment
      * @return array
      * @throws \Exception
      */
-    private function createFakeTransaction(
+    protected function createFakeTransaction(
         ?int $amount = null,
         ?Account $fromAccount = null,
         ?Account $toAccount = null,
@@ -78,7 +78,7 @@ trait CreatesFakePayment
      * @param array|null $attributes
      * @return Bonus
      */
-    private function createFakeBonus(?int $amount, ?Account $account, ?array $attributes = []): Bonus
+    protected function createFakeBonus(?int $amount = null, ?Account $account = null, ?array $attributes = []): Bonus
     {
         if (null !== $amount) {
             $attributes['amount'] = $amount;
@@ -88,6 +88,6 @@ trait CreatesFakePayment
             $attributes['account_id'] = $account->id;
         }
 
-        return \factory(Bonus::class)->create($attributes);
+        return Bonus::factory()->create($attributes);
     }
 }

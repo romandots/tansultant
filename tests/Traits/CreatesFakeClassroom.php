@@ -24,10 +24,10 @@ trait CreatesFakeClassroom
      * @param Branch|null $branch
      * @return Classroom
      */
-    private function createFakeClassroom(?array $attributes = [], ?Branch $branch = null): Classroom
+    protected function createFakeClassroom(?array $attributes = [], ?Branch $branch = null): Classroom
     {
         $branch = $branch ?? $this->createFakeBranch();
         $attributes['branch_id'] = $attributes['branch_id'] ?? $branch->id;
-        return \factory(Classroom::class)->create($attributes);
+        return Classroom::factory()->create($attributes);
     }
 }

@@ -8,8 +8,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\ManagerApi;
 
+use App\Http\Resources\CourseResource;
+use App\Http\Resources\InstructorResource;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -39,14 +42,20 @@ class LessonResource extends JsonResource
             'course' => $this->whenLoaded('course', function () {
                 return new CourseResource($this->course);
             }),
+            'classroom' => $this->whenLoaded('classroom', function () {
+                return new ClassroomResource($this->classroom);
+            }),
             'controller' => $this->whenLoaded('controller', function () {
                 return new UserResource($this->controller);
             }),
-            'starts_at' => $this->starts_at ? $this->starts_at->toDateTimeString() : null,
-            'ends_at' => $this->ends_at ? $this->ends_at->toDateTimeString() : null,
-            'closed_at' => $this->closed_at ? $this->closed_at->toDateTimeString() : null,
-            'canceled_at' => $this->canceled_at ? $this->canceled_at->toDateTimeString() : null,
-            'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
+            'is_closed' => (bool)$this->closed_at,
+            'is_canceled' => (bool)$this->canceled_at,
+            'starts_at' => $this->starts_at?->toDateTimeString(),
+            'ends_at' => $this->ends_at?->toDateTimeString(),
+            'closed_at' => $this->closed_at?->toDateTimeString(),
+            'canceled_at' => $this->canceled_at?->toDateTimeString(),
+            'checked_out_at' => $this->checked_out_at?->toDateTimeString(),
+            'created_at' => $this->created_at?->toDateTimeString(),
         ];
     }
 }

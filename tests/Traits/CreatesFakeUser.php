@@ -25,7 +25,7 @@ trait CreatesFakeUser
      * @param array $roles
      * @return \App\Models\User
      */
-    private function createFakeUser(
+    protected function createFakeUser(
         array $attributes = [],
         array $permissions = [],
         array $roles = []
@@ -36,7 +36,7 @@ trait CreatesFakeUser
         }
 
         /** @var User $user */
-        $user = \factory(\App\Models\User::class)->create($attributes);
+        $user = \App\Models\User::factory()->create($attributes);
         $user->givePermissionTo($permissions);
 
         $user->assignRole($roles);
@@ -49,7 +49,7 @@ trait CreatesFakeUser
      * @param array $permissions
      * @return \App\Models\User
      */
-    private function createFakeManagerUser(array $attributes = [], array $permissions = []): \App\Models\User
+    protected function createFakeManagerUser(array $attributes = [], array $permissions = []): \App\Models\User
     {
         /** @var User $user */
         $user = $this->createFakeUser($attributes, $permissions);

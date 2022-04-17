@@ -1,27 +1,35 @@
 <?php
-declare(strict_types=1);
-/**
- * File: BonusFactory.php
- * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-30
- * Copyright (c) 2019
- */
 
-/* @var \Illuminate\Database\Eloquent\Factory  $factory */
+namespace Database\Factories;
 
 use App\Models\Bonus;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Bonus::class, static function (Faker $faker) {
-    return [
-        'id' => \uuid(),
-        'name' => 'Bonus',
-        'amount' => 5000,
-        'type' => Bonus::TYPE_CODE,
-        'status' => Bonus::STATUS_ACTIVATED,
-        'account_id' => \uuid(),
-        'promocode_id' => null,
-        'user_id' => \uuid(),
-        'expired_at' => \Carbon\Carbon::now()->addMonth()
-    ];
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Bonus>
+ */
+class BonusFactory extends Factory
+{
+    protected $model = Bonus::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     * @throws \Exception
+     */
+    public function definition()
+    {
+        return [
+            'id' => \uuid(),
+            'name' => 'Bonus',
+            'amount' => 5000,
+            'type' => Bonus::TYPE_CODE,
+            'status' => Bonus::STATUS_ACTIVATED,
+            'account_id' => \App\Models\Account::factory(),
+            'promocode_id' => null,
+            'user_id' => \App\Models\User::factory(),
+            'expired_at' => \Carbon\Carbon::now()->addMonth()
+        ];
+    }
+}

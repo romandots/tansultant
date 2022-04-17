@@ -44,11 +44,6 @@ class CreateSchedulesTable extends Migration
                     ->references('id')
                     ->on(\App\Models\Course::TABLE)
                     ->onDelete('cascade');
-
-                $table->foreign('branch_id')
-                    ->references('id')
-                    ->on(\App\Models\Branch::TABLE)
-                    ->onDelete('cascade');
             }
         );
 

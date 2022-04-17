@@ -1,0 +1,26 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ../manager-app
+      dockerfile: DockerfileProduction
+    restart: always
+    ports:
+      - "8000:80"
+  api:
+    restart: always
+  queue:
+    restart: always
+  scheduler:
+    restart: always
+  db:
+    restart: always
+  redis:
+    restart: always
+  proxy:
+    image: nginx:latest
+    volumes:
+      - ./docker/nginx/sites-enabled:/etc/nginx/conf.d/
+      - ./docker/nginx/certs:/etc/nginx/certs/
+      - ./docker/logs/nginx:/var/log/nginx
+    restart: always

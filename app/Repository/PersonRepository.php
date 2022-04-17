@@ -24,7 +24,7 @@ use Ramsey\Uuid\Uuid;
  * Class PersonRepository
  * @package App\Repository
  */
-class PersonRepository extends Repository
+class PersonRepository extends BaseRepository
 {
     public const WITH_SOFT_DELETES = true;
     public const SEARCHABLE_ATTRIBUTES = [
@@ -36,7 +36,17 @@ class PersonRepository extends Repository
         'note',
     ];
 
-    protected function getQuery(): \Illuminate\Database\Eloquent\Builder
+    public function getSearchableAttributes(): array
+    {
+        return self::SEARCHABLE_ATTRIBUTES;
+    }
+
+    public function withSoftDeletes(): bool
+    {
+        return self::WITH_SOFT_DELETES;
+    }
+
+    public function getQuery(): \Illuminate\Database\Eloquent\Builder
     {
         return Person::query();
     }

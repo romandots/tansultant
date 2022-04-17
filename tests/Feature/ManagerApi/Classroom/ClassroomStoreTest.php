@@ -49,7 +49,7 @@ class ClassroomStoreTest extends TestCase
     {
         parent::setUp();
         $this->branchId = $this->createFakeBranch()->id;
-        $this->url = 'admin/branches/' . $this->branchId . '/classrooms';
+        $this->url = 'admin/classrooms';
     }
 
     public function testAccessDenied(): void
@@ -71,6 +71,7 @@ class ClassroomStoreTest extends TestCase
 
     public function testValidationErrors(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             ClassroomsPermissions::CREATE
         ]);
@@ -108,6 +109,7 @@ class ClassroomStoreTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser([], [
             ClassroomsPermissions::CREATE
         ]);

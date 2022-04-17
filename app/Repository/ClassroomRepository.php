@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Http\Requests\PublicApi\DTO\Classroom as ClassroomDto;
+use App\Http\Requests\ManagerApi\DTO\Classroom as ClassroomDto;
 use App\Models\Classroom;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -18,8 +18,10 @@ use Illuminate\Database\Eloquent\Collection;
 /**
  * Class ClassroomRepository
  */
-class ClassroomRepository
+class ClassroomRepository extends BaseRepository
 {
+    public const SEARCHABLE_ATTRIBUTES = ['name'];
+
     /**
      * @param string $id
      * @return Classroom
@@ -108,22 +110,26 @@ class ClassroomRepository
         $classroom->number = $dto->number;
     }
 
-    /**
-     * @param Classroom $classroom
-     * @throws \Exception
-     */
-    public function delete(Classroom $classroom): void
+    public function getBranchIdByClassroomId(string $classroomId): string
     {
-        $classroom->deleted_at = Carbon::now();
-        $classroom->save();
+        return (string)$this
+            ->getQuery()
+            ->where('id', $classroomId)
+            ->value('branch_id');
     }
 
-    /**
-     * @param Classroom $classroom
-     */
-    public function restore(Classroom $classroom): void
+    public function getSearchableAttributes(): array
     {
-        $classroom->deleted_at = null;
-        $classroom->save();
+        return self::SEARCHABLE_ATTRIBUTES;
+    }
+
+    public function withSoftDeletes(): bool
+    {
+        return true;
+    }
+
+    public function getQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return Classroom::query();
     }
 }

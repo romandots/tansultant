@@ -1,28 +1,37 @@
 <?php
-/**
- * File: InstructorFactory.php
- * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-17
- * Copyright (c) 2019
- */
-
 declare(strict_types=1);
 
-/* @var \Illuminate\Database\Eloquent\Factory  $factory */
+namespace Database\Factories;
 
-use Faker\Generator as Faker;
+use App\Models\Course;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(\App\Models\Instructor::class, static function (Faker $faker) {
-    return [
-        'id' => \uuid(),
-        'name' => $faker->name,
-        'description' => $faker->sentence,
-        'picture' => $faker->imageUrl(),
-        'display' => true,
-        'status' => $faker->randomElement(\App\Models\Instructor::STATUSES),
-        'person_id' => \factory(\App\Models\Person::class),
-        'seen_at' => \Carbon\Carbon::now(),
-        'created_at' => \Carbon\Carbon::now(),
-        'updated_at' => \Carbon\Carbon::now()
-    ];
-});
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Classroom>
+ */
+class InstructorFactory extends Factory
+{
+    protected $model = \App\Models\Instructor::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     * @throws \Exception
+     */
+    public function definition()
+    {
+        return [
+            'id' => \uuid(),
+            'name' => $this->faker->name,
+            'description' => $this->faker->words(10, true),
+            'picture' => 'http://some.ur/to/picture.jpg',
+            'display' => true,
+            'status' => $this->faker->randomElement(\App\Models\Instructor::STATUSES),
+            'person_id' => \App\Models\Person::factory(),
+            'seen_at' => \Carbon\Carbon::now(),
+            'created_at' => \Carbon\Carbon::now(),
+            'updated_at' => \Carbon\Carbon::now()
+        ];
+    }
+}

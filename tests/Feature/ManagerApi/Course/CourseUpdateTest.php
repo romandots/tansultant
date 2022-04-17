@@ -95,6 +95,7 @@ class CourseUpdateTest extends TestCase
      */
     public function testValidationErrors(array $data): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser(
             [],
             [
@@ -110,6 +111,7 @@ class CourseUpdateTest extends TestCase
 
     public function testWithFiredInstructor(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser(
             [],
             [
@@ -121,8 +123,8 @@ class CourseUpdateTest extends TestCase
         $data = [
             'name' => $this->faker->name,
             'status' => Course::STATUS_ACTIVE,
-            'summary' => $this->faker->sentence,
-            'description' => $this->faker->text,
+            'summary' => $this->faker->words(10, true),
+            'description' => $this->faker->words(10, true),
             'picture' => null,
             'age_restrictions' => '3+',
             'instructor_id' => $instructor->id,
@@ -151,6 +153,7 @@ class CourseUpdateTest extends TestCase
 
     public function testSuccess(): void
     {
+        $this->artisan('db:seed');
         $user = $this->createFakeManagerUser(
             [],
             [
@@ -164,8 +167,8 @@ class CourseUpdateTest extends TestCase
         $data = [
             'name' => $this->faker->name,
             'status' => Course::STATUS_ACTIVE,
-            'summary' => $this->faker->sentence,
-            'description' => $this->faker->text,
+            'summary' => $this->faker->words(10, true),
+            'description' => $this->faker->words(10, true),
             'picture' => null,
             'age_restrictions_from' => 3,
             'instructor_id' => $instructor->id,
@@ -187,7 +190,7 @@ class CourseUpdateTest extends TestCase
                         'description' => $data['description'],
                         'status' => $data['status'],
                         'age_restrictions' => [
-                            'from' => $data['age_restrictions_from'
+                            'from' => $data['age_restrictions_from']
                         ],
                         'genres' => ['vogue'],
                     ]

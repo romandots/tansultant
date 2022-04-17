@@ -1,2 +1,5 @@
 .idea
 .env
+docker/data/*
+vendor/*
+node_modules/*
