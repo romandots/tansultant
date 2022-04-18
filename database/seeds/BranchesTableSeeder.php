@@ -60,7 +60,7 @@ class BranchesTableSeeder extends Seeder
         try {
             \App\Models\Classroom::query()->firstOrFail();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
-            $classroom = new \App\Http\Requests\ManagerApi\DTO\Classroom;
+            $classroom = new \App\Repository\DTO\Classroom;
             $classroom->name = 'Зал А';
             $classroom->branch_id = $branch->id;
 

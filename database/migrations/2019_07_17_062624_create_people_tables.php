@@ -133,6 +133,7 @@ class CreatePeopleTables extends Migration
             $table->unsignedInteger('number')->index();
             $table->uuid('branch_id')->nullable()->index();
             $table->uuid('customer_id')->nullable()->index();
+            $table->uuid('student_id')->nullable()->index();
             $table->text('status');
             $table->timestamp('created_at');
             $table->timestamp('signed_at')->nullable();
@@ -145,6 +146,11 @@ class CreatePeopleTables extends Migration
             $table->foreign('customer_id')
                 ->references('id')
                 ->on('customers')
+                ->onDelete('restrict');
+
+            $table->foreign('student_id')
+                ->references('id')
+                ->on('students')
                 ->onDelete('restrict');
         });
 
