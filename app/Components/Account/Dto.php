@@ -7,7 +7,7 @@ namespace App\Components\Account;
 use App\Models\Enum\AccountOwnerType;
 use App\Models\Enum\AccountType;
 
-class Dto implements \App\Common\Contracts\Dto
+class Dto extends \App\Common\DTO\DtoWIthUser
 {
     public ?string $id = null;
     public string $name;

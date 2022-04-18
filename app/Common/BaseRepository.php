@@ -16,7 +16,7 @@ abstract class BaseRepository
     ) {
     }
 
-    abstract public function fill(Model $record, Contracts\Dto $dto): void;
+    abstract public function fill(Model $record, Contracts\DtoWithUser $dto): void;
 
     public function getSearchableAttributes(): array
     {
@@ -108,7 +108,7 @@ abstract class BaseRepository
             ->firstOrFail();
     }
 
-    public function create(Contracts\Dto $dto): Model
+    public function create(Contracts\DtoWithUser $dto): Model
     {
         $record = $this->make();
         $record->id = \uuid();
@@ -118,7 +118,7 @@ abstract class BaseRepository
         return $record;
     }
 
-    public function update($record, Contracts\Dto $dto): void
+    public function update($record, Contracts\DtoWithUser $dto): void
     {
         $this->fill($record, $dto);
         $this->fillDate($record, 'updated_at');

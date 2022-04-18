@@ -10,6 +10,7 @@ use App\Common\Requests\SuggestRequest;
 use App\Common\Requests\UpdateRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
@@ -29,7 +30,7 @@ abstract class AdminController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        $records = $this->getFacade()->getAll();
+        $records = $this->getFacade()->getAll([]);
         return $this->makeResourceCollection($records);
     }
 
@@ -75,14 +76,14 @@ abstract class AdminController extends Controller
         return $this->makeResource($record);
     }
 
-    public function destroy(string $id): void
+    public function destroy(string $id, Request $request): void
     {
-        $this->getFacade()->findAndDelete($id);
+        $this->getFacade()->findAndDelete($id, $request->getUser());
     }
 
-    public function restore(string $id): void
+    public function restore(string $id, Request $request): void
     {
-        $this->getFacade()->findAndRestore($id, $this->getSingleRecordRelations());
+        $this->getFacade()->findAndRestore($id, $this->getSingleRecordRelations(), $request->getUser());
     }
 
     public function getFacade(): BaseFacade

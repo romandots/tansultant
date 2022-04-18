@@ -6,5 +6,5 @@ use Illuminate\Foundation\Http\FormRequest;
 
 abstract class StoreRequest extends FormRequest
 {
-    abstract public function getDto(): \App\Common\Contracts\Dto;
+    abstract public function getDto(): \App\Common\Contracts\DtoWithUser;
 }

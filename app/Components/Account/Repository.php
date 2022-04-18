@@ -37,7 +37,7 @@ class Repository extends \App\Common\BaseRepository
      * @param Dto $dto
      * @return void
      */
-    public function fill(Model $record, \App\Common\Contracts\Dto $dto): void
+    public function fill(Model $record, \App\Common\Contracts\DtoWithUser $dto): void
     {
         $record->name = $dto->name;
         $record->type = $dto->type->value;

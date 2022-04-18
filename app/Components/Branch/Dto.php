@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Branch;
 
-class Dto implements \App\Common\Contracts\Dto
+class Dto extends \App\Common\DTO\DtoWIthUser
 {
     public ?string $id;
     public string $name;

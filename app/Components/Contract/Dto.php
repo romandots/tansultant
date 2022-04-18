@@ -6,7 +6,7 @@ namespace App\Components\Contract;
 
 use App\Models\Enum\ContractStatus;
 
-class Dto implements \App\Common\Contracts\Dto
+class Dto extends \App\Common\DTO\DtoWIthUser
 {
     public ?string $id;
     public ?string $serial;

@@ -39,7 +39,7 @@ class Repository extends \App\Common\BaseRepository
      * @param Dto $dto
      * @return void
      */
-    public function fill(Model $record, \App\Common\Contracts\Dto $dto): void
+    public function fill(Model $record, \App\Common\Contracts\DtoWithUser $dto): void
     {
         $record->serial = $dto->serial ?: $this->getCurrentSerial();
         $record->number = $this->getNextValue($record->serial);

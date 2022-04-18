@@ -51,11 +51,12 @@ abstract class BaseFacade
     /**
      * Method returns all records. Use with caution
      *
+     * @param array $relations
      * @return Collection
      */
-    public function getAll(): Collection
+    public function getAll(array $relations = []): Collection
     {
-        return $this->getRepository()->getAll();
+        return $this->getRepository()->getAll($relations);
     }
 
     /**
@@ -87,18 +88,18 @@ abstract class BaseFacade
      * Single entry point for creating new record
      * returns newly created record with relations loaded
      *
-     * @param \App\Common\Contracts\Dto $dto
+     * @param \App\Common\Contracts\DtoWithUser $dto
      * @param array $relations
      * @return Model
      */
-    public function create(Contracts\Dto $dto, array $relations = []): Model
+    public function create(Contracts\DtoWithUser $dto, array $relations = []): Model
     {
         return $this->getService()
             ->create($dto)
             ->load($relations);
     }
 
-    public function find(string $id, array $relations = []): Model
+    public function find(string $id, array $relations): Model
     {
         return $this->getRepository()->find($id)->load($relations);
     }
@@ -107,12 +108,14 @@ abstract class BaseFacade
      * Single entry point for deleting record
      *
      * @param string $id
+     * @param \App\Models\User $user
      * @return void
+     * @throws \Throwable
      */
-    public function findAndDelete(string $id): void
+    public function findAndDelete(string $id, \App\Models\User $user): void
     {
         $record = $this->getRepository()->find($id);
-        $this->getService()->delete($record);
+        $this->getService()->delete($record, $user);
     }
 
     /**
@@ -121,11 +124,12 @@ abstract class BaseFacade
      * @param string $id
      * @param array $relations
      * @return Model
+     * @throws \Throwable
      */
-    public function findAndRestore(string $id, array $relations = []): Model
+    public function findAndRestore(string $id, array $relations, \App\Models\User $user): Model
     {
         $record = $this->getRepository()->find($id);
-        $this->getService()->restore($record);
+        $this->getService()->restore($record, $user);
 
         return $record->load($relations);
     }
@@ -135,11 +139,11 @@ abstract class BaseFacade
      * returns updated record with relations loaded
      *
      * @param string $id
-     * @param \App\Common\Contracts\Dto $dto
+     * @param \App\Common\Contracts\DtoWithUser $dto
      * @param array $relations
      * @return Model
      */
-    public function findAndUpdate(string $id, Contracts\Dto $dto, array $relations = []): Model
+    public function findAndUpdate(string $id, Contracts\DtoWithUser $dto, array $relations = []): Model
     {
         $record = $this->getRepository()->find($id);
         $this->getService()->update($record, $dto);

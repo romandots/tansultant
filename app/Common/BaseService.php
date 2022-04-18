@@ -3,7 +3,8 @@
 namespace App\Common;
 
 use App\Common\Contracts\PaginatedInterface;
-use App\Http\Requests\DTO\FilteredDto;
+use App\Http\Requests\DTO\FilteredDtoWithUser;
+use App\Services\LogRecord\LogRecordService;
 use App\Services\WithCache;
 use App\Services\WithLogger;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +16,7 @@ abstract class BaseService
     use WithCache;
 
     protected BaseRepository $repository;
+    protected LogRecordService $actions;
 
     public function __construct(
         protected string $modelClass,
@@ -23,6 +25,7 @@ abstract class BaseService
         protected ?string $searchFilterDtoClass
     ) {
         $this->repository = \app($repositoryClass);
+        $this->actions = \app(LogRecordService::class);
     }
 
     public function suggest(
@@ -109,16 +112,17 @@ abstract class BaseService
     /**
      * @throws \Throwable
      */
-    public function create(Contracts\Dto $storeDto): Model
+    public function create(Contracts\DtoWithUser $dto): Model
     {
-        assert($storeDto instanceof $this->dtoClass);
+        assert($dto instanceof $this->dtoClass);
         try {
             $this->debug('Creating record of model ' . $this->modelClass, (array)$dto);
-            $record = $this->getRepository()->create($storeDto);
+            $record = $this->getRepository()->create($dto);
+            $this->actions->logCreate($dto->getUser(), $record);
             $this->debug('Record of model ' . $this->modelClass . ' is created with ID#' . $record->id, $record->toArray());
             return $record;
         } catch (\Throwable $exception) {
-            $this->error('Failed creating record of model ' . $this->modelClass, (array)$storeDto);
+            $this->error('Failed creating record of model ' . $this->modelClass, (array)$dto);
             throw $exception;
         }
     }
@@ -126,12 +130,14 @@ abstract class BaseService
     /**
      * @throws \Throwable
      */
-    public function update(Model $record, Contracts\Dto $dto): void
+    public function update(Model $record, Contracts\DtoWithUser $dto): void
     {
         assert($dto instanceof $this->dtoClass);
         try {
             $this->debug('Updating record #' . $record->id . ' of model ' . $this->modelClass, (array)$dto);
+            $originalRecord = clone $record;
             $this->getRepository()->update($record, $dto);
+            $this->actions->logUpdate($dto->getUser(), $record, $originalRecord);
             $this->debug('Record of model #' . $record->id . ' of model ' . $this->modelClass . ' is updated', $record->toArray());
         } catch (\Throwable $exception) {
             $this->error('Failed updating record #' . $record->id . ' of model ' . $this->modelClass, (array)$dto);
@@ -142,14 +148,31 @@ abstract class BaseService
     /**
      * @throws \Throwable
      */
-    public function delete(Model $record): void
+    public function delete(Model $record, \App\Models\User $user): void
     {
         try {
             $this->debug('Deleting record #' . $record->id . ' of model ' . $this->modelClass);
             $this->getRepository()->delete($record);
+            $this->actions->logDelete($user, $record);
             $this->debug('Record of model #' . $record->id . ' of model ' . $this->modelClass . ' is deleted');
         } catch (\Throwable $exception) {
             $this->error('Failed deleting record #' . $record->id . ' of model ' . $this->modelClass);
+            throw $exception;
+        }
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function restore(Model $record, \App\Models\User $user): void
+    {
+        try {
+            $this->debug('Restoring record #' . $record->id . ' of model ' . $this->modelClass);
+            $this->getRepository()->restore($record);
+            $this->actions->logRestore($user, $record);
+            $this->debug('Record of model #' . $record->id . ' of model ' . $this->modelClass . ' is restored');
+        } catch (\Throwable $exception) {
+            $this->error('Failed restoring record #' . $record->id . ' of model ' . $this->modelClass);
             throw $exception;
         }
     }
@@ -164,7 +187,7 @@ abstract class BaseService
         return $this->modelClass;
     }
 
-    public function makeSearchFilterDto(): FilteredDto
+    public function makeSearchFilterDto(): FilteredDtoWithUser
     {
         return new $this->searchFilterDtoClass();
     }
