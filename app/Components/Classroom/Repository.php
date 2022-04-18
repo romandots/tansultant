@@ -1,0 +1,69 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Components\Classroom;
+
+use App\Models\Classroom;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @method array getSearchableAttributes()
+ * @method bool withSoftDeletes()
+ * @method \Illuminate\Database\Eloquent\Builder getQuery()
+ * @method Classroom make()
+ * @method int countFiltered(\App\Common\Contracts\FilteredInterface $search)
+ * @method \Illuminate\Database\Eloquent\Collection<Classroom> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
+ * @method Classroom find(string $id)
+ * @method Classroom findTrashed(string $id)
+ * @method Classroom create(Dto $dto)
+ * @method void update($record, Dto $dto)
+ * @method void delete(Classroom $record)
+ * @method void restore(Classroom $record)
+ * @method void forceDelete(Classroom $record)
+ * @mixin \App\Common\BaseRepository
+ */
+class Repository extends \App\Common\BaseRepository
+{
+    public function __construct() {
+        parent::__construct(
+            Classroom::class,
+            ['name']
+        );
+    }
+
+    /**
+     * @param Classroom $record
+     * @param Dto $dto
+     * @return void
+     */
+    public function fill(Model $record, \App\Common\Contracts\Dto $dto): void
+    {
+        $record->name = $dto->name;
+        $record->branch_id = $dto->branch_id;
+        $record->color = $dto->color;
+        $record->capacity = $dto->capacity;
+        $record->number = $dto->number;
+    }
+
+    /**
+     * @param string $branchId
+     * @return \Illuminate\Database\Eloquent\Collection<Classroom>
+     */
+    public function getByBranchId(string $branchId): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->getQuery()
+            ->whereNull('deleted_at')
+            ->where('branch_id', $branchId)
+            ->with('branch')
+            ->get();
+    }
+
+    public function getBranchIdByClassroomId(string $classroomId): string
+    {
+        return (string)$this
+            ->getQuery()
+            ->where('id', $classroomId)
+            ->value('branch_id');
+    }
+}
