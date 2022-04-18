@@ -8,13 +8,13 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Lesson\Exceptions;
+namespace App\Components\Lesson\Exceptions;
 
 /**
  * Class LessonNotCanceledYetException
  * @package App\Services\Lesson\Exceptions
  */
-class LessonNotCanceledYetException extends LessonServiceException
+class LessonNotCanceledYetException extends Exception
 {
     /**
      * LessonNotCanceledYetException constructor.

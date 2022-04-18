@@ -1,45 +1,31 @@
 <?php
 
-namespace App\Services\Lesson;
+namespace App\Components\Lesson;
 
+use App\Models\Enum\LessonStatus;
 use App\Models\Lesson;
-use App\Repository\CourseRepository;
-use App\Repository\LessonRepository;
-use App\Services\BaseService;
-use App\Services\Intent\IntentService;
-use App\Services\Visit\VisitService;
 use App\Services\WithLogger;
 use Carbon\Carbon;
 
-class LessonManager
+class Manager
 {
     use WithLogger;
 
-    private LessonRepository $repository;
-    private IntentService $intentService;
-    private VisitService $visitService;
+    protected Repository $repository;
+    protected \App\Components\Intent\Facade $intents;
+    protected \App\Components\Visit\Facade $visits;
 
-    /**
-     * LessonController constructor.
-     * @param LessonRepository $repository
-     * @param CourseRepository $courseRepository
-     * @param IntentService $intentService
-     * @param VisitService $visitService
-     */
-    public function __construct(
-        LessonRepository $repository,
-        IntentService $intentService,
-        VisitService $visitService
-    ) {
-        $this->repository = $repository;
-        $this->intentService = $intentService;
-        $this->visitService = $visitService;
+    public function __construct() {
+        $this->repository = \app(Repository::class);
+        $this->intents = \app(\App\Components\Intent\Facade::class);
+        $this->visits = \app(\App\Components\Visit\Facade::class);
     }
 
     protected function getLoggerPrefix(): string
     {
         return __CLASS__;
     }
+
     /**
      * Close lesson:
      * - Update intents
@@ -56,15 +42,15 @@ class LessonManager
             throw new Exceptions\LessonNotPassedYetException();
         }
 
-        if ($lesson->status === Lesson::STATUS_CLOSED) {
+        if ($lesson->status === LessonStatus::CLOSED) {
             throw new Exceptions\LessonAlreadyClosedException();
         }
 
-        if (false === $this->visitService->visitsArePaid($lesson->visits)) {
+        if (false === $this->visits->visitsArePaid($lesson->visits)) {
             throw new Exceptions\LessonNotCompletelyPaidException();
         }
 
-        $this->intentService->updateIntents($lesson->visits, $lesson->intents);
+        $this->intents->updateIntents($lesson->visits, $lesson->intents);
 
         $this->repository->close($lesson);
     }
@@ -75,7 +61,7 @@ class LessonManager
      */
     public function open(Lesson $lesson): void
     {
-        if ($lesson->status !== Lesson::STATUS_CLOSED) {
+        if ($lesson->status !== LessonStatus::CLOSED) {
             throw new Exceptions\LessonNotClosedException();
         }
 
@@ -90,11 +76,11 @@ class LessonManager
      */
     public function cancel(Lesson $lesson): void
     {
-        if ($lesson->status === Lesson::STATUS_CANCELED) {
+        if ($lesson->status === LessonStatus::CANCELED) {
             throw new Exceptions\LessonAlreadyCanceledException();
         }
 
-        if ($lesson->status === Lesson::STATUS_CLOSED) {
+        if ($lesson->status === LessonStatus::CLOSED) {
             throw new Exceptions\LessonAlreadyClosedException();
         }
 
@@ -111,7 +97,7 @@ class LessonManager
      */
     public function book(Lesson $lesson): void
     {
-        if ($lesson->status !== Lesson::STATUS_CANCELED) {
+        if ($lesson->status !== LessonStatus::CANCELED) {
             throw new Exceptions\LessonNotCanceledYetException();
         }
 

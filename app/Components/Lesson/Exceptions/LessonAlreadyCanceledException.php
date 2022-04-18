@@ -1,6 +1,6 @@
 <?php
 /**
- * File: LessonHasVisitsException.php
+ * File: LessonAlreadyCanceledException.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
  * Date: 2019-07-27
  * Copyright (c) 2019
@@ -8,20 +8,20 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Lesson\Exceptions;
+namespace App\Components\Lesson\Exceptions;
 
 /**
- * Class LessonHasVisitsException
+ * Class LessonAlreadyCanceledException
  * @package App\Services\Lesson\Exceptions
  */
-class LessonHasVisitsException extends LessonServiceException
+class LessonAlreadyCanceledException extends Exception
 {
     /**
-     * LessonHasVisitsException constructor.
+     * LessonAlreadyCanceledException constructor.
      */
     public function __construct()
     {
-        parent::__construct('lesson_has_visits');
+        parent::__construct('lesson_already_canceled');
     }
 
     /**

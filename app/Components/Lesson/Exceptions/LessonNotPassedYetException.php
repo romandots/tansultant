@@ -1,6 +1,6 @@
 <?php
 /**
- * File: LessonAlreadyCanceledException.php
+ * File: LessonNotPassedYetException.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
  * Date: 2019-07-27
  * Copyright (c) 2019
@@ -8,20 +8,20 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Lesson\Exceptions;
+namespace App\Components\Lesson\Exceptions;
 
 /**
- * Class LessonAlreadyCanceledException
+ * Class LessonNotPassedYetException
  * @package App\Services\Lesson\Exceptions
  */
-class LessonAlreadyCanceledException extends LessonServiceException
+class LessonNotPassedYetException extends Exception
 {
     /**
-     * LessonAlreadyCanceledException constructor.
+     * LessonNotPassedYetException constructor.
      */
     public function __construct()
     {
-        parent::__construct('lesson_already_canceled');
+        parent::__construct('lesson_not_passed_yet');
     }
 
     /**

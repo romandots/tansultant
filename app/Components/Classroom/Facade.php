@@ -25,4 +25,18 @@ class Facade extends BaseFacade
     {
         parent::__construct(Service::class);
     }
+
+    /**
+     * @param string $branchId
+     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Classroom>
+     */
+    public function getByBranchId(string $branchId): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->getRepository()->getByBranchId($branchId);
+    }
+
+    public function getBranchIdByClassroomId(string $classroomId): string
+    {
+        return $this->getRepository()->getBranchIdByClassroomId($classroomId);
+    }
 }

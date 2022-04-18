@@ -8,13 +8,13 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Lesson\Exceptions;
+namespace App\Components\Lesson\Exceptions;
 
 /**
  * Class LessonNotCompletelyPaidException
  * @package App\Services\Lesson\Exceptions
  */
-class LessonNotCompletelyPaidException extends LessonServiceException
+class LessonNotCompletelyPaidException extends Exception
 {
 
     /**
