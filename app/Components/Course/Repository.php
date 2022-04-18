@@ -39,6 +39,7 @@ class Repository extends \App\Common\BaseRepository
      * @param Course $record
      * @param Dto $dto
      * @return void
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
     public function fill(Model $record, \App\Common\Contracts\DtoWithUser $dto): void
     {
