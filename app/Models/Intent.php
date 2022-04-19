@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\IntentEventType;
+use App\Models\Enum\IntentStatus;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,8 +23,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $event_id
  * @property string $student_id
  * @property string|null $manager_id
- * @property string $event_type
- * @property string $status
+ * @property IntentEventType $event_type
+ * @property IntentStatus $status
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Relations\MorphTo|\App\Models\Lesson $event
@@ -48,22 +50,13 @@ class Intent extends Model
 
     public const TABLE = 'intents';
 
-    public const EVENT_TYPES = [
-        Lesson::class,
-        '\App\Models\Event'
-    ];
-
-    public const STATUS_EXPECTING = 'expecting';
-    public const STATUS_VISITED = 'visited';
-    public const STATUS_NOSHOW = 'no-show';
-
-    public const STATUSES = [
-        self::STATUS_EXPECTING,
-        self::STATUS_VISITED,
-        self::STATUS_NOSHOW,
-    ];
-
     protected $table = self::TABLE;
+    protected $casts = [
+        'status' => IntentStatus::class,
+        'type' => IntentEventType::class,
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo|\App\Models\Lesson

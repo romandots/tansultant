@@ -40,11 +40,7 @@ class CreateUsersTable extends Migration
             $table->unique(['username', 'deleted_at'], 'unique_username');
         });
 
-        \convertPostgresColumnTextToEnum('users', 'status', [
-            'pending',
-            'approved',
-            'disabled',
-        ]);
+        \convertPostgresColumnTextToEnum('users', 'status', \App\Models\Enum\UserStatus::cases());
     }
 
     /**

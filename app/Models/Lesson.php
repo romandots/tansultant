@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\LessonStatus;
+use App\Models\Enum\LessonType;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,8 +30,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $payment_id
  * @property string $branch_id
  * @property string $classroom_id
- * @property string $type [lesson | event | rent]
- * @property string $status [booked | ongoing | passed | canceled | closed]
+ * @property LessonType $type [lesson | event | rent]
+ * @property LessonStatus $status [booked | ongoing | passed | canceled | closed]
  * @property \Carbon\Carbon $starts_at
  * @property \Carbon\Carbon $ends_at
  * @property \Carbon\Carbon|null $closed_at
@@ -44,8 +46,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\Classroom $classroom
  * @property-read \App\Models\Schedule|null $schedule
  * @property-read \App\Models\Branch|null $branch
- * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Intent[] $intents
- * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Visit[] $visits
+ * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Intent> $intents
+ * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Visit> $visits
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null $payment
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newQuery()
@@ -83,35 +85,11 @@ class Lesson extends Model
 
     public const TABLE = 'lessons';
 
-    public const TYPE_LESSON = 'lesson';
-    public const TYPE_EVENT = 'event';
-    public const TYPE_RENT = 'rent';
-
-    public const TYPES = [
-        self::TYPE_LESSON,
-        self::TYPE_EVENT,
-        self::TYPE_RENT,
-    ];
-
-    public const STATUS_BOOKED = 'booked';
-    public const STATUS_ONGOING = 'ongoing';
-    public const STATUS_PASSED = 'passed';
-    public const STATUS_CANCELED = 'canceled';
-    public const STATUS_CLOSED = 'closed';
-    public const STATUS_CHECKED_OUT = 'checked_out';
-
-    public const STATUSES = [
-        self::STATUS_BOOKED,
-        self::STATUS_ONGOING,
-        self::STATUS_PASSED,
-        self::STATUS_CANCELED,
-        self::STATUS_CLOSED,
-        self::STATUS_CHECKED_OUT,
-    ];
-
     protected $table = self::TABLE;
 
     protected $casts = [
+        'status' => LessonStatus::class,
+        'type' => LessonType::class,
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
         'closed_at' => 'datetime',

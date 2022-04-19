@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\ContractStatus;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +26,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $number
  * @property string $branch_id
  * @property string|null $customer_id
- * @property string $status [pending|signed|terminated]
+ * @property string|null $student_id
+ * @property ContractStatus $status [pending|signed|terminated]
  * @property \App\Models\Customer $customer
  * @property \Carbon\Carbon $signed_at
  * @property \Carbon\Carbon $terminated_at
@@ -53,20 +55,12 @@ class Contract extends Model
 
     public const TABLE = 'contracts';
 
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_SIGNED = 'signed';
-    public const STATUS_TERMINATED = 'terminated';
-    public const STATUSES = [
-        self::STATUS_PENDING,
-        self::STATUS_SIGNED,
-        self::STATUS_TERMINATED
-    ];
-
     protected $table = self::TABLE;
 
     protected $fillable = [];
 
     protected $casts = [
+        'status' => ContractStatus::class,
         'signed_at' => 'datetime',
         'terminated_at' => 'datetime',
     ];
@@ -77,5 +71,13 @@ class Contract extends Model
     public function customer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Customer::class)->with('person');
+    }
+
+    /**
+     * @return Contract|\Illuminate\Database\Eloquent\Relations\BelongsTo|Customer
+     */
+    public function student(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Student::class)->with('person');
     }
 }

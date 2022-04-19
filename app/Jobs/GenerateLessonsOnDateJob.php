@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Services\Lesson\LessonFacade;
+use App\Components\Lesson\Facade;
 use App\Services\WithLogger;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -34,7 +34,7 @@ class GenerateLessonsOnDateJob implements ShouldQueue, ShouldBeUnique
         return $this->date->toDateString();
     }
 
-    public function handle(LessonFacade $lessons): void
+    public function handle(Facade $lessons): void
     {
         $this->debug('Handling GenerateLessonsOnDate job for date: ' . $this->date->toDateString());
         $lessons->generateLessonsOnDate($this->date);

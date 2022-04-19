@@ -27,7 +27,7 @@ class PersonFactory extends Factory
             'first_name' => $this->faker->name,
             'patronymic_name' => $this->faker->name,
             'birth_date' => \Carbon\Carbon::now(),
-            'gender' => $this->faker->randomElement(\App\Models\Person::GENDER),
+            'gender' => $this->faker->randomElement(\App\Models\\App\Models\Enum\Gender::cases()),
             'phone' => \normalize_phone_number($this->faker->unique()->phoneNumber),
             'email' => $this->faker->unique()->safeEmail,
             'picture' => 'http://some.ur/to/picture.jpg',

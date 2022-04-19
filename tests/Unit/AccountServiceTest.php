@@ -15,6 +15,7 @@ use App\Models\Account;
 use App\Models\Bonus;
 use App\Models\Branch;
 use App\Models\Enum\AccountType;
+use App\Models\Enum\BonusStatus;
 use App\Models\Enum\PaymentStatus;
 use App\Models\Instructor;
 use App\Models\Payment;
@@ -204,23 +205,23 @@ class AccountServiceTest extends TestCase
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_ACTIVATED
+            'status' => BonusStatus::ACTIVATED
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_PENDING
+            'status' => BonusStatus::PENDING
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_CANCELED
+            'status' => BonusStatus::CANCELED
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_EXPIRED
+            'status' => BonusStatus::EXPIRED
         ]);
         $this->createFakeBonus(100, $anotherAccount, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_ACTIVATED
+            'status' => BonusStatus::ACTIVATED
         ]);
 
         $amount = $this->service->getAmount($account);
@@ -260,23 +261,23 @@ class AccountServiceTest extends TestCase
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_ACTIVATED
+            'status' => BonusStatus::ACTIVATED
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_PENDING
+            'status' => BonusStatus::PENDING
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_CANCELED
+            'status' => BonusStatus::CANCELED
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_EXPIRED
+            'status' => BonusStatus::EXPIRED
         ]);
         $this->createFakeBonus(100, $anotherAccount, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_PENDING
+            'status' => BonusStatus::PENDING
         ]);
 
         $amount = $this->service->getBonusAmount($account);
@@ -316,23 +317,23 @@ class AccountServiceTest extends TestCase
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_ACTIVATED
+            'status' => BonusStatus::ACTIVATED
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_PENDING
+            'status' => BonusStatus::PENDING
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_CANCELED
+            'status' => BonusStatus::CANCELED
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_EXPIRED
+            'status' => BonusStatus::EXPIRED
         ]);
         $this->createFakeBonus(100, $anotherAccount, [
             'user_id' => $user->id,
-            'status' => Bonus::STATUS_ACTIVATED
+            'status' => BonusStatus::ACTIVATED
         ]);
 
         $amount = $this->service->getTotalAmount($account);

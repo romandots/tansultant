@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\CourseStatus;
 use App\Models\Traits\UsesUuid;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,7 +32,7 @@ use Spatie\Tags\HasTags;
  * @property int[] $age_restrictions ['from' => (int|null), 'to' => (int|null)]
  * @property string|null $picture
  * @property string|null $picture_thumb
- * @property string $status [pending|active|disabled]
+ * @property CourseStatus $status [pending|active|disabled]
  * @property bool $is_working
  * @property string|null $instructor_id
  * @property \Carbon\Carbon|null $starts_at
@@ -78,19 +79,10 @@ class Course extends Model
 
     public const TABLE = 'courses';
 
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_ACTIVE = 'active';
-    public const STATUS_DISABLED = 'disabled';
-
-    public const STATUSES = [
-        self::STATUS_PENDING,
-        self::STATUS_ACTIVE,
-        self::STATUS_DISABLED
-    ];
-
     protected $table = self::TABLE;
 
     protected $casts = [
+        'status' => CourseStatus::class,
         'starts_at' => 'date',
         'ends_at' => 'date',
         'age_restrictions' => 'array',
@@ -139,7 +131,7 @@ class Course extends Model
      */
     public function isWorking(): bool
     {
-        return self::STATUS_ACTIVE === $this->status && $this->isInPeriod();
+        return CourseStatus::ACTIVE === $this->status && $this->isInPeriod();
     }
 
     public function getIsWorkingAttribute(): bool

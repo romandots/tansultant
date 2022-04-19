@@ -81,7 +81,7 @@ class RegisterControllerTest extends TestCase
             'first_name' => 'Roman',
             'patronymic_name' => 'A.',
             'birth_date' => '1986-01-08',
-            'gender' => Person::GENDER_MALE,
+            'gender' => \App\Models\Enum\Gender::MALE,
             'password' => '123456',
         ];
 
@@ -275,7 +275,7 @@ class RegisterControllerTest extends TestCase
                     'first_name' => 'Roman',
                     'patronymic_name' => 'A.',
                     'birth_date' => '1986-01-08',
-                    'gender' => Person::GENDER_MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE,
                     'password' => '123456',
                 ]
             ],
@@ -285,7 +285,7 @@ class RegisterControllerTest extends TestCase
                     'last_name' => 'Dots',
                     'patronymic_name' => 'A.',
                     'birth_date' => '1986-01-08',
-                    'gender' => Person::GENDER_MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE,
                     'password' => '123456',
                 ]
             ],
@@ -295,7 +295,7 @@ class RegisterControllerTest extends TestCase
                     'last_name' => 'Dots',
                     'first_name' => 'Roman',
                     'birth_date' => '1986-01-08',
-                    'gender' => Person::GENDER_MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE,
                     'password' => '123456',
                 ]
             ],
@@ -305,7 +305,7 @@ class RegisterControllerTest extends TestCase
                     'last_name' => 'Dots',
                     'first_name' => 'Roman',
                     'patronymic_name' => 'A.',
-                    'gender' => Person::GENDER_MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE,
                     'password' => '123456',
                 ]
             ],
@@ -337,7 +337,7 @@ class RegisterControllerTest extends TestCase
                     'first_name' => 'Roman',
                     'patronymic_name' => 'A.',
                     'birth_date' => '1986-01-08',
-                    'gender' => Person::GENDER_MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE,
                 ]
             ],
             [
@@ -346,7 +346,7 @@ class RegisterControllerTest extends TestCase
                     'first_name' => 'Roman',
                     'patronymic_name' => 'A.',
                     'birth_date' => '1986-01-08',
-                    'gender' => Person::GENDER_MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE,
                     'password' => '123456',
                 ]
             ],
@@ -356,7 +356,7 @@ class RegisterControllerTest extends TestCase
                     'last_name' => 'Dots',
                     'patronymic_name' => 'A.',
                     'birth_date' => '1986-01-08',
-                    'gender' => Person::GENDER_MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE,
                     'password' => '123456',
                 ]
             ],
@@ -380,7 +380,7 @@ class RegisterControllerTest extends TestCase
             'first_name' => 'Roman',
             'patronymic_name' => 'A.',
             'birth_date' => '1986-01-08',
-            'gender' => Person::GENDER_MALE,
+            'gender' => \App\Models\Enum\Gender::MALE,
             'password' => '123456',
         ];
 
@@ -396,7 +396,7 @@ class RegisterControllerTest extends TestCase
                         'first_name' => 'Roman',
                         'patronymic_name' => 'A.',
                         'birth_date' => '1986-01-08',
-                        'gender' => Person::GENDER_MALE,
+                        'gender' => \App\Models\Enum\Gender::MALE,
                     ]
                 ],
             ]);
@@ -421,7 +421,7 @@ class RegisterControllerTest extends TestCase
             'first_name' => 'Roman',
             'patronymic_name' => 'A.',
             'birth_date' => '1986-01-08',
-            'gender' => Person::GENDER_MALE,
+            'gender' => \App\Models\Enum\Gender::MALE,
             'password' => '123456',
         ];
 
@@ -446,7 +446,7 @@ class RegisterControllerTest extends TestCase
             'first_name' => 'Roman',
             'patronymic_name' => 'A.',
             'birth_date' => '1986-01-08',
-            'gender' => Person::GENDER_MALE,
+            'gender' => \App\Models\Enum\Gender::MALE,
         ];
 
         $fakePerson = $this->createFakePerson($postData);

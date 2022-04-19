@@ -80,14 +80,14 @@ class ContractTest extends \Tests\TestCase
     public function testShow(): void
     {
         $contract = $this->createFakeContract([
-            'status' => Contract::STATUS_PENDING,
+            'status' => \App\Models\Enum\ContractStatus::PENDING,
             'signed_at' => null,
             'terminated_at' => null
         ]);
 
         $this->assertDatabaseHas(Contract::TABLE, [
             'id' => $contract->id,
-            'status' => Contract::STATUS_PENDING,
+            'status' => \App\Models\Enum\ContractStatus::PENDING,
             'signed_at' => null,
             'terminated_at' => null
         ]);
@@ -158,7 +158,7 @@ class ContractTest extends \Tests\TestCase
     public function testSign(): void
     {
         $contract = $this->createFakeContract([
-            'status' => Contract::STATUS_PENDING,
+            'status' => \App\Models\Enum\ContractStatus::PENDING,
             'signed_at' => null,
             'terminated_at' => null
         ]);
@@ -201,7 +201,7 @@ class ContractTest extends \Tests\TestCase
     public function testTerminate(): void
     {
         $contract = $this->createFakeContract([
-            'status' => \App\Models\Contract::STATUS_PENDING,
+            'status' => \App\Models\Enum\ContractStatus::PENDING,
             'signed_at' => null,
             'terminated_at' => null
         ]);

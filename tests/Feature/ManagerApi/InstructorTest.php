@@ -57,7 +57,7 @@ class InstructorTest extends \Tests\TestCase
     public function testShowDenied(): void
     {
         $me = $this->createFakeUser();
-        $instructor = $this->createFakeInstructor(['status' => \App\Models\Instructor::STATUS_HIRED]);
+        $instructor = $this->createFakeInstructor(['status' => \App\Models\Enum\InstructorStatus::HIRED]);
 
         $url = self::URL . '/' . $instructor->id;
 
@@ -88,7 +88,7 @@ class InstructorTest extends \Tests\TestCase
     public function testUpdateDenied(): void
     {
         $me = $this->createFakeUser();
-        $instructor = $this->createFakeInstructor(['status' => \App\Models\Instructor::STATUS_HIRED]);
+        $instructor = $this->createFakeInstructor(['status' => \App\Models\Enum\InstructorStatus::HIRED]);
 
         $url = self::URL . '/' . $instructor->id;
 
@@ -105,7 +105,7 @@ class InstructorTest extends \Tests\TestCase
     public function testDestroyDenied(): void
     {
         $me = $this->createFakeUser();
-        $instructor = $this->createFakeInstructor(['status' => \App\Models\Instructor::STATUS_HIRED]);
+        $instructor = $this->createFakeInstructor(['status' => \App\Models\Enum\InstructorStatus::HIRED]);
 
         $url = self::URL . '/' . $instructor->id;
 
@@ -121,7 +121,7 @@ class InstructorTest extends \Tests\TestCase
 
     public function testShow(): void
     {
-        $instructor = $this->createFakeInstructor(['status' => \App\Models\Instructor::STATUS_HIRED]);
+        $instructor = $this->createFakeInstructor(['status' => \App\Models\Enum\InstructorStatus::HIRED]);
         $person = $instructor->person;
 
         $url = self::URL . '/' . $instructor->id;
@@ -164,7 +164,7 @@ class InstructorTest extends \Tests\TestCase
     public function testStore(): void
     {
         $data = [
-            'status' => \App\Models\Instructor::STATUS_HIRED,
+            'status' => \App\Models\Enum\InstructorStatus::HIRED,
             'description' => 'Some teacher info',
             'display' => true,
             'last_name' => $this->faker->lastName,
@@ -188,8 +188,8 @@ class InstructorTest extends \Tests\TestCase
             ->assertJsonStructure(self::JSON_STRUCTURE)
             ->assertJson([
                 'data' => [
-                    'status' => \App\Models\Instructor::STATUS_HIRED,
-                    'status_label' => \trans('instructor.status.' . \App\Models\Instructor::STATUS_HIRED),
+                    'status' => \App\Models\Enum\InstructorStatus::HIRED,
+                    'status_label' => \trans('instructor.status.' . \App\Models\Enum\InstructorStatus::HIRED),
                     'description' => 'Some teacher info',
                     'display' => true,
                     'name' => "{$data['first_name']} {$data['last_name']}",
@@ -256,7 +256,7 @@ class InstructorTest extends \Tests\TestCase
     {
         $person = $this->createFakePerson();
         $data = [
-            'status' => \App\Models\Instructor::STATUS_HIRED,
+            'status' => \App\Models\Enum\InstructorStatus::HIRED,
             'description' => 'Some teacher info',
             'display' => true,
             'person_id' => $person->id,
@@ -271,8 +271,8 @@ class InstructorTest extends \Tests\TestCase
             ->assertJson([
                 'data' => [
                     'name' => "{$person->first_name} {$person->last_name}",
-                    'status' => \App\Models\Instructor::STATUS_HIRED,
-                    'status_label' => \trans('instructor.status.' . \App\Models\Instructor::STATUS_HIRED),
+                    'status' => \App\Models\Enum\InstructorStatus::HIRED,
+                    'status_label' => \trans('instructor.status.' . \App\Models\Enum\InstructorStatus::HIRED),
                     'description' => 'Some teacher info',
                     'display' => true,
                     'person' => [
@@ -300,13 +300,13 @@ class InstructorTest extends \Tests\TestCase
     public function testUpdate(): void
     {
         $data = [
-            'status' => \App\Models\Instructor::STATUS_FIRED,
+            'status' => \App\Models\Enum\InstructorStatus::FIRED,
             'description' => 'Some other info',
             'display' => false,
         ];
 
         $instructor = $this->createFakeInstructor([
-            'status' => \App\Models\Instructor::STATUS_HIRED,
+            'status' => \App\Models\Enum\InstructorStatus::HIRED,
             'description' => 'Some teacher info',
             'display' => true,
         ]);
@@ -323,8 +323,8 @@ class InstructorTest extends \Tests\TestCase
                 'data' => [
                     'id' => $instructor->id,
                     'name' => $instructor->name,
-                    'status' => \App\Models\Instructor::STATUS_FIRED,
-                    'status_label' => \trans('instructor.status.' . \App\Models\Instructor::STATUS_FIRED),
+                    'status' => \App\Models\Enum\InstructorStatus::FIRED,
+                    'status_label' => \trans('instructor.status.' . \App\Models\Enum\InstructorStatus::FIRED),
                     'description' => 'Some other info',
                     'display' => false,
                     'person' => [

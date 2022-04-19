@@ -47,13 +47,8 @@ class CreateSchedulesTable extends Migration
             }
         );
 
-        \convertPostgresColumnTextToEnum('schedules', 'cycle', [
-            'once',
-            'month',
-            'week',
-            'day',
-        ]);
-        \convertPostgresColumnTextToEnum('schedules', 'weekday', [1, 2, 3, 4, 5, 6, 7,]);
+        \convertPostgresColumnTextToEnum('schedules', 'cycle', \App\Models\Enum\ScheduleCycle::cases());
+        \convertPostgresColumnTextToEnum('schedules', 'weekday', \App\Models\Enum\Weekday::cases());
     }
 
     /**

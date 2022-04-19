@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\StudentStatus;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,8 +23,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @package App\Models
  * @property string $id
  * @property string $name
- * @property int $card_number
- * @property string $status [potential|active|recent|former]
+ * @property ?string $card_number
+ * @property StudentStatus $status [potential|active|recent|former]
  * @property string $person_id
  * @property string $customer_id
  * @property \Carbon\Carbon $seen_at
@@ -62,22 +63,12 @@ class Student extends Model
 
     public const TABLE = 'students';
 
-    public const STATUS_POTENTIAL = 'potential';
-    public const STATUS_ACTIVE = 'active';
-    public const STATUS_RECENT = 'recent';
-    public const STATUS_FORMER = 'former';
-    public const STATUSES = [
-        self::STATUS_POTENTIAL,
-        self::STATUS_ACTIVE,
-        self::STATUS_RECENT,
-        self::STATUS_FORMER
-    ];
-
     protected $table = self::TABLE;
 
     protected $guarded = [];
 
     protected $casts = [
+        'status' => StudentStatus::class,
         'seen_at' => 'datetime'
     ];
 

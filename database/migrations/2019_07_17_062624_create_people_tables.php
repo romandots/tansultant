@@ -46,7 +46,7 @@ class CreatePeopleTables extends Migration
             $table->unique(['last_name', 'first_name', 'patronymic_name', 'birth_date', 'deleted_at'], 'unique_bio');
         });
 
-        \convertPostgresColumnTextToEnum('people', 'gender', ['male', 'female']);
+        \convertPostgresColumnTextToEnum('people', 'gender', \App\Models\Enum\Gender::cases());
 
         Schema::create('customers', static function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -86,12 +86,7 @@ class CreatePeopleTables extends Migration
                 ->onDelete('restrict');
         });
 
-        \convertPostgresColumnTextToEnum('students', 'status', [
-            'potential',
-            'active',
-            'recent',
-            'former',
-        ]);
+        \convertPostgresColumnTextToEnum('students', 'status', \App\Models\Enum\StudentStatus::cases());
 
         Schema::create('instructors', static function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -112,11 +107,7 @@ class CreatePeopleTables extends Migration
                 ->onDelete('restrict');
         });
 
-        \convertPostgresColumnTextToEnum('instructors', 'status', [
-            'hired',
-            'freelance',
-            'fired',
-        ]);
+        \convertPostgresColumnTextToEnum('instructors', 'status', \App\Models\Enum\InstructorStatus::cases());
 
         Schema::table('users', static function (Blueprint $table) {
             $table->uuid('person_id')->nullable()->index();
@@ -154,11 +145,7 @@ class CreatePeopleTables extends Migration
                 ->onDelete('restrict');
         });
 
-        \convertPostgresColumnTextToEnum('contracts', 'status', [
-            'pending',
-            'signed',
-            'terminated',
-        ]);
+        \convertPostgresColumnTextToEnum('contracts', 'status', \App\Models\Enum\ContractStatus::cases());
 
     }
 

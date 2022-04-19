@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Api\Course;
 
 use App\Models\Course;
+use App\Models\Enum\InstructorStatus;
 use App\Models\Instructor;
 use App\Services\Permissions\CoursesPermissions;
 use Carbon\Carbon;
@@ -116,7 +117,7 @@ class CourseStoreTest extends TestCase
             ]
         );
 
-        $instructor = $this->createFakeInstructor(['status' => Instructor::STATUS_FIRED]);
+        $instructor = $this->createFakeInstructor(['status' => InstructorStatus::FIRED]);
         $data = [
             'name' => $this->faker->name,
             'status' => CourseStatus::ACTIVE,
@@ -141,7 +142,7 @@ class CourseStoreTest extends TestCase
                         'instructor' => [
                             'id' => $instructor->id,
                             'name' => $instructor->name,
-                            'status' => Instructor::STATUS_FIRED,
+                            'status' => InstructorStatus::FIRED,
                         ]
                     ]
                 ]

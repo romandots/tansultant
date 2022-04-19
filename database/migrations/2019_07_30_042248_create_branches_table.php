@@ -57,6 +57,9 @@ class CreateBranchesTable extends Migration
      */
     public function down(): void
     {
+        Schema::table('schedules', static function (Blueprint $table) {
+            $table->dropForeign('schedules_branch_id_foreign');
+        });
         Schema::dropIfExists('branches');
     }
 }

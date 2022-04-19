@@ -61,20 +61,8 @@ class CreateLessonsTable extends Migration
                 ->on(\App\Models\User::TABLE);
         });
 
-        \convertPostgresColumnTextToEnum('lessons', 'type', [
-            'lesson',
-            'event',
-            'rent',
-        ]);
-
-        \convertPostgresColumnTextToEnum('lessons', 'status', [
-            'booked',
-            'ongoing',
-            'passed',
-            'canceled',
-            'closed',
-            'checked_out',
-        ]);
+        \convertPostgresColumnTextToEnum('lessons', 'type', \App\Models\Enum\LessonType::cases());
+        \convertPostgresColumnTextToEnum('lessons', 'status', \App\Models\Enum\LessonStatus::cases());
     }
 
     /**

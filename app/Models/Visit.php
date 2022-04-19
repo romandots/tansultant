@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\VisitEventType;
+use App\Models\Enum\VisitPaymentType;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,8 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $manager_id
  * @property int|null $payment_id
  * @property int $event_id
- * @property string $payment_type
- * @property string $event_type
+ * @property VisitPaymentType $payment_type
+ * @property VisitEventType $event_type
  * @property int|null $price
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon|null $updated_at
@@ -53,17 +55,11 @@ class Visit extends Model
 
     public const TABLE = 'visits';
 
-    public const PAYMENT_TYPES = [
-        Payment::class,
-        'App\Models\Promocode',
-    ];
-
-    public const EVENT_TYPES = [
-        Lesson::class,
-        '\App\Models\Event'
-    ];
-
     protected $table = self::TABLE;
+    protected $casts = [
+        'event_type' => VisitEventType::class,
+        'payment_type' => VisitPaymentType::class,
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Student|null

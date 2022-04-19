@@ -38,17 +38,8 @@ class CreateMoneyTables extends Migration
             $table->softDeletes();
         });
 
-        \convertPostgresColumnTextToEnum('accounts', 'type', [
-            'operational',
-            'savings',
-            'personal',
-        ]);
-
-        \convertPostgresColumnTextToEnum('accounts', 'owner_type', [
-            Student::class,
-            Instructor::class,
-            Branch::class
-        ]);
+        \convertPostgresColumnTextToEnum('accounts', 'type', \App\Models\Enum\AccountType::cases());
+        \convertPostgresColumnTextToEnum('accounts', 'owner_type', \App\Models\Enum\AccountOwnerType::cases());
 
         Schema::create('payments', static function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -80,30 +71,10 @@ class CreateMoneyTables extends Migration
                 ->on(\App\Models\User::TABLE);
         });
 
-        \convertPostgresColumnTextToEnum('payments', 'type', [
-            'manual',
-            'automatic',
-        ]);
-
-        \convertPostgresColumnTextToEnum('payments', 'transfer_type', [
-            'cash',
-            'card',
-            'online',
-            'internal',
-            'code',
-        ]);
-
-        \convertPostgresColumnTextToEnum('payments', 'status', [
-            'pending',
-            'expired',
-            'confirmed',
-            'canceled',
-        ]);
-
-        \convertPostgresColumnTextToEnum('payments', 'object_type', [
-            Visit::class,
-            Lesson::class
-        ]);
+        \convertPostgresColumnTextToEnum('payments', 'type', \App\Models\Enum\PaymentType::cases());
+        \convertPostgresColumnTextToEnum('payments', 'transfer_type', \App\Models\Enum\PaymentTransferType::cases());
+        \convertPostgresColumnTextToEnum('payments', 'status', \App\Models\Enum\PaymentStatus::cases());
+        \convertPostgresColumnTextToEnum('payments', 'object_type', \App\Models\Enum\PaymentObjectType::cases());
 
         Schema::table('payments', static function (Blueprint $table) {
             $table->foreign('related_id')
@@ -156,17 +127,8 @@ class CreateMoneyTables extends Migration
                 ->on(\App\Models\User::TABLE);
         });
 
-        \convertPostgresColumnTextToEnum('bonuses', 'type', [
-            'code',
-            'reward',
-        ]);
-
-        \convertPostgresColumnTextToEnum('bonuses', 'status', [
-            'pending',
-            'expired',
-            'activated',
-            'canceled',
-        ]);
+        \convertPostgresColumnTextToEnum('bonuses', 'type', \App\Models\Enum\BonusType::cases());
+        \convertPostgresColumnTextToEnum('bonuses', 'status', \App\Models\Enum\BonusStatus::cases());
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Bonus;
+use App\Models\Enum\BonusStatus;
+use App\Models\Enum\BonusType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -24,8 +26,8 @@ class BonusFactory extends Factory
             'id' => \uuid(),
             'name' => 'Bonus',
             'amount' => 5000,
-            'type' => Bonus::TYPE_CODE,
-            'status' => Bonus::STATUS_ACTIVATED,
+            'type' => BonusType::CODE,
+            'status' => BonusStatus::ACTIVATED,
             'account_id' => \App\Models\Account::factory(),
             'promocode_id' => null,
             'user_id' => \App\Models\User::factory(),

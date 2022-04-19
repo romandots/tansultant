@@ -46,16 +46,8 @@ class CreateIntentsTable extends Migration
                 ->on(\App\Models\User::TABLE);
         });
 
-        \convertPostgresColumnTextToEnum('intents', 'event_type', [
-            Lesson::class,
-            '\App\Models\Event'
-        ]);
-
-        \convertPostgresColumnTextToEnum('intents', 'status', [
-            'expecting',
-            'visited',
-            'no-show',
-        ]);
+        \convertPostgresColumnTextToEnum('intents', 'event_type', \App\Models\Enum\IntentEventType::cases());
+        \convertPostgresColumnTextToEnum('intents', 'status', \App\Models\Enum\IntentStatus::cases());
     }
 
     /**

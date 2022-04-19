@@ -27,7 +27,7 @@ class InstructorFactory extends Factory
             'description' => $this->faker->words(10, true),
             'picture' => 'http://some.ur/to/picture.jpg',
             'display' => true,
-            'status' => $this->faker->randomElement(\App\Models\Instructor::STATUSES),
+            'status' => $this->faker->randomElement(\App\Models\Enum\InstructorStatus::cases()),
             'person_id' => \App\Models\Person::factory(),
             'seen_at' => \Carbon\Carbon::now(),
             'created_at' => \Carbon\Carbon::now(),

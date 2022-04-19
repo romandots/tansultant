@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\BonusStatus;
+use App\Models\Enum\BonusType;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,8 +24,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $id
  * @property string $name
  * @property int $amount
- * @property string $type [code|reward]
- * @property string $status [pending | expired | activated | canceled]
+ * @property BonusType $type [code|reward]
+ * @property BonusStatus $status [pending | expired | activated | canceled]
  * @property string $account_id
  * @property string|null $promocode_id
  * @property int $user_id
@@ -67,27 +69,11 @@ class Bonus extends Model
 
     public const TABLE = 'bonuses';
 
-    public const TYPE_CODE = 'code';
-    public const TYPE_REWARD = 'reward';
-    public const TYPES = [
-        self::TYPE_CODE,
-        self::TYPE_REWARD
-    ];
-
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_EXPIRED = 'expired';
-    public const STATUS_ACTIVATED = 'activated';
-    public const STATUS_CANCELED = 'canceled';
-    public const STATUSES = [
-        self::STATUS_PENDING,
-        self::STATUS_EXPIRED,
-        self::STATUS_ACTIVATED,
-        self::STATUS_CANCELED,
-    ];
-
     protected $table = self::TABLE;
 
     protected $casts = [
+        'type' => BonusType::class,
+        'status' => BonusStatus::class,
         'expired_at' => 'datetime',
         'activated_at' => 'datetime',
         'canceled_at' => 'datetime',

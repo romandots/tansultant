@@ -43,6 +43,6 @@ class Repository extends \App\Common\BaseRepository
         $record->person_id = $dto->person_id;
         $record->description = $dto->description;
         $record->display = $dto->display;
-        $record->status = $dto->status ?? Instructor::STATUS_HIRED;
+        $record->status = $dto->status ?? InstructorStatus::HIRED;
     }
 }

@@ -49,15 +49,8 @@ class CreateVisitsTable extends Migration
                 ->on(\App\Models\User::TABLE);
         });
 
-        \convertPostgresColumnTextToEnum('visits','event_type', [
-            Lesson::class,
-            '\App\Models\Event'
-        ]);
-
-        \convertPostgresColumnTextToEnum('visits','payment_type', [
-            Payment::class,
-            'App\Models\Promocode',
-        ]);
+        \convertPostgresColumnTextToEnum('visits','event_type', \App\Models\Enum\VisitEventType::cases());
+        \convertPostgresColumnTextToEnum('visits','payment_type', \App\Models\Enum\VisitPaymentType::cases());
     }
 
     /**

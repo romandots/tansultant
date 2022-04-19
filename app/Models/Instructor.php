@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\InstructorStatus;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +25,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $description
  * @property string $picture
  * @property bool $display
- * @property string $status [hired|freelance|fired]
+ * @property InstructorStatus $status
  * @property string $person_id
  * @property \Carbon\Carbon|null $seen_at
  * @property \Carbon\Carbon $created_at
@@ -64,15 +65,6 @@ class Instructor extends Model
 
     public const TABLE = 'instructors';
 
-    public const STATUS_HIRED = 'hired';
-    public const STATUS_FREELANCE = 'freelance';
-    public const STATUS_FIRED = 'fired';
-    public const STATUSES = [
-        self::STATUS_HIRED,
-        self::STATUS_FREELANCE,
-        self::STATUS_FIRED
-    ];
-
     protected $table = self::TABLE;
 
     protected $guarded = [];
@@ -85,6 +77,7 @@ class Instructor extends Model
     ];
 
     public $casts = [
+        'status' => InstructorStatus::class,
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'seen_at' => 'datetime',

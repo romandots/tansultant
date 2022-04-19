@@ -38,11 +38,7 @@ class CreateCoursesTable extends Migration
                 ->onDelete('restrict');
         });
 
-        \convertPostgresColumnTextToEnum('courses', 'status', [
-            'pending',
-            'active',
-            'disabled',
-        ]);
+        \convertPostgresColumnTextToEnum('courses', 'status', \App\Models\Enum\CourseStatus::cases());
     }
 
     /**

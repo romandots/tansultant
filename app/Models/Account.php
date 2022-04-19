@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\AccountOwnerType;
+use App\Models\Enum\AccountType;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,8 +23,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @package App\Models
  * @property string $id
  * @property string $name
- * @property string $type [personal|savings|operational]
- * @property string $owner_type [App\Models\Student|App\Models\Instructor|App\Models\Branch]
+ * @property AccountType $type [personal|savings|operational]
+ * @property AccountOwnerType $owner_type [App\Models\Student|App\Models\Instructor|App\Models\Branch]
  * @property int $owner_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -57,22 +59,11 @@ class Account extends Model
 
     public const TABLE = 'accounts';
 
-    public const TYPE_OPERATIONAL = 'operational';
-    public const TYPE_SAVINGS = 'savings';
-    public const TYPE_PERSONAL = 'personal';
-    public const TYPES = [
-        self::TYPE_OPERATIONAL,
-        self::TYPE_SAVINGS,
-        self::TYPE_PERSONAL
-    ];
-
-    public const OWNER_TYPES = [
-        Student::class,
-        Instructor::class,
-        Branch::class
-    ];
-
     protected $table = self::TABLE;
+    protected $casts = [
+        'type' => AccountType::class,
+        'owner_type' => AccountOwnerType::class,
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo|Instructor|Student|Branch

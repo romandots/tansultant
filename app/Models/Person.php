@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\Gender;
 use App\Models\Traits\Notifiable;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,7 +24,7 @@ use Spatie\Tags\HasTags;
  * @property string $first_name
  * @property string $patronymic_name
  * @property \Carbon\Carbon $birth_date
- * @property string $gender [male|female]
+ * @property Gender $gender [male|female]
  * @property string $phone
  * @property string $email
  * @property string $picture
@@ -81,13 +82,6 @@ class Person extends Model
     use HasFactory;
 
     public const TABLE = 'people';
-
-    public const GENDER_MALE = 'male';
-    public const GENDER_FEMALE = 'female';
-    public const GENDER = [
-        self::GENDER_MALE,
-        self::GENDER_FEMALE
-    ];
 
     protected $table = self::TABLE;
 

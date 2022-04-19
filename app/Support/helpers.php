@@ -93,14 +93,14 @@ if (!function_exists('convertPostgresColumnTextToEnum')) {
     /**
      * @param string $table
      * @param string $column
-     * @param array $values
+     * @param object[] $values
      */
     function convertPostgresColumnTextToEnum(string $table, string $column, array $values): void
     {
         $type = "{$table}_{$column}";
 
-        $values = \array_map(function ($item) {
-            return "'{$item}'";
+        $values = \array_map(function (object $item) {
+            return "'{$item->value}'";
         }, $values);
         $valueString = \implode(',', $values);
 
@@ -197,5 +197,17 @@ if (!function_exists('format_pagination')) {
             'to' => $to,
             'total' => $total
         ];
+    }
+}
+
+if (!function_exists('translate')) {
+    /**
+     * @param string $prefix
+     * @param string|object $messageKey
+     * @return string
+     */
+    function translate(string $prefix, mixed $messageKey): string
+    {
+        return \trans($prefix . '.' . (is_string($messageKey) ? $messageKey : $messageKey->value));
     }
 }

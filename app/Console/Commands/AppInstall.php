@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Models\Enum\UserStatus;
 use App\Models\User;
 use App\Repository\PersonRepository;
 use Illuminate\Console\Command;
@@ -51,7 +52,7 @@ class AppInstall extends Command
                 'name' => "{$lastName} {$firstName}",
                 'username' => self::ADMIN_USERNAME,
                 'password' => \Hash::make($password ?? '12345678'),
-                'status' => User::STATUS_APPROVED,
+                'status' => UserStatus::APPROVED,
             ]);
         $user->assignRole(\App\Services\Permissions\UserRoles::ADMIN);
 

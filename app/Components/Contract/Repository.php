@@ -45,7 +45,7 @@ class Repository extends \App\Common\BaseRepository
         $record->number = $this->getNextValue($record->serial);
         $record->branch_id = $dto->branch_id;
         $record->customer_id = $dto->customer_id;
-        $record->status = Contract::STATUS_PENDING;
+        $record->status = \App\Models\Enum\ContractStatus::PENDING;
     }
 
     /**
@@ -60,7 +60,7 @@ class Repository extends \App\Common\BaseRepository
 
     public function sign(Contract $contract): void
     {
-        $contract->status = Contract::STATUS_SIGNED;
+        $contract->status = \App\Models\Enum\ContractStatus::SIGNED;
         $contract->signed_at = Carbon::now();
         $contract->updated_at = Carbon::now();
         $contract->save();
@@ -68,7 +68,7 @@ class Repository extends \App\Common\BaseRepository
 
     public function terminate(Contract $contract): void
     {
-        $contract->status = Contract::STATUS_TERMINATED;
+        $contract->status = \App\Models\Enum\ContractStatus::TERMINATED;
         $contract->terminated_at = Carbon::now();
         $contract->updated_at = Carbon::now();
         $contract->save();

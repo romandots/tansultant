@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\ScheduleCycle;
+use App\Models\Enum\Weekday;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,8 +21,8 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App
  * @property string $id
- * @property string $cycle
- * @property string $weekday
+ * @property ScheduleCycle $cycle
+ * @property Weekday $weekday
  * @property \Illuminate\Support\Carbon $from_date
  * @property \Illuminate\Support\Carbon $to_date
  * @property \Illuminate\Support\Carbon $starts_at
@@ -63,6 +65,11 @@ class Schedule extends Model
     public const TABLE = 'schedules';
 
     protected $table = self::TABLE;
+
+    protected $casts = [
+        'cycle' => ScheduleCycle::class,
+        'weekday' => Weekday::class,
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Course|null

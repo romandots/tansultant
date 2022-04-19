@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Enum\UserStatus;
 use App\Models\Person;
 use App\Models\User;
 
@@ -19,7 +20,7 @@ class UserStatusUpdateCommand extends UserCommand
 
         $this->info("User {$username}'s current status is {$user->status}");
 
-        $user->status = $this->choice('Choose new status', User::STATUSES);
+        $user->status = $this->choice('Choose new status', UserStatus::cases());
         $user->save();
 
         $this->info("User {$username}'s current status is {$user->status}");
