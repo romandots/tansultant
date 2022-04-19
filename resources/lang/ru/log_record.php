@@ -10,6 +10,6 @@ declare(strict_types=1);
 
 return [
     \App\Models\Course::class => [
-        \App\Models\LogRecord::ACTION_CREATE => ':user создаёт класс :object',
+        \App\Models\Enum\LogRecordAction::CREATE->value => ':user создаёт класс :object',
     ]
 ];

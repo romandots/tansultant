@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Schema;
@@ -30,6 +31,9 @@ class CreateLogRecordsTable extends Migration
                 ->on(\App\Models\User::TABLE)
                 ->onDelete('restrict');
         });
+
+        \convertPostgresColumnTextToEnum('log_records', 'action', \App\Models\Enum\LogRecordAction::cases());
+        \convertPostgresColumnTextToEnum('log_records', 'object_type', \App\Models\Enum\LogRecordObjectType::cases());
     }
 
     /**
@@ -39,6 +43,9 @@ class CreateLogRecordsTable extends Migration
      */
     public function down(): void
     {
+        \DB::unprepared('DROP TYPE log_records_action CASCADE');
+        \DB::unprepared('DROP TYPE log_records_object_type CASCADE');
+
         Schema::dropIfExists('log_records');
     }
 }

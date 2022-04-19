@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Enum\LogRecordAction;
+use App\Models\Enum\LogRecordObjectType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -17,8 +19,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * App\Models\LogRecord
  *
  * @property int $id
- * @property string $action
- * @property string $object_type
+ * @property LogRecordAction $action
+ * @property LogRecordObjectType $object_type
  * @property string $object_id
  * @property string $user_id
  * @property string $message
@@ -44,49 +46,13 @@ class LogRecord extends Model
 {
     public const TABLE = 'log_records';
 
-    public const OBJECTS = [
-        \App\Models\Course::class,
-        \App\Models\User::class,
-        \App\Models\Person::class,
-        \App\Models\Instructor::class,
-        \App\Models\Student::class,
-        \App\Models\Customer::class,
-        \App\Models\Account::class,
-        \App\Models\Classroom::class,
-        \App\Models\Contract::class,
-        \App\Models\Genre::class,
-        \App\Models\Intent::class,
-        \App\Models\Lesson::class,
-        \App\Models\Payment::class,
-        \App\Models\Person::class,
-        \App\Models\Schedule::class,
-        \App\Models\Student::class,
-        \App\Models\Visit::class,
-    ];
-
-    public const ACTIONS = [
-        self::ACTION_CREATE,
-        self::ACTION_UPDATE,
-        self::ACTION_DELETE,
-        self::ACTION_RESTORE,
-        self::ACTION_ENABLE,
-        self::ACTION_DISABLE,
-        self::ACTION_SEND,
-    ];
-
-    public const ACTION_CREATE = 'create';
-    public const ACTION_UPDATE = 'update';
-    public const ACTION_DELETE = 'delete';
-    public const ACTION_RESTORE = 'restore';
-    public const ACTION_ENABLE = 'enable';
-    public const ACTION_DISABLE = 'disable';
-    public const ACTION_SEND = 'send';
-
     public const UPDATED_AT = null;
 
     public $table = self::TABLE;
 
     public $casts = [
+        'action' => LogRecordAction::class,
+        'object_type' => LogRecordObjectType::class,
         'old_value' => 'object',
         'new_value' => 'object',
     ];
@@ -98,6 +64,6 @@ class LogRecord extends Model
 
     public function object(): BelongsTo
     {
-        return $this->belongsTo($this->object_type, 'object_id', 'id');
+        return $this->belongsTo($this->object_type->value, 'object_id', 'id');
     }
 }

@@ -8,21 +8,18 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\Exceptions;
+namespace App\Components\Schedule\Exceptions;
 
-use App\Exceptions\BaseException;
-use App\Models\Schedule;
-
-class ScheduleSlotIsOccupied extends BaseException
+class ScheduleSlotIsOccupied extends Exception
 {
     /**
-     * @var Schedule[]
+     * @var array<\App\Models\Schedule>
      */
     private array $schedules;
 
     /**
      * ScheduleSlotIsOccupied constructor.
-     * @param Schedule[] $schedules
+     * @param array<\App\Models\Schedule> $schedules
      */
     public function __construct(array $schedules)
     {
@@ -31,7 +28,7 @@ class ScheduleSlotIsOccupied extends BaseException
     }
 
     /**
-     * @return Schedule[]
+     * @return array<\App\Models\Schedule>
      */
     public function getSchedules(): array
     {
