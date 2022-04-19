@@ -8,58 +8,48 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Verify;
+namespace App\Services\Verification;
 
+use App\Common\BaseService;
+use App\Components\Loader;
+use App\Components\VerificationCode\Dto;
 use App\Models\VerificationCode;
-use App\Repository\VerificationCodeRepository;
 use App\Services\TextMessaging\TextMessagingServiceInterface;
 use Carbon\Carbon;
 
-/**
- * Class VerifyService
- * @package App\Services\Verify
- */
-class VerificationService
+class VerificationService extends BaseService
 {
-    private VerificationCodeRepository $codeRepository;
+    protected TextMessagingServiceInterface $messagingService;
+    protected \App\Components\VerificationCode\Facade $verificationCodes;
+    protected array $config;
 
-    private TextMessagingServiceInterface $messagingService;
-
-    private array $config;
-
-    /**
-     * VerifyService constructor.
-     * @param VerificationCodeRepository $codeRepository
-     * @param TextMessagingServiceInterface $messagingService
-     */
     public function __construct(
-        VerificationCodeRepository $codeRepository,
         TextMessagingServiceInterface $messagingService
     ) {
-        $this->codeRepository = $codeRepository;
-        $this->config = \app('config')['verification'];
         $this->messagingService = $messagingService;
+        $this->verificationCodes = Loader::verificationCodes();
+        $this->config = \app('config')['verification'];
     }
 
     /**
      * @param string $phoneNumber
      * @param string|null $code
      * @return VerificationCode
-     * @throws Exceptions\VerificationCodeIsInvalid
+     * @throws Exception\VerificationCodeIsInvalid
      */
     public function checkVerificationCode(string $phoneNumber, ?string $code): VerificationCode
     {
         try {
-            $verificationCode = $this->codeRepository->findByPhoneNumberAndVerificationCode($phoneNumber, $code);
+            $verificationCode = $this->verificationCodes->findByPhoneNumberAndVerificationCode($phoneNumber, $code);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
-            throw new Exceptions\VerificationCodeIsInvalid();
+            throw new Exception\VerificationCodeIsInvalid();
         }
 
         if (null !== $verificationCode->expired_at && $verificationCode->expired_at->lessThan(Carbon::now())) {
-            throw new Exceptions\VerificationCodeExpired();
+            throw new Exception\VerificationCodeExpired();
         }
 
-        $this->codeRepository->updateVerifiedAt($verificationCode);
+        $this->verificationCodes->updateVerifiedAt($verificationCode);
 
         return $verificationCode;
     }
@@ -93,25 +83,28 @@ class VerificationService
 
     /**
      * @param string $phoneNumber
-     * @throws Exceptions\VerificationCodeWasSentTooManyTimes
-     * @throws Exceptions\VerificationCodeAlreadySentRecently
-     * @throws Exceptions\TextMessageSendingFailed
+     * @throws Exception\VerificationCodeWasSentTooManyTimes
+     * @throws Exception\VerificationCodeAlreadySentRecently
+     * @throws Exception\TextMessageSendingFailed
      * @throws \Exception
      */
     public function initNewVerificationCode(string $phoneNumber): void
     {
-        if ($this->config['max_tries'] < $this->codeRepository->countByPhoneNumber($phoneNumber)) {
-            throw new Exceptions\VerificationCodeWasSentTooManyTimes($this->config['max_tries']);
+        if ($this->config['max_tries'] < $this->verificationCodes->countByPhoneNumber($phoneNumber)) {
+            throw new Exception\VerificationCodeWasSentTooManyTimes($this->config['max_tries']);
         }
 
-        if ($this->codeRepository->getByPhoneNumberNotExpired($phoneNumber)) {
-            throw new Exceptions\VerificationCodeAlreadySentRecently($this->config['timeout']);
+        if ($this->verificationCodes->getByPhoneNumberNotExpired($phoneNumber)) {
+            throw new Exception\VerificationCodeAlreadySentRecently($this->config['timeout']);
         }
 
         $code = $this->generateVerificationCode();
 
         \DB::transaction(function () use ($phoneNumber, $code) {
-            $this->codeRepository->create($phoneNumber, $code);
+            $verificationCodeDto = new Dto();
+            $verificationCodeDto->phone_number = $phoneNumber;
+            $verificationCodeDto->verification_code = $code;
+            $this->verificationCodes->create($verificationCodeDto);
             $this->sendVerificationCode($phoneNumber, $code);
         });
     }
@@ -119,14 +112,14 @@ class VerificationService
     /**
      * @param string $phoneNumber
      * @param string $verificationCode
-     * @throws Exceptions\TextMessageSendingFailed
+     * @throws Exception\TextMessageSendingFailed
      */
     private function sendVerificationCode(string $phoneNumber, string $verificationCode): void
     {
         $message = \trans('verification.verification_text_message', ['code' => $verificationCode]);
 
         if ($this->config['log_messages']) {
-            \Log::debug($message, [$phoneNumber, $verificationCode]);
+            $this->debug($message, [$phoneNumber, $verificationCode]);
             return;
         }
 
@@ -134,7 +127,7 @@ class VerificationService
             try {
                 $this->messagingService->send($phoneNumber, $message);
             } catch (\Exception $exception) {
-                throw new Exceptions\TextMessageSendingFailed($exception->getMessage());
+                throw new Exception\TextMessageSendingFailed($exception->getMessage());
             }
         }
     }
@@ -142,6 +135,6 @@ class VerificationService
     public function cleanUp(string $phone): void
     {
         $phone = \normalize_phone_number($phone);
-        $this->codeRepository->removeRecordsByPhone($phone);
+        $this->verificationCodes->deleteByPhoneNumber($phone);
     }
 }

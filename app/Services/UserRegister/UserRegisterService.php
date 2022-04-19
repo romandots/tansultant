@@ -10,79 +10,42 @@ declare(strict_types=1);
 
 namespace App\Services\UserRegister;
 
+use App\Common\BaseService;
+use App\Components;
+use App\Components\User\Exceptions\UserAlreadyRegisteredWithSamePhoneNumber;
 use App\Events\InstructorCreatedEvent;
 use App\Events\StudentCreatedEvent;
 use App\Events\UserCreatedEvent;
 use App\Events\UserRegisteredEvent;
 use App\Http\Requests\DTO\RegisterUser;
-use App\Http\Requests\DTO\StoreInstructor;
-use App\Http\Requests\DTO\StorePerson;
-use App\Http\Requests\DTO\StoreStudent;
-use App\Http\Requests\ManagerApi\DTO\StoreUser;
-use App\Models\Instructor;
+use App\Models\Enum\InstructorStatus;
+use App\Models\Enum\UserType;
 use App\Models\Person;
 use App\Models\User;
-use App\Repository\CustomerRepository;
-use App\Repository\InstructorRepository;
-use App\Repository\PersonRepository;
-use App\Repository\StudentRepository;
-use App\Repository\UserRepository;
-use App\Services\Verify\VerificationService;
+use App\Services\Verification\VerificationService;
 
-class UserRegisterService
+class UserRegisterService extends BaseService
 {
-    /**
-     * @var UserRepository
-     */
-    private UserRepository $userRepository;
+    protected Components\User\Facade $users;
+    protected Components\Customer\Facade $customers;
+    protected Components\Student\Facade $students;
+    protected Components\Instructor\Facade $instructors;
+    protected Components\Person\Facade $people;
+    protected VerificationService $verifyService;
 
-    /**
-     * @var CustomerRepository
-     */
-    private CustomerRepository $customerRepository;
-
-    /**
-     * @var StudentRepository
-     */
-    private StudentRepository $studentRepository;
-
-    /**
-     * @var InstructorRepository
-     */
-    private InstructorRepository $instructorRepository;
-
-    /**
-     * @var PersonRepository
-     */
-    private PersonRepository $personRepository;
-
-    /**
-     * @var VerificationService
-     */
-    private VerificationService $verifyService;
-
-    /**
-     * UserRegisterService constructor.
-     * @param UserRepository $userRepository
-     * @param CustomerRepository $customerRepository
-     * @param StudentRepository $studentRepository
-     * @param InstructorRepository $instructorRepository
-     * @param PersonRepository $personRepository
-     * @param VerificationService $verifyService
-     */
     public function __construct(
-        UserRepository $userRepository,
-        CustomerRepository $customerRepository,
-        StudentRepository $studentRepository,
-        InstructorRepository $instructorRepository,
-        PersonRepository $personRepository,
+        Components\User\Facade $users,
+        Components\Customer\Facade $customers,
+        Components\Student\Facade $students,
+        Components\Instructor\Facade $instructors,
+        Components\Person\Facade $people,
         VerificationService $verifyService
     ) {
-        $this->userRepository = $userRepository;
-        $this->customerRepository = $customerRepository;
-        $this->studentRepository = $studentRepository;
-        $this->instructorRepository = $instructorRepository;
-        $this->personRepository = $personRepository;
+        $this->users = $users;
+        $this->customers = $customers;
+        $this->students = $students;
+        $this->instructors = $instructors;
+        $this->people = $people;
         $this->verifyService = $verifyService;
     }
 
@@ -93,10 +56,10 @@ class UserRegisterService
      */
     private function checkPeopleWithSamePhoneNumber(RegisterUser $registerUser): ?Person
     {
-        $person = $this->personRepository->getByPhoneNumber($registerUser->phone);
+        $person = $this->people->getByPhoneNumber($registerUser->phone);
 
         if (null !== $person && null !== $person->user) {
-            throw new Exceptions\UserAlreadyRegisteredWithSamePhoneNumber();
+            throw new UserAlreadyRegisteredWithSamePhoneNumber();
         }
 
         return $person;
@@ -108,7 +71,7 @@ class UserRegisterService
      */
     private function checkPeopleWithSameBio(RegisterUser $registerUser): void
     {
-        $person = $this->personRepository->getByNameGenderAndBirthDate(
+        $person = $this->people->getByNameGenderAndBirthDate(
             $registerUser->last_name,
             $registerUser->first_name,
             $registerUser->patronymic_name,
@@ -136,19 +99,19 @@ class UserRegisterService
             $this->checkPeopleWithSameBio($registerUser);
         }
 
-        $storePerson = new StorePerson();
-        $storePerson->last_name = $registerUser->last_name;
-        $storePerson->first_name = $registerUser->first_name;
-        $storePerson->patronymic_name = $registerUser->patronymic_name;
-        $storePerson->birth_date = $registerUser->birth_date;
-        $storePerson->gender = $registerUser->gender;
-        $storePerson->phone = $registerUser->phone;
-        $storePerson->email = $registerUser->email;
+        $dto = new Components\Person\Dto();
+        $dto->last_name = $registerUser->last_name;
+        $dto->first_name = $registerUser->first_name;
+        $dto->patronymic_name = $registerUser->patronymic_name;
+        $dto->birth_date = $registerUser->birth_date;
+        $dto->gender = $registerUser->gender;
+        $dto->phone = $registerUser->phone;
+        $dto->email = $registerUser->email;
 
         if (null === $person) {
-            $person = $this->personRepository->createFromDto($storePerson);
+            $person = $this->people->create($dto);
         } else {
-            $this->personRepository->update($person, $storePerson);
+            $this->people->findAndUpdate($person->id, $dto);
         }
 
         return $person;
@@ -165,7 +128,8 @@ class UserRegisterService
             return;
         }
 
-        $newStudent = $this->studentRepository->createFromPerson($person, new StoreStudent());
+        $dto = new Components\Student\Dto();
+        $newStudent = $this->students->createFromPerson($dto, $person);
 
         // Fire event
         \event(new StudentCreatedEvent($newStudent));
@@ -185,13 +149,13 @@ class UserRegisterService
             return;
         }
 
-        $storeInstructor = new StoreInstructor();
-        $storeInstructor->name = "{$person->first_name} {$person->last_name}";
-        $storeInstructor->description = $registerUser->description;
-        $storeInstructor->display = false;
-        $storeInstructor->status = Instructor::STATUS_FREELANCE;
+        $dto = new Components\Instructor\Dto();
+        $dto->name = "{$person->first_name} {$person->last_name}";
+        $dto->description = $registerUser->description;
+        $dto->display = false;
+        $dto->status = InstructorStatus::FREELANCE;
 
-        $newInstructor = $this->instructorRepository->createFromPerson($person, $storeInstructor);
+        $newInstructor = $this->instructors->createFromPerson($dto, $person);
 
         // Fire event
         \event(new InstructorCreatedEvent($newInstructor));
@@ -207,12 +171,11 @@ class UserRegisterService
      */
     private function createUser(Person $person, RegisterUser $registerUser): User
     {
-        $storeUser = new StoreUser();
-        $storeUser->person_id = $person;
-        $storeUser->username = $registerUser->phone;
-        $storeUser->password = $registerUser->password;
+        $dto = new Components\User\Dto();
+        $dto->username = $registerUser->phone;
+        $dto->password = $registerUser->password;
 
-        $newUser = $this->userRepository->createFromPerson($person, $storeUser);
+        $newUser = $this->users->createFromPerson($dto, $person);
 
         // Fire event
         \event(new UserCreatedEvent($newUser));
@@ -227,7 +190,7 @@ class UserRegisterService
      *
      * @param RegisterUser $registerUser
      * @return User
-     * @throws Exceptions\UserAlreadyRegisteredWithSamePhoneNumber
+     * @throws \App\Components\User\Exceptions\UserAlreadyRegisteredWithSamePhoneNumber
      * @throws Exceptions\UserAlreadyRegisteredWithOtherPhoneNumber
      * @throws \Exception
      */
@@ -240,21 +203,19 @@ class UserRegisterService
             $person = $this->createOrUpdatePerson($registerUser);
 
             // Create Instructor or Student
-            switch ($registerUser->user_type) {
-                case RegisterUser::TYPE_INSTRUCTOR:
-                    $this->createInstructorIfNotExist($person, $registerUser);
-                    break;
-                case RegisterUser::TYPE_STUDENT:
-                    $this->createStudentIfNotExist($person, $registerUser);
-                    break;
-            }
+            match ($registerUser->user_type) {
+                UserType::INSTRUCTOR => $this->createInstructorIfNotExist($person, $registerUser),
+                UserType::STUDENT => $this->createStudentIfNotExist($person, $registerUser),
+                UserType::USER => throw new \Exception('To be implemented'),
+                UserType::CUSTOMER => throw new \Exception('To be implemented'),
+            };
 
             // Create User
             $newUser = $this->createUser($person, $registerUser);
 
             // Auto approve new students
-            if (RegisterUser::TYPE_STUDENT === $registerUser->user_type) {
-                $this->userRepository->approve($newUser);
+            if (UserType::STUDENT === $registerUser->user_type) {
+                $this->users->approve($newUser);
             }
 
             // Remove verification codes

@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Verify\Exceptions;
+namespace App\Services\Verification\Exception;
 
 use App\Exceptions\BaseException;
 

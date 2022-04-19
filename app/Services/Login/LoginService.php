@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Services\Login;
 
+use App\Common\BaseService;
+use App\Components\Loader;
 use App\Http\Requests\Auth\DTO\Login;
 use App\Models\User;
 use App\Repository\UserRepository;
@@ -19,12 +21,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
  * Class LoginService
  * @package App\Services\Login
  */
-class LoginService
+class LoginService extends BaseService
 {
-    /**
-     * @var UserRepository
-     */
-    private UserRepository $repository;
+    private \App\Components\User\Facade $users;
 
     /**
      * LoginService constructor.
@@ -32,7 +31,7 @@ class LoginService
      */
     public function __construct(UserRepository $repository)
     {
-        $this->repository = $repository;
+        $this->users = Loader::users();
     }
 
     /**
@@ -43,7 +42,7 @@ class LoginService
     private function attemptLogin(string $username, string $password): User
     {
         try {
-            $user = $this->repository->findByUsername($username);
+            $user = $this->users->findByUsername($username);
         } catch (ModelNotFoundException $exception) {
             throw new Exceptions\UserNotFoundException();
         }
@@ -63,7 +62,7 @@ class LoginService
     {
         $user = $this->attemptLogin($login->username, $login->password);
 
-        $this->repository->updateSeenAt($user);
+        $this->users->updateSeenAt($user);
 
         return $user->createToken($user->username);
     }

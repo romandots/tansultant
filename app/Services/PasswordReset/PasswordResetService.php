@@ -10,41 +10,35 @@ declare(strict_types=1);
 
 namespace App\Services\PasswordReset;
 
-use App\Http\Requests\ManagerApi\DTO\UpdateUser;
+use App\Common\BaseService;
+use App\Components\Loader;
+use App\Components\User\UpdateUserPasswordDto;
 use App\Notifications\TextMessages\PasswordResetSmsNotification;
-use App\Repository\UserRepository;
-use App\Services\Verify\VerificationService;
+use App\Services\Verification\VerificationService;
 
-class PasswordResetService
+class PasswordResetService extends BaseService
 {
     private VerificationService $verificationService;
+    private \App\Components\User\Facade $users;
 
-    private UserRepository $userRepository;
-
-    /**
-     * PasswordResetService constructor.
-     * @param UserRepository $userRepository
-     * @param VerificationService $verificationService
-     */
     public function __construct(
-        UserRepository $userRepository,
         VerificationService $verificationService
     ) {
-        $this->userRepository = $userRepository;
+        $this->users = Loader::users();
         $this->verificationService = $verificationService;
     }
 
     /**
      * @param \App\Http\Requests\Auth\DTO\ResetPassword $resetPassword
-     * @throws \App\Services\Verify\Exceptions\VerificationCodeAlreadySentRecently
-     * @throws \App\Services\Verify\Exceptions\VerificationCodeIsInvalid
-     * @throws \App\Services\Verify\Exceptions\VerificationCodeWasSentTooManyTimes
+     * @throws \App\Services\Verification\Exception\VerificationCodeAlreadySentRecently
+     * @throws \App\Services\Verification\Exception\VerificationCodeIsInvalid
+     * @throws \App\Services\Verification\Exception\VerificationCodeWasSentTooManyTimes
      * @throws Exceptions\UserHasNoPerson
      * @throws \Exception
      */
     public function resetPassword(\App\Http\Requests\Auth\DTO\ResetPassword $resetPassword): void
     {
-        $user = $this->userRepository->findByUsername($resetPassword->username);
+        $user = $this->users->findByUsername($resetPassword->username);
 
         if (null === $user->person) {
             throw new Exceptions\UserHasNoPerson();
@@ -63,18 +57,19 @@ class PasswordResetService
 
         // Phone owner verified (the exception would be thrown otherwise)
 
-        $updateUser = new UpdateUser();
-        $updateUser->password = $this->generatePassword();
+        $updateUserPasswordDto = new UpdateUserPasswordDto();
+        $updateUserPasswordDto->new_password = $this->generatePassword();
+        $updateUserPasswordDto->skip_check = true;
 
-        \DB::transaction(function () use ($user, $updateUser, $phoneNumber) {
+        \DB::transaction(function () use ($user, $updateUserPasswordDto, $phoneNumber) {
             // Save new password
-            $this->userRepository->update($user, $updateUser);
+            $this->users->updatePassword($user, $updateUserPasswordDto);
 
             // Remove verification codes
             $this->verificationService->cleanUp($phoneNumber);
 
             // Send SMS with new password
-            $user->person->notify(new PasswordResetSmsNotification($updateUser->password));
+            $user->person->notify(new PasswordResetSmsNotification($updateUserPasswordDto->new_password));
         });
     }
 

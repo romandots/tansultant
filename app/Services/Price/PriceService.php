@@ -10,11 +10,13 @@ declare(strict_types=1);
 
 namespace App\Services\Price;
 
+use App\Common\BaseService;
+
 /**
  * Class PriceService
  * @package App\Services\Price
  */
-class PriceService
+class PriceService extends BaseService
 {
     /**
      * @todo Implement price policies

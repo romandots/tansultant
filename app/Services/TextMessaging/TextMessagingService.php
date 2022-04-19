@@ -10,9 +10,10 @@ declare(strict_types=1);
 
 namespace App\Services\TextMessaging;
 
+use App\Common\BaseService;
 use Nutnet\LaravelSms\SmsSender;
 
-class TextMessagingService implements TextMessagingServiceInterface
+class TextMessagingService extends BaseService implements TextMessagingServiceInterface
 {
     private SmsSender $sender;
 
@@ -32,6 +33,11 @@ class TextMessagingService implements TextMessagingServiceInterface
      */
     public function send($phoneNumber, string $message, ?array $options = []): void
     {
+        $this->debug("Sending SMS to {$phoneNumber}", [
+            'phone' => $phoneNumber,
+            'message' => $message,
+            'options' => $options,
+        ]);
         $this->sender->send($phoneNumber, $message, $options);
     }
 }
