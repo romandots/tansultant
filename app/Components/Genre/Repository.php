@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Components\Genre;
 
+use App\Models\Course;
 use App\Models\Genre;
+use App\Models\Person;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Tags\Tag;
 
 /**
  * @method array getSearchableAttributes()
@@ -32,6 +35,18 @@ class Repository extends \App\Common\BaseRepository
         );
     }
 
+    public function createWithName(string $name): Tag
+    {
+        return Tag::findOrCreate($name, Genre::class);
+    }
+
+    public function rename(string $oldName, string $newName): void
+    {
+        $tag = Tag::findFromString($oldName, Genre::class);
+        $tag->name = $newName;
+        $tag->save();
+    }
+
     /**
      * @param Genre $record
      * @param Dto $dto
@@ -40,5 +55,47 @@ class Repository extends \App\Common\BaseRepository
     public function fill(Model $record, \App\Common\Contracts\DtoWithUser $dto): void
     {
         $record->name = $dto->name;
+    }
+
+    /**
+     * @param Person $person
+     * @return string[]
+     */
+    public function getAllForPerson(Person $person): array
+    {
+        return $person
+            ->tagsWithType(Genre::class)
+            ->pluck('name')
+            ->all();
+    }
+
+    /**
+     * @param Course $course
+     * @return string[]
+     */
+    public function getAllForCourse(Course $course): array
+    {
+        return $course
+            ->tagsWithType(Genre::class)
+            ->pluck('name')
+            ->all();
+    }
+
+    /**
+     * @param string[] $genres
+     * @return \Illuminate\Support\Collection|Course[]
+     */
+    public function getCoursesByGenres(array $genres): \Illuminate\Support\Collection
+    {
+        return Course::withAnyTags($genres, Genre::class)->get();
+    }
+
+    /**
+     * @param string[] $genres
+     * @return \Illuminate\Support\Collection|Person[]
+     */
+    public function getPersonsByGenres(array $genres): \Illuminate\Support\Collection
+    {
+        return Person::withAnyTags($genres, Genre::class)->get();
     }
 }
