@@ -99,6 +99,13 @@ class Repository extends \App\Common\BaseComponentRepository
             ->count();
     }
 
+    public function deleteByPhoneNumber(string $phoneNumber): void
+    {
+        $this->getQuery()
+            ->where('phone_number', $phoneNumber)
+            ->delete();
+    }
+
     /**
      * @param VerificationCode $verificationCode
      */

@@ -34,6 +34,11 @@ class Repository extends \App\Common\BaseComponentRepository
         );
     }
 
+    public function findByUsername(string $username): User
+    {
+        return $this->getQuery()->where('username', $username)->firstOrFail();
+    }
+
     /**
      * @param User $record
      * @param Dto $dto
@@ -49,7 +54,7 @@ class Repository extends \App\Common\BaseComponentRepository
             $record->password = \Hash::make($dto->password);
         }
     }
-    
+
     /**
      * @param User $user
      * @param string $password
@@ -67,7 +72,6 @@ class Repository extends \App\Common\BaseComponentRepository
     public function updateSeenAt(User $user): void
     {
         $user->seen_at = Carbon::now();
-        $user->updated_at = Carbon::now();
         $user->save();
     }
 

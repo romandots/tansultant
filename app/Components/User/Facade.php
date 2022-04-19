@@ -28,8 +28,28 @@ class Facade extends BaseComponentFacade
         parent::__construct(Service::class);
     }
 
+    public function updatePassword(User $user, UpdateUserPasswordDto $updateUserPasswordDto): void
+    {
+        $this->getService()->updatePassword($user, $updateUserPasswordDto);
+    }
+
+    public function updateSeenAt(User $user): void
+    {
+        $this->getRepository()->updateSeenAt($user);
+    }
+
     public function createFromPerson(Dto $dto, Person $person): User
     {
         return $this->getService()->createFromPerson($dto, $person);
+    }
+
+    public function findByUsername(string $username): User
+    {
+        return $this->getRepository()->findByUsername($username);
+    }
+
+    public function approve(User $user): void
+    {
+        $this->getRepository()->setApproved($user);
     }
 }

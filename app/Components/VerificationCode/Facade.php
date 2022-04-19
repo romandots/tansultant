@@ -54,6 +54,11 @@ class Facade extends BaseComponentFacade
         $this->getRepository()->updateVerifiedAt($verificationCode);
     }
 
+    public function deleteByPhoneNumber(string $phone): void
+    {
+        $this->getService()->deleteByPhoneNumber($phone);
+    }
+
     public function removeOldRecords(): void
     {
         $this->getRepository()->removeOldRecords();

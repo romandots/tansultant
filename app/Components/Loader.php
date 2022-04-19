@@ -10,83 +10,83 @@ class Loader extends Locator
         return self::facade(Account\Facade::class);
     }
 
-    public static function bonuses(): Bonus\ComponentFacade
+    public static function bonuses(): Bonus\Facade
     {
-        return self::facade(Bonus\ComponentFacade::class);
+        return self::facade(Bonus\Facade::class);
     }
 
-    public static function branches(): Branch\ComponentFacade
+    public static function branches(): Branch\Facade
     {
-        return self::facade(Branch\ComponentFacade::class);
+        return self::facade(Branch\Facade::class);
     }
 
-    public static function classrooms(): Classroom\ComponentFacade
+    public static function classrooms(): Classroom\Facade
     {
-        return self::facade(Classroom\ComponentFacade::class);
+        return self::facade(Classroom\Facade::class);
     }
 
-    public static function contracts(): Contract\ComponentFacade
+    public static function contracts(): Contract\Facade
     {
-        return self::facade(Contract\ComponentFacade::class);
+        return self::facade(Contract\Facade::class);
     }
 
-    public static function customers(): Customer\ComponentFacade
+    public static function customers(): Customer\Facade
     {
-        return self::facade(Customer\ComponentFacade::class);
+        return self::facade(Customer\Facade::class);
     }
 
-    public static function genres(): Genre\ComponentFacade
+    public static function genres(): Genre\Facade
     {
-        return self::facade(Genre\ComponentFacade::class);
+        return self::facade(Genre\Facade::class);
     }
 
-    public static function instructors(): Instructor\ComponentFacade
+    public static function instructors(): Instructor\Facade
     {
-        return self::facade(Instructor\ComponentFacade::class);
+        return self::facade(Instructor\Facade::class);
     }
 
-    public static function intents(): Intent\ComponentFacade
+    public static function intents(): Intent\Facade
     {
-        return self::facade(Intent\ComponentFacade::class);
+        return self::facade(Intent\Facade::class);
     }
 
-    public static function lessons(): Lesson\ComponentFacade
+    public static function lessons(): Lesson\Facade
     {
-        return self::facade(Lesson\ComponentFacade::class);
+        return self::facade(Lesson\Facade::class);
     }
 
-    public static function payments(): Payment\ComponentFacade
+    public static function payments(): Payment\Facade
     {
-        return self::facade(Payment\ComponentFacade::class);
+        return self::facade(Payment\Facade::class);
     }
 
-    public static function people(): Person\ComponentFacade
+    public static function people(): Person\Facade
     {
-        return self::facade(Person\ComponentFacade::class);
+        return self::facade(Person\Facade::class);
     }
 
-    public static function schedules(): Schedule\ComponentFacade
+    public static function schedules(): Schedule\Facade
     {
-        return self::facade(Schedule\ComponentFacade::class);
+        return self::facade(Schedule\Facade::class);
     }
 
-    public static function students(): Student\ComponentFacade
+    public static function students(): Student\Facade
     {
-        return self::facade(Student\ComponentFacade::class);
+        return self::facade(Student\Facade::class);
     }
 
-    public static function users(): User\ComponentFacade
+    public static function users(): User\Facade
     {
-        return self::facade(User\ComponentFacade::class);
+        return self::facade(User\Facade::class);
     }
 
-    public static function verificationCodes(): VerificationCode\ComponentFacade
+    public static function verificationCodes(): VerificationCode\Facade
     {
-        return self::facade(VerificationCode\ComponentFacade::class);
+        return self::facade(VerificationCode\Facade::class);
     }
 
-    public static function visits(): Visit\ComponentFacade
+    public static function visits(): Visit\Facade
     {
-        return self::facade(Visit\ComponentFacade::class);
+        return self::facade(Visit\Facade::class);
     }
 }

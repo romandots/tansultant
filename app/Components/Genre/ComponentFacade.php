@@ -19,7 +19,7 @@ use App\Common\BaseComponentFacade;
  * @method \App\Models\Genre findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Genre findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class ComponentFacade extends BaseComponentFacade
+class Facade extends BaseComponentFacade
 {
     public function __construct()
     {

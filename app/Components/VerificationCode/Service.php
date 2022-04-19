@@ -36,4 +36,10 @@ class Service extends \App\Common\BaseComponentService
 
         return parent::create($dto);
     }
+
+    public function deleteByPhoneNumber(string $phone): void
+    {
+        $this->debug("Deleting all verification code records for number " . $phone);
+        $this->getRepository()->deleteByPhoneNumber($phone);
+    }
 }

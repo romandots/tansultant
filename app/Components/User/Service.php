@@ -62,9 +62,9 @@ class Service extends \App\Common\BaseComponentService
         return $this->create($dto);
     }
 
-    public function updatePassword(User $user, \App\Http\Requests\ManagerApi\DTO\UpdateUserPassword $dto): void
+    public function updatePassword(User $user, \App\Components\User\UpdateUserPasswordDto $dto): void
     {
-        if (!\Hash::check($dto->old_password, $user->password)) {
+        if (!$dto->skip_check && !\Hash::check($dto->old_password, $user->password)) {
             throw new OldPasswordInvalidException();
         }
 

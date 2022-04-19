@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Components\Instructor;
 
-use App\Components\Customer\Dto;
 use App\Models\Instructor;
 use App\Models\Person;
 
@@ -24,12 +23,12 @@ class Service extends \App\Common\BaseComponentService
     }
 
     /**
+     * @param Dto $dto
      * @param Person $person
      * @return Instructor
      */
-    public function createFromPerson(Person $person): Instructor
+    public function createFromPerson(Dto $dto, Person $person): Instructor
     {
-        $dto = new Dto();
         $dto->name = $dto->name ?? \trans('person.instructor_name', $person->compactName());
         $dto->person_id = $person->id;
 

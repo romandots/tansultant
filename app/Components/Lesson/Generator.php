@@ -2,8 +2,8 @@
 
 namespace App\Components\Lesson;
 
+use App\Common\Traits\WithLogger;
 use App\Models\Schedule;
-use App\Services\WithLogger;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 

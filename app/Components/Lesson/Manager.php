@@ -2,9 +2,9 @@
 
 namespace App\Components\Lesson;
 
+use App\Common\Traits\WithLogger;
 use App\Models\Enum\LessonStatus;
 use App\Models\Lesson;
-use App\Services\WithLogger;
 use Carbon\Carbon;
 
 class Manager
