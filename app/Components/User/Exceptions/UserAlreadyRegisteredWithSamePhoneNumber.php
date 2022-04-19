@@ -8,15 +8,9 @@
 
 declare(strict_types=1);
 
-namespace App\Services\UserRegister\Exceptions;
+namespace App\Components\User\Exceptions;
 
-use App\Exceptions\BaseException;
-
-/**
- * Class UserAlreadyRegistered
- * @package App\Services\UserRegister\Exceptions
- */
-class UserAlreadyRegisteredWithSamePhoneNumber extends BaseException
+class UserAlreadyRegisteredWithSamePhoneNumber extends Exception
 {
     /**
      * UserAlreadyRegistered constructor.

@@ -1,0 +1,88 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Components\User;
+
+use App\Models\Enum\UserStatus;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @method array getSearchableAttributes()
+ * @method bool withSoftDeletes()
+ * @method \Illuminate\Database\Eloquent\Builder getQuery()
+ * @method User make()
+ * @method int countFiltered(\App\Common\Contracts\FilteredInterface $search)
+ * @method \Illuminate\Database\Eloquent\Collection<User> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
+ * @method User find(string $id)
+ * @method User findTrashed(string $id)
+ * @method User create(Dto $dto)
+ * @method void update($record, Dto $dto)
+ * @method void delete(User $record)
+ * @method void restore(User $record)
+ * @method void forceDelete(User $record)
+ * @mixin \App\Common\BaseRepository
+ */
+class Repository extends \App\Common\BaseRepository
+{
+    public function __construct() {
+        parent::__construct(
+            User::class,
+            ['name']
+        );
+    }
+
+    /**
+     * @param User $record
+     * @param Dto $dto
+     * @return void
+     */
+    public function fill(Model $record, \App\Common\Contracts\DtoWithUser $dto): void
+    {
+        $record->status = $dto->status;
+        $record->person_id = $dto->person_id;
+        $record->name = $dto->name;
+        $record->username = $dto->username;
+        if ($dto->password) {
+            $record->password = \Hash::make($dto->password);
+        }
+    }
+    
+    /**
+     * @param User $user
+     * @param string $password
+     */
+    public function updatePassword(User $user, string $password): void
+    {
+        $user->password = \Hash::make($password);
+        $user->updated_at = Carbon::now();
+        $user->save();
+    }
+
+    /**
+     * @param User $user
+     */
+    public function updateSeenAt(User $user): void
+    {
+        $user->seen_at = Carbon::now();
+        $user->updated_at = Carbon::now();
+        $user->save();
+    }
+
+    public function setApproved(User $user): void
+    {
+        $user->status = UserStatus::APPROVED;
+        $user->approved_at = Carbon::now();
+        $user->updated_at = Carbon::now();
+        $user->save();
+    }
+
+    public function setDisabled(User $user): void
+    {
+        $user->status = UserStatus::DISABLED;
+        $user->updated_at = Carbon::now();
+        $user->save();
+    }
+}
