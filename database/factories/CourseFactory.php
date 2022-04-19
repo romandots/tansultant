@@ -23,7 +23,7 @@ class CourseFactory extends Factory
         return [
             'id' => \uuid(),
             'name' => $this->faker->name,
-            'status' => \App\Models\Course::STATUS_ACTIVE,
+            'status' => \App\Models\CourseStatus::ACTIVE,
             'summary' => $this->faker->words(10, true),
             'description' => $this->faker->words(20, true),
             'display' => true,

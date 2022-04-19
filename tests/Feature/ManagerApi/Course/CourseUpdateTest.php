@@ -122,7 +122,7 @@ class CourseUpdateTest extends TestCase
         $instructor = $this->createFakeInstructor(['status' => Instructor::STATUS_FIRED]);
         $data = [
             'name' => $this->faker->name,
-            'status' => Course::STATUS_ACTIVE,
+            'status' => CourseStatus::ACTIVE,
             'summary' => $this->faker->words(10, true),
             'description' => $this->faker->words(10, true),
             'picture' => null,
@@ -166,7 +166,7 @@ class CourseUpdateTest extends TestCase
         $instructor = $this->createFakeInstructor();
         $data = [
             'name' => $this->faker->name,
-            'status' => Course::STATUS_ACTIVE,
+            'status' => CourseStatus::ACTIVE,
             'summary' => $this->faker->words(10, true),
             'description' => $this->faker->words(10, true),
             'picture' => null,
@@ -207,13 +207,13 @@ class CourseUpdateTest extends TestCase
             [
                 [
                     'name' => 'Название',
-                    'status' => Course::STATUS_ACTIVE,
+                    'status' => CourseStatus::ACTIVE,
                     'instructor_id' => '$instructor->id',
                 ]
             ],
             [
                 [
-                    'status' => Course::STATUS_ACTIVE,
+                    'status' => CourseStatus::ACTIVE,
                 ]
             ],
             [

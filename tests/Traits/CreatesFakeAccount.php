@@ -12,6 +12,7 @@ namespace Tests\Traits;
 
 use App\Models\Account;
 use App\Models\Branch;
+use App\Models\Enum\AccountType;
 use App\Models\Instructor;
 use App\Models\Payment;
 use App\Models\Student;
@@ -44,7 +45,7 @@ trait CreatesFakeAccount
         $account = $this->createFakeAccount($attributes);
         $user = $user ?: $this->createFakeUser();
         $this->createFakePayment($amount, $account, [
-            'status' => Payment::STATUS_CONFIRMED,
+            'status' => PaymentStatus::CONFIRMED,
             'confirmed_at' => Carbon::now(),
             'user_id' => $user->id
         ]);
@@ -61,7 +62,7 @@ trait CreatesFakeAccount
     {
         $attributes['owner_type'] = Student::class;
         $attributes['owner_id'] = $student->id;
-        $attributes['type'] = Account::TYPE_PERSONAL;
+        $attributes['type'] = AccountType::PERSONAL;
 
         return $this->createFakeAccount($attributes);
     }
@@ -75,7 +76,7 @@ trait CreatesFakeAccount
     {
         $attributes['owner_type'] = Instructor::class;
         $attributes['owner_id'] = $instructor->id;
-        $attributes['type'] = Account::TYPE_PERSONAL;
+        $attributes['type'] = AccountType::PERSONAL;
 
         return $this->createFakeAccount($attributes);
     }
@@ -89,7 +90,7 @@ trait CreatesFakeAccount
     {
         $attributes['owner_type'] = Branch::class;
         $attributes['owner_id'] = $branch->id;
-        $attributes['type'] = Account::TYPE_SAVINGS;
+        $attributes['type'] = AccountType::SAVINGS;
 
         return $this->createFakeAccount($attributes);
     }
@@ -103,7 +104,7 @@ trait CreatesFakeAccount
     {
         $attributes['owner_type'] = Branch::class;
         $attributes['owner_id'] = $branch->id;
-        $attributes['type'] = Account::TYPE_OPERATIONAL;
+        $attributes['type'] = AccountType::OPERATIONAL;
 
         return $this->createFakeAccount($attributes);
     }

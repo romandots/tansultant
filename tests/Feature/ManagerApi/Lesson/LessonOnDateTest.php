@@ -123,19 +123,19 @@ class LessonOnDateTest extends TestCase
             'instructor_id' => $instructor->id,
             'starts_at' => null,
             'ends_at' => null,
-            'status' => Course::STATUS_ACTIVE
+            'status' => CourseStatus::ACTIVE
         ]);
         $course2 = $this->createFakeCourse([
             'instructor_id' => $instructor->id,
             'starts_at' => null,
             'ends_at' => null,
-            'status' => Course::STATUS_ACTIVE
+            'status' => CourseStatus::ACTIVE
         ]);
         $course3 = $this->createFakeCourse([
             'instructor_id' => $instructor->id,
             'starts_at' => null,
             'ends_at' => null,
-            'status' => Course::STATUS_DISABLED
+            'status' => CourseStatus::DISABLED
         ]);
 
         $lesson1_1 = $this->createFakeLesson([

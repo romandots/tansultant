@@ -76,7 +76,7 @@ class VisitDestroyTest extends TestCase
 
         $this->visit = $this->createFakeLessonVisit($lesson, $student, null, ['manager_id' => null]);
         $transaction = $this->createFakeTransaction(100, $this->studentAccount, $this->savingsAccount, [
-            'status' => Payment::STATUS_CONFIRMED,
+            'status' => PaymentStatus::CONFIRMED,
             'confirmed_at' => Carbon::now(),
             'object_id' => $this->visit->id,
             'object_type' => Visit::class

@@ -3,7 +3,7 @@
 namespace Tests\Unit\Repository;
 
 use App\Common\BaseRepository;
-use App\Common\Contracts\Dto;
+use App\Common\Contracts\DtoWithUser;
 use Tests\TestCase;
 
 /**
@@ -15,7 +15,7 @@ class RepositoryTest extends TestCase
     protected BaseRepository $repository;
     protected string $dtoClass;
 
-    protected function buildDto(array $attributes): Dto
+    protected function buildDto(array $attributes): DtoWithUser
     {
         $dto = new $this->dtoClass();
         foreach ($attributes as $key => $value) {

@@ -51,9 +51,9 @@ class CourseIndexTest extends TestCase
         /** @var \Illuminate\Database\Eloquent\Collection|Course[] $courses */
         $courses = [
             Course::factory()->create(['instructor_id' => $this->instructor->id]),
-            Course::factory()->create(['status' => Course::STATUS_DISABLED]),
-            Course::factory()->create(['status' => Course::STATUS_PENDING]),
-            Course::factory()->create(['status' => Course::STATUS_ACTIVE])
+            Course::factory()->create(['status' => CourseStatus::DISABLED]),
+            Course::factory()->create(['status' => CourseStatus::PENDING]),
+            Course::factory()->create(['status' => CourseStatus::ACTIVE])
         ];
 
         $counter = 0;
@@ -268,7 +268,7 @@ class CourseIndexTest extends TestCase
                 ];
             }
         }
-        $totalCount = Course::STATUS_ACTIVE === $status ? 10 : 5;
+        $totalCount = CourseStatus::ACTIVE === $status ? 10 : 5;
         $this
             ->actingAs($this->userWithPermission, 'api')
             ->get(self::URL . '?' . \http_build_query(['statuses[]' => $status]))
@@ -288,9 +288,9 @@ class CourseIndexTest extends TestCase
     public function statusProvider(): array
     {
         return [
-            'STATUS_PENDING' => [Course::STATUS_PENDING],
-            'STATUS_ACTIVE' => [Course::STATUS_ACTIVE],
-            'STATUS_DISABLED' => [Course::STATUS_DISABLED],
+            'STATUS_PENDING' => [CourseStatus::PENDING],
+            'STATUS_ACTIVE' => [CourseStatus::ACTIVE],
+            'STATUS_DISABLED' => [CourseStatus::DISABLED],
         ];
     }
 }

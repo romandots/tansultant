@@ -53,7 +53,7 @@ class StudentTest extends \Tests\TestCase
     public function testShowDenied(): void
     {
         $me = $this->createFakeUser();
-        $student = $this->createFakeStudent(['status' => \App\Models\Student::STATUS_POTENTIAL]);
+        $student = $this->createFakeStudent(['status' => \App\Models\StudentStatus::POTENTIAL]);
 
         $url = self::URL . '/' . $student->id;
 
@@ -84,7 +84,7 @@ class StudentTest extends \Tests\TestCase
     public function testUpdateDenied(): void
     {
         $me = $this->createFakeUser();
-        $student = $this->createFakeStudent(['status' => \App\Models\Student::STATUS_POTENTIAL]);
+        $student = $this->createFakeStudent(['status' => \App\Models\StudentStatus::POTENTIAL]);
 
         $url = self::URL . '/' . $student->id;
 
@@ -101,7 +101,7 @@ class StudentTest extends \Tests\TestCase
     public function testDestroyDenied(): void
     {
         $me = $this->createFakeUser();
-        $student = $this->createFakeStudent(['status' => \App\Models\Student::STATUS_POTENTIAL]);
+        $student = $this->createFakeStudent(['status' => \App\Models\StudentStatus::POTENTIAL]);
 
         $url = self::URL . '/' . $student->id;
 
@@ -117,7 +117,7 @@ class StudentTest extends \Tests\TestCase
 
     public function testShow(): void
     {
-        $student = $this->createFakeStudent(['status' => \App\Models\Student::STATUS_POTENTIAL]);
+        $student = $this->createFakeStudent(['status' => \App\Models\StudentStatus::POTENTIAL]);
         $person = $student->person;
 
         $url = self::URL . '/' . $student->id;
@@ -234,7 +234,7 @@ class StudentTest extends \Tests\TestCase
                 'data' => [
                     'name' => "{$person->last_name} {$person->first_name} {$person->patronymic_name}",
                     'card_number' => $data['card_number'],
-                    'status' => \App\Models\Student::STATUS_POTENTIAL,
+                    'status' => \App\Models\StudentStatus::POTENTIAL,
                     'person' => [
                         'id' => $person->id,
                         'last_name' => $person->last_name,

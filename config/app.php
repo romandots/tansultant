@@ -226,6 +226,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+        'Users' => \App\Components\User\Facade::class,
+        'Accounts' => \App\Components\Account\Facade::class,
     ],
 
 ];

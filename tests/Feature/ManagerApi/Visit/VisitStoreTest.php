@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\Lesson;
 
-use App\Models\Account;
+use App\Models\Enum\AccountType;
 use App\Models\Lesson;
 use App\Models\Student;
 use App\Models\Visit;
@@ -70,7 +70,7 @@ class VisitStoreTest extends TestCase
         $this->student = $this->createFakeStudent();
         $branch = $this->createFakeBranch();
         $this->createFakeAccountWithBalance(100, null, [
-            'type' => Account::TYPE_PERSONAL,
+            'type' => AccountType::PERSONAL,
             'owner_type' => Student::class,
             'owner_id' => $this->student->id
         ]);

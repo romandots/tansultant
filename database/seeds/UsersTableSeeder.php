@@ -31,7 +31,7 @@ class UsersTableSeeder extends Seeder
                     'id' => \uuid(),
                     'name' => 'Admin',
                     'username' => 'admin',
-                    'status' => User::STATUS_APPROVED,
+                    'status' => UserStatus::APPROVED,
                     'password' => \Hash::make('12345678')
                 ]);
             $user->assignRole(\App\Services\Permissions\UserRoles::ADMIN);

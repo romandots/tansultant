@@ -10,9 +10,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use App\Components\Account\Exceptions\InsufficientFundsAccountException;
 use App\Models\Account;
 use App\Models\Bonus;
 use App\Models\Branch;
+use App\Models\Enum\AccountType;
+use App\Models\Enum\PaymentStatus;
 use App\Models\Instructor;
 use App\Models\Payment;
 use App\Models\Student;
@@ -61,7 +64,7 @@ class AccountServiceTest extends TestCase
         $this->assertDatabaseMissing(Account::TABLE, [
             'owner_id' => $this->branch->id,
             'owner_type' => Branch::class,
-            'type' => Account::TYPE_OPERATIONAL
+            'type' => AccountType::OPERATIONAL
         ]);
 
         $account = $this->service->getOperationalAccount($this->branch);
@@ -73,7 +76,7 @@ class AccountServiceTest extends TestCase
             'name' => $name,
             'owner_id' => $this->branch->id,
             'owner_type' => Branch::class,
-            'type' => Account::TYPE_OPERATIONAL
+            'type' => AccountType::OPERATIONAL
         ]);
 
         $nextAccount = $this->service->getOperationalAccount($this->branch);
@@ -89,7 +92,7 @@ class AccountServiceTest extends TestCase
         $this->assertDatabaseMissing(Account::TABLE, [
             'owner_id' => $this->branch->id,
             'owner_type' => Branch::class,
-            'type' => Account::TYPE_SAVINGS
+            'type' => AccountType::SAVINGS
         ]);
 
         $account = $this->service->getSavingsAccount($this->branch);
@@ -101,7 +104,7 @@ class AccountServiceTest extends TestCase
             'name' => $name,
             'owner_id' => $this->branch->id,
             'owner_type' => Branch::class,
-            'type' => Account::TYPE_SAVINGS
+            'type' => AccountType::SAVINGS
         ]);
 
         $nextAccount = $this->service->getSavingsAccount($this->branch);
@@ -119,7 +122,7 @@ class AccountServiceTest extends TestCase
         $this->assertDatabaseMissing(Account::TABLE, [
             'owner_id' => $instructor->id,
             'owner_type' => Instructor::class,
-            'type' => Account::TYPE_PERSONAL
+            'type' => AccountType::PERSONAL
         ]);
 
         $account = $this->service->getInstructorAccount($instructor);
@@ -131,7 +134,7 @@ class AccountServiceTest extends TestCase
             'name' => $name,
             'owner_id' => $instructor->id,
             'owner_type' => Instructor::class,
-            'type' => Account::TYPE_PERSONAL
+            'type' => AccountType::PERSONAL
         ]);
 
         $nextAccount = $this->service->getInstructorAccount($instructor);
@@ -149,7 +152,7 @@ class AccountServiceTest extends TestCase
         $this->assertDatabaseMissing(Account::TABLE, [
             'owner_id' => $student->id,
             'owner_type' => Student::class,
-            'type' => Account::TYPE_PERSONAL
+            'type' => AccountType::PERSONAL
         ]);
 
         $account = $this->service->getStudentAccount($student);
@@ -161,7 +164,7 @@ class AccountServiceTest extends TestCase
             'name' => $name,
             'owner_id' => $student->id,
             'owner_type' => Student::class,
-            'type' => Account::TYPE_PERSONAL
+            'type' => AccountType::PERSONAL
         ]);
 
         $nextAccount = $this->service->getStudentAccount($student);
@@ -176,28 +179,28 @@ class AccountServiceTest extends TestCase
         $anotherAccount = $this->createFakeAccount();
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_CONFIRMED
+            'status' => PaymentStatus::CONFIRMED
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_CONFIRMED,
+            'status' => PaymentStatus::CONFIRMED,
             'deleted_at' => Carbon::now()
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_PENDING
+            'status' => PaymentStatus::PENDING
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_CANCELED
+            'status' => PaymentStatus::CANCELED
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_EXPIRED
+            'status' => PaymentStatus::EXPIRED
         ]);
         $this->createFakePayment(100, $anotherAccount, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_CONFIRMED
+            'status' => PaymentStatus::CONFIRMED
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
@@ -232,28 +235,28 @@ class AccountServiceTest extends TestCase
         $anotherAccount = $this->createFakeAccount();
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_PENDING
+            'status' => PaymentStatus::PENDING
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_PENDING,
+            'status' => PaymentStatus::PENDING,
             'deleted_at' => Carbon::now()
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_CONFIRMED
+            'status' => PaymentStatus::CONFIRMED
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_CANCELED
+            'status' => PaymentStatus::CANCELED
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_EXPIRED
+            'status' => PaymentStatus::EXPIRED
         ]);
         $this->createFakePayment(100, $anotherAccount, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_CONFIRMED
+            'status' => PaymentStatus::CONFIRMED
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
@@ -288,28 +291,28 @@ class AccountServiceTest extends TestCase
         $anotherAccount = $this->createFakeAccount();
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_CONFIRMED
+            'status' => PaymentStatus::CONFIRMED
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_CONFIRMED,
+            'status' => PaymentStatus::CONFIRMED,
             'deleted_at' => Carbon::now()
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_PENDING
+            'status' => PaymentStatus::PENDING
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_CANCELED
+            'status' => PaymentStatus::CANCELED
         ]);
         $this->createFakePayment(100, $account, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_EXPIRED
+            'status' => PaymentStatus::EXPIRED
         ]);
         $this->createFakePayment(100, $anotherAccount, [
             'user_id' => $user->id,
-            'status' => Payment::STATUS_CONFIRMED
+            'status' => PaymentStatus::CONFIRMED
         ]);
         $this->createFakeBonus(100, $account, [
             'user_id' => $user->id,
@@ -343,7 +346,7 @@ class AccountServiceTest extends TestCase
 
         $this->assertException(function () use ($account) {
             $this->service->checkFunds($account, 300);
-        }, InsufficientFundsAccountServiceException::class);
+        }, InsufficientFundsAccountException::class);
 
         $this->service->checkFunds($account, 200);
     }

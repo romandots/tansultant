@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\Components\Payment;
 
 use App\Common\BaseFacade;
+use App\Models\Payment;
+use App\Models\Student;
+use App\Models\User;
+use App\Models\Visit;
 
 /**
  * @method Service getService()
@@ -24,5 +28,13 @@ class Facade extends BaseFacade
     public function __construct()
     {
         parent::__construct(Service::class);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function createVisitPayment(int $price, Visit $visit, Student $student, ?User $user = null): Payment
+    {
+        return $this->getService()->createVisitPayment($price, $visit, $student, $user);
     }
 }

@@ -10,8 +10,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\Models\Account;
 use App\Models\Branch;
+use App\Models\Enum\AccountOwnerType;
+use App\Models\Enum\AccountType;
+use App\Models\Enum\PaymentStatus;
+use App\Models\Enum\PaymentTransferType;
+use App\Models\Enum\PaymentType;
 use App\Models\Instructor;
 use App\Models\Lesson;
 use App\Models\Payment;
@@ -57,14 +61,14 @@ class PaymentServiceTest extends TestCase
         $student = $this->createFakeStudent();
         $user = $this->createFakeUser();
         $studentAccount = $this->createFakeAccount([
-            'type' => Account::TYPE_PERSONAL,
+            'type' => AccountType::PERSONAL,
             'owner_type' => Student::class,
             'owner_id' => $student->id
         ]);
 
         $savingsAccount = $this->createFakeAccount([
-            'type' => Account::TYPE_SAVINGS,
-            'owner_type' => Branch::class,
+            'type' => AccountType::SAVINGS,
+            'owner_type' => AccountOwnerType::BRANCH,
             'owner_id' => $branchId
         ]);
 
@@ -73,7 +77,7 @@ class PaymentServiceTest extends TestCase
         }, InsufficientFundsAccountServiceException::class);
 
         $this->createFakePayment(100, $studentAccount, [
-            'status' => Payment::STATUS_CONFIRMED,
+            'status' => PaymentStatus::CONFIRMED,
             'user_id' => $user->id
         ]);
 
@@ -84,9 +88,9 @@ class PaymentServiceTest extends TestCase
         $this->assertEquals(Visit::class, $visitPayment->object_type);
         $this->assertEquals($visit->id, $visitPayment->object_id);
         $this->assertEquals($savingsAccount->id, $visitPayment->account_id);
-        $this->assertEquals(Payment::TYPE_AUTOMATIC, $visitPayment->type);
-        $this->assertEquals(Payment::TRANSFER_TYPE_INTERNAL, $visitPayment->transfer_type);
-        $this->assertEquals(Payment::STATUS_CONFIRMED, $visitPayment->status);
+        $this->assertEquals(PaymentType::AUTO, $visitPayment->type);
+        $this->assertEquals(PaymentTransferType::INTERNAL, $visitPayment->transfer_type);
+        $this->assertEquals(PaymentStatus::CONFIRMED, $visitPayment->status);
         $this->assertNotNull($visitPayment->confirmed_at);
 
         $relatedPayment = $visitPayment->related_payment;
@@ -95,9 +99,9 @@ class PaymentServiceTest extends TestCase
         $this->assertEquals(Visit::class, $relatedPayment->object_type);
         $this->assertEquals($visit->id, $relatedPayment->object_id);
         $this->assertEquals($studentAccount->id, $relatedPayment->account_id);
-        $this->assertEquals(Payment::TYPE_AUTOMATIC, $relatedPayment->type);
-        $this->assertEquals(Payment::TRANSFER_TYPE_INTERNAL, $relatedPayment->transfer_type);
-        $this->assertEquals(Payment::STATUS_CONFIRMED, $relatedPayment->status);
+        $this->assertEquals(PaymentType::AUTO, $relatedPayment->type);
+        $this->assertEquals(PaymentTransferType::INTERNAL, $relatedPayment->transfer_type);
+        $this->assertEquals(PaymentStatus::CONFIRMED, $relatedPayment->status);
         $this->assertNotNull($relatedPayment->confirmed_at);
         $this->assertEquals($visitPayment->id, $relatedPayment->related_id);
     }
@@ -117,14 +121,14 @@ class PaymentServiceTest extends TestCase
         $user = $this->createFakeUser();
         $instructor = $this->createFakeInstructor();
         $instructorAccount = $this->createFakeAccount([
-            'type' => Account::TYPE_PERSONAL,
-            'owner_type' => Instructor::class,
+            'type' => AccountType::PERSONAL,
+            'owner_type' => AccountOwnerType::INSTRUCTOR,
             'owner_id' => $instructor->id
         ]);
 
         $savingsAccount = $this->createFakeAccount([
-            'type' => Account::TYPE_SAVINGS,
-            'owner_type' => Branch::class,
+            'type' => AccountType::SAVINGS,
+            'owner_type' => AccountOwnerType::BRANCH,
             'owner_id' => $branchId
         ]);
 
@@ -135,9 +139,9 @@ class PaymentServiceTest extends TestCase
         $this->assertEquals(Lesson::class, $lessonPayment->object_type);
         $this->assertEquals($lesson->id, $lessonPayment->object_id);
         $this->assertEquals($savingsAccount->id, $lessonPayment->account_id);
-        $this->assertEquals(Payment::TYPE_AUTOMATIC, $lessonPayment->type);
-        $this->assertEquals(Payment::TRANSFER_TYPE_INTERNAL, $lessonPayment->transfer_type);
-        $this->assertEquals(Payment::STATUS_CONFIRMED, $lessonPayment->status);
+        $this->assertEquals(PaymentType::AUTO, $lessonPayment->type);
+        $this->assertEquals(PaymentTransferType::INTERNAL, $lessonPayment->transfer_type);
+        $this->assertEquals(PaymentStatus::CONFIRMED, $lessonPayment->status);
         $this->assertNotNull($lessonPayment->confirmed_at);
 
         $relatedPayment = $lessonPayment->related_payment;
@@ -146,9 +150,9 @@ class PaymentServiceTest extends TestCase
         $this->assertEquals(Lesson::class, $relatedPayment->object_type);
         $this->assertEquals($lesson->id, $relatedPayment->object_id);
         $this->assertEquals($instructorAccount->id, $relatedPayment->account_id);
-        $this->assertEquals(Payment::TYPE_AUTOMATIC, $relatedPayment->type);
-        $this->assertEquals(Payment::TRANSFER_TYPE_INTERNAL, $relatedPayment->transfer_type);
-        $this->assertEquals(Payment::STATUS_CONFIRMED, $relatedPayment->status);
+        $this->assertEquals(PaymentType::AUTO, $relatedPayment->type);
+        $this->assertEquals(PaymentTransferType::INTERNAL, $relatedPayment->transfer_type);
+        $this->assertEquals(PaymentStatus::CONFIRMED, $relatedPayment->status);
         $this->assertNotNull($relatedPayment->confirmed_at);
         $this->assertEquals($lessonPayment->id, $relatedPayment->related_id);
     }
@@ -165,14 +169,14 @@ class PaymentServiceTest extends TestCase
         $user = $this->createFakeUser();
         $instructor = $this->createFakeInstructor();
         $instructorAccount = $this->createFakeAccount([
-            'type' => Account::TYPE_PERSONAL,
-            'owner_type' => Instructor::class,
+            'type' => AccountType::PERSONAL,
+            'owner_type' => AccountOwnerType::INSTRUCTOR,
             'owner_id' => $instructor->id
         ]);
 
         $savingsAccount = $this->createFakeAccount([
-            'type' => Account::TYPE_SAVINGS,
-            'owner_type' => Branch::class,
+            'type' => AccountType::SAVINGS,
+            'owner_type' => AccountOwnerType::BRANCH,
             'owner_id' => $branchId
         ]);
 

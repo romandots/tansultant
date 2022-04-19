@@ -59,7 +59,7 @@ class CourseDisableTest extends TestCase
         $instructor = $this->createFakeInstructor();
         $this->deletedCourse = $this->createFakeCourse([
             'instructor_id' => $instructor->id,
-            'status' => Course::STATUS_ACTIVE
+            'status' => CourseStatus::ACTIVE
         ]);
         $this->url = self::URL . '/' . $this->deletedCourse->id . '/disable';
     }
@@ -99,7 +99,7 @@ class CourseDisableTest extends TestCase
 
         $this->assertDatabaseHas(Course::TABLE, [
             'id' => $this->deletedCourse->id,
-            'status' => Course::STATUS_DISABLED
+            'status' => CourseStatus::DISABLED
         ]);
     }
 }
