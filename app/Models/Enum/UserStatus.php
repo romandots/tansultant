@@ -2,9 +2,9 @@
 
 namespace App\Models\Enum;
 
-enum CourseStatus: string
+enum UserStatus: string
 {
     case PENDING = 'pending';
-    case ACTIVE = 'active';
+    case APPROVED = 'approved';
     case DISABLED = 'disabled';
 }
