@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method Payment findTrashed(string $id)
  * @method Payment create(Dto $dto)
  * @method void update($record, Dto $dto)
- * @method void delete(Payment $record)
  * @method void restore(Payment $record)
  * @method void forceDelete(Payment $record)
  * @mixin \App\Common\BaseRepository
