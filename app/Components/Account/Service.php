@@ -3,8 +3,7 @@
 namespace App\Components\Account;
 
 use App\Common\BaseService;
-use App\Models\{Account, Bonus, Branch, Instructor, Payment, Student};
-use App\Repository\AccountRepository;
+use App\Models\{Account, Bonus, Branch, Enum\BonusStatus, Instructor, Payment, Student};
 
 /**
  * @method Repository getRepository()
@@ -108,7 +107,7 @@ class Service extends BaseService
     public function getBonusAmount(Account $account): int
     {
         return $account->bonuses
-            ->where('status', Bonus::STATUS_PENDING)
+            ->where('status', BonusStatus::PENDING)
             ->sum('amount');
     }
 
