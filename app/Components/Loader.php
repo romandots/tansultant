@@ -35,6 +35,11 @@ class Loader extends Locator
         return self::facade(Customer\Facade::class);
     }
 
+    public static function genres(): Genre\Facade
+    {
+        return self::facade(Genre\Facade::class);
+    }
+
     public static function instructors(): Instructor\Facade
     {
         return self::facade(Instructor\Facade::class);
@@ -73,6 +78,11 @@ class Loader extends Locator
     public static function users(): User\Facade
     {
         return self::facade(User\Facade::class);
+    }
+
+    public static function verificationCodes(): VerificationCode\Facade
+    {
+        return self::facade(VerificationCode\Facade::class);
     }
 
     public static function visits(): Visit\Facade
