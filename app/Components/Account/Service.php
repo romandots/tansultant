@@ -80,13 +80,13 @@ class Service extends BaseService
     /**
      * @param Account $account
      * @param int $amount
-     * @throws Exceptions\InsufficientFundsAccountServiceException
+     * @throws Exceptions\InsufficientFundsAccountException
      */
     public function checkFunds(Account $account, int $amount): void
     {
         $availableAmount = $this->getTotalAmount($account);
         if ($availableAmount < $amount) {
-            throw new Exceptions\InsufficientFundsAccountServiceException($account, $availableAmount, $amount);
+            throw new Exceptions\InsufficientFundsAccountException($account, $availableAmount, $amount);
         }
     }
 
@@ -97,7 +97,7 @@ class Service extends BaseService
     public function getAmount(Account $account): int
     {
         return $account->payments
-            ->where('status', Payment::STATUS_CONFIRMED)
+            ->where('status', PaymentStatus::CONFIRMED)
             ->sum('amount');
     }
 

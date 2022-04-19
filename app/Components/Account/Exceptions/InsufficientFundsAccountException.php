@@ -6,7 +6,7 @@ namespace App\Components\Account\Exceptions;
 
 use App\Exceptions\BaseException;
 
-class InsufficientFundsAccountServiceException extends BaseException
+class InsufficientFundsAccountException extends BaseException
 {
     /**
      * InsufficientFundsAccountServiceException constructor.

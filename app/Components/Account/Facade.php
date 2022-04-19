@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\Components\Account;
 
 use App\Common\BaseFacade;
+use App\Models\Account;
+use App\Models\Branch;
+use App\Models\Instructor;
+use App\Models\Student;
 
 /**
  * @method Service getService()
@@ -24,5 +28,62 @@ class Facade extends BaseFacade
     public function __construct()
     {
         parent::__construct(Service::class);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function getStudentAccount(Student $student): Account
+    {
+        return $this->getService()->getStudentAccount($student);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function getInstructorAccount(Instructor $instructor): Account
+    {
+        return $this->getService()->getInstructorAccount($instructor);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function getOperationalAccount(Branch $branch): Account
+    {
+        return $this->getService()->getOperationalAccount($branch);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function getSavingsAccount(Branch $branch): Account
+    {
+        return $this->getService()->getSavingsAccount($branch);
+    }
+
+    /**
+     * @param Account $account
+     * @param int $amount
+     * @throws Exceptions\InsufficientFundsAccountException
+     */
+    public function checkFunds(Account $account, int $amount): void
+    {
+        $this->getService()->checkFunds($account, $amount);
+    }
+
+    public function getAmount(Account $account): int
+    {
+        return $this->getService()->getAmount($account);
+    }
+
+    public function getBonusAmount(Account $account): int
+    {
+        return $this->getService()->getBonusAmount($account);
+    }
+
+    public function getTotalAmount(Account $account): int
+    {
+        return $this->getService()->getTotalAmount($account);
     }
 }
