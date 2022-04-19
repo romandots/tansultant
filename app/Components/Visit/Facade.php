@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Visit;
 
-use App\Common\BaseFacade;
+use App\Common\BaseComponentFacade;
 use Illuminate\Support\Collection;
 
 /**
@@ -20,7 +20,7 @@ use Illuminate\Support\Collection;
  * @method \App\Models\Visit findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Visit findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class Facade extends BaseFacade
+class Facade extends BaseComponentFacade
 {
     public function __construct()
     {

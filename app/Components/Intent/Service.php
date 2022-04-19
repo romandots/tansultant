@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Components\Intent;
 
-use App\Common\BaseService;
 use App\Models\Intent;
 use App\Models\Visit;
 use Illuminate\Database\Eloquent\Collection;
@@ -12,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 /**
  * @method Repository getRepository()
  */
-class Service extends BaseService
+class Service extends \App\Common\BaseComponentService
 {
     public function __construct()
     {

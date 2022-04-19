@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Components\VerificationCode;
 
-use App\Common\BaseService;
 use App\Common\Contracts\DtoWithUser;
 use App\Models\VerificationCode;
 use Carbon\Carbon;
@@ -13,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @method Repository getRepository()
  */
-class Service extends BaseService
+class Service extends \App\Common\BaseComponentService
 {
     public function __construct()
     {

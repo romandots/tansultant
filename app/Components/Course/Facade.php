@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Course;
 
-use App\Common\BaseFacade;
-use App\Models\Course;
-use Illuminate\Http\Request;
+use App\Common\BaseComponentFacade;
 
 /**
  * @method Service getService()
@@ -21,7 +19,7 @@ use Illuminate\Http\Request;
  * @method \App\Models\Course findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Course findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class Facade extends BaseFacade
+class Facade extends BaseComponentFacade
 {
     public function __construct()
     {

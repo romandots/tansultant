@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\LogRecord;
 
-use App\Common\BaseFacade;
+use App\Common\BaseComponentFacade;
 use App\Models\Enum\LogRecordAction;
 use App\Models\User;
 
@@ -21,7 +21,7 @@ use App\Models\User;
  * @method \App\Models\LogRecord findAndRestore(string $id, array $relations = [])
  * @method \App\Models\LogRecord findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class Facade extends BaseFacade
+class Facade extends BaseComponentFacade
 {
     public function __construct()
     {

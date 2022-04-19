@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace App\Components\Instructor;
 
-use App\Common\BaseService;
 use App\Components\Customer\Dto;
-use App\Models\Customer;
 use App\Models\Instructor;
 use App\Models\Person;
 
 /**
  * @method Repository getRepository()
  */
-class Service extends BaseService
+class Service extends \App\Common\BaseComponentService
 {
     public function __construct()
     {

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Components\Lesson;
 
-use App\Common\BaseService;
 use App\Common\Contracts\DtoWithUser;
 use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
-use App\Http\Requests\ManagerApi\DTO\StoreLesson as LessonDto;
 use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
 use App\Jobs\GenerateLessonsOnDateJob;
 use App\Models\Course;
@@ -21,7 +19,7 @@ use Illuminate\Support\Collection;
 /**
  * @method Repository getRepository()
  */
-class Service extends BaseService
+class Service extends \App\Common\BaseComponentService
 {
     protected \App\Components\Course\Facade $courses;
     protected \App\Components\Classroom\Facade $classrooms;

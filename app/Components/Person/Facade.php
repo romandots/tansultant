@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Person;
 
-use App\Common\BaseFacade;
+use App\Common\BaseComponentFacade;
 use App\Models\Enum\Gender;
 use App\Models\Person;
 use Carbon\Carbon;
@@ -22,7 +22,7 @@ use Carbon\Carbon;
  * @method \App\Models\Person findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Person findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class Facade extends BaseFacade
+class Facade extends BaseComponentFacade
 {
     public function __construct()
     {

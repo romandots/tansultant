@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Components\Customer;
 
 use App\Models\Customer;
-use App\Models\Person;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -24,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method void forceDelete(Customer $record)
  * @mixin \App\Common\BaseRepository
  */
-class Repository extends \App\Common\BaseRepository
+class Repository extends \App\Common\BaseComponentRepository
 {
     public function __construct() {
         parent::__construct(

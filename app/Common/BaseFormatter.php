@@ -4,7 +4,7 @@ namespace App\Common;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BaseFormatter extends JsonResource
+abstract class BaseFormatter extends JsonResource
 {
 
 }

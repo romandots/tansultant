@@ -1,9 +1,6 @@
 <?php
 
-namespace App\Services;
-
-use Illuminate\Support\Facades\Cache;
-use Psr\Log\LoggerInterface;
+namespace App\Common\Traits;
 
 /**
  * @method static \Illuminate\Cache\TaggedCache tags(array|mixed $names)
@@ -41,7 +38,7 @@ trait WithCache
     protected function getCacheManager()
     {
         if (!isset($this->_cache)) {
-            $this->_cache = app('cache');
+            $this->_cache = \app('cache');
         }
 
         return $this->_cache;

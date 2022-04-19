@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Payment;
 
-use App\Common\BaseFacade;
+use App\Common\BaseComponentFacade;
 use App\Models\Payment;
 use App\Models\Student;
 use App\Models\User;
@@ -23,7 +23,7 @@ use App\Models\Visit;
  * @method \App\Models\Payment findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Payment findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class Facade extends BaseFacade
+class Facade extends BaseComponentFacade
 {
     public function __construct()
     {

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Common\Controllers;
 
-use App\Common\BaseFacade;
+use App\Common\BaseComponentFacade;
 use App\Common\Requests\FilteredPaginatedRequest;
 use App\Common\Requests\StoreRequest;
 use App\Common\Requests\SuggestRequest;
@@ -17,7 +17,7 @@ use Illuminate\Support\Collection;
 
 abstract class AdminController extends Controller
 {
-    protected BaseFacade $facade;
+    protected BaseComponentFacade $facade;
 
     public function __construct(
         string $facadeClass,
@@ -86,7 +86,7 @@ abstract class AdminController extends Controller
         $this->getFacade()->findAndRestore($id, $this->getSingleRecordRelations(), $request->getUser());
     }
 
-    public function getFacade(): BaseFacade
+    public function getFacade(): BaseComponentFacade
     {
         return $this->facade;
     }

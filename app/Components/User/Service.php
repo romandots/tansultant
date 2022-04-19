@@ -4,28 +4,18 @@ declare(strict_types=1);
 
 namespace App\Components\User;
 
-use App\Common\BaseService;
 use App\Common\Contracts\DtoWithUser;
-use App\Events\InstructorCreatedEvent;
-use App\Events\StudentCreatedEvent;
+use App\Components\User\Exceptions\OldPasswordInvalidException;
 use App\Events\UserCreatedEvent;
-use App\Http\Requests\DTO\RegisterUser;
-use App\Http\Requests\DTO\StoreInstructor;
-use App\Http\Requests\DTO\StorePerson;
-use App\Http\Requests\DTO\StoreStudent;
-use App\Http\Requests\ManagerApi\DTO\StoreUser;
 use App\Models\Enum\UserStatus;
-use App\Models\Genre;
-use App\Models\Instructor;
 use App\Models\Person;
 use App\Models\User;
-use App\Components\User\Exceptions\OldPasswordInvalidException;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @method Repository getRepository()
  */
-class Service extends BaseService
+class Service extends \App\Common\BaseComponentService
 {
     protected \App\Components\Person\Facade $people;
     public function __construct()

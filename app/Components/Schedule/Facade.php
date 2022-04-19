@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Schedule;
 
-use App\Common\BaseFacade;
+use App\Common\BaseComponentFacade;
 use App\Http\Requests\ManagerApi\DTO\ScheduleOnDate;
 use App\Models\Schedule;
 use Ramsey\Collection\Collection;
@@ -22,7 +22,7 @@ use Ramsey\Collection\Collection;
  * @method \App\Models\Schedule findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Schedule findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class Facade extends BaseFacade
+class Facade extends BaseComponentFacade
 {
     public function __construct()
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Customer;
 
-use App\Common\BaseFacade;
+use App\Common\BaseComponentFacade;
 use App\Models\Customer;
 use App\Models\Person;
 
@@ -21,7 +21,7 @@ use App\Models\Person;
  * @method \App\Models\Customer findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Customer findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class Facade extends BaseFacade
+class Facade extends BaseComponentFacade
 {
     public function __construct()
     {

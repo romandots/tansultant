@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Contract;
 
-use App\Common\BaseFacade;
+use App\Common\BaseComponentFacade;
 use App\Models\Contract;
 
 /**
@@ -20,7 +20,7 @@ use App\Models\Contract;
  * @method \App\Models\Contract findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Contract findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class Facade extends BaseFacade
+class Facade extends BaseComponentFacade
 {
     public function __construct()
     {

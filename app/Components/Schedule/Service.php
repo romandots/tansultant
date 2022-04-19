@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Components\Schedule;
 
-use App\Common\BaseService;
 use App\Models\Schedule;
 
 /**
  * @method Repository getRepository()
  */
-class Service extends BaseService
+class Service extends \App\Common\BaseComponentService
 {
     public function __construct()
     {

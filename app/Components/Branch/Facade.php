@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Branch;
 
-use App\Common\BaseFacade;
+use App\Common\BaseComponentFacade;
 
 /**
  * @method Service getService()
@@ -19,7 +19,7 @@ use App\Common\BaseFacade;
  * @method \App\Models\Branch findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Branch findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class Facade extends BaseFacade
+class Facade extends BaseComponentFacade
 {
     public function __construct()
     {

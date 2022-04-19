@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Components\Course;
 
-use App\Common\BaseService;
 use App\Common\Contracts;
 use App\Events\Course\CourseCreatedEvent;
 use App\Events\Course\CourseDeletedEvent;
@@ -19,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @method Repository getRepository()
  */
-class Service extends BaseService
+class Service extends \App\Common\BaseComponentService
 {
     public function __construct()
     {

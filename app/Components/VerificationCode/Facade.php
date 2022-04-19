@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\VerificationCode;
 
-use App\Common\BaseFacade;
+use App\Common\BaseComponentFacade;
 use App\Models\VerificationCode;
 
 /**
@@ -20,7 +20,7 @@ use App\Models\VerificationCode;
  * @method \App\Models\VerificationCode findAndRestore(string $id, array $relations = [])
  * @method \App\Models\VerificationCode findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class Facade extends BaseFacade
+class Facade extends BaseComponentFacade
 {
     public function __construct()
     {

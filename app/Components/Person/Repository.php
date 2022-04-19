@@ -27,7 +27,7 @@ use Ramsey\Uuid\Uuid;
  * @method void forceDelete(Person $record)
  * @mixin \App\Common\BaseRepository
  */
-class Repository extends \App\Common\BaseRepository
+class Repository extends \App\Common\BaseComponentRepository
 {
     public function __construct() {
         parent::__construct(

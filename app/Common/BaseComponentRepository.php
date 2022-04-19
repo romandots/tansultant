@@ -1,17 +1,42 @@
 <?php
 
-namespace App\Repository;
+namespace App\Common;
 
-use App\Http\Requests\DTO\Contracts\FilteredInterface;
-use App\Http\Requests\DTO\Contracts\PaginatedInterface;
+use App\Common\Contracts\FilteredInterface;
+use App\Common\Contracts\PaginatedInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-abstract class BaseRepository
+abstract class BaseComponentRepository extends BaseRepository
 {
-    abstract public function getSearchableAttributes(): array;
-    abstract public function withSoftDeletes(): bool;
-    abstract public function getQuery(): \Illuminate\Database\Eloquent\Builder;
+    public function __construct(
+        protected string $modelClass,
+        protected array $searchableAttributes = [],
+    ) {
+    }
+
+    abstract public function fill(Model $record, Contracts\DtoWithUser $dto): void;
+
+    public function getSearchableAttributes(): array
+    {
+        return $this->searchableAttributes;
+    }
+
+    public function withSoftDeletes(): bool
+    {
+        return isset(class_uses($this->modelClass)[SoftDeletes::class]);
+    }
+
+    public function getQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return $this->modelClass::query();
+    }
+
+    public function make(): Model
+    {
+        return new $this->modelClass();
+    }
 
     protected function getFilterQuery(FilteredInterface $filter): \Illuminate\Database\Eloquent\Builder
     {
@@ -46,16 +71,15 @@ abstract class BaseRepository
         return $this->getFilterQuery($search)->count();
     }
 
-    public function findFiltered(FilteredInterface $filter, array $withRelations = []): \Illuminate\Database\Eloquent\Collection
+    protected function getFilteredQuery(FilteredInterface $filter, array $withRelations = []): \Illuminate\Database\Eloquent\Builder
     {
         return $this->getFilterQuery($filter)
-            ->with($withRelations)
-            ->get();
+            ->with($withRelations);
     }
 
     public function findFilteredPaginated(PaginatedInterface $search, array $withRelations = []): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->findFiltered($search->filter, $withRelations)
+        return $this->getFilteredQuery($search->filter, $withRelations)
             ->orderBy($search->sort, $search->order)
             ->offset($search->offset)
             ->limit($search->limit)
@@ -84,39 +108,61 @@ abstract class BaseRepository
             ->firstOrFail();
     }
 
-    public function delete(Model $model): void
+    public function create(Contracts\DtoWithUser $dto): Model
+    {
+        $record = $this->make();
+        $record->id = \uuid();
+        $this->fill($record, $dto);
+        $this->fillDate($record, 'created_at');
+        $record->save();
+        return $record;
+    }
+
+    public function update($record, Contracts\DtoWithUser $dto): void
+    {
+        $this->fill($record, $dto);
+        $this->fillDate($record, 'updated_at');
+        $record->save();
+    }
+
+    public function delete(Model $record): void
     {
         if ($this->withSoftDeletes()) {
-            $model->deleted_at = \Carbon\Carbon::now();
-            $model->updated_at = \Carbon\Carbon::now();
-            $model->save();
+            $this->fillDate($record, 'updated_at');
+            $this->fillDate($record, 'deleted_at');
+            $record->save();
             return;
         }
 
-        $model->delete();
+        $record->delete();
     }
 
-    public function restore(Model $person): void
+    public function restore(Model $record): void
     {
         if (!$this->withSoftDeletes()) {
             return;
         }
-        $person->deleted_at = null;
-        $person->updated_at = Carbon::now();
-        $person->save();
+        $this->fillDate($record, 'updated_at');
+        $record->deleted_at = null;
+        $record->save();
     }
 
-    public function forceDelete(Model $model): void
+    public function forceDelete(Model $record): void
     {
         if (!$this->withSoftDeletes()) {
-            $model->delete();
+            $record->delete();
             return;
         }
-        $model->forceDelete();
+        $record->forceDelete();
     }
 
-    public function getAll(): Collection
+    public function getAll(array $relations = []): Collection
     {
-        return $this->getQuery()->get();
+        return $this->getQuery()->with($relations)->get();
+    }
+
+    protected function fillDate(Model $record, string $attribute): void
+    {
+        $record->{$attribute} = \Carbon\Carbon::now();
     }
 }

@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace App\Components\Visit;
 
-use App\Common\BaseService;
 use App\Components\Loader;
 use App\Components\Locator;
-use App\Http\Requests\ManagerApi\DTO\StoreLessonVisit;
-use App\Models\Enum\PaymentType;
 use App\Models\Enum\VisitPaymentType;
-use App\Models\Payment;
 use App\Models\User;
 use App\Models\Visit;
 use App\Services\Price\PriceService;
@@ -20,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @method Repository getRepository()
  */
-class Service extends BaseService
+class Service extends \App\Common\BaseComponentService
 {
     public function __construct()
     {

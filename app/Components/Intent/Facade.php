@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Intent;
 
-use App\Common\BaseFacade;
+use App\Common\BaseComponentFacade;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @method \App\Models\Intent findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Intent findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class Facade extends BaseFacade
+class Facade extends BaseComponentFacade
 {
     public function __construct()
     {

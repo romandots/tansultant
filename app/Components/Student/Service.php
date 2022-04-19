@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace App\Components\Student;
 
-use App\Common\BaseService;
-use App\Http\Requests\DTO\StoreStudent;
 use App\Models\Enum\StudentStatus;
 use App\Models\Person;
 use App\Models\Student;
-use Carbon\Carbon;
 
 /**
  * @method Repository getRepository()
  */
-class Service extends BaseService
+class Service extends \App\Common\BaseComponentService
 {
     public function __construct()
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Lesson;
 
-use App\Common\BaseFacade;
+use App\Common\BaseComponentFacade;
 use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
 use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
 use App\Models\Lesson;
@@ -25,7 +25,7 @@ use Illuminate\Support\Collection;
  * @method \App\Models\Lesson findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Lesson findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
-class Facade extends BaseFacade
+class Facade extends BaseComponentFacade
 {
     protected Manager $manager;
     protected Generator $generator;

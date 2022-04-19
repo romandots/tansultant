@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Components\Payment;
 
-use App\Common\BaseService;
 use App\Models\Enum\PaymentObjectType;
 use App\Models\Enum\PaymentType;
 use App\Models\Instructor;
@@ -17,7 +16,7 @@ use App\Models\Visit;
 /**
  * @method Repository getRepository()
  */
-class Service extends BaseService
+class Service extends \App\Common\BaseComponentService
 {
     protected \App\Components\Account\Facade $accounts;
 

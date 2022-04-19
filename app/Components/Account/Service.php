@@ -2,13 +2,12 @@
 
 namespace App\Components\Account;
 
-use App\Common\BaseService;
-use App\Models\{Account, Bonus, Branch, Enum\BonusStatus, Instructor, Payment, Student};
+use App\Models\{Account, Branch, Enum\BonusStatus, Instructor, Student};
 
 /**
  * @method Repository getRepository()
  */
-class Service extends BaseService
+class Service extends \App\Common\BaseComponentService
 {
     public function __construct()
     {

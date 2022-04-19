@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method void forceDelete(Schedule $record)
  * @mixin \App\Common\BaseRepository
  */
-class Repository extends \App\Common\BaseRepository
+class Repository extends \App\Common\BaseComponentRepository
 {
     public function __construct() {
         parent::__construct(

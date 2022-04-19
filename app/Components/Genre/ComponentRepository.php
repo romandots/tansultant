@@ -24,9 +24,9 @@ use Spatie\Tags\Tag;
  * @method void delete(Genre $record)
  * @method void restore(Genre $record)
  * @method void forceDelete(Genre $record)
- * @mixin \App\Common\BaseRepository
+ * @mixin \App\Common\BaseComponentRepository
  */
-class Repository extends \App\Common\BaseRepository
+class ComponentRepository extends \App\Common\BaseComponentRepository
 {
     public function __construct() {
         parent::__construct(
