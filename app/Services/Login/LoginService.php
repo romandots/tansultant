@@ -14,7 +14,6 @@ use App\Common\BaseService;
 use App\Components\Loader;
 use App\Http\Requests\Auth\DTO\Login;
 use App\Models\User;
-use App\Repository\UserRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
@@ -25,11 +24,7 @@ class LoginService extends BaseService
 {
     private \App\Components\User\Facade $users;
 
-    /**
-     * LoginService constructor.
-     * @param UserRepository $repository
-     */
-    public function __construct(UserRepository $repository)
+    public function __construct()
     {
         $this->users = Loader::users();
     }

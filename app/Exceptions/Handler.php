@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace App\Exceptions;
 
+use App\Components\Schedule\Exceptions\ScheduleSlotIsOccupied;
+use App\Components\User\Exceptions\OldPasswordInvalidException;
+use App\Components\User\Exceptions\UserAlreadyRegisteredWithSamePhoneNumber;
 use App\Exceptions\Auth\UnauthorizedException;
-use App\Repository\Exceptions\ScheduleSlotIsOccupied;
 use App\Services\Course\Exceptions\InstructorStatusIncompatible;
 use App\Services\Login\Exceptions\UserNotFoundException;
 use App\Services\Login\Exceptions\WrongPasswordException;
 use App\Services\PasswordReset\Exceptions\UserHasNoPerson;
-use App\Services\User\Exceptions\OldPasswordInvalidException;
 use App\Services\UserRegister\Exceptions\UserAlreadyRegisteredWithOtherPhoneNumber;
-use App\Services\UserRegister\Exceptions\UserAlreadyRegisteredWithSamePhoneNumber;
-use App\Services\Verify\Exceptions\TextMessageSendingFailed;
-use App\Services\Verify\Exceptions\VerificationCodeAlreadySentRecently;
-use App\Services\Verify\Exceptions\VerificationCodeExpired;
-use App\Services\Verify\Exceptions\VerificationCodeIsInvalid;
-use App\Services\Verify\Exceptions\VerificationCodeWasSentTooManyTimes;
+use App\Services\Verification\Exception\TextMessageSendingFailed;
+use App\Services\Verification\Exception\VerificationCodeAlreadySentRecently;
+use App\Services\Verification\Exception\VerificationCodeExpired;
+use App\Services\Verification\Exception\VerificationCodeIsInvalid;
+use App\Services\Verification\Exception\VerificationCodeWasSentTooManyTimes;
 
 /**
  * Class Handler

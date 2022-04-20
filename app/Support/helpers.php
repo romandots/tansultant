@@ -211,3 +211,10 @@ if (!function_exists('translate')) {
         return \trans($prefix . '.' . (is_string($messageKey) ? $messageKey : $messageKey->value));
     }
 }
+
+if (!function_exists('gate')) {
+    function gate(array $permissions): string
+    {
+        return 'permission:' . implode('|', $permissions);
+    }
+}
