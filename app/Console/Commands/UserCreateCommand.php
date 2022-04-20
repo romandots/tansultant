@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Person;
+use App\Components\Loader;
 
 class UserCreateCommand extends UserCommand
 {
@@ -11,8 +11,8 @@ class UserCreateCommand extends UserCommand
 
     public function handle(): void
     {
-        $userDto = new \App\Http\Requests\ManagerApi\DTO\StoreUser();
-        $personDto = new \App\Http\Requests\DTO\StorePerson();
+        $userDto = new \App\Components\User\Dto();
+        $personDto = new \App\Components\Person\Dto();
 
         $userDto->username = $this->argument('username');
         $userDto->password = $this->argument('password');
@@ -27,10 +27,11 @@ class UserCreateCommand extends UserCommand
         $birthDate = $this->ask('Birth date');
         $personDto->birth_date = $birthDate ? \Carbon\Carbon::parse($birthDate) : null;
 
-        $user = $this->userService->createUser($userDto, $personDto);
+        $person = Loader::people()->create($personDto);
+        $user = $this->users->createFromPerson($userDto, $person);
 
         $this->info(
-            "User #{$user->id} with password '{$userDto->password}' created in status [{$user->status}]"
+            "User #{$user->id} <{$user->name}> with password '{$userDto->password}' created in status [{$user->status}]"
         );
     }
 }

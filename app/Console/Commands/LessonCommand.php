@@ -2,16 +2,16 @@
 
 namespace App\Console\Commands;
 
-use App\Services\Lesson\LessonFacade;
+use App\Components\Loader;
 use Illuminate\Console\Command;
 
 abstract class LessonCommand extends Command
 {
-    protected LessonFacade $lessons;
+    protected \App\Components\Lesson\Facade $lessons;
 
-    public function __construct(LessonFacade $lessons)
+    public function __construct()
     {
         parent::__construct();
-        $this->lessons = $lessons;
+        $this->lessons = Loader::lessons();
     }
 }

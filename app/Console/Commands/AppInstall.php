@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Components\Loader;
 use App\Models\Enum\UserStatus;
 use App\Models\User;
-use App\Repository\PersonRepository;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
@@ -16,7 +16,7 @@ class AppInstall extends Command
     protected $signature = 'app:install';
     protected $description = 'Install app: seed permissions and create admin user';
 
-    public function handle(PersonRepository $repository): void
+    public function handle(): void
     {
         $this->info('Seeding all data');
         Artisan::call('db:seed');
@@ -36,26 +36,20 @@ class AppInstall extends Command
             return;
         }
 
-        $firstName = $this->ask('Admin first name');
-        $lastName = $this->ask('Admin last name');
+        $personDto = new \App\Components\Person\Dto();
 
-        $person = $repository->create([
-            'last_name' => $lastName ?? 'User',
-            'first_name' => $firstName ?? 'Admin',
-        ]);
+        $personDto->first_name = $this->ask('Admin first name');
+        $personDto->last_name = $this->ask('Admin last name');
 
-        /** @var User $user */
-        $user = User::query()
-            ->create([
-                'id' => \uuid(),
-                'person_id' => $person->id,
-                'name' => "{$lastName} {$firstName}",
-                'username' => self::ADMIN_USERNAME,
-                'password' => \Hash::make($password ?? '12345678'),
-                'status' => UserStatus::APPROVED,
-            ]);
+        $person = Loader::people()->create($personDto);
+
+        $userDto = new \App\Components\User\Dto();
+        $userDto->status = UserStatus::APPROVED;
+        $userDto->username = self::ADMIN_USERNAME;
+        $userDto->password = $password ?? '12345678';
+        $user = Loader::users()->createFromPerson($userDto, $person);
         $user->assignRole(\App\Services\Permissions\UserRoles::ADMIN);
 
-        $this->info("User {$lastName} {$firstName} created!");
+        $this->info("User {$user->name} <{$user->username}> created!");
     }
 }

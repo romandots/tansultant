@@ -3,8 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\Enum\UserStatus;
-use App\Models\Person;
-use App\Models\User;
 
 class UserStatusUpdateCommand extends UserCommand
 {
@@ -13,14 +11,12 @@ class UserStatusUpdateCommand extends UserCommand
 
     public function handle(): void
     {
-        $repo = $this->userService->getUserRepository();
-
         $username = $this->argument('username');
-        $user = $repo->findByUsername($username);
+        $user = $this->users->findByUsername($username);
 
         $this->info("User {$username}'s current status is {$user->status}");
 
-        $user->status = $this->choice('Choose new status', UserStatus::cases());
+        $user->status = UserStatus::from($this->choice('Choose new status', UserStatus::cases()));
         $user->save();
 
         $this->info("User {$username}'s current status is {$user->status}");

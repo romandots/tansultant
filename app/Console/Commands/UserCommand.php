@@ -2,16 +2,16 @@
 
 namespace App\Console\Commands;
 
-use App\Services\User\UserService;
+use App\Components\Loader;
 use Illuminate\Console\Command;
 
 abstract class UserCommand extends Command
 {
-    protected UserService $userService;
+    protected \App\Components\User\Facade $users;
 
-    public function __construct(UserService $userService)
+    public function __construct()
     {
         parent::__construct();
-        $this->userService = $userService;
+        $this->users = Loader::users();
     }
 }
