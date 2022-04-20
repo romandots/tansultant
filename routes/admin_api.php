@@ -22,6 +22,8 @@
 
 declare(strict_types=1);
 
+use App\Common\Route;
+use App\Http\Controllers\ManagerApi;
 use App\Services\Permissions\BranchesPermissions;
 use App\Services\Permissions\ClassroomsPermissions;
 use App\Services\Permissions\CoursesPermissions;
@@ -34,214 +36,128 @@ use App\Services\Permissions\SchedulesPermissions;
 use App\Services\Permissions\StudentsPermissions;
 use App\Services\Permissions\UsersPermissions;
 use App\Services\Permissions\VisitsPermissions;
-use Illuminate\Support\Facades\Route;
 
 // USERS
-Route::group(['prefix' => 'users'], static function () {
-    Route::post('from_person', 'UserController@createFromPerson')
-        ->middleware('permission:' . UsersPermissions::MANAGE . '|' . UsersPermissions::CREATE);
-    Route::post('/', 'UserController@store')
-        ->middleware('permission:' . UsersPermissions::MANAGE . '|' . UsersPermissions::CREATE);
-    Route::get('{id}', 'UserController@show')
-        ->middleware('permission:' . UsersPermissions::MANAGE . '|' . UsersPermissions::READ);
-    Route::put('{id}', 'UserController@update')
-        ->middleware('permission:' . UsersPermissions::MANAGE . '|' . UsersPermissions::UPDATE);
-    Route::delete('{id}', 'UserController@destroy')
-        ->middleware('permission:' . UsersPermissions::MANAGE . '|' . UsersPermissions::DELETE);
+Route::namedGroup('users',ManagerApi\UserController::class, static function () {
+        Route::namedRoute('index', 'get', '/', [UsersPermissions::MANAGE, UsersPermissions::READ]);
+        Route::namedRoute('store', 'post', '/', [UsersPermissions::MANAGE, UsersPermissions::CREATE]);
+        Route::namedRoute('show', 'get', '{id}', [UsersPermissions::MANAGE, UsersPermissions::READ]);
+        Route::namedRoute('update', 'put', '{id}', [UsersPermissions::MANAGE, UsersPermissions::UPDATE]);
+        Route::namedRoute('destroy', 'delete', '{id}', [UsersPermissions::MANAGE, UsersPermissions::DELETE]);
 });
 
 // PEOPLE
-Route::group(['prefix' => 'people'], static function () {
-    Route::get('/', 'PersonController@index')
-        ->middleware('permission:' . PersonsPermissions::MANAGE . '|' . PersonsPermissions::READ);
-    Route::post('/', 'PersonController@store')
-        ->middleware('permission:' . PersonsPermissions::MANAGE . '|' . PersonsPermissions::CREATE);
-    Route::get('{id}', 'PersonController@show')
-        ->middleware('permission:' . PersonsPermissions::MANAGE . '|' . PersonsPermissions::READ);
-    Route::put('{id}', 'PersonController@update')
-        ->middleware('permission:' . PersonsPermissions::MANAGE . '|' . PersonsPermissions::UPDATE);
-    Route::delete('{id}', 'PersonController@destroy')
-        ->middleware('permission:' . PersonsPermissions::MANAGE . '|' . PersonsPermissions::DELETE);
+Route::namedGroup('people',ManagerApi\PersonController::class, static function () {
+    Route::namedRoute('index', 'get', '/', [PersonsPermissions::MANAGE, PersonsPermissions::READ]);
+    Route::namedRoute('store', 'post', '/', [PersonsPermissions::MANAGE, PersonsPermissions::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [PersonsPermissions::MANAGE, PersonsPermissions::READ]);
+    Route::namedRoute('update', 'put', '{id}', [PersonsPermissions::MANAGE, PersonsPermissions::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [PersonsPermissions::MANAGE, PersonsPermissions::DELETE]);
 });
 
 // STUDENTS
-Route::group(['prefix' => 'students'], static function () {
-    Route::post('from_person', 'StudentController@storeFromPerson')
-        ->middleware('permission:' . StudentsPermissions::MANAGE . '|' . StudentsPermissions::CREATE);
-    Route::post('/', 'StudentController@store')
-        ->middleware('permission:' . StudentsPermissions::MANAGE . '|' . StudentsPermissions::CREATE);
-    Route::get('{id}', 'StudentController@show')
-        ->middleware('permission:' . StudentsPermissions::MANAGE . '|' . StudentsPermissions::READ);
-    Route::put('{id}', 'StudentController@update')
-        ->middleware('permission:' . StudentsPermissions::MANAGE . '|' . StudentsPermissions::UPDATE);
-    Route::delete('{id}', 'StudentController@destroy')
-        ->middleware('permission:' . StudentsPermissions::MANAGE . '|' . StudentsPermissions::DELETE);
+Route::namedGroup('students',ManagerApi\StudentController::class, static function () {
+    Route::namedRoute('index', 'get', '/', [StudentsPermissions::MANAGE, StudentsPermissions::READ]);
+    Route::namedRoute('store', 'post', '/', [StudentsPermissions::MANAGE, StudentsPermissions::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [StudentsPermissions::MANAGE, StudentsPermissions::READ]);
+    Route::namedRoute('update', 'put', '{id}', [StudentsPermissions::MANAGE, StudentsPermissions::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [StudentsPermissions::MANAGE, StudentsPermissions::DELETE]);
 });
 
+
 // INSTRUCTORS
-Route::group(['prefix' => 'instructors'], static function () {
-    Route::get('/suggest', 'InstructorController@suggest')
-        ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::READ);
-    Route::get('/', 'InstructorController@search')
-        ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::READ);
-    Route::post('/', 'InstructorController@store')
-        ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::CREATE);
-    Route::get('{id}', 'InstructorController@show')
-        ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::READ);
-    Route::put('{id}', 'InstructorController@update')
-        ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::UPDATE);
-    Route::delete('{id}', 'InstructorController@destroy')
-        ->middleware('permission:' . InstructorsPermissions::MANAGE . '|' . InstructorsPermissions::DELETE);
+Route::namedGroup('instructors',ManagerApi\InstructorController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [InstructorsPermissions::MANAGE, InstructorsPermissions::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [InstructorsPermissions::MANAGE, InstructorsPermissions::READ]);
+    Route::namedRoute('store', 'post', '/', [InstructorsPermissions::MANAGE, InstructorsPermissions::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [InstructorsPermissions::MANAGE, InstructorsPermissions::READ]);
+    Route::namedRoute('update', 'put', '{id}', [InstructorsPermissions::MANAGE, InstructorsPermissions::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [InstructorsPermissions::MANAGE, InstructorsPermissions::DELETE]);
 });
 
 // CUSTOMERS
-Route::group(['prefix' => 'customers'], static function () {
-    Route::post('from_person', 'CustomerController@createFromPerson')
-        ->middleware('permission:' . CustomersPermissions::MANAGE . '|' . CustomersPermissions::CREATE);
-    Route::post('/', 'CustomerController@store')
-        ->middleware('permission:' . CustomersPermissions::MANAGE . '|' . CustomersPermissions::CREATE);
-    Route::get('{id}', 'CustomerController@show')
-        ->middleware('permission:' . CustomersPermissions::MANAGE . '|' . CustomersPermissions::READ);
-    Route::delete('{id}', 'CustomerController@destroy')
-        ->middleware('permission:' . CustomersPermissions::MANAGE . '|' . CustomersPermissions::DELETE);
-    Route::get('{id}/contract', 'ContractController@show')
-        ->middleware('permission:' . CustomersPermissions::MANAGE . '|' . CustomersPermissions::READ);
-    Route::post('{id}/contract', 'ContractController@sign')
-        ->middleware('permission:' . CustomersPermissions::SIGN_CONTRACTS);
-    Route::delete('{id}/contract', 'ContractController@terminate')
-        ->middleware('permission:' . CustomersPermissions::TERMINATE_CONTRACTS);
+Route::namedGroup('customers',ManagerApi\CustomerController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [CustomersPermissions::MANAGE, CustomersPermissions::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [CustomersPermissions::MANAGE, CustomersPermissions::READ]);
+    Route::namedRoute('store', 'post', '/', [CustomersPermissions::MANAGE, CustomersPermissions::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [CustomersPermissions::MANAGE, CustomersPermissions::READ]);
+    Route::namedRoute('update', 'put', '{id}', [CustomersPermissions::MANAGE, CustomersPermissions::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [CustomersPermissions::MANAGE, CustomersPermissions::DELETE]);
+    Route::namedRoute('sign', 'post', '{id}/contract', [CustomersPermissions::MANAGE, CustomersPermissions::SIGN_CONTRACTS]);
+    Route::namedRoute('terminate', 'delete', '{id}/contract', [CustomersPermissions::MANAGE, CustomersPermissions::TERMINATE_CONTRACTS]);
 });
 
 // COURSES
-Route::group(['prefix' => 'courses'], static function () {
-    Route::get('/', 'CourseController@index')
-        ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::READ);
-    Route::post('/', 'CourseController@store')
-        ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::CREATE);
-    Route::put('{id}', 'CourseController@update')
-        ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::UPDATE);
-    Route::delete('{id}', 'CourseController@destroy')
-        ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::DELETE);
-    Route::post('{id}/restore', 'CourseController@restore')
-        ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::RESTORE);
-    Route::post('{id}/disable', 'CourseController@disable')
-        ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::DISABLE);
-    Route::post('{id}/enable', 'CourseController@enable')
-        ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::ENABLE);
-    Route::get('{id}', 'CourseController@show')
-        ->middleware('permission:' . CoursesPermissions::MANAGE . '|' . CoursesPermissions::READ);
+Route::namedGroup('courses',ManagerApi\CourseController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [CoursesPermissions::MANAGE, CoursesPermissions::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [CoursesPermissions::MANAGE, CoursesPermissions::READ]);
+    Route::namedRoute('store', 'post', '/', [CoursesPermissions::MANAGE, CoursesPermissions::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [CoursesPermissions::MANAGE, CoursesPermissions::READ]);
+    Route::namedRoute('update', 'put', '{id}', [CoursesPermissions::MANAGE, CoursesPermissions::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [CoursesPermissions::MANAGE, CoursesPermissions::DELETE]);
+    Route::namedRoute('restore', 'post', '{id}/restore', [CoursesPermissions::MANAGE, CoursesPermissions::RESTORE]);
+    Route::namedRoute('disable', 'post', '{id}/disable', [CoursesPermissions::MANAGE, CoursesPermissions::DISABLE]);
+    Route::namedRoute('enable', 'post', '{id}/enable', [CoursesPermissions::MANAGE, CoursesPermissions::ENABLE]);
 });
 
 // SCHEDULES
-Route::group(['prefix' => 'schedules'], static function () {
-    Route::get('/', 'ScheduleController@index')
-        ->middleware('permission:' . SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::READ);
-    Route::post('/', 'ScheduleController@store')
-        ->middleware('permission:' .
-            SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::CREATE);
-    Route::put('{id}', 'ScheduleController@update')
-        ->middleware('permission:' .
-            SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::UPDATE);
-    Route::delete('{id}', 'ScheduleController@destroy')
-        ->middleware('permission:' .
-            SchedulesPermissions::MANAGE . '|' . SchedulesPermissions::DELETE);
+Route::namedGroup('schedules',ManagerApi\ScheduleController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [SchedulesPermissions::MANAGE, SchedulesPermissions::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [SchedulesPermissions::MANAGE, SchedulesPermissions::READ]);
+    Route::namedRoute('store', 'post', '/', [SchedulesPermissions::MANAGE, SchedulesPermissions::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [SchedulesPermissions::MANAGE, SchedulesPermissions::READ]);
+    Route::namedRoute('update', 'put', '{id}', [SchedulesPermissions::MANAGE, SchedulesPermissions::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [SchedulesPermissions::MANAGE, SchedulesPermissions::DELETE]);
 });
 
 // LESSONS
-Route::group(['prefix' => 'lessons'], static function () {
-    Route::get('/suggest', 'LessonController@suggest')
-        ->middleware('permission:' . LessonsPermissions::MANAGE . '|' . LessonsPermissions::READ);
-    Route::get('/', 'LessonController@search')
-        ->middleware('permission:' . LessonsPermissions::MANAGE . '|' . LessonsPermissions::READ);
-    Route::post('/', 'LessonController@store')
-        ->middleware('permission:' .
-            LessonsPermissions::MANAGE . '|' . LessonsPermissions::CREATE);
-    Route::put('{id}', 'LessonController@update')
-        ->middleware('permission:' .
-            LessonsPermissions::MANAGE . '|' . LessonsPermissions::UPDATE);
-    Route::delete('{id}', 'LessonController@destroy')
-        ->middleware('permission:' .
-            LessonsPermissions::MANAGE . '|' . LessonsPermissions::DELETE);
-    Route::get('{id}', 'LessonController@show')
-        ->middleware('permission:' .
-            LessonsPermissions::MANAGE . '|' . LessonsPermissions::READ);
-
-    Route::post('{id}/cancel', 'LessonController@cancel')
-        ->middleware('permission:' .
-            LessonsPermissions::MANAGE . '|' . LessonsPermissions::CANCEL);
-    Route::post('{id}/book', 'LessonController@book')
-        ->middleware('permission:' .
-            LessonsPermissions::MANAGE . '|' . LessonsPermissions::BOOK);
-    Route::post('{id}/close', 'LessonController@close')
-        ->middleware('permission:' .
-            LessonsPermissions::MANAGE . '|' . LessonsPermissions::CLOSE);
-    Route::post('{id}/open', 'LessonController@open')
-        ->middleware('permission:' .
-            LessonsPermissions::MANAGE . '|' . LessonsPermissions::OPEN);
+Route::namedGroup('lessons',ManagerApi\LessonController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [LessonsPermissions::MANAGE, LessonsPermissions::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [LessonsPermissions::MANAGE, LessonsPermissions::READ]);
+    Route::namedRoute('store', 'post', '/', [LessonsPermissions::MANAGE, LessonsPermissions::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [LessonsPermissions::MANAGE, LessonsPermissions::READ]);
+    Route::namedRoute('update', 'put', '{id}', [LessonsPermissions::MANAGE, LessonsPermissions::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [LessonsPermissions::MANAGE, LessonsPermissions::DELETE]);
+    Route::namedRoute('cancel', 'post', '{id}\cancel', [LessonsPermissions::MANAGE, LessonsPermissions::CANCEL]);
+    Route::namedRoute('book', 'post', '{id}\book', [LessonsPermissions::MANAGE, LessonsPermissions::BOOK]);
+    Route::namedRoute('close', 'post', '{id}\close', [LessonsPermissions::MANAGE, LessonsPermissions::CLOSE]);
+    Route::namedRoute('open', 'post', '{id}\open', [LessonsPermissions::MANAGE, LessonsPermissions::OPEN]);
 });
 
 // VISITS
-Route::group(['prefix' => 'visits'], static function () {
-    Route::post('/', 'VisitController@createLessonVisit')
-        ->middleware('permission:' .
-            VisitsPermissions::MANAGE . '|' . VisitsPermissions::CREATE);
-    Route::delete('{id}', 'VisitController@destroy')
-        ->middleware('permission:' .
-            VisitsPermissions::MANAGE . '|' . VisitsPermissions::DELETE);
-    Route::get('{id}', 'VisitController@show')
-        ->middleware('permission:' .
-            VisitsPermissions::MANAGE . '|' . VisitsPermissions::READ);
+Route::namedGroup('visits',ManagerApi\VisitController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [VisitsPermissions::MANAGE, VisitsPermissions::READ]);
+    Route::namedRoute('store', 'post', '/', [VisitsPermissions::MANAGE, VisitsPermissions::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [VisitsPermissions::MANAGE, VisitsPermissions::READ]);
+    Route::namedRoute('destroy', 'delete', '{id}', [VisitsPermissions::MANAGE, VisitsPermissions::DELETE]);
 });
 
 // INTENTS
-Route::group(['prefix' => 'intents'], static function () {
-    Route::post('/', 'IntentController@store')
-        ->middleware('permission:' .
-            IntentsPermissions::MANAGE . '|' . IntentsPermissions::CREATE);
-    Route::delete('{id}', 'IntentController@destroy')
-        ->middleware('permission:' .
-            IntentsPermissions::MANAGE . '|' . IntentsPermissions::DELETE);
-    Route::get('{id}', 'IntentController@show')
-        ->middleware('permission:' .
-            IntentsPermissions::MANAGE . '|' . IntentsPermissions::READ);
+Route::namedGroup('intents',ManagerApi\IntentController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [IntentsPermissions::MANAGE, IntentsPermissions::READ]);
+    Route::namedRoute('store', 'post', '/', [IntentsPermissions::MANAGE, IntentsPermissions::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [IntentsPermissions::MANAGE, IntentsPermissions::READ]);
+    Route::namedRoute('destroy', 'delete', '{id}', [IntentsPermissions::MANAGE, IntentsPermissions::DELETE]);
 });
 
 // BRANCHES
-Route::group(['prefix' => 'branches'], static function () {
-    Route::get('/', 'BranchController@index')
-        ->middleware('permission:' .
-            BranchesPermissions::MANAGE . '|' . BranchesPermissions::READ);
-    Route::get('{id}', 'BranchController@show')
-        ->middleware('permission:' .
-            BranchesPermissions::MANAGE . '|' . BranchesPermissions::READ);
-    Route::post('/', 'BranchController@store')
-        ->middleware('permission:' .
-            BranchesPermissions::MANAGE . '|' . BranchesPermissions::CREATE);
-    Route::put('{id}', 'BranchController@update')
-        ->middleware('permission:' .
-            BranchesPermissions::MANAGE . '|' . BranchesPermissions::UPDATE);
-    Route::delete('{id}', 'BranchController@destroy')
-        ->middleware('permission:' .
-            BranchesPermissions::MANAGE . '|' . BranchesPermissions::DELETE);
-    Route::post('{id}/recover', 'BranchController@restore')
-        ->middleware('permission:' .
-            BranchesPermissions::MANAGE . '|' . BranchesPermissions::DELETE);
+Route::namedGroup('branches',ManagerApi\BranchController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [BranchesPermissions::MANAGE, BranchesPermissions::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [BranchesPermissions::MANAGE, BranchesPermissions::READ]);
+    Route::namedRoute('store', 'post', '/', [BranchesPermissions::MANAGE, BranchesPermissions::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [BranchesPermissions::MANAGE, BranchesPermissions::READ]);
+    Route::namedRoute('update', 'put', '{id}', [BranchesPermissions::MANAGE, BranchesPermissions::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [BranchesPermissions::MANAGE, BranchesPermissions::DELETE]);
+    Route::namedRoute('restore', 'post', '{id}/restore', [BranchesPermissions::MANAGE, BranchesPermissions::RESTORE]);
 });
 
 // CLASSROOMS
-Route::group(['prefix' => 'classrooms'], static function () {
-    Route::get('/suggest', 'ClassroomController@suggest')
-        ->middleware('permission:' . ClassroomsPermissions::MANAGE . '|' . ClassroomsPermissions::READ);
-    Route::get('/', 'ClassroomController@index')
-        ->middleware('permission:' . ClassroomsPermissions::MANAGE . '|' . ClassroomsPermissions::READ);
-    Route::get('{classroomId}', 'ClassroomController@show')
-        ->middleware('permission:' .  ClassroomsPermissions::MANAGE . '|' . ClassroomsPermissions::READ);
-    Route::post('/', 'ClassroomController@store')
-        ->middleware('permission:' . ClassroomsPermissions::MANAGE . '|' . ClassroomsPermissions::CREATE);
-    Route::put('{classroomId}', 'ClassroomController@update')
-        ->middleware('permission:' . ClassroomsPermissions::MANAGE . '|' . ClassroomsPermissions::UPDATE);
-    Route::delete('{classroomId}', 'ClassroomController@destroy')
-        ->middleware('permission:' . ClassroomsPermissions::MANAGE . '|' . ClassroomsPermissions::DELETE);
-    Route::post('{classroomId}/restore', 'ClassroomController@restore')
-        ->middleware('permission:' . ClassroomsPermissions::MANAGE . '|' . ClassroomsPermissions::DELETE);
+Route::namedGroup('classrooms',ManagerApi\ClassroomController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::READ]);
+    Route::namedRoute('store', 'post', '/', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::READ]);
+    Route::namedRoute('update', 'put', '{id}', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::DELETE]);
+    Route::namedRoute('restore', 'post', '{id}/restore', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::RESTORE]);
 });
