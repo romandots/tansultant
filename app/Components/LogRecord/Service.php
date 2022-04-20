@@ -5,22 +5,13 @@ declare(strict_types=1);
 namespace App\Components\LogRecord;
 
 use App\Models\Enum\LogRecordAction;
-use App\Models\LogRecord;
 use App\Models\User;
 
-/**
- * @method Repository getRepository()
- */
-class Service extends \App\Common\BaseComponentService
+class Service extends \App\Common\BaseService
 {
-    public function __construct()
+    public function getRepository(): Repository
     {
-        parent::__construct(
-            LogRecord::class,
-            Repository::class,
-            Dto::class,
-            null
-        );
+        return \app(Repository::class);
     }
 
     /**

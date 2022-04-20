@@ -4,7 +4,7 @@ namespace App\Common;
 
 abstract class Locator
 {
-    public static function facade(string $class) {
+    public static function get(string $class) {
         $container = app();
         if ($container->has($class)) {
             return $container->get($class);

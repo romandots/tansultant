@@ -12,7 +12,7 @@ namespace Tests\Feature\Auth;
 
 use App\Models\VerificationCode;
 use App\Services\TextMessaging\TextMessagingService;
-use App\Services\Verify\VerificationService;
+use App\Services\Verification\VerificationService;
 use Illuminate\Foundation\Testing\WithFaker;
 use Mockery\MockInterface;
 use Tests\TestCase;

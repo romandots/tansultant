@@ -13,7 +13,7 @@ class Dto extends \App\Common\DTO\DtoWIthUser
     public string $name;
     public string $branch_id;
     public ?string $course_id;
-    public ?string $schedule_id;
+    public ?string $schedule_id = null;
     public string $classroom_id;
     public ?string $instructor_id;
     public ?string $controller_id;

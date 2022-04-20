@@ -2,17 +2,27 @@
 
 namespace App\Common\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Common\DTO\DtoWIthUser;
 
-class SuggestRequest extends FormRequest
+class SuggestRequest extends BaseRequest
 {
     public function rules(): array
     {
-        return [];
+        return [
+            'query' => [
+                'nullable',
+                'string',
+            ]
+        ];
     }
 
     public function getQuery(): ?string
     {
         return $this->query('query');
+    }
+
+    public function getDto(): \App\Common\Contracts\DtoWithUser
+    {
+        return new DtoWIthUser();
     }
 }

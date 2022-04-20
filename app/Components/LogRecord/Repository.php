@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method void forceDelete(LogRecord $record)
  * @mixin \App\Common\BaseRepository
  */
-class Repository extends \App\Common\BaseComponentRepository
+class Repository extends \App\Common\BaseRepository
 {
     public function __construct() {
         parent::__construct(

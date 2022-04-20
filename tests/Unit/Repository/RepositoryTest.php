@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Repository;
 
-use App\Common\BaseRepository;
+use App\Common\BaseComponentRepository;
 use App\Common\Contracts\DtoWithUser;
 use Tests\TestCase;
 
@@ -12,7 +12,7 @@ use Tests\TestCase;
 class RepositoryTest extends TestCase
 {
     protected string $table;
-    protected BaseRepository $repository;
+    protected BaseComponentRepository $repository;
     protected string $dtoClass;
 
     protected function buildDto(array $attributes): DtoWithUser

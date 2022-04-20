@@ -21,7 +21,7 @@ use App\Models\Student;
 use App\Models\User;
 use App\Models\VerificationCode;
 use App\Services\TextMessaging\TextMessagingService;
-use App\Services\Verify\VerificationService;
+use App\Services\Verification\VerificationService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;

@@ -11,15 +11,15 @@ use App\Models\Person;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * @method ComponentRepository getRepository()
+ * @method Repository getRepository()
  */
-class ComponentService extends BaseComponentService
+class Service extends BaseComponentService
 {
     public function __construct()
     {
         parent::__construct(
             Genre::class,
-            ComponentRepository::class,
+            Repository::class,
             Dto::class,
             null
         );

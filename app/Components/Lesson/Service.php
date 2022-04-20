@@ -73,7 +73,6 @@ class Service extends \App\Common\BaseComponentService
         }
 
         $dto->branch_id = $this->getBranchIdByClassroomId($dto->classroom_id);
-        $dto->schedule_id = null;
 
         return parent::create($dto);
     }

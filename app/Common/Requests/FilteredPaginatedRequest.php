@@ -10,10 +10,9 @@ namespace App\Common\Requests;
 
 use App\Common\Contracts\FilteredInterface;
 use App\Common\Contracts\PaginatedInterface;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class FilteredPaginatedRequest extends FormRequest
+class FilteredPaginatedRequest extends BaseRequest
 {
     protected PaginatedInterface $paginationDto;
     protected FilteredInterface $filterDto;

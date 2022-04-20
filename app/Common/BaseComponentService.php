@@ -4,8 +4,8 @@ namespace App\Common;
 
 use App\Common\Contracts\PaginatedInterface;
 use App\Common\Traits\WithCache;
+use App\Components\Loader;
 use App\Http\Requests\DTO\FilteredDtoWithUser;
-use App\Services\LogRecord\LogRecordService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -14,7 +14,7 @@ abstract class BaseComponentService extends BaseService
     use WithCache;
 
     protected BaseComponentRepository $repository;
-    protected LogRecordService $actions;
+    protected \App\Components\LogRecord\Facade $history;
 
     public function __construct(
         protected string $modelClass,
@@ -23,7 +23,7 @@ abstract class BaseComponentService extends BaseService
         protected ?string $searchFilterDtoClass
     ) {
         $this->repository = \app($repositoryClass);
-        $this->actions = \app(LogRecordService::class);
+        $this->history = Loader::logRecords();
     }
 
     public function suggest(
@@ -116,7 +116,7 @@ abstract class BaseComponentService extends BaseService
         try {
             $this->debug('Creating record of model ' . $this->modelClass, (array)$dto);
             $record = $this->getRepository()->create($dto);
-            $this->actions->logCreate($dto->getUser(), $record);
+            $this->history->logCreate($dto->getUser(), $record);
             $this->debug('Record of model ' . $this->modelClass . ' is created with ID#' . $record->id, $record->toArray());
             return $record;
         } catch (\Throwable $exception) {
@@ -135,7 +135,7 @@ abstract class BaseComponentService extends BaseService
             $this->debug('Updating record #' . $record->id . ' of model ' . $this->modelClass, (array)$dto);
             $originalRecord = clone $record;
             $this->getRepository()->update($record, $dto);
-            $this->actions->logUpdate($dto->getUser(), $record, $originalRecord);
+            $this->history->logUpdate($dto->getUser(), $record, $originalRecord);
             $this->debug('Record of model #' . $record->id . ' of model ' . $this->modelClass . ' is updated', $record->toArray());
         } catch (\Throwable $exception) {
             $this->error('Failed updating record #' . $record->id . ' of model ' . $this->modelClass, (array)$dto);
@@ -151,7 +151,7 @@ abstract class BaseComponentService extends BaseService
         try {
             $this->debug('Deleting record #' . $record->id . ' of model ' . $this->modelClass);
             $this->getRepository()->delete($record);
-            $this->actions->logDelete($user, $record);
+            $this->history->logDelete($user, $record);
             $this->debug('Record of model #' . $record->id . ' of model ' . $this->modelClass . ' is deleted');
         } catch (\Throwable $exception) {
             $this->error('Failed deleting record #' . $record->id . ' of model ' . $this->modelClass);
@@ -167,7 +167,7 @@ abstract class BaseComponentService extends BaseService
         try {
             $this->debug('Restoring record #' . $record->id . ' of model ' . $this->modelClass);
             $this->getRepository()->restore($record);
-            $this->actions->logRestore($user, $record);
+            $this->history->logRestore($user, $record);
             $this->debug('Record of model #' . $record->id . ' of model ' . $this->modelClass . ' is restored');
         } catch (\Throwable $exception) {
             $this->error('Failed restoring record #' . $record->id . ' of model ' . $this->modelClass);

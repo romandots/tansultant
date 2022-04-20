@@ -31,4 +31,9 @@ class Facade extends BaseComponentFacade
     {
         //
     }
+
+    public function createLessonVisit(Dto $dto)
+    {
+        
+    }
 }

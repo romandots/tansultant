@@ -25,4 +25,9 @@ class Facade extends BaseComponentFacade
     {
         parent::__construct(Service::class);
     }
+
+    public function getNextNumberValue(): int
+    {
+        return $this->getRepository()->getNextNumberValue();
+    }
 }

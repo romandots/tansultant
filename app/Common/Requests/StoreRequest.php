@@ -2,9 +2,13 @@
 
 namespace App\Common\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Common\DTO\DtoWIthUser;
 
-abstract class StoreRequest extends FormRequest
+abstract class StoreRequest extends BaseRequest
 {
-    abstract public function getDto(): \App\Common\Contracts\DtoWithUser;
+    public function buildDto(DtoWithUser $dto)
+    {
+        $dto->user = $this->user();
+        return $dto;
+    }
 }

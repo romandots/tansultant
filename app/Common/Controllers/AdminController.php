@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace App\Common\Controllers;
 
-use App\Common\BaseComponentFacade;
-use App\Common\Requests\FilteredPaginatedRequest;
+use App\Common\BaseFacade;
 use App\Common\Requests\StoreRequest;
 use App\Common\Requests\SuggestRequest;
 use App\Common\Requests\UpdateRequest;
@@ -17,7 +16,7 @@ use Illuminate\Support\Collection;
 
 abstract class AdminController extends Controller
 {
-    protected BaseComponentFacade $facade;
+    protected BaseFacade $facade;
 
     public function __construct(
         string $facadeClass,
@@ -34,18 +33,13 @@ abstract class AdminController extends Controller
         return $this->makeResourceCollection($records);
     }
 
-    public function search(FilteredPaginatedRequest $request): AnonymousResourceCollection
+    protected function _search(\App\Common\Requests\SearchRequest $request): AnonymousResourceCollection
     {
         $searchRecords = $request->getDto();
         $records = $this->getFacade()->search($searchRecords, $this->getSearchRelations());
         $meta = $this->getFacade()->getMeta($searchRecords);
 
         return $this->makeResourceCollection($records)->additional(['meta' => $meta]);
-    }
-
-    protected function getSearchRelations(): array
-    {
-        return $this->searchRelations;
     }
 
     public function suggest(SuggestRequest $request): array
@@ -59,18 +53,13 @@ abstract class AdminController extends Controller
         return $this->makeResource($record);
     }
 
-    protected function getSingleRecordRelations(): array
-    {
-        return $this->singleRecordRelations;
-    }
-
-    public function store(StoreRequest $request): JsonResource
+    protected function _store(StoreRequest $request): JsonResource
     {
         $record = $this->getFacade()->create($request->getDto(), $this->getSingleRecordRelations());
         return $this->makeResource($record);
     }
 
-    public function update(string $id, UpdateRequest $request): JsonResource
+    protected function _update(string $id, StoreRequest $request): JsonResource
     {
         $record = $this->getFacade()->findAndUpdate($id, $request->getDto(), $this->getSingleRecordRelations());
         return $this->makeResource($record);
@@ -86,18 +75,29 @@ abstract class AdminController extends Controller
         $this->getFacade()->findAndRestore($id, $this->getSingleRecordRelations(), $request->getUser());
     }
 
-    public function getFacade(): BaseComponentFacade
+    final protected function getFacade(): BaseFacade
     {
         return $this->facade;
     }
 
-    public function makeResource(Model $record): JsonResource
+    final protected function makeResource(Model $record): JsonResource
     {
         return new $this->resourceClass($record);
     }
 
-    public function makeResourceCollection(Collection $collection): AnonymousResourceCollection
+    final protected function makeResourceCollection(Collection $collection): AnonymousResourceCollection
     {
         return $this->resourceClass::collection($collection);
     }
+
+    final protected function getSearchRelations(): array
+    {
+        return $this->searchRelations;
+    }
+
+    final protected function getSingleRecordRelations(): array
+    {
+        return $this->singleRecordRelations;
+    }
+
 }

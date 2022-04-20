@@ -4,28 +4,16 @@ declare(strict_types=1);
 
 namespace App\Components\LogRecord;
 
-use App\Common\BaseComponentFacade;
+use App\Common\BaseFacade;
+use App\Common\Locator;
 use App\Models\Enum\LogRecordAction;
 use App\Models\User;
 
-/**
- * @method Service getService()
- * @method Repository getRepository()
- * @method array suggest(?string $query, string|\Closure $labelField = 'name', string|\Closure $valueField = 'id', array $extraFields = [])
- * @method \Illuminate\Support\Collection<\App\Models\LogRecord> getAll()
- * @method \Illuminate\Support\Collection<\App\Models\LogRecord> search(PaginatedInterface $searchParams, array $relations = []):
- * @method array getMeta(\App\Common\Contracts\PaginatedInterface $searchParams)
- * @method \App\Models\LogRecord create(Dto $dto, array $relations = [])
- * @method \App\Models\LogRecord find(string $id, array $relations = [])
- * @method void findAndDelete(string $id)
- * @method \App\Models\LogRecord findAndRestore(string $id, array $relations = [])
- * @method \App\Models\LogRecord findAndUpdate(string $id, Dto $dto, array $relations = [])
- */
-class Facade extends BaseComponentFacade
+class Facade extends BaseFacade
 {
-    public function __construct()
+    public function getService(): Service
     {
-        parent::__construct(Service::class);
+        return Locator::get(Service::class);
     }
 
     /**

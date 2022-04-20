@@ -7,86 +7,91 @@ use App\Common\Locator;
 class Loader extends Locator
 {
     public static function accounts(): Account\Facade {
-        return self::facade(Account\Facade::class);
+        return self::get(Account\Facade::class);
     }
 
     public static function bonuses(): Bonus\Facade
     {
-        return self::facade(Bonus\Facade::class);
+        return self::get(Bonus\Facade::class);
     }
 
     public static function branches(): Branch\Facade
     {
-        return self::facade(Branch\Facade::class);
+        return self::get(Branch\Facade::class);
     }
 
     public static function classrooms(): Classroom\Facade
     {
-        return self::facade(Classroom\Facade::class);
+        return self::get(Classroom\Facade::class);
     }
 
     public static function contracts(): Contract\Facade
     {
-        return self::facade(Contract\Facade::class);
+        return self::get(Contract\Facade::class);
     }
 
     public static function customers(): Customer\Facade
     {
-        return self::facade(Customer\Facade::class);
+        return self::get(Customer\Facade::class);
     }
 
     public static function genres(): Genre\Facade
     {
-        return self::facade(Genre\Facade::class);
+        return self::get(Genre\Facade::class);
     }
 
     public static function instructors(): Instructor\Facade
     {
-        return self::facade(Instructor\Facade::class);
+        return self::get(Instructor\Facade::class);
     }
 
     public static function intents(): Intent\Facade
     {
-        return self::facade(Intent\Facade::class);
+        return self::get(Intent\Facade::class);
     }
 
     public static function lessons(): Lesson\Facade
     {
-        return self::facade(Lesson\Facade::class);
+        return self::get(Lesson\Facade::class);
+    }
+
+    public static function logRecords(): LogRecord\Facade
+    {
+        return self::get(LogRecord\Facade::class);
     }
 
     public static function payments(): Payment\Facade
     {
-        return self::facade(Payment\Facade::class);
+        return self::get(Payment\Facade::class);
     }
 
     public static function people(): Person\Facade
     {
-        return self::facade(Person\Facade::class);
+        return self::get(Person\Facade::class);
     }
 
     public static function schedules(): Schedule\Facade
     {
-        return self::facade(Schedule\Facade::class);
+        return self::get(Schedule\Facade::class);
     }
 
     public static function students(): Student\Facade
     {
-        return self::facade(Student\Facade::class);
+        return self::get(Student\Facade::class);
     }
 
     public static function users(): User\Facade
     {
-        return self::facade(User\Facade::class);
+        return self::get(User\Facade::class);
     }
 
     public static function verificationCodes(): VerificationCode\Facade
     {
-        return self::facade(VerificationCode\Facade::class);
+        return self::get(VerificationCode\Facade::class);
     }
 
     public static function visits(): Visit\Facade
     {
-        return self::facade(Visit\Facade::class);
+        return self::get(Visit\Facade::class);
     }
 }

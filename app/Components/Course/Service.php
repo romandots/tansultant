@@ -83,7 +83,7 @@ class Service extends \App\Common\BaseComponentService
         }
 
         // log event
-        $this->actions->logEnable($user, $course, $oldCourse);
+        $this->history->logEnable($user, $course, $oldCourse);
 
         // fire event
         \event(new CourseEnabledEvent($course, $user));
@@ -106,7 +106,7 @@ class Service extends \App\Common\BaseComponentService
         $this->getRepository()->setDisabled($course);
 
         // log event
-        $this->actions->logDisable($user, $course, $oldCourse);
+        $this->history->logDisable($user, $course, $oldCourse);
 
         // fire event
         \event(new CourseDisabledEvent($course, $user));
