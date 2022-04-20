@@ -10,54 +10,42 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Controllers\Controller;
+use App\Common\Controllers\AdminController;
+use App\Components\Schedule as Component;
 use App\Http\Requests\ManagerApi\ScheduleOnDateRequest;
-use App\Http\Requests\ManagerApi\StoreScheduleRequest;
-use App\Http\Resources\ScheduleResource;
-use App\Services\Schedule\ScheduleFacade;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class ScheduleController extends Controller
+/**
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection search(\App\Common\Requests\SearchRequest $request)
+ * @method array suggest(\App\Common\Requests\SuggestRequest $request)
+ * @method Component\Formatter show(string $id)
+ * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
+ * @method Component\Formatter _update(string $id, \App\Common\Requests\StoreRequest $request)
+ * @method void destroy(string $id, \Illuminate\Http\Request $request)
+ * @method void restore(string $id, \Illuminate\Http\Request $request)
+ * @method Component\Facade getFacade()
+ * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
+ */
+class ScheduleController extends AdminController
 {
-    private ScheduleFacade $schedules;
-
-    public function __construct(ScheduleFacade $scheduleFacade)
-    {
-        $this->schedules = $scheduleFacade;
-    }
-
-    public function index(string $courseId): AnonymousResourceCollection
-    {
-        $schedules = $this->schedules->getAllByCourseId($courseId);
-
-        return ScheduleResource::collection($schedules);
-    }
-
-    public function store(StoreScheduleRequest $request): ScheduleResource
-    {
-        $schedule = $this->schedules->create($request->getDto());
-
-        return new ScheduleResource($schedule);
-    }
-
-    public function update(StoreScheduleRequest $request, string $scheduleId): void
-    {
-        $this->schedules->findAndUpdate($scheduleId, $request->getDto());
-    }
-
-    public function destroy(Request $request, string $scheduleId): void
-    {
-        $this->schedules->findAndDelete($scheduleId, $request->user());
+    public function __construct() {
+        parent::__construct(
+            facadeClass: Component\Facade::class,
+            resourceClass: Component\Formatter::class,
+            searchRelations: [],
+            singleRecordRelations: [],
+        );
     }
 
     public function onDate(ScheduleOnDateRequest $request): AnonymousResourceCollection
     {
-        $schedules = $this->schedules->getSchedulesForDateWithRelations(
+        $schedules = $this->getFacade()->getSchedulesForDateWithRelations(
             $request->getDto(),
             ['course.instructor.person']
         );
 
-        return ScheduleResource::collection($schedules);
+        return $this->makeResourceCollection($schedules);
     }
 }

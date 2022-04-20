@@ -10,93 +10,30 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\ManagerApi\AttachCustomerRequest;
-use App\Http\Requests\ManagerApi\StoreCustomerRequest;
-use App\Http\Resources\CustomerResource;
-use App\Models\Customer;
-use App\Repository\ContractRepository;
-use App\Repository\CustomerRepository;
-use App\Repository\PersonRepository;
-use Illuminate\Support\Facades\DB;
+use App\Common\Controllers\AdminController;
+use App\Components\Customer as Component;
 
-
-class CustomerController extends Controller
+/**
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection _search(\App\Common\Requests\SearchRequest $request)
+ * @method array suggest(\App\Common\Requests\SuggestRequest $request)
+ * @method \Illuminate\Http\Resources\Json\JsonResource show(string $id)
+ * @method \Illuminate\Http\Resources\Json\JsonResource store(\App\Common\Requests\StoreRequest $request)
+ * @method \Illuminate\Http\Resources\Json\JsonResource update(string $id, \App\Common\Requests\UpdateRequest $request)
+ * @method void destroy(string $id)
+ * @method void restore(string $id)
+ * @method Component\Facade getFacade()
+ * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
+ */
+class CustomerController extends AdminController
 {
-    private PersonRepository $personRepository;
-    private CustomerRepository $customerRepository;
-    private ContractRepository $contractRepository;
-
-    public function __construct(
-        CustomerRepository $customerRepository,
-        PersonRepository $personRepository,
-        ContractRepository $contractRepository
-    ) {
-        $this->customerRepository = $customerRepository;
-        $this->personRepository = $personRepository;
-        $this->contractRepository = $contractRepository;
-    }
-
-    /**
-     * @param StoreCustomerRequest $request
-     * @return CustomerResource
-     */
-    public function store(StoreCustomerRequest $request): CustomerResource
-    {
-        /** @var Customer $customer */
-        $customer = DB::transaction(function () use ($request) {
-            $person = $this->personRepository->createFromDto($request->getPersonDto());
-            $customer = $this->customerRepository->create($person);
-            $this->contractRepository->create($customer->id);
-
-            return $customer;
-        });
-        $customer->load('person', 'contract');
-
-        return new CustomerResource($customer);
-    }
-
-    /**
-     * @param AttachCustomerRequest $request
-     * @return CustomerResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function createFromPerson(AttachCustomerRequest $request): CustomerResource
-    {
-        $dto = $request->getDto();
-        $person = $this->personRepository->find($dto->person_id);
-        $customer = DB::transaction(function () use ($person) {
-            $customer = $this->customerRepository->create($person);
-            $this->contractRepository->create($customer->id);
-
-            return $customer;
-        });
-        $customer->load('person', 'contract');
-
-        return new CustomerResource($customer);
-    }
-
-    /**
-     * @param string $id
-     * @return CustomerResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function show(string $id): CustomerResource
-    {
-        $customer = $this->customerRepository->find($id);
-        $customer->load('person');
-
-        return new CustomerResource($customer);
-    }
-
-    /**
-     * @param string $id
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Exception
-     */
-    public function destroy(string $id): void
-    {
-        $customer = $this->customerRepository->find($id);
-        $this->customerRepository->delete($customer);
+    public function __construct() {
+        parent::__construct(
+            facadeClass: Component\Facade::class,
+            resourceClass: Component\Formatter::class,
+            searchRelations: ['classroom', 'instructor.person'],
+            singleRecordRelations: ['classroom', 'instructor.person'],
+        );
     }
 }

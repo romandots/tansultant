@@ -10,67 +10,74 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\ContractResource;
-use App\Repository\ContractRepository;
-use App\Repository\CustomerRepository;
-use App\Services\Contract\ContractService;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Components\Contract as Component;
+use App\Components\Loader;
+use App\Http\Requests\ManagerApi\StoreContractRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class ContractController extends Controller
+/**
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection _search(\App\Common\Requests\SearchRequest $request)
+ * @method array suggest(\App\Common\Requests\SuggestRequest $request)
+ * @method Component\Formatter show(string $id)
+ * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
+ * @method Component\Formatter _update(string $id, \App\Common\Requests\StoreRequest $request)
+ * @method void destroy(string $id, \Illuminate\Http\Request $request)
+ * @method void restore(string $id, \Illuminate\Http\Request $request)
+ * @method Component\Facade getFacade()
+ * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
+ */
+class ContractController extends \App\Common\Controllers\AdminController
 {
-    private ContractRepository $contractRepository;
-    private ContractService $contractService;
-    private CustomerRepository $customerRepository;
+    protected \App\Components\Customer\Facade $customers;
 
     public function __construct(
-        ContractService $contractService,
-        ContractRepository $contractRepository,
-        CustomerRepository $customerRepository
     ) {
-        $this->contractService = $contractService;
-        $this->contractRepository = $contractRepository;
-        $this->customerRepository = $customerRepository;
+        parent::__construct(
+            facadeClass: Component\Facade::class,
+            resourceClass: Component\Formatter::class,
+            searchRelations: ['customer.person', 'student.person'],
+            singleRecordRelations: ['customer.person', 'student.person'],
+        );
+        $this->customers = Loader::customers();
     }
 
-    /**
-     * @param string $customerId
-     * @return ContractResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function show(string $customerId): ContractResource
+    public function store(StoreContractRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $contract = $this->contractRepository->findByCustomerId($customerId);
-        $contract->load('customer');
+        return $this->_store($request);
+    }
 
-        return new ContractResource($contract);
+    public function update(string $id, StoreContractRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    {
+        return $this->_update($id, $request);
     }
 
     /**
      * @param string $customerId
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \App\Services\Contract\Exceptions\ContractAlreadySignedException
+     * @return void
+     * @throws ModelNotFoundException
      */
     public function sign(string $customerId): void
     {
-        $customer = $this->customerRepository->find($customerId);
+        $customer = $this->customers->find($customerId);
         if (null === $customer->contract) {
-            throw new NotFoundHttpException('contract_not_found');
+            throw new ModelNotFoundException('contract_not_found');
         }
-        $this->contractService->sign($customer->contract);
+        $this->getFacade()->sign($customer->contract);
     }
 
     /**
      * @param string $customerId
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \App\Services\Contract\Exceptions\ContractAlreadyTerminatedException
+     * @return void
+     * @throws ModelNotFoundException
      */
     public function terminate(string $customerId): void
     {
-        $customer = $this->customerRepository->find($customerId);
+        $customer = $this->customers->find($customerId);
         if (null === $customer->contract) {
-            throw new NotFoundHttpException('contract_not_found');
+            throw new ModelNotFoundException('contract_not_found');
         }
-        $this->contractService->terminate($customer->contract);
+        $this->getFacade()->terminate($customer->contract);
     }
 }

@@ -10,104 +10,64 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Requests\ManagerApi\FilterCoursesRequest;
+use App\Common\Controllers\AdminController;
+use App\Components\Course as Component;
 use App\Http\Requests\ManagerApi\StoreCourseRequest;
-use App\Http\Requests\ManagerApi\StoreCourseRequest as UpdateCourseRequest;
-use App\Http\Resources\CourseResource;
-use App\Repository\CourseRepository;
-use App\Services\Course\CourseService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class CourseController
+/**
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection _search(\App\Common\Requests\SearchRequest $request)
+ * @method array suggest(\App\Common\Requests\SuggestRequest $request)
+ * @method Component\Formatter show(string $id)
+ * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
+ * @method Component\Formatter _update(string $id, \App\Common\Requests\StoreRequest $request)
+ * @method void destroy(string $id, \Illuminate\Http\Request $request)
+ * @method void restore(string $id, \Illuminate\Http\Request $request)
+ * @method Component\Facade getFacade()
+ * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
+ */
+class CourseController extends AdminController
 {
-    protected CourseRepository $repository;
-    protected CourseService $service;
-
-    public function __construct(CourseRepository $repository, CourseService $service)
-    {
-        $this->repository = $repository;
-        $this->service = $service;
-    }
-
-    public function index(FilterCoursesRequest $request): AnonymousResourceCollection
-    {
-        $filter = $request->getDto();
-        [$count, $records] = $this->repository->getAllFilteredPaginated($filter);
-
-        return CourseResource::collection($records)->additional(
-            [
-                'meta' =>\format_pagination($filter->page, $filter->perPage, $count)
-            ]
+    public function __construct() {
+        parent::__construct(
+            facadeClass: Component\Facade::class,
+            resourceClass: Component\Formatter::class,
+            searchRelations: ['classroom', 'instructor.person'],
+            singleRecordRelations: ['classroom', 'instructor.person'],
         );
     }
 
-    public function show(string $id): CourseResource
+    public function store(StoreCourseRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $course = $this->repository->find($id);
-        $course->load('instructor');
-
-        return new CourseResource($course);
+        return $this->_store($request);
     }
 
-    /**
-     * @param StoreCourseRequest $request
-     * @return CourseResource
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
-    public function store(StoreCourseRequest $request): CourseResource
+    public function update(string $id, StoreCourseRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $course = $this->service->create($request->getDto(), $request->user());
-
-        return new CourseResource($course);
-    }
-
-    /**
-     * @param UpdateCourseRequest $request
-     * @param string $id
-     * @return CourseResource
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function update(UpdateCourseRequest $request, string $id): CourseResource
-    {
-        $course = $this->repository->find($id);
-        $this->service->update($course, $request->getDto(), $request->user());
-
-        return new CourseResource($course);
+        return $this->_update($id, $request);
     }
 
     /**
      * @param Request $request
      * @param string $id
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @return void
      * @throws \Exception
-     */
-    public function destroy(Request $request, string $id): void
-    {
-        $course = $this->repository->find($id);
-        $this->service->delete($course, $request->user());
-    }
-
-    /**
-     * @param Request $request
-     * @param string $id
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function disable(Request $request, string $id): void
     {
-        $course = $this->repository->find($id);
-        $this->service->disable($course, $request->user());
+        $this->getFacade()->disable($id, $request->user());
     }
 
     /**
      * @param Request $request
      * @param string $id
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @return void
+     * @throws \Exception
      */
     public function enable(Request $request, string $id): void
     {
-        $course = $this->repository->find($id);
-        $this->service->disable($course, $request->user());
+        $this->getFacade()->enable($id, $request->user());
     }
 }

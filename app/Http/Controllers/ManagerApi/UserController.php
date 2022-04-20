@@ -1,111 +1,44 @@
 <?php
-/**
- * File: UserController.php
- * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-20
- * Copyright (c) 2019
- */
 
 declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\ManagerApi\AttachUserRequest;
+use App\Common\Controllers\AdminController;
+use App\Components\User as Component;
 use App\Http\Requests\ManagerApi\StoreUserRequest;
-use App\Http\Requests\ManagerApi\UpdateUserRequest;
-use App\Http\Resources\UserResource;
-use App\Models\User;
-use App\Repository\PersonRepository;
-use App\Repository\UserRepository;
-use App\Services\User\UserService;
-use Illuminate\Support\Facades\DB;
 
-class UserController extends Controller
+/**
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection search(\App\Common\Requests\SearchRequest $request)
+ * @method array suggest(\App\Common\Requests\SuggestRequest $request)
+ * @method Component\Formatter show(string $id)
+ * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
+ * @method Component\Formatter _update(string $id, \App\Common\Requests\StoreRequest $request)
+ * @method void destroy(string $id, \Illuminate\Http\Request $request)
+ * @method void restore(string $id, \Illuminate\Http\Request $request)
+ * @method Component\Facade getFacade()
+ * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
+ */
+class UserController extends AdminController
 {
-    private PersonRepository $personRepository;
-
-    private UserRepository $userRepository;
-
-    private UserService $userService;
-
-    public function __construct(
-        UserRepository $userRepository,
-        PersonRepository $personRepository,
-        UserService $userService
-    ) {
-        $this->userRepository = $userRepository;
-        $this->personRepository = $personRepository;
-        $this->userService = $userService;
+    public function __construct() {
+        parent::__construct(
+            facadeClass: Component\Facade::class,
+            resourceClass: Component\Formatter::class,
+            searchRelations: [],
+            singleRecordRelations: [],
+        );
     }
 
-    /**
-     * @param StoreUserRequest $request
-     * @return UserResource
-     */
-    public function store(StoreUserRequest $request): UserResource
+    public function store(StoreUserRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $userDto = $request->getUserDto();
-        $personDto = $request->getPersonDto();
-
-        $user = $this->userService->createUser($userDto, $personDto);
-        $user->load('person');
-
-        return new UserResource($user);
+        return $this->_store($request);
     }
 
-    /**
-     * @param AttachUserRequest $request
-     * @return UserResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Exception
-     */
-    public function createFromPerson(AttachUserRequest $request): UserResource
+    public function update(string $id, StoreUserRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $dto = $request->getDto();
-        $person = $this->personRepository->find($dto->person_id);
-        $user = $this->userService->createUserForExistingPerson($person, $dto);
-        $user->load('person');
-
-        return new UserResource($user);
-    }
-
-    /**
-     * @param string $id
-     * @return UserResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function show(string $id): UserResource
-    {
-        $user = $this->userRepository->find($id);
-        $user->load('person');
-
-        return new UserResource($user);
-    }
-
-    /**
-     * @param string $id
-     * @param UpdateUserRequest $request
-     * @return UserResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function update(string $id, UpdateUserRequest $request): UserResource
-    {
-        $user = $this->userRepository->find($id);
-        $this->userService->update($user, $request->getDto());
-        $user->load('person');
-
-        return new UserResource($user);
-    }
-
-    /**
-     * @param string $id
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Exception
-     */
-    public function destroy(string $id): void
-    {
-        $user = $this->userRepository->find($id);
-        $this->userService->delete($user);
+        return $this->_update($id, $request);
     }
 }

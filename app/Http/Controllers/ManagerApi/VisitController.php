@@ -1,69 +1,44 @@
 <?php
-/**
- * File: VisitController.php
- * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-26
- * Copyright (c) 2019
- */
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\ManagerApi\StoreLessonVisitRequest;
-use App\Http\Resources\VisitResource;
-use App\Repository\VisitRepository;
-use App\Services\Visit\VisitService;
+use App\Common\Controllers\AdminController;
+use App\Components\Visit as Component;
+use App\Http\Requests\ManagerApi\StoreVisitRequest;
 
 /**
- * Class VisitController
- * @package App\Http\Controllers\Api
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection search(\App\Common\Requests\SearchRequest $request)
+ * @method array suggest(\App\Common\Requests\SuggestRequest $request)
+ * @method Component\Formatter show(string $id)
+ * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
+ * @method Component\Formatter _update(string $id, \App\Common\Requests\StoreRequest $request)
+ * @method void destroy(string $id, \Illuminate\Http\Request $request)
+ * @method void restore(string $id, \Illuminate\Http\Request $request)
+ * @method Component\Facade getFacade()
+ * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
  */
-class VisitController extends Controller
+class VisitController extends AdminController
 {
-    private VisitRepository $repository;
-    private VisitService $service;
-
-    public function __construct(VisitRepository $repository, VisitService $service)
-    {
-        $this->repository = $repository;
-        $this->service = $service;
+    public function __construct() {
+        parent::__construct(
+            facadeClass: Component\Facade::class,
+            resourceClass: Component\Formatter::class,
+            searchRelations: [],
+            singleRecordRelations: [],
+        );
     }
 
-    /**
-     * @param StoreLessonVisitRequest $request
-     * @return VisitResource
-     * @throws \App\Services\Account\Exceptions\InsufficientFundsAccountServiceException
-     */
-    public function createLessonVisit(StoreLessonVisitRequest $request): VisitResource
+    public function store(StoreVisitRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $visit = $this->service->createLessonVisit($request->getDto(), $request->user());
-        $visit->load('event', 'student', 'manager', 'payment');
-
-        return new VisitResource($visit);
+        return $this->_store($request);
     }
 
-    /**
-     * @param string $id
-     * @return VisitResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function show(string $id): VisitResource
+    public function update(string $id, StoreVisitRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $visit = $this->repository->find($id);
-        $visit->load('event', 'student', 'manager');
-
-        return new VisitResource($visit);
-    }
-
-    /**
-     * @param string $id
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Exception
-     */
-    public function destroy(string $id): void
-    {
-        $visit = $this->repository->find($id);
-        $this->service->delete($visit);
+        return $this->_update($id, $request);
     }
 }

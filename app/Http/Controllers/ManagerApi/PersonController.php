@@ -1,97 +1,50 @@
 <?php
-/**
- * File: PersonController.php
- * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-17
- * Copyright (c) 2019
- */
 
 declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Controllers\Controller;
-use App\Services\Person\PersonService;
+use App\Common\Controllers\AdminController;
+use App\Components\Person as Component;
 use App\Http\Requests\ManagerApi\SearchPeopleRequest;
 use App\Http\Requests\ManagerApi\StorePersonRequest;
-use App\Http\Requests\ManagerApi\StorePersonRequest as UpdatePersonRequest;
-use App\Http\Resources\PersonResource;
-use App\Repository\PersonRepository;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
- * @todo test picture upload
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
+ * @method array suggest(\App\Common\Requests\SuggestRequest $request)
+ * @method Component\Formatter show(string $id)
+ * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
+ * @method Component\Formatter _update(string $id, \App\Common\Requests\StoreRequest $request)
+ * @method void destroy(string $id, \Illuminate\Http\Request $request)
+ * @method void restore(string $id, \Illuminate\Http\Request $request)
+ * @method Component\Facade getFacade()
+ * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
  */
-class PersonController extends Controller
+class PersonController extends AdminController
 {
-    private PersonRepository $personRepository;
-    private PersonService $personService;
-
-    public function __construct(PersonRepository $personRepository, PersonService $personService)
-    {
-        $this->personRepository = $personRepository;
-        $this->personService = $personService;
+    public function __construct() {
+        parent::__construct(
+            facadeClass: Component\Facade::class,
+            resourceClass: Component\Formatter::class,
+            searchRelations: [],
+            singleRecordRelations: [],
+        );
     }
 
-    /**
-     * @param StorePersonRequest $request
-     * @return PersonResource
-     * @throws \Exception
-     */
-    public function store(StorePersonRequest $request): PersonResource
+    public function store(StorePersonRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $person = $this->personRepository->createFromDto($request->getDto());
-
-        return new PersonResource($person);
+        return $this->_store($request);
     }
 
-    /**
-     * @param SearchPeopleRequest $request
-     * @return AnonymousResourceCollection
-     */
-    public function index(SearchPeopleRequest $request): AnonymousResourceCollection
+    public function update(string $id, StorePersonRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $searchPeople = $request->getDto();
-        $people = $this->personRepository->findFilteredPaginated($searchPeople);
-        $meta = $this->personService->getMeta($searchPeople);
-
-        return PersonResource::collection($people)->additional(['meta' => $meta]);
+        return $this->_update($id, $request);
     }
 
-    /**
-     * @param string $id
-     * @return PersonResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function show(string $id): PersonResource
+    public function search(SearchPeopleRequest $request): AnonymousResourceCollection
     {
-        $person = $this->personRepository->find($id);
-
-        return new PersonResource($person);
-    }
-
-    /**
-     * @param string $id
-     * @param UpdatePersonRequest $request
-     * @return PersonResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function update(string $id, UpdatePersonRequest $request): PersonResource
-    {
-        $person = $this->personRepository->find($id);
-        $this->personRepository->update($person, $request->getDto());
-
-        return new PersonResource($person);
-    }
-
-    /**
-     * @param string $id
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Exception
-     */
-    public function destroy(string $id): void
-    {
-        $person = $this->personRepository->find($id);
-        $this->personRepository->delete($person);
+        return $this->_search($request);
     }
 }

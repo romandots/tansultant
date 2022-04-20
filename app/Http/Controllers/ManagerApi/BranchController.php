@@ -10,83 +10,41 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Controllers\Controller;
+use App\Common\Controllers\AdminController;
+use App\Components\Branch as Component;
 use App\Http\Requests\ManagerApi\StoreBranchRequest;
-use App\Http\Resources\ManagerApi\BranchResource;
-use App\Repository\BranchRepository;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class BranchController extends Controller
+/**
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection _search(\App\Common\Requests\SearchRequest $request)
+ * @method array suggest(\App\Common\Requests\SuggestRequest $request)
+ * @method Component\Formatter show(string $id)
+ * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
+ * @method Component\Formatter _update(string $id, \App\Common\Requests\StoreRequest $request)
+ * @method void destroy(string $id, \Illuminate\Http\Request $request)
+ * @method void restore(string $id, \Illuminate\Http\Request $request)
+ * @method Component\Facade getFacade()
+ * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
+ */
+class BranchController extends AdminController
 {
-    private BranchRepository $repository;
-
-    public function __construct(BranchRepository $branchRepository)
-    {
-        $this->repository = $branchRepository;
+    public function __construct() {
+        parent::__construct(
+            facadeClass: Component\Facade::class,
+            resourceClass: Component\Formatter::class,
+            searchRelations: ['classrooms'],
+            singleRecordRelations: ['classrooms'],
+        );
     }
 
-    public function index(): AnonymousResourceCollection
+    public function store(StoreBranchRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $branches = $this->repository->getAll();
-
-        return BranchResource::collection($branches);
+        return $this->_store($request);
     }
 
-    /**
-     * @param string $id
-     * @return BranchResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function show(string $id): BranchResource
+    public function update(string $id, StoreBranchRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $branch = $this->repository->find($id);
-
-        return new BranchResource($branch);
-    }
-
-    /**
-     * @param StoreBranchRequest $request
-     * @return BranchResource
-     * @throws \Exception
-     */
-    public function store(StoreBranchRequest $request): BranchResource
-    {
-        $branch = $this->repository->create($request->getDto());
-
-        return new BranchResource($branch);
-    }
-
-    /**
-     * @param StoreBranchRequest $request
-     * @param string $id
-     * @return BranchResource
-     * @throws \Exception
-     */
-    public function update(StoreBranchRequest $request, string $id): BranchResource
-    {
-        $branch = $this->repository->find($id);
-        $this->repository->update($branch, $request->getDto());
-
-        return new BranchResource($branch);
-    }
-
-    /**
-     * @param string $id
-     * @throws \Exception
-     */
-    public function destroy(string $id): void
-    {
-        $branch = $this->repository->find($id);
-        $this->repository->delete($branch);
-    }
-
-    /**
-     * @param string $id
-     * @throws \Exception
-     */
-    public function restore(string $id): void
-    {
-        $record = $this->repository->findWithDeleted($id);
-        $this->repository->restore($record);
+        return $this->_update($id, $request);
     }
 }

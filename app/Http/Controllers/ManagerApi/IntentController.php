@@ -1,63 +1,44 @@
 <?php
-/**
- * File: IntentController.php
- * Author: Roman Dots <ram.d.kreiz@gmail.com>
- * Date: 2019-07-28
- * Copyright (c) 2019
- */
 
 declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\ManagerApi\StoreLessonIntentRequest;
-use App\Http\Resources\IntentResource;
-use App\Repository\IntentRepository;
+use App\Common\Controllers\AdminController;
+use App\Components\Intent as Component;
+use App\Http\Requests\ManagerApi\StoreIntentRequest;
 
-class IntentController extends Controller
+/**
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection _search(\App\Common\Requests\SearchRequest $request)
+ * @method array suggest(\App\Common\Requests\SuggestRequest $request)
+ * @method Component\Formatter show(string $id)
+ * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
+ * @method Component\Formatter _update(string $id, \App\Common\Requests\StoreRequest $request)
+ * @method void destroy(string $id, \Illuminate\Http\Request $request)
+ * @method void restore(string $id, \Illuminate\Http\Request $request)
+ * @method Component\Facade getFacade()
+ * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
+ */
+class IntentController extends AdminController
 {
-    private IntentRepository $repository;
-
-    public function __construct(IntentRepository $repository)
-    {
-        $this->repository = $repository;
+    public function __construct() {
+        parent::__construct(
+            facadeClass: Component\Facade::class,
+            resourceClass: Component\Formatter::class,
+            searchRelations: [],
+            singleRecordRelations: [],
+        );
     }
 
-    /**
-     * @param StoreLessonIntentRequest $request
-     * @return IntentResource
-     * @throws \Exception
-     */
-    public function store(StoreLessonIntentRequest $request): IntentResource
+    public function store(StoreIntentRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $intent = $this->repository->createFromDto($request->getDto(), $request->user());
-        $intent->load('student', 'manager', 'event');
-
-        return new IntentResource($intent);
+        return $this->_store($request);
     }
 
-    /**
-     * @param string $id
-     * @return IntentResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function show(string $id): IntentResource
+    public function update(string $id, StoreIntentRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $intent = $this->repository->find($id);
-        $intent->load('student', 'manager', 'event');
-
-        return new IntentResource($intent);
-    }
-
-    /**
-     * @param string $id
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Exception
-     */
-    public function destroy(string $id): void
-    {
-        $intent = $this->repository->find($id);
-        $this->repository->delete($intent);
+        return $this->_update($id, $request);
     }
 }

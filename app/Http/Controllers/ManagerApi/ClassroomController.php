@@ -10,55 +10,43 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Controllers\AdminController;
+use App\Common\Controllers\AdminController;
+use App\Common\Requests\SuggestRequest;
+use App\Components\Classroom as Component;
 use App\Http\Requests\ManagerApi\StoreClassroomRequest;
-use App\Http\Requests\ManagerApi\StoreClassroomRequest as UpdateClassroomRequest;
-use App\Http\Requests\ManagerApi\SuggestRequest;
-use App\Http\Resources\ManagerApi\ClassroomResource;
 use App\Models\Classroom;
-use App\Repository\ClassroomRepository;
-use App\Services\BaseFacade;
-use App\Services\Classroom\ClassroomFacade;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Collection;
-use JetBrains\PhpStorm\Pure;
 
+/**
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection _search(\App\Common\Requests\SearchRequest $request)
+ * @method Component\Formatter show(string $id)
+ * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
+ * @method Component\Formatter _update(string $id, \App\Common\Requests\StoreRequest $request)
+ * @method void destroy(string $id, \Illuminate\Http\Request $request)
+ * @method void restore(string $id, \Illuminate\Http\Request $request)
+ * @method Component\Facade getFacade()
+ * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
+ */
 class ClassroomController extends AdminController
 {
-    private ClassroomFacade $facade;
-
-    public function __construct(ClassroomFacade $facade)
-    {
-        $this->facade = $facade;
+    public function __construct() {
+        parent::__construct(
+            facadeClass: Component\Facade::class,
+            resourceClass: Component\Formatter::class,
+            searchRelations: ['person'],
+            singleRecordRelations: ['person'],
+        );
     }
 
-    public function getFacade(): BaseFacade
+    public function store(StoreClassroomRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        return $this->facade;
+        return $this->_store($request);
     }
 
-    #[Pure] public function makeResource(Model $record): JsonResource
+    public function update(string $id, StoreClassroomRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        return new ClassroomResource($record);
-    }
-
-    public function makeResourceCollection(Collection $collection): AnonymousResourceCollection
-    {
-        return ClassroomResource::collection($collection);
-    }
-
-    public function store(StoreClassroomRequest $request): JsonResource
-    {
-        $record = $this->facade->create($request->getDto());
-        return $this->makeResource($record);
-    }
-
-    public function update(UpdateClassroomRequest $request, string $id): JsonResource
-    {
-        $record = $this->facade->findAndUpdate($id, $request->getDto());
-        return $this->makeResource($record);
+        return $this->_update($id, $request);
     }
 
     public function suggest(SuggestRequest $request): array
@@ -69,7 +57,7 @@ class ClassroomController extends AdminController
             },
             'branch_id' => 'branch_id',
         ];
-        return $this->facade->suggest(
+        return $this->getFacade()->suggest(
             $request->getQuery(),
             function(Classroom $classroom) {
                 return sprintf('%s (%s)', $classroom->name, $classroom->branch->name);

@@ -10,113 +10,65 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\ManagerApi;
 
-use App\Http\Controllers\AdminController;
-use App\Http\Requests\ManagerApi\ChangeLessonInstructorRequest;
-use App\Http\Requests\ManagerApi\LessonsFilteredRequest;
-use App\Http\Requests\ManagerApi\SearchLessonsRequest;
+use App\Common\Controllers\AdminController;
+use App\Components\Lesson as Component;
 use App\Http\Requests\ManagerApi\StoreLessonRequest;
-use App\Http\Requests\ManagerApi\StoreLessonRequest as UpdateLessonRequest;
-use App\Http\Resources\ManagerApi\LessonResource;
-use App\Services\BaseFacade;
-use App\Services\Lesson\LessonFacade;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Collection;
 
+/**
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection _search(\App\Common\Requests\SearchRequest $request)
+ * @method array suggest(\App\Common\Requests\SuggestRequest $request)
+ * @method Component\Formatter show(string $id)
+ * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
+ * @method Component\Formatter _update(string $id, \App\Common\Requests\StoreRequest $request)
+ * @method void destroy(string $id, \Illuminate\Http\Request $request)
+ * @method void restore(string $id, \Illuminate\Http\Request $request)
+ * @method Component\Facade getFacade()
+ * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
+ */
 class LessonController extends AdminController
 {
-    protected LessonFacade $lessons;
-
-    public function __construct(LessonFacade $lessons)
-    {
-        $this->lessons = $lessons;
+    public function __construct() {
+        parent::__construct(
+            facadeClass: Component\Facade::class,
+            resourceClass: Component\Formatter::class,
+            searchRelations: [],
+            singleRecordRelations: [],
+        );
     }
 
-    public function getFacade(): BaseFacade
+    public function store(StoreLessonRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        return $this->lessons;
+        return $this->_store($request);
     }
 
-    public function makeResource(Model $record): JsonResource
+    public function update(string $id, StoreLessonRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        return new LessonResource($record);
+        return $this->_update($id, $request);
     }
 
-    public function makeResourceCollection(Collection $collection): AnonymousResourceCollection
+    public function close(string $id): Component\Formatter
     {
-        return LessonResource::collection($collection);
+        $lesson = $this->getFacade()->findAndClose($id);
+        return $this->makeResource($lesson);
     }
 
-    protected function getSearchRelations(): array
+    public function open(string $id): Component\Formatter
     {
-        return ['course', 'classroom', 'instructor'];
+        $lesson = $this->getFacade()->findAndOpen($id);
+        return $this->makeResource($lesson);
     }
 
-    /**
-     * @param StoreLessonRequest $request
-     * @return LessonResource
-     * @throws \Exception
-     */
-    public function store(StoreLessonRequest $request): LessonResource
+    public function cancel(string $id): Component\Formatter
     {
-        $lesson = $this->lessons->createFromDto($request->getDto());
-        return new LessonResource($lesson);
+        $lesson = $this->getFacade()->findAndCancel($id);
+        return $this->makeResource($lesson);
     }
 
-    public function update(UpdateLessonRequest $request, string $id): LessonResource
+    public function book(string $id): Component\Formatter
     {
-        $lesson = $this->lessons->findAndUpdate($id, $request->getDto());
-        return new LessonResource($lesson);
-    }
-
-    public function changeInstructor(ChangeLessonInstructorRequest $request, string $id): LessonResource
-    {
-        $lesson = $this->lessons->findAndChangeInstructor($id, $request->instructor_id);
-        return new LessonResource($lesson);
-    }
-
-    /**
-     * @param string $id
-     * @return LessonResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function close(string $id): LessonResource
-    {
-        $lesson = $this->lessons->findAndClose($id);
-        return new LessonResource($lesson);
-    }
-
-    /**
-     * @param string $id
-     * @return LessonResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function open(string $id): LessonResource
-    {
-        $lesson = $this->lessons->findAndOpen($id);
-        return new LessonResource($lesson);
-    }
-
-    /**
-     * @param string $id
-     * @return LessonResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function cancel(string $id): LessonResource
-    {
-        $lesson = $this->lessons->findAndCancel($id);
-        return new LessonResource($lesson);
-    }
-
-    /**
-     * @param string $id
-     * @return LessonResource
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function book(string $id): LessonResource
-    {
-        $lesson = $this->lessons->findAndBook($id);
-        return new LessonResource($lesson);
+        $lesson = $this->getFacade()->findAndBook($id);
+        return $this->makeResource($lesson);
     }
 }
