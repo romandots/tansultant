@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Common\Traits\WithLogger;
 use App\Components\Lesson\Facade;
-use App\Services\WithLogger;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
