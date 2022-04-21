@@ -10,29 +10,15 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi\DTO;
 
-/**
- * Class LessonsOnDate
- * @package App\Http\Requests\ManagerApi\DTO
- */
-class LessonsFiltered
+use App\Common\DTO\DtoWIthUser;
+
+class LessonsFiltered extends DtoWIthUser
 {
-    /**
-     * @var \Carbon\Carbon
-     */
     public \Carbon\Carbon $date;
 
-    /**
-     * @var string|null
-     */
     public ?string $branch_id;
 
-    /**
-     * @var string|null
-     */
     public ?string $classroom_id;
 
-    /**
-     * @var string|null
-     */
     public ?string $course_id;
 }

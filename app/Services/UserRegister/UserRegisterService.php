@@ -17,7 +17,7 @@ use App\Events\InstructorCreatedEvent;
 use App\Events\StudentCreatedEvent;
 use App\Events\UserCreatedEvent;
 use App\Events\UserRegisteredEvent;
-use App\Http\Requests\DTO\RegisterUser;
+use App\Http\Requests\Auth\DTO\RegisterUser;
 use App\Models\Enum\InstructorStatus;
 use App\Models\Enum\UserType;
 use App\Models\Person;

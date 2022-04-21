@@ -8,18 +8,13 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\DTO;
+namespace App\Http\Requests\Auth\DTO;
 
-/**
- * Class RegisterUser
- * @package App\Http\Requests\DTO
- */
+use App\Models\Enum\Gender;
+use App\Models\Enum\UserType;
+
 class RegisterUser
 {
-    public const TYPE_INSTRUCTOR = 'Instructor';
-    public const TYPE_STUDENT = 'Student';
-    public const TYPE_USER = 'User';
-
     public string $last_name;
 
     public string $first_name;
@@ -28,9 +23,9 @@ class RegisterUser
 
     public \Carbon\Carbon $birth_date;
 
-    public string $gender;
+    public Gender $gender;
 
-    public string $phone;
+    public ?string $phone;
 
     public ?string $email;
 
@@ -41,7 +36,9 @@ class RegisterUser
      */
     public ?string $description = null;
 
-    public string $user_type;
+    public UserType $user_type;
 
     public string $password;
+
+    public ?string $verification_code;
 }

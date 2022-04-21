@@ -6,14 +6,20 @@
  * Copyright (c) 2021
  */
 
-namespace App\Http\Requests\DTO;
+namespace App\Common\DTO;
 
-use App\Http\Requests\DTO\Contracts\FilteredInterface;
+use App\Common\Contracts\FilteredInterface;
 
-class FilteredDto implements FilteredInterface
+class FilteredDtoWithUser implements FilteredInterface, \App\Common\Contracts\DtoWithUser
 {
+    public ?\App\Models\User $user;
     public ?string $query;
     public bool $with_deleted = false;
+
+    public function __construct(?\App\Models\User $user = null)
+    {
+        $this->user = $user;
+    }
 
     public function getQuery(): ?string
     {
@@ -28,5 +34,10 @@ class FilteredDto implements FilteredInterface
     public function withDeleted(): bool
     {
         return $this->with_deleted;
+    }
+
+    public function getUser(): \App\Models\User
+    {
+        return $this->user;
     }
 }

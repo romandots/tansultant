@@ -3,9 +3,9 @@
 namespace App\Common;
 
 use App\Common\Contracts\PaginatedInterface;
+use App\Common\DTO\FilteredDtoWithUser;
 use App\Common\Traits\WithCache;
 use App\Components\Loader;
-use App\Http\Requests\DTO\FilteredDtoWithUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 

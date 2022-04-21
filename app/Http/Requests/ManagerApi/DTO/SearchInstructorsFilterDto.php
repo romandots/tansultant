@@ -8,9 +8,9 @@
 
 namespace App\Http\Requests\ManagerApi\DTO;
 
-use App\Http\Requests\DTO\FilteredDto;
+use App\Common\DTO\FilteredDtoWithUser;
 
-class SearchInstructorsFilterDto extends FilteredDto
+class SearchInstructorsFilterDto extends FilteredDtoWithUser
 {
     /** @var string[]|null  */
     public ?array $statuses;

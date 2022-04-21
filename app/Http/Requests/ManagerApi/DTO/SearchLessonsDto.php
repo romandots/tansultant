@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\ManagerApi\DTO;
 
-use App\Http\Requests\DTO\FilteredPaginatedDto;
+use App\Common\DTO\FilteredPaginatedDto;
 
 class SearchLessonsDto extends FilteredPaginatedDto
 {

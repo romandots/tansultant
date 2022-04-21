@@ -8,10 +8,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\DTO;
+namespace App\Common\DTO;
 
-use App\Http\Requests\DTO\Contracts\FilteredInterface;
-use App\Http\Requests\DTO\Contracts\PaginatedInterface;
+use App\Common\Contracts\FilteredInterface;
+use App\Common\Contracts\PaginatedInterface;
 
 abstract class FilteredPaginatedDto implements PaginatedInterface
 {

@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Auth;
 
-use App\Http\Requests\DTO\RegisterUser;
+use App\Http\Requests\Auth\DTO\RegisterUser;
 use App\Models\Enum\UserType;
 use App\Models\VerificationCode;
 use App\Repository\VerificationCodeRepository;
