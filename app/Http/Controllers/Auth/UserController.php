@@ -11,19 +11,19 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Auth;
 
 use App\Components\Loader;
+use App\Components\User\Formatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ManagerApi\UpdateUserPasswordRequest;
-use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function me(Request $request): UserResource
+    public function me(Request $request): Formatter
     {
         $user = $request->user();
         $user->load('person');
 
-        return new UserResource($user);
+        return new Formatter($user);
     }
 
     public function updatePassword(UpdateUserPasswordRequest $request): void
