@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Components\Student;
 
+use App\Common\Contracts;
+use App\Components\Loader;
 use App\Models\Enum\StudentStatus;
 use App\Models\Person;
 use App\Models\Student;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @method Repository getRepository()
@@ -21,6 +24,17 @@ class Service extends \App\Common\BaseComponentService
             Dto::class,
             null
         );
+    }
+
+    /**
+     * @param Dto $dto
+     * @return Model
+     * @throws \Throwable
+     */
+    public function create(Contracts\DtoWithUser $dto): Model
+    {
+        $person = Loader::people()->find($dto->person_id);
+        return $this->createFromPerson($dto, $person);
     }
 
     /**

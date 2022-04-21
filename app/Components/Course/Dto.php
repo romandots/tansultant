@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Components\Course;
 
 use App\Models\Enum\CourseStatus;
-use App\Models\Instructor;
 use JetBrains\PhpStorm\ArrayShape;
 
 class Dto extends \App\Common\DTO\DtoWIthUser
@@ -18,7 +17,7 @@ class Dto extends \App\Common\DTO\DtoWIthUser
     #[ArrayShape(['from' => "int", 'to' => "int"])] public array $age_restrictions;
     public ?\Illuminate\Http\UploadedFile $picture = null;
     public CourseStatus $status;
-    public ?Instructor $instructor;
+    public ?string $instructor_id;
     public ?\Carbon\Carbon $starts_at = null;
     public ?\Carbon\Carbon $ends_at = null;
     public array $genres = [];
