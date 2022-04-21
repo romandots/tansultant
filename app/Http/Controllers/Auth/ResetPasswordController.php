@@ -14,9 +14,9 @@ class ResetPasswordController extends Controller
      * @param PasswordResetService $service
      * @param ResetPasswordRequest $request
      * @return \Illuminate\Http\JsonResponse
-     * @throws \App\Services\Verify\Exceptions\VerificationCodeAlreadySentRecently
-     * @throws \App\Services\Verify\Exceptions\VerificationCodeIsInvalid
-     * @throws \App\Services\Verify\Exceptions\VerificationCodeWasSentTooManyTimes
+     * @throws \App\Services\Verification\Exception\VerificationCodeAlreadySentRecently
+     * @throws \App\Services\Verification\Exception\VerificationCodeIsInvalid
+     * @throws \App\Services\Verification\Exception\VerificationCodeWasSentTooManyTimes
      * @throws UserHasNoPerson
      * @throws \Exception
      */

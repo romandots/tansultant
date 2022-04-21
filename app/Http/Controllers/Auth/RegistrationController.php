@@ -10,11 +10,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Components\User\Formatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterUserRequest;
-use App\Http\Resources\UserResource;
 use App\Services\UserRegister\UserRegisterService;
-use App\Services\Verify\Exceptions\VerificationCodeIsInvalid;
 
 /**
  * Class RegistrationController
@@ -22,12 +21,6 @@ use App\Services\Verify\Exceptions\VerificationCodeIsInvalid;
  */
 class RegistrationController extends Controller
 {
-    private UserRegisterService $registrationService;
-
-    public function __construct(UserRegisterService $userRegistrationService) {
-        $this->registrationService = $userRegistrationService;
-    }
-
     /**
      * Самостоятельная регистрация всех пользователей (менеджеров, преподавателей, студентов)
      * осуществляется через этот метод с указанием типа пользователя
@@ -37,16 +30,16 @@ class RegistrationController extends Controller
      * Будут запушены события UserRegisteredEvent, UserCreatedEvent,
      * InstructorCreatedEvent (при необходимости) и StudentCreatedEvent (при необходимости)
      *
+     * @param UserRegisterService $registrationService
      * @param RegisterUserRequest $request
-     * @return UserResource|\Illuminate\Http\JsonResponse
-     * @throws VerificationCodeIsInvalid
-     * @throws \Exception
+     * @return Formatter
+     * @throws \Throwable
      */
-    public function registerUser(RegisterUserRequest $request)
+    public function registerUser(UserRegisterService $registrationService, RegisterUserRequest $request): Formatter
     {
         $registerUser = $request->getDto();
-        $newUser = $this->registrationService->registerUser($registerUser);
+        $newUser = $registrationService->registerUser($registerUser);
 
-        return new UserResource($newUser);
+        return new Formatter($newUser);
     }
 }
