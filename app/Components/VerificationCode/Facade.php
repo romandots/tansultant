@@ -27,6 +27,11 @@ class Facade extends BaseComponentFacade
         parent::__construct(Service::class);
     }
 
+    /**
+     * @param $id
+     * @return VerificationCode
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
+     */
     public function findVerifiedById($id): VerificationCode
     {
         return $this->getRepository()->findVerifiedById($id);

@@ -91,6 +91,7 @@ abstract class BaseComponentFacade extends BaseFacade
      * @param \App\Common\Contracts\DtoWithUser $dto
      * @param array $relations
      * @return Model
+     * @throws \Throwable
      */
     public function create(Contracts\DtoWithUser $dto, array $relations = []): Model
     {
@@ -123,6 +124,7 @@ abstract class BaseComponentFacade extends BaseFacade
      *
      * @param string $id
      * @param array $relations
+     * @param \App\Models\User $user
      * @return Model
      * @throws \Throwable
      */
@@ -142,6 +144,7 @@ abstract class BaseComponentFacade extends BaseFacade
      * @param \App\Common\Contracts\DtoWithUser $dto
      * @param array $relations
      * @return Model
+     * @throws \Throwable
      */
     public function findAndUpdate(string $id, Contracts\DtoWithUser $dto, array $relations = []): Model
     {

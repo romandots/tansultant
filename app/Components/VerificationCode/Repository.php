@@ -46,7 +46,7 @@ class Repository extends \App\Common\BaseComponentRepository
     /**
      * @param $id
      * @return \Illuminate\Database\Eloquent\Model|VerificationCode
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
      */
     public function findVerifiedById($id): VerificationCode
     {

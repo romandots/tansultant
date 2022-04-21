@@ -6,13 +6,13 @@ namespace App\Exceptions;
 
 use App\Components\Schedule\Exceptions\ScheduleSlotIsOccupied;
 use App\Components\User\Exceptions\OldPasswordInvalidException;
-use App\Components\User\Exceptions\UserAlreadyRegisteredWithSamePhoneNumber;
 use App\Exceptions\Auth\UnauthorizedException;
 use App\Services\Course\Exceptions\InstructorStatusIncompatible;
 use App\Services\Login\Exceptions\UserNotFoundException;
 use App\Services\Login\Exceptions\WrongPasswordException;
 use App\Services\PasswordReset\Exceptions\UserHasNoPerson;
 use App\Services\UserRegister\Exceptions\UserAlreadyRegisteredWithOtherPhoneNumber;
+use App\Services\UserRegister\Exceptions\UserAlreadyRegisteredWithSamePhoneNumber;
 use App\Services\Verification\Exception\TextMessageSendingFailed;
 use App\Services\Verification\Exception\VerificationCodeAlreadySentRecently;
 use App\Services\Verification\Exception\VerificationCodeExpired;
