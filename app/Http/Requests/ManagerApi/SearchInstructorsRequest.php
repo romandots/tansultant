@@ -10,12 +10,13 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Http\Requests\DTO\Contracts\FilteredInterface;
+use App\Common\Contracts\FilteredInterface;
+use App\Common\Requests\FilteredPaginatedRequest;
 use App\Http\Requests\ManagerApi\DTO\SearchInstructorsFilterDto;
-use App\Models\Instructor;
+use App\Models\Enum\InstructorStatus;
 use Illuminate\Validation\Rule;
 
-class SearchInstructorsRequest extends FilteredPaginatedFormRequest
+class SearchInstructorsRequest extends FilteredPaginatedRequest
 {
     public function __construct()
     {
@@ -37,7 +38,7 @@ class SearchInstructorsRequest extends FilteredPaginatedFormRequest
                 'statuses.*' => [
                     'required_with:statuses',
                     'string',
-                    Rule::in(Instructor::STATUSES),
+                    Rule::in(InstructorStatus::cases()),
                 ],
                 'display' => [
                     'nullable',

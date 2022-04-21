@@ -15,7 +15,6 @@ use App\Models\Branch;
 use App\Models\Classroom;
 use App\Models\Course;
 use App\Models\Enum\Weekday;
-use App\Models\Schedule;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidDateException;
 use Illuminate\Foundation\Http\FormRequest;
@@ -77,9 +76,9 @@ class ScheduleOnDateRequest extends FormRequest
         }
 
 
-        $dto = new ScheduleOnDate;
+        $dto = new ScheduleOnDate($this->user());
         $dto->date = $date;
-        $dto->weekday = $weekday;
+        $dto->weekday = Weekday::from($weekday);
         $dto->branch_id = $validated['branch_id'] ?? null;
         $dto->classroom_id = $validated['classroom_id'] ?? null;
         $dto->course_id = $validated['course_id'] ?? null;

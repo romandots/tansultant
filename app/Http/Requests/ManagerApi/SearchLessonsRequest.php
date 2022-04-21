@@ -2,7 +2,15 @@
 
 namespace App\Http\Requests\ManagerApi;
 
-class SearchLessonsRequest extends FilteredPaginatedFormRequest
+use App\Common\Contracts\FilteredInterface;
+use App\Common\Requests\SearchRequest;
+use App\Http\Requests\ManagerApi\DTO\SearchInstructorsFilterDto;
+use App\Models\Branch;
+use App\Models\Classroom;
+use App\Models\Course;
+use Illuminate\Validation\Rule;
+
+class SearchLessonsRequest extends SearchRequest
 {
     public function __construct()
     {
@@ -15,7 +23,42 @@ class SearchLessonsRequest extends FilteredPaginatedFormRequest
     public function rules(): array
     {
         return array_merge(parent::rules(), [
-
+            'date' => [
+                'required',
+                'date'
+            ],
+            'branch_id' => [
+                'nullable',
+                'string',
+                'uuid',
+                Rule::exists(Branch::TABLE, 'id')
+            ],
+            'classroom_id' => [
+                'nullable',
+                'string',
+                'uuid',
+                Rule::exists(Classroom::TABLE, 'id')
+            ],
+            'course_id' => [
+                'nullable',
+                'string',
+                'uuid',
+                Rule::exists(Course::TABLE, 'id')
+            ],
         ]);
+    }
+
+    protected function getFilterDto(): FilteredInterface
+    {
+        $filter = parent::getFilterDto();
+        if (!$filter instanceof SearchInstructorsFilterDto) {
+            return $filter;
+        }
+
+        $validated = $this->validated();
+        $filter->statuses = isset($validated['statuses']) ? (array)$validated['statuses'] : null;
+        $filter->display = isset($validated['display']) ? (bool)$validated['display'] : null;
+
+        return $filter;
     }
 }

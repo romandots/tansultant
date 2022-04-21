@@ -10,12 +10,12 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Http\Requests\DTO\Contracts\FilteredInterface;
-use App\Models\Person;
+use App\Common\Contracts\FilteredInterface;
+use App\Common\Requests\SearchRequest;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
-class SearchPeopleRequest extends FilteredPaginatedFormRequest
+class SearchPeopleRequest extends SearchRequest
 {
     public function __construct()
     {
@@ -47,7 +47,7 @@ class SearchPeopleRequest extends FilteredPaginatedFormRequest
             'gender' => [
                 'nullable',
                 'string',
-                Rule::in(Person::GENDER)
+                Rule::in(\App\Models\Enum\Gender::cases())
             ],
         ]);
     }
