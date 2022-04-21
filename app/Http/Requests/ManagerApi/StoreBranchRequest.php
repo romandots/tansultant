@@ -10,20 +10,18 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
+use App\Common\Requests\StoreRequest;
+use App\Components\Branch\Dto;
+use App\Components\Loader;
 use App\Models\Branch;
-use App\Repository\BranchRepository;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * Class StoreBranchRequest
  * @package App\Http\Requests\ManagerApi
  */
-class StoreBranchRequest extends FormRequest
+class StoreBranchRequest extends StoreRequest
 {
-    /**
-     * @return array
-     */
     public function rules(): array
     {
         return [
@@ -106,15 +104,11 @@ class StoreBranchRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return DTO\StoreBranch
-     */
-    public function getDto(): DTO\StoreBranch
+    public function getDto(): Dto
     {
         $validated = $this->validated();
-        $dto = new DTO\StoreBranch;
+        $dto = new Dto($this->user());
 
-        $dto->user = $this->user();
         $dto->name = $validated['name'];
         $dto->summary = $validated['summary'] ?? null;
         $dto->description = $validated['description'] ?? null;
@@ -136,13 +130,11 @@ class StoreBranchRequest extends FormRequest
      */
     private function getNextNumberValue(): int
     {
-        /** @var BranchRepository $repository */
-        $repository = \app(BranchRepository::class);
-        return $repository->getNextNumberValue();
+        return Loader::branches()->getNextNumberValue();
     }
 
     protected function getId(): ?string
     {
-        return $this->route()->parameter('id');
+        return $this->route()?->parameter('id');
     }
 }

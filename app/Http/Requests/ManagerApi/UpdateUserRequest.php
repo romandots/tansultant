@@ -1,6 +1,6 @@
 <?php
 /**
- * File: UpdateUserRequest.php
+ * File: StoreUserRequest.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
  * Date: 2019-07-20
  * Copyright (c) 2019
@@ -10,14 +10,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use App\Common\Requests\StoreRequest;
+use App\Components\User\Dto;
 
-/**
- * Class UpdateUserRequest
- * @package App\Http\Requests\Api
- */
-class UpdateUserRequest extends FormRequest
+class UpdateUserRequest extends StoreRequest
 {
     /**
      * @return array
@@ -25,36 +21,29 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'password' => [
-                'nullable',
-                'string',
-                'min:6'
-            ],
-            'username' => [
-                'nullable',
-                'string',
-                'min:3',
-                Rule::unique(\App\Models\User::TABLE)->ignore($this->route('user'))
-            ],
             'name' => [
                 'nullable',
-                'string',
-                'min:2',
+                'string'
+            ],
+            'username' => [
+                'required',
+                'string'
+            ],
+            'password' => [
+                'required',
+                'string'
             ],
         ];
     }
 
-    /**
-     * @return DTO\UpdateUser
-     */
-    public function getDto(): DTO\UpdateUser
+    public function getDto(): \App\Common\Contracts\DtoWithUser
     {
         $validated = $this->validated();
 
-        $dto = new DTO\UpdateUser;
-        $dto->password = $validated['password'] ?? null;
+        $dto = new Dto($this->user());
+        $dto->username = $validated['username'];
+        $dto->password = $validated['password'];
         $dto->name = $validated['name'] ?? null;
-        $dto->username = $validated['username'] ?? null;
 
         return $dto;
     }

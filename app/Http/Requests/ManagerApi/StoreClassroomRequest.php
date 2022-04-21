@@ -10,16 +10,16 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Http\Requests\PublicApi\DTO;
+use App\Common\Requests\StoreRequest;
+use App\Components\Classroom\Dto;
 use App\Models\Branch;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * Class StoreClassroomRequest
  * @package App\Http\Requests\PublicApi
  */
-class StoreClassroomRequest extends FormRequest
+class StoreClassroomRequest extends StoreRequest
 {
     /**
      * @return array
@@ -54,14 +54,11 @@ class StoreClassroomRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return \App\Http\Requests\ManagerApi\DTO\Classroom
-     */
-    public function getDto(): \App\Http\Requests\ManagerApi\DTO\Classroom
+    public function getDto(): Dto
     {
         $valid = $this->validated();
 
-        $dto = new \App\Http\Requests\ManagerApi\DTO\Classroom;
+        $dto = new Dto($this->user());
         $dto->name = $valid['name'];
         $dto->branch_id = $valid['branch_id'];
         $dto->color = $valid['color'] ?? null;

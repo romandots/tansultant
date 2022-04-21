@@ -10,31 +10,19 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Models\Course;
+use App\Common\Requests\StoreRequest;
+use App\Components\Course\Dto;
+use App\Models\Enum\CourseStatus;
 use App\Models\Instructor;
-use App\Repository\InstructorRepository;
 use Carbon\Carbon;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * Class StoreCourseRequest
  * @package App\Http\Requests\Api
  */
-class StoreCourseRequest extends FormRequest
+class StoreCourseRequest extends StoreRequest
 {
-    private InstructorRepository $instructorRepository;
-
-    /**
-     * StoreCourseRequest constructor.
-     * @param InstructorRepository $instructorRepository
-     */
-    public function __construct(InstructorRepository $instructorRepository)
-    {
-        parent::__construct();
-        $this->instructorRepository = $instructorRepository;
-    }
-
     /**
      * @return array
      */
@@ -48,7 +36,7 @@ class StoreCourseRequest extends FormRequest
             'status' => [
                 'nullable',
                 'string',
-                Rule::in(Course::STATUSES)
+                Rule::in(CourseStatus::cases())
             ],
             'summary' => [
                 'nullable',
@@ -99,15 +87,15 @@ class StoreCourseRequest extends FormRequest
     }
 
     /**
-     * @return DTO\StoreCourse
+     * @return Dto
      */
-    public function getDto(): DTO\StoreCourse
+    public function getDto(): Dto
     {
         $validated = $this->validated();
 
-        $dto = new DTO\StoreCourse();
+        $dto = new Dto($this->user());
         $dto->name = $validated['name'];
-        $dto->status = $validated['status'] ?? Course::STATUS_PENDING;
+        $dto->status = $validated['status'] ?? CourseStatus::PENDING;
         $dto->summary = $validated['summary'] ?? null;
         $dto->description = $validated['description'] ?? null;
         $dto->display = (bool)($validated['display'] ?? false);
@@ -115,15 +103,11 @@ class StoreCourseRequest extends FormRequest
             'from' => isset($validated['age_restrictions_from']) ? (int)$validated['age_restrictions_from'] : null,
             'to' => isset($validated['age_restrictions_to']) ? (int)$validated['age_restrictions_to'] : null,
         ];
-        $dto->instructor = isset($validated['instructor_id']) ?
-            $this->instructorRepository->find($validated['instructor_id'])
-            : null;
         $dto->picture = $this->file('picture');
         $dto->instructor_id = $validated['instructor_id'] ?? null;
         $dto->starts_at = isset($validated['starts_at']) ? Carbon::parse($validated['starts_at']) : null;
         $dto->ends_at = isset($validated['ends_at']) ? Carbon::parse($validated['ends_at']) : null;
         $dto->genres = $validated['genres'] ?? [];
-        $dto->user = $this->user();
 
         return $dto;
     }

@@ -10,19 +10,14 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
+use App\Common\Requests\StoreRequest;
+use App\Components\Visit\Dto;
+use App\Models\Enum\VisitEventType;
 use App\Models\Lesson;
 use App\Models\Student;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-/**
- * Class StoreLessonVisitRequest
- * @package App\Http\Requests\Api
- * @property-read int $student_id
- * @property-read int $lesson_id
- * @property-read int $promocode_id
- */
-class StoreLessonVisitRequest extends FormRequest
+class StoreVisitRequest extends StoreRequest
 {
     /**
      * @return array
@@ -51,16 +46,14 @@ class StoreLessonVisitRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return DTO\StoreLessonVisit
-     */
-    public function getDto(): DTO\StoreLessonVisit
+    public function getDto(): Dto
     {
         $validated = $this->validated();
+        $dto = new Dto($this->user());
 
-        $dto = new DTO\StoreLessonVisit;
         $dto->student_id = $validated['student_id'];
-        $dto->lesson_id = $validated['lesson_id'];
+        $dto->event_id = $validated['lesson_id'];
+        $dto->event_type = VisitEventType::LESSON;
         $dto->promocode_id = $validated['promocode_id'] ?? null;
 
         return $dto;

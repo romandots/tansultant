@@ -10,19 +10,19 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Models\Branch;
+use App\Common\Requests\StoreRequest;
+use App\Components\Lesson\Dto;
 use App\Models\Classroom;
 use App\Models\Course;
+use App\Models\Enum\LessonType;
 use App\Models\Instructor;
-use App\Models\Lesson;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * Class StoreLessonRequest
  * @package App\Http\Requests\Api
  */
-class StoreLessonRequest extends FormRequest
+class StoreLessonRequest extends StoreRequest
 {
     /**
      * @return array
@@ -43,7 +43,7 @@ class StoreLessonRequest extends FormRequest
                 Rule::exists(Course::TABLE, 'id')
             ],
             'instructor_id' => [
-                'required_when:type,' . Lesson::TYPE_LESSON,
+                'required_when:type,' . LessonType::LESSON,
                 'string',
                 'uuid',
                 Rule::exists(Instructor::TABLE, 'id')
@@ -51,7 +51,7 @@ class StoreLessonRequest extends FormRequest
             'type' => [
                 'required',
                 'string',
-                Rule::in(Lesson::TYPES)
+                Rule::in(LessonType::cases())
             ],
             'starts_at' => [
                 'required',
@@ -64,19 +64,15 @@ class StoreLessonRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return DTO\StoreLesson
-     */
-    public function getDto(): DTO\StoreLesson
+    public function getDto(): Dto
     {
         $validated = $this->validated();
+        $dto = new Dto($this->user());
 
-        $dto = new DTO\StoreLesson();
         $dto->classroom_id = $validated['classroom_id'] ?? null;
         $dto->course_id = $validated['course_id'] ?? null;
-//        $dto->branch_id = $validated['branch_id'] ?? null;
         $dto->instructor_id = $validated['instructor_id'] ?? null;
-        $dto->type = $validated['type'] ?? Lesson::TYPE_LESSON;
+        $dto->type = $validated['type'] ?? LessonType::LESSON;
         $dto->starts_at = \Carbon\Carbon::parse($validated['starts_at']);
         $dto->ends_at = \Carbon\Carbon::parse($validated['ends_at']);
 

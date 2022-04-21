@@ -1,6 +1,6 @@
 <?php
 /**
- * File: UpdateInstructorRequest.php
+ * File: AttachInstructorRequest.php
  * Author: Roman Dots <ram.d.kreiz@gmail.com>
  * Date: 2019-07-19
  * Copyright (c) 2019
@@ -10,10 +10,12 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Common\Requests\StoreRequest;
+use App\Components\Instructor\Dto;
+use App\Models\Enum\InstructorStatus;
 use Illuminate\Validation\Rule;
 
-class UpdateInstructorRequest extends FormRequest
+class UpdateInstructorRequest extends StoreRequest
 {
     /**
      * @return array
@@ -28,7 +30,7 @@ class UpdateInstructorRequest extends FormRequest
             'status' => [
                 'required',
                 'string',
-                Rule::in(\App\Models\Instructor::STATUSES)
+                Rule::in(InstructorStatus::cases())
             ],
             'display' => [
                 'nullable',
@@ -37,17 +39,15 @@ class UpdateInstructorRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return \App\Http\Requests\DTO\StoreInstructor
-     */
-    public function getDto(): \App\Http\Requests\DTO\StoreInstructor
+    public function getDto(): Dto
     {
         $validated = $this->validated();
+        $dto = new Dto($this->user());
 
-        $dto = new \App\Http\Requests\DTO\StoreInstructor;
+        $dto->name = $validated['name'] ?? null;
         $dto->description = $validated['description'] ?? null;
-        $dto->status = $validated['status'];
-        $dto->display = (bool)$validated['display'];
+        $dto->status = InstructorStatus::from($validated['status']);
+        $dto->display = (bool)($validated['display'] ?? null);
 
         return $dto;
     }

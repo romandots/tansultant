@@ -10,15 +10,15 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Models\Branch;
+use App\Common\Contracts\DtoWithUser;
+use App\Common\Requests\StoreRequest;
+use App\Components\Loader;
+use App\Components\Schedule\Dto;
 use App\Models\Classroom;
 use App\Models\Course;
 use App\Models\Enum\ScheduleCycle;
 use App\Models\Enum\Weekday;
-use App\Models\Schedule;
-use App\Repository\ClassroomRepository;
 use Carbon\Carbon;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
@@ -26,18 +26,12 @@ use Illuminate\Validation\Validator;
  * Class StoreScheduleRequest
  * @package App\Http\Requests\Api
  */
-class StoreScheduleRequest extends FormRequest
+class StoreScheduleRequest extends StoreRequest
 {
-    protected ClassroomRepository $classroomRepository;
-
-    /**
-     * StoreScheduleRequest constructor.
-     * @param ClassroomRepository $classroomRepository
-     */
-    public function __construct(ClassroomRepository $classroomRepository)
+    public function __construct()
     {
         parent::__construct();
-        $this->classroomRepository = $classroomRepository;
+        $this->classroomRepository = Loader::classrooms()->getRepository();
     }
 
     /**
@@ -59,7 +53,7 @@ class StoreScheduleRequest extends FormRequest
                 Rule::exists(Classroom::TABLE, 'id'),
             ],
             'from_date' => [
-                'required_unless:cycle,' . ScheduleCycle::EVERY_WEEK,
+                'required_unless:cycle,' . ScheduleCycle::EVERY_WEEK->value,
                 'regex:/\d{4}-\d{1,2}-\d{1,2}$/i',
             ],
             'to_date' => [
@@ -81,7 +75,7 @@ class StoreScheduleRequest extends FormRequest
             ],
             'weekday' => [
                 'nullable',
-                'required_if:cycle,' . ScheduleCycle::EVERY_WEEK,
+                'required_if:cycle,' . ScheduleCycle::EVERY_WEEK->value,
                 'int',
                 Rule::in(Weekday::cases()),
             ],
@@ -99,10 +93,7 @@ class StoreScheduleRequest extends FormRequest
         });
     }
 
-    /**
-     * @return DTO\StoreSchedule
-     */
-    public function getDto(): DTO\StoreSchedule
+    public function getDto(): DtoWithUser
     {
         $validated = $this->validated();
 
@@ -111,17 +102,16 @@ class StoreScheduleRequest extends FormRequest
             : null;
         $branchId = $validated['branch_id'] ?? null;
 
-        $dto = new DTO\StoreSchedule;
+        $dto = new Dto($this->user());
         $dto->branch_id = null !== $classroom ? $classroom->branch_id : $branchId;
-        $dto->classroom_id = null !== $classroom ? $classroom->id : null;
+        $dto->classroom_id = $classroom?->id;
         $dto->course_id = $validated['course_id'];
-        $dto->cycle = $validated['cycle'];
-        $dto->weekday = $validated['weekday'] ?? null;
+        $dto->cycle = ScheduleCycle::from($validated['cycle']);
+        $dto->weekday = isset($validated['weekday']) ? Weekday::from($validated['weekday']) : null;
         $dto->from_date = isset($validated['from_date']) ? Carbon::parse($validated['from_date']) : null;
         $dto->to_date = isset($validated['to_date']) ? Carbon::parse($validated['to_date']) : null;
         $dto->starts_at = Carbon::parse($validated['starts_at']);
         $dto->ends_at = Carbon::parse($validated['ends_at']);
-        $dto->user = $this->user();
 
         return $dto;
     }

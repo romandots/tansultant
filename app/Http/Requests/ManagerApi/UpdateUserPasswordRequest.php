@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Common\Requests\BaseRequest;
 
 /**
  * Class UpdateUserPasswordRequest
@@ -18,7 +18,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property-read string $old_password
  * @property-read string $new_password
  */
-class UpdateUserPasswordRequest extends FormRequest
+class UpdateUserPasswordRequest extends BaseRequest
 {
     /**
      * @return array
@@ -39,13 +39,13 @@ class UpdateUserPasswordRequest extends FormRequest
     }
 
     /**
-     * @return DTO\UpdateUserPassword
+     * @return \App\Components\User\UpdateUserPasswordDto
      */
-    public function getDto(): DTO\UpdateUserPassword
+    public function getDto(): \App\Components\User\UpdateUserPasswordDto
     {
         $validated = $this->validated();
 
-        $dto = new DTO\UpdateUserPassword;
+        $dto = new \App\Components\User\UpdateUserPasswordDto;
         $dto->old_password = $validated['old_password'];
         $dto->new_password = $validated['new_password'];
 

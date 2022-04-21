@@ -10,21 +10,11 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Auth;
 
-use App\Repository\VerificationCodeRepository;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ResetPasswordRequest extends FormRequest
 {
-    private VerificationCodeRepository $verificationCodes;
-
-    /**
-     * RegisterUserRequest constructor.
-     * @param VerificationCodeRepository $verificationCodes
-     */
-    public function __construct(VerificationCodeRepository $verificationCodes)
-    {
-        $this->verificationCodes = $verificationCodes;
-    }
 
     public function rules(): array
     {
@@ -32,7 +22,7 @@ class ResetPasswordRequest extends FormRequest
             'username' => [
                 'required',
                 'string',
-//                Rule::exists(User::TABLE, 'username'),
+                Rule::exists(\App\Models\User::TABLE, 'username'),
             ],
             'verification_code' => [
                 'nullable',

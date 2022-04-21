@@ -10,8 +10,10 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
+use App\Common\Requests\StoreRequest;
+use App\Components\Instructor\Dto;
+use App\Models\Enum\InstructorStatus;
 use App\Models\Person;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
@@ -19,7 +21,7 @@ use Illuminate\Validation\Rule;
  * @property-read string $person_id
  * @package App\Http\Requests\Api
  */
-class StoreInstructorRequest extends FormRequest
+class StoreInstructorRequest extends StoreRequest
 {
     /**
      * @return array
@@ -34,7 +36,7 @@ class StoreInstructorRequest extends FormRequest
             'status' => [
                 'required',
                 'string',
-                Rule::in(\App\Models\Instructor::STATUSES)
+                Rule::in(\App\Models\Enum\InstructorStatus::cases())
             ],
             'display' => [
                 'nullable',
@@ -45,22 +47,20 @@ class StoreInstructorRequest extends FormRequest
                 'string',
                 'uuid',
                 Rule::exists(Person::TABLE, 'id')
-            ]
+            ],
         ];
     }
 
-    /**
-     * @return \App\Http\Requests\DTO\StoreInstructor
-     */
-    public function getDto(): \App\Http\Requests\DTO\StoreInstructor
+    public function getDto(): Dto
     {
         $validated = $this->validated();
+        $dto = new Dto($this->user());
 
-        $dto = new \App\Http\Requests\DTO\StoreInstructor();
         $dto->name = $validated['name'] ?? null;
         $dto->description = $validated['description'] ?? null;
-        $dto->status = $validated['status'];
-        $dto->display = (bool)($validated['display'] ?? null);
+        $dto->status = InstructorStatus::from($validated['status']);
+        $dto->display = (bool)($validated['display'] ?? false);
+        $dto->person_id = $validated['person_id'];
 
         return $dto;
     }

@@ -11,8 +11,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\DTO\RegisterUser;
-use App\Models\Person;
-use App\Models\User;
+use App\Models\Enum\UserType;
 use App\Models\VerificationCode;
 use App\Repository\VerificationCodeRepository;
 use Carbon\Carbon;
@@ -25,17 +24,6 @@ use Illuminate\Validation\Rule;
  */
 class RegisterUserRequest extends FormRequest
 {
-    private VerificationCodeRepository $verificationCodes;
-
-    /**
-     * RegisterUserRequest constructor.
-     * @param VerificationCodeRepository $verificationCodes
-     */
-    public function __construct(VerificationCodeRepository $verificationCodes)
-    {
-        $this->verificationCodes = $verificationCodes;
-    }
-
     /**
      * @return array
      */
@@ -45,7 +33,7 @@ class RegisterUserRequest extends FormRequest
             'user_type' => [
                 'required',
                 'string',
-                Rule::in(\array_map(fn(string $type) => \base_classname($type), User::TYPES)),
+                Rule::in(UserType::cases()),
             ],
             'verification_code_id' => [
                 'required',
@@ -72,7 +60,7 @@ class RegisterUserRequest extends FormRequest
             'gender' => [
                 'required',
                 'string',
-                Rule::in(Person::GENDER),
+                Rule::in(\App\Models\Enum\Gender::cases()),
             ],
             'email' => [
                 'nullable',
@@ -99,9 +87,9 @@ class RegisterUserRequest extends FormRequest
 
         $dto = new RegisterUser();
         $dto->user_type = $validated['user_type'];
-        $dto->phone = $this->verificationCodes->findVerifiedById($validated['verification_code_id'])->phone_number;
         $dto->last_name = $validated['last_name'];
         $dto->first_name = $validated['first_name'];
+        $dto->verification_code = $validated['verification_code_id'] ?? null;
         $dto->patronymic_name = $validated['patronymic_name'];
         $dto->birth_date = isset($validated['birth_date']) ? Carbon::parse($validated['birth_date']) : null;
         $dto->gender = $validated['gender'];

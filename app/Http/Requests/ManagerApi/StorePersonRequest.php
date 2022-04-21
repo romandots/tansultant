@@ -10,15 +10,15 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Models\Person;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Common\Requests\StoreRequest;
+use App\Components\Person\Dto;
 use Illuminate\Validation\Rule;
 
 /**
  * Class StorePersonRequest
  * @package App\Http\Requests
  */
-class StorePersonRequest extends FormRequest
+class StorePersonRequest extends StoreRequest
 {
     /**
      * @return array
@@ -46,7 +46,7 @@ class StorePersonRequest extends FormRequest
             'gender' => [
                 'nullable',
                 'string',
-                Rule::in(Person::GENDER)
+                Rule::in(\App\Models\Enum\Gender::cases())
             ],
             'phone' => [
                 'nullable',
@@ -88,13 +88,11 @@ class StorePersonRequest extends FormRequest
         ];
     }
 
-    /**
-     * @return \App\Http\Requests\DTO\StorePerson
-     */
-    public function getDto(): \App\Http\Requests\DTO\StorePerson
+    public function getDto(): Dto
     {
         $validated = $this->validated();
-        $dto = new \App\Http\Requests\DTO\StorePerson;
+        $dto = new Dto($this->user());
+
         $dto->last_name = $validated['last_name'] ?? null;
         $dto->first_name = $validated['first_name'] ?? null;
         $dto->patronymic_name = $validated['patronymic_name'] ?? null;

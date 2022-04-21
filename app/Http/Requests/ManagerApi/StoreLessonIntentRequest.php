@@ -10,16 +10,16 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
+use App\Common\Requests\StoreRequest;
 use App\Models\Lesson;
 use App\Models\Student;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
  * Class StoreLessonIntentRequest
  * @package App\Http\Requests\Api
  */
-class StoreLessonIntentRequest extends FormRequest
+class StoreLessonIntentRequest extends StoreRequest
 {
     /**
      * @return array
