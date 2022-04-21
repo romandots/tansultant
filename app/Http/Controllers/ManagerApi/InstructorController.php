@@ -6,7 +6,9 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
 use App\Components\Instructor as Component;
+use App\Http\Requests\ManagerApi\SearchInstructorRequest;
 use App\Http\Requests\ManagerApi\StoreInstructorRequest;
+use App\Http\Requests\ManagerApi\UpdateInstructorRequest;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
@@ -32,12 +34,17 @@ class InstructorController extends AdminController
         );
     }
 
+    public function search(SearchInstructorRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return $this->_search($request);
+    }
+
     public function store(StoreInstructorRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         return $this->_store($request);
     }
 
-    public function update(string $id, StoreInstructorRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    public function update(string $id, UpdateInstructorRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         return $this->_update($id, $request);
     }

@@ -6,11 +6,13 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
 use App\Components\User as Component;
+use App\Http\Requests\ManagerApi\SearchUsersRequest;
 use App\Http\Requests\ManagerApi\StoreUserRequest;
+use App\Http\Requests\ManagerApi\UpdateUserRequest;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
- * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection search(\App\Common\Requests\SearchRequest $request)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection _search(\App\Common\Requests\SearchRequest $request)
  * @method array suggest(\App\Common\Requests\SuggestRequest $request)
  * @method Component\Formatter show(string $id)
  * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
@@ -32,12 +34,17 @@ class UserController extends AdminController
         );
     }
 
+    public function search(SearchUsersRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return $this->_search($request);
+    }
+
     public function store(StoreUserRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         return $this->_store($request);
     }
 
-    public function update(string $id, StoreUserRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    public function update(string $id, UpdateUserRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         return $this->_update($id, $request);
     }

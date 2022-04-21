@@ -12,6 +12,7 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
 use App\Components\Course as Component;
+use App\Http\Requests\ManagerApi\SearchCourseRequest;
 use App\Http\Requests\ManagerApi\StoreCourseRequest;
 use Illuminate\Http\Request;
 
@@ -37,6 +38,11 @@ class CourseController extends AdminController
             searchRelations: ['classroom', 'instructor.person'],
             singleRecordRelations: ['classroom', 'instructor.person'],
         );
+    }
+
+    public function search(SearchCourseRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return $this->_search($request);
     }
 
     public function store(StoreCourseRequest $request): \Illuminate\Http\Resources\Json\JsonResource

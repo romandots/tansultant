@@ -6,6 +6,7 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
 use App\Components\Dummy as Component;
+use App\Http\Requests\ManagerApi\SearchDummyRequest;
 use App\Http\Requests\ManagerApi\StoreDummyRequest;
 
 /**
@@ -30,6 +31,11 @@ class DummyController extends AdminController
             searchRelations: [],
             singleRecordRelations: [],
         );
+    }
+
+    public function search(SearchDummyRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return $this->_search($request);
     }
 
     public function store(StoreDummyRequest $request): \Illuminate\Http\Resources\Json\JsonResource

@@ -6,11 +6,12 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
 use App\Components\Student as Component;
+use App\Http\Requests\ManagerApi\SearchStudentsRequest;
 use App\Http\Requests\ManagerApi\StoreStudentRequest;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
- * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection search(\App\Common\Requests\SearchRequest $request)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection _search(\App\Common\Requests\SearchRequest $request)
  * @method array suggest(\App\Common\Requests\SuggestRequest $request)
  * @method Component\Formatter show(string $id)
  * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
@@ -30,6 +31,11 @@ class StudentController extends AdminController
             searchRelations: [],
             singleRecordRelations: [],
         );
+    }
+
+    public function search(SearchStudentsRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return $this->_search($request);
     }
 
     public function store(StoreStudentRequest $request): \Illuminate\Http\Resources\Json\JsonResource

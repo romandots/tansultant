@@ -12,6 +12,7 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
 use App\Components\Lesson as Component;
+use App\Http\Requests\ManagerApi\SearchLessonsRequest;
 use App\Http\Requests\ManagerApi\StoreLessonRequest;
 
 /**
@@ -36,6 +37,11 @@ class LessonController extends AdminController
             searchRelations: [],
             singleRecordRelations: [],
         );
+    }
+
+    public function search(SearchLessonsRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return $this->_search($request);
     }
 
     public function store(StoreLessonRequest $request): \Illuminate\Http\Resources\Json\JsonResource

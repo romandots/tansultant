@@ -12,6 +12,7 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Components\Contract as Component;
 use App\Components\Loader;
+use App\Http\Requests\ManagerApi\SearchContractsRequest;
 use App\Http\Requests\ManagerApi\StoreContractRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -41,6 +42,11 @@ class ContractController extends \App\Common\Controllers\AdminController
             singleRecordRelations: ['customer.person', 'student.person'],
         );
         $this->customers = Loader::customers();
+    }
+
+    public function search(SearchContractsRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return $this->_search($request);
     }
 
     public function store(StoreContractRequest $request): \Illuminate\Http\Resources\Json\JsonResource

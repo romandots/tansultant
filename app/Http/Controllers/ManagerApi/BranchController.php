@@ -12,6 +12,7 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
 use App\Components\Branch as Component;
+use App\Http\Requests\ManagerApi\SearchBranchesRequest;
 use App\Http\Requests\ManagerApi\StoreBranchRequest;
 
 /**
@@ -36,6 +37,11 @@ class BranchController extends AdminController
             searchRelations: ['classrooms'],
             singleRecordRelations: ['classrooms'],
         );
+    }
+
+    public function search(SearchBranchesRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return $this->_search($request);
     }
 
     public function store(StoreBranchRequest $request): \Illuminate\Http\Resources\Json\JsonResource

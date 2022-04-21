@@ -6,11 +6,12 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
 use App\Components\Visit as Component;
+use App\Http\Requests\ManagerApi\SearchVisitsRequest;
 use App\Http\Requests\ManagerApi\StoreVisitRequest;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
- * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection search(\App\Common\Requests\SearchRequest $request)
+ * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection _search(\App\Common\Requests\SearchRequest $request)
  * @method array suggest(\App\Common\Requests\SuggestRequest $request)
  * @method Component\Formatter show(string $id)
  * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
@@ -30,6 +31,11 @@ class VisitController extends AdminController
             searchRelations: [],
             singleRecordRelations: [],
         );
+    }
+
+    public function search(SearchVisitsRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return $this->_search($request);
     }
 
     public function store(StoreVisitRequest $request): \Illuminate\Http\Resources\Json\JsonResource

@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
-use App\Components\Intent as Component;
-use App\Http\Requests\ManagerApi\SearchIntentsRequest;
-use App\Http\Requests\ManagerApi\StoreIntentRequest;
+use App\Components\Account as Component;
+use App\Http\Requests\ManagerApi\SearchAccountRequest;
+use App\Http\Requests\ManagerApi\StoreAccountRequest;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
- * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection _search(\App\Common\Requests\SearchRequest $request)
  * @method array suggest(\App\Common\Requests\SuggestRequest $request)
  * @method Component\Formatter show(string $id)
  * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
@@ -22,7 +21,7 @@ use App\Http\Requests\ManagerApi\StoreIntentRequest;
  * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
  */
-class IntentController extends AdminController
+class AccountController extends AdminController
 {
     public function __construct() {
         parent::__construct(
@@ -33,17 +32,17 @@ class IntentController extends AdminController
         );
     }
 
-    public function search(SearchIntentsRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function search(SearchAccountRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         return $this->_search($request);
     }
 
-    public function store(StoreIntentRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    public function store(StoreAccountRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         return $this->_store($request);
     }
 
-    public function update(string $id, StoreIntentRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    public function update(string $id, StoreAccountRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         return $this->_update($id, $request);
     }
