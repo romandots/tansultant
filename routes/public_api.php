@@ -18,17 +18,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('ping', function () {
     return 'OK';
 });
-
-Route::group(['prefix' => 'branches'], static function () {
-    Route::get('/', 'BranchController@index');
-    Route::get('{id}', 'BranchController@show');
-});
-
-Route::group(['prefix' => 'classrooms'], static function () {
-    Route::get('/', 'ClassroomController@index');
-    Route::get('{id}', 'ClassroomController@show');
-});
-
-Route::group(['prefix' => 'lessons'], static function () {
-    Route::get('date/{date}', 'LessonController@onDate');
-});

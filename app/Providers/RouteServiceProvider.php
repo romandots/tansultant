@@ -49,6 +49,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapApiRoutes(): void
     {
         Route::prefix('')
+            ->name('auth.')
             ->namespace($this->namespace . '\Auth')
             ->group(base_path('routes/auth.php'));
 

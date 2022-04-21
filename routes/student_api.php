@@ -11,11 +11,3 @@
  */
 
 declare(strict_types=1);
-
-use Illuminate\Support\Facades\Route;
-
-// Tags
-Route::get('genres', 'GenreController@index');
-Route::get('genres/my', 'GenreController@getSubscriptions');
-Route::post('genres/{genre}', 'GenreController@subscribe');
-Route::delete('genres/{genre}', 'GenreController@unsubscribe');

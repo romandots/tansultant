@@ -6,11 +6,10 @@ class Route extends \Illuminate\Support\Facades\Route
 {
     public static function namedGroup(string $prefix, string $controllerClass, \Closure $closure)
     {
-        return \Illuminate\Support\Facades\Route::group([
-            'prefix' => $prefix,
-            'name' => $prefix . '.',
-            'controller' => $controllerClass,
-        ], $closure);
+        return \Illuminate\Support\Facades\Route::name($prefix . '.')
+            ->prefix($prefix)
+            ->controller($controllerClass)
+            ->group($closure);
     }
 
     public static function namedRoute(string $action, string $method, string $path, array $permissions)
