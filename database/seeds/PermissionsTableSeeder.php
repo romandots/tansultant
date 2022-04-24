@@ -21,117 +21,92 @@ class PermissionsTableSeeder extends Seeder
     /**
      * Run the database seeds.
      * @return void
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
     public function run(): void
     {
+        // reset cached roles and permissions
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
         $this->runSystem();
         $this->runUsers();
         $this->runPeople();
         $this->runBranchesAndClassrooms();
         $this->runCoursesAndLessons();
         $this->runVisitsAndIntents();
+        $this->runFinance();
+    }
+
+    protected function _runPermissions(string $permission): void
+    {
+        $permissions = $permission::getAllNames();
+        $descriptions = $permission::getInitialDescriptions();
+
+        $this->createPermissions($permissions, $descriptions);
     }
 
     /**
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
     private function runSystem(): void
     {
-        $permissions = \App\Services\Permissions\SystemPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\SystemPermissions::getInitialDescriptions();
-
-        $this->createPermissions($permissions, $descriptions);
+        $this->_runPermissions(\App\Services\Permissions\SystemPermission::class);
     }
 
     /**
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
     private function runUsers(): void
     {
-        $permissions = \App\Services\Permissions\UsersPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\UsersPermissions::getInitialDescriptions();
-
-        $this->createPermissions($permissions, $descriptions);
+        $this->_runPermissions(\App\Services\Permissions\UsersPermission::class);
     }
 
     /**
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
     private function runPeople(): void
     {
-        $permissions = \App\Services\Permissions\PersonsPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\PersonsPermissions::getInitialDescriptions();
-
-        $this->createPermissions($permissions, $descriptions);
-
-        $permissions = \App\Services\Permissions\StudentsPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\StudentsPermissions::getInitialDescriptions();
-
-        $this->createPermissions($permissions, $descriptions);
-
-        $permissions = \App\Services\Permissions\CustomersPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\CustomersPermissions::getInitialDescriptions();
-
-        $this->createPermissions($permissions, $descriptions);
-
-        $permissions = \App\Services\Permissions\InstructorsPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\InstructorsPermissions::getInitialDescriptions();
-
-        $this->createPermissions($permissions, $descriptions);
+        $this->_runPermissions(\App\Services\Permissions\PersonsPermission::class);
+        $this->_runPermissions(\App\Services\Permissions\StudentsPermission::class);
+        $this->_runPermissions(\App\Services\Permissions\CustomersPermission::class);
+        $this->_runPermissions(\App\Services\Permissions\InstructorsPermission::class);
     }
 
     /**
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
     private function runBranchesAndClassrooms(): void
     {
-        $permissions = \App\Services\Permissions\BranchesPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\BranchesPermissions::getInitialDescriptions();
-
-        $this->createPermissions($permissions, $descriptions);
-
-        $permissions = \App\Services\Permissions\ClassroomsPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\ClassroomsPermissions::getInitialDescriptions();
-
-        $this->createPermissions($permissions, $descriptions);
+        $this->_runPermissions(\App\Services\Permissions\BranchesPermission::class);
+        $this->_runPermissions(\App\Services\Permissions\ClassroomsPermission::class);
     }
 
     /**
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
     private function runCoursesAndLessons(): void
     {
-        $permissions = \App\Services\Permissions\CoursesPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\CoursesPermissions::getInitialDescriptions();
-
-        $this->createPermissions($permissions, $descriptions);
-
-        $permissions = \App\Services\Permissions\SchedulesPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\SchedulesPermissions::getInitialDescriptions();
-
-        $this->createPermissions($permissions, $descriptions);
-
-        $permissions = \App\Services\Permissions\LessonsPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\LessonsPermissions::getInitialDescriptions();
-
-        $this->createPermissions($permissions, $descriptions);
+        $this->_runPermissions(\App\Services\Permissions\CoursesPermission::class);
+        $this->_runPermissions(\App\Services\Permissions\SchedulesPermission::class);
+        $this->_runPermissions(\App\Services\Permissions\LessonsPermission::class);
     }
 
     /**
-     * @throws ReflectionException
+     * @throws \ReflectionException
      */
     private function runVisitsAndIntents(): void
     {
-        $permissions = \App\Services\Permissions\IntentsPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\IntentsPermissions::getInitialDescriptions();
+        $this->_runPermissions(\App\Services\Permissions\IntentsPermission::class);
+        $this->_runPermissions(\App\Services\Permissions\VisitsPermission::class);
+    }
 
-        $this->createPermissions($permissions, $descriptions);
-
-        $permissions = \App\Services\Permissions\VisitsPermissions::getAllNames();
-        $descriptions = \App\Services\Permissions\VisitsPermissions::getInitialDescriptions();
-
-        $this->createPermissions($permissions, $descriptions);
+    /**
+     * @throws \ReflectionException
+     */
+    private function runFinance(): void
+    {
+        $this->_runPermissions(\App\Services\Permissions\AccountsPermission::class);
+        $this->_runPermissions(\App\Services\Permissions\BonusesPermission::class);
     }
 
     /**

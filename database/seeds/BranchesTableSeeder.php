@@ -9,8 +9,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Repository\BranchRepository;
-use App\Repository\ClassroomRepository;
+use App\Components\Loader;
 use Illuminate\Database\Seeder;
 
 /**
@@ -18,29 +17,6 @@ use Illuminate\Database\Seeder;
  */
 class BranchesTableSeeder extends Seeder
 {
-    /**
-     * @var BranchRepository
-     */
-    private $branchRepository;
-
-    /**
-     * @var ClassroomRepository
-     */
-    private $classroomRepository;
-
-    /**
-     * BranchesTableSeeder constructor.
-     * @param BranchRepository $branchRepository
-     * @param ClassroomRepository $classroomRepository
-     */
-    public function __construct(
-        BranchRepository $branchRepository,
-        ClassroomRepository $classroomRepository
-    ) {
-        $this->branchRepository = $branchRepository;
-        $this->classroomRepository = $classroomRepository;
-    }
-
     /**
      * Seed the application's database.
      * @return void
@@ -51,20 +27,20 @@ class BranchesTableSeeder extends Seeder
         try {
             $branch = \App\Models\Branch::query()->firstOrFail();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
-            $branchDto = new \App\Http\Requests\ManagerApi\DTO\StoreBranch;
+            $branchDto = new \App\Components\Branch\Dto();
             $branchDto->name = 'Студия';
 
-            $branch = $this->branchRepository->create($branchDto);
+            $branch = Loader::branches()->create($branchDto);
         }
 
         try {
             \App\Models\Classroom::query()->firstOrFail();
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
-            $classroom = new \App\Repository\DTO\Classroom;
+            $classroom = new \App\Components\Classroom\Dto();
             $classroom->name = 'Зал А';
             $classroom->branch_id = $branch->id;
 
-            $this->classroomRepository->create($classroom);
+            Loader::classrooms()->create($classroom);
         }
     }
 }
