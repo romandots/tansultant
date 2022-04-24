@@ -14,7 +14,7 @@ namespace App\Services\Permissions;
  * Class ClassroomsPermissions
  * @package App\Services\Permissions
  */
-class ClassroomsPermissions extends Permissions
+class ClassroomsPermission extends Permission
 {
     public const MANAGE = 'manage_classrooms';
     public const CREATE = 'create_classrooms';

@@ -10,11 +10,7 @@ declare(strict_types=1);
 
 namespace App\Services\Permissions;
 
-/**
- * Class InstructorRole
- * @package App\Services\Permissions
- */
-class StudentRole extends Permissions
+class StudentRole extends Permission
 {
     public const ROLE = 'student';
     public const PERMISSIONS = [];

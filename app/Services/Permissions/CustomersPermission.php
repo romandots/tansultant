@@ -14,7 +14,7 @@ namespace App\Services\Permissions;
  * Class CustomersPermissions
  * @package App\Services\Permissions
  */
-class CustomersPermissions extends Permissions
+class CustomersPermission extends Permission
 {
     public const MANAGE = 'manage_customers';
     public const CREATE = 'create_customers';

@@ -2,6 +2,6 @@
 
 namespace App\Services\Permissions;
 
-abstract class Permissions
+class Role
 {
 }

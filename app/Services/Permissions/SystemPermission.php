@@ -14,7 +14,7 @@ namespace App\Services\Permissions;
  * Class SystemPermissions
  * @package App\Services\Permissions
  */
-class SystemPermissions extends Permissions
+class SystemPermission extends Permission
 {
     public const ACCESS_PANEL = 'access_panel';
 

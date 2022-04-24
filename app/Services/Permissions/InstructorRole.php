@@ -14,7 +14,7 @@ namespace App\Services\Permissions;
  * Class InstructorRole
  * @package App\Services\Permissions
  */
-class InstructorRole extends Permissions
+class InstructorRole extends Permission
 {
     public const ROLE = 'instructor';
     public const PERMISSIONS = [];

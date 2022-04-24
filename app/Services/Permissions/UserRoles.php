@@ -14,7 +14,7 @@ namespace App\Services\Permissions;
  * Class Roles
  * @package App\Services\Permissions
  */
-class UserRoles extends Permissions
+class UserRoles extends Permission
 {
     public const ADMIN = AdminRole::ROLE;
     public const MANAGER = ManagerRole::ROLE;
