@@ -24,151 +24,151 @@ declare(strict_types=1);
 
 use App\Common\Route;
 use App\Http\Controllers\ManagerApi;
-use App\Services\Permissions\AccountsPermissions;
-use App\Services\Permissions\BranchesPermissions;
-use App\Services\Permissions\ClassroomsPermissions;
-use App\Services\Permissions\CoursesPermissions;
-use App\Services\Permissions\CustomersPermissions;
-use App\Services\Permissions\InstructorsPermissions;
-use App\Services\Permissions\IntentsPermissions;
-use App\Services\Permissions\LessonsPermissions;
-use App\Services\Permissions\PersonsPermissions;
-use App\Services\Permissions\SchedulesPermissions;
-use App\Services\Permissions\StudentsPermissions;
-use App\Services\Permissions\UsersPermissions;
-use App\Services\Permissions\VisitsPermissions;
+use App\Services\Permissions\AccountsPermission;
+use App\Services\Permissions\BranchesPermission;
+use App\Services\Permissions\ClassroomsPermission;
+use App\Services\Permissions\CoursesPermission;
+use App\Services\Permissions\CustomersPermission;
+use App\Services\Permissions\InstructorsPermission;
+use App\Services\Permissions\IntentsPermission;
+use App\Services\Permissions\LessonsPermission;
+use App\Services\Permissions\PersonsPermission;
+use App\Services\Permissions\SchedulesPermission;
+use App\Services\Permissions\StudentsPermission;
+use App\Services\Permissions\UsersPermission;
+use App\Services\Permissions\VisitsPermission;
 
 // ACCOUNTS
 Route::namedGroup('accounts',ManagerApi\AccountController::class, static function () {
-    Route::namedRoute('search', 'get', '/', [AccountsPermissions::MANAGE, AccountsPermissions::READ]);
-    Route::namedRoute('suggest', 'get', '/suggest', [AccountsPermissions::MANAGE, AccountsPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [AccountsPermissions::MANAGE, AccountsPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [AccountsPermissions::MANAGE, AccountsPermissions::READ]);
-    Route::namedRoute('update', 'put', '{id}', [AccountsPermissions::MANAGE, AccountsPermissions::UPDATE]);
-    Route::namedRoute('destroy', 'delete', '{id}', [AccountsPermissions::MANAGE, AccountsPermissions::DELETE]);
-    Route::namedRoute('restore', 'post', '{id}/restore', [AccountsPermissions::MANAGE, AccountsPermissions::RESTORE]);
+    Route::namedRoute('search', 'get', '/', [AccountsPermission::MANAGE, AccountsPermission::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [AccountsPermission::MANAGE, AccountsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [AccountsPermission::MANAGE, AccountsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [AccountsPermission::MANAGE, AccountsPermission::READ]);
+    Route::namedRoute('update', 'put', '{id}', [AccountsPermission::MANAGE, AccountsPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [AccountsPermission::MANAGE, AccountsPermission::DELETE]);
+    Route::namedRoute('restore', 'post', '{id}/restore', [AccountsPermission::MANAGE, AccountsPermission::RESTORE]);
 });
 
 // BRANCHES
 Route::namedGroup('branches',ManagerApi\BranchController::class, static function () {
-    Route::namedRoute('search', 'get', '/', [BranchesPermissions::MANAGE, BranchesPermissions::READ]);
-    Route::namedRoute('suggest', 'get', '/suggest', [BranchesPermissions::MANAGE, BranchesPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [BranchesPermissions::MANAGE, BranchesPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [BranchesPermissions::MANAGE, BranchesPermissions::READ]);
-    Route::namedRoute('update', 'put', '{id}', [BranchesPermissions::MANAGE, BranchesPermissions::UPDATE]);
-    Route::namedRoute('destroy', 'delete', '{id}', [BranchesPermissions::MANAGE, BranchesPermissions::DELETE]);
-    Route::namedRoute('restore', 'post', '{id}/restore', [BranchesPermissions::MANAGE, BranchesPermissions::RESTORE]);
+    Route::namedRoute('search', 'get', '/', [BranchesPermission::MANAGE, BranchesPermission::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [BranchesPermission::MANAGE, BranchesPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [BranchesPermission::MANAGE, BranchesPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [BranchesPermission::MANAGE, BranchesPermission::READ]);
+    Route::namedRoute('update', 'put', '{id}', [BranchesPermission::MANAGE, BranchesPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [BranchesPermission::MANAGE, BranchesPermission::DELETE]);
+    Route::namedRoute('restore', 'post', '{id}/restore', [BranchesPermission::MANAGE, BranchesPermission::RESTORE]);
 });
 
 // CLASSROOMS
 Route::namedGroup('classrooms',ManagerApi\ClassroomController::class, static function () {
-    Route::namedRoute('search', 'get', '/', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::READ]);
-    Route::namedRoute('suggest', 'get', '/suggest', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::READ]);
-    Route::namedRoute('update', 'put', '{id}', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::UPDATE]);
-    Route::namedRoute('destroy', 'delete', '{id}', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::DELETE]);
-    Route::namedRoute('restore', 'post', '{id}/restore', [ClassroomsPermissions::MANAGE, ClassroomsPermissions::RESTORE]);
+    Route::namedRoute('search', 'get', '/', [ClassroomsPermission::MANAGE, ClassroomsPermission::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [ClassroomsPermission::MANAGE, ClassroomsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [ClassroomsPermission::MANAGE, ClassroomsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [ClassroomsPermission::MANAGE, ClassroomsPermission::READ]);
+    Route::namedRoute('update', 'put', '{id}', [ClassroomsPermission::MANAGE, ClassroomsPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [ClassroomsPermission::MANAGE, ClassroomsPermission::DELETE]);
+    Route::namedRoute('restore', 'post', '{id}/restore', [ClassroomsPermission::MANAGE, ClassroomsPermission::RESTORE]);
 });
 
 // COURSES
 Route::namedGroup('courses',ManagerApi\CourseController::class, static function () {
-    Route::namedRoute('search', 'get', '/', [CoursesPermissions::MANAGE, CoursesPermissions::READ]);
-    Route::namedRoute('suggest', 'get', '/suggest', [CoursesPermissions::MANAGE, CoursesPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [CoursesPermissions::MANAGE, CoursesPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [CoursesPermissions::MANAGE, CoursesPermissions::READ]);
-    Route::namedRoute('update', 'put', '{id}', [CoursesPermissions::MANAGE, CoursesPermissions::UPDATE]);
-    Route::namedRoute('destroy', 'delete', '{id}', [CoursesPermissions::MANAGE, CoursesPermissions::DELETE]);
-    Route::namedRoute('restore', 'post', '{id}/restore', [CoursesPermissions::MANAGE, CoursesPermissions::RESTORE]);
-    Route::namedRoute('disable', 'post', '{id}/disable', [CoursesPermissions::MANAGE, CoursesPermissions::DISABLE]);
-    Route::namedRoute('enable', 'post', '{id}/enable', [CoursesPermissions::MANAGE, CoursesPermissions::ENABLE]);
+    Route::namedRoute('search', 'get', '/', [CoursesPermission::MANAGE, CoursesPermission::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [CoursesPermission::MANAGE, CoursesPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [CoursesPermission::MANAGE, CoursesPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [CoursesPermission::MANAGE, CoursesPermission::READ]);
+    Route::namedRoute('update', 'put', '{id}', [CoursesPermission::MANAGE, CoursesPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [CoursesPermission::MANAGE, CoursesPermission::DELETE]);
+    Route::namedRoute('restore', 'post', '{id}/restore', [CoursesPermission::MANAGE, CoursesPermission::RESTORE]);
+    Route::namedRoute('disable', 'post', '{id}/disable', [CoursesPermission::MANAGE, CoursesPermission::DISABLE]);
+    Route::namedRoute('enable', 'post', '{id}/enable', [CoursesPermission::MANAGE, CoursesPermission::ENABLE]);
 });
 
 // CUSTOMERS
 Route::namedGroup('customers',ManagerApi\CustomerController::class, static function () {
-    Route::namedRoute('search', 'get', '/', [CustomersPermissions::MANAGE, CustomersPermissions::READ]);
-    Route::namedRoute('suggest', 'get', '/suggest', [CustomersPermissions::MANAGE, CustomersPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [CustomersPermissions::MANAGE, CustomersPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [CustomersPermissions::MANAGE, CustomersPermissions::READ]);
-    Route::namedRoute('update', 'put', '{id}', [CustomersPermissions::MANAGE, CustomersPermissions::UPDATE]);
-    Route::namedRoute('destroy', 'delete', '{id}', [CustomersPermissions::MANAGE, CustomersPermissions::DELETE]);
-    Route::namedRoute('sign', 'post', '{id}/contract', [CustomersPermissions::MANAGE, CustomersPermissions::SIGN_CONTRACTS]);
-    Route::namedRoute('terminate', 'delete', '{id}/contract', [CustomersPermissions::MANAGE, CustomersPermissions::TERMINATE_CONTRACTS]);
+    Route::namedRoute('search', 'get', '/', [CustomersPermission::MANAGE, CustomersPermission::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [CustomersPermission::MANAGE, CustomersPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [CustomersPermission::MANAGE, CustomersPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [CustomersPermission::MANAGE, CustomersPermission::READ]);
+    Route::namedRoute('update', 'put', '{id}', [CustomersPermission::MANAGE, CustomersPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [CustomersPermission::MANAGE, CustomersPermission::DELETE]);
+    Route::namedRoute('sign', 'post', '{id}/contract', [CustomersPermission::MANAGE, CustomersPermission::SIGN_CONTRACTS]);
+    Route::namedRoute('terminate', 'delete', '{id}/contract', [CustomersPermission::MANAGE, CustomersPermission::TERMINATE_CONTRACTS]);
 });
 
 // INSTRUCTORS
 Route::namedGroup('instructors',ManagerApi\InstructorController::class, static function () {
-    Route::namedRoute('search', 'get', '/', [InstructorsPermissions::MANAGE, InstructorsPermissions::READ]);
-    Route::namedRoute('suggest', 'get', '/suggest', [InstructorsPermissions::MANAGE, InstructorsPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [InstructorsPermissions::MANAGE, InstructorsPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [InstructorsPermissions::MANAGE, InstructorsPermissions::READ]);
-    Route::namedRoute('update', 'put', '{id}', [InstructorsPermissions::MANAGE, InstructorsPermissions::UPDATE]);
-    Route::namedRoute('destroy', 'delete', '{id}', [InstructorsPermissions::MANAGE, InstructorsPermissions::DELETE]);
+    Route::namedRoute('search', 'get', '/', [InstructorsPermission::MANAGE, InstructorsPermission::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [InstructorsPermission::MANAGE, InstructorsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [InstructorsPermission::MANAGE, InstructorsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [InstructorsPermission::MANAGE, InstructorsPermission::READ]);
+    Route::namedRoute('update', 'put', '{id}', [InstructorsPermission::MANAGE, InstructorsPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [InstructorsPermission::MANAGE, InstructorsPermission::DELETE]);
 });
 
 // INTENTS
 Route::namedGroup('intents',ManagerApi\IntentController::class, static function () {
-    Route::namedRoute('search', 'get', '/', [IntentsPermissions::MANAGE, IntentsPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [IntentsPermissions::MANAGE, IntentsPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [IntentsPermissions::MANAGE, IntentsPermissions::READ]);
-    Route::namedRoute('destroy', 'delete', '{id}', [IntentsPermissions::MANAGE, IntentsPermissions::DELETE]);
+    Route::namedRoute('search', 'get', '/', [IntentsPermission::MANAGE, IntentsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [IntentsPermission::MANAGE, IntentsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [IntentsPermission::MANAGE, IntentsPermission::READ]);
+    Route::namedRoute('destroy', 'delete', '{id}', [IntentsPermission::MANAGE, IntentsPermission::DELETE]);
 });
 
 // LESSONS
 Route::namedGroup('lessons',ManagerApi\LessonController::class, static function () {
-    Route::namedRoute('search', 'get', '/', [LessonsPermissions::MANAGE, LessonsPermissions::READ]);
-    Route::namedRoute('suggest', 'get', '/suggest', [LessonsPermissions::MANAGE, LessonsPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [LessonsPermissions::MANAGE, LessonsPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [LessonsPermissions::MANAGE, LessonsPermissions::READ]);
-    Route::namedRoute('update', 'put', '{id}', [LessonsPermissions::MANAGE, LessonsPermissions::UPDATE]);
-    Route::namedRoute('destroy', 'delete', '{id}', [LessonsPermissions::MANAGE, LessonsPermissions::DELETE]);
-    Route::namedRoute('cancel', 'post', '{id}\cancel', [LessonsPermissions::MANAGE, LessonsPermissions::CANCEL]);
-    Route::namedRoute('book', 'post', '{id}\book', [LessonsPermissions::MANAGE, LessonsPermissions::BOOK]);
-    Route::namedRoute('close', 'post', '{id}\close', [LessonsPermissions::MANAGE, LessonsPermissions::CLOSE]);
-    Route::namedRoute('open', 'post', '{id}\open', [LessonsPermissions::MANAGE, LessonsPermissions::OPEN]);
+    Route::namedRoute('search', 'get', '/', [LessonsPermission::MANAGE, LessonsPermission::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [LessonsPermission::MANAGE, LessonsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [LessonsPermission::MANAGE, LessonsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [LessonsPermission::MANAGE, LessonsPermission::READ]);
+    Route::namedRoute('update', 'put', '{id}', [LessonsPermission::MANAGE, LessonsPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [LessonsPermission::MANAGE, LessonsPermission::DELETE]);
+    Route::namedRoute('cancel', 'post', '{id}\cancel', [LessonsPermission::MANAGE, LessonsPermission::CANCEL]);
+    Route::namedRoute('book', 'post', '{id}\book', [LessonsPermission::MANAGE, LessonsPermission::BOOK]);
+    Route::namedRoute('close', 'post', '{id}\close', [LessonsPermission::MANAGE, LessonsPermission::CLOSE]);
+    Route::namedRoute('open', 'post', '{id}\open', [LessonsPermission::MANAGE, LessonsPermission::OPEN]);
 });
 
 // PEOPLE
 Route::namedGroup('people',ManagerApi\PersonController::class, static function () {
-    Route::namedRoute('index', 'get', '/', [PersonsPermissions::MANAGE, PersonsPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [PersonsPermissions::MANAGE, PersonsPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [PersonsPermissions::MANAGE, PersonsPermissions::READ]);
-    Route::namedRoute('update', 'put', '{id}', [PersonsPermissions::MANAGE, PersonsPermissions::UPDATE]);
-    Route::namedRoute('destroy', 'delete', '{id}', [PersonsPermissions::MANAGE, PersonsPermissions::DELETE]);
+    Route::namedRoute('index', 'get', '/', [PersonsPermission::MANAGE, PersonsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [PersonsPermission::MANAGE, PersonsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [PersonsPermission::MANAGE, PersonsPermission::READ]);
+    Route::namedRoute('update', 'put', '{id}', [PersonsPermission::MANAGE, PersonsPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [PersonsPermission::MANAGE, PersonsPermission::DELETE]);
 });
 
 // SCHEDULES
 Route::namedGroup('schedules',ManagerApi\ScheduleController::class, static function () {
-    Route::namedRoute('search', 'get', '/', [SchedulesPermissions::MANAGE, SchedulesPermissions::READ]);
-    Route::namedRoute('suggest', 'get', '/suggest', [SchedulesPermissions::MANAGE, SchedulesPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [SchedulesPermissions::MANAGE, SchedulesPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [SchedulesPermissions::MANAGE, SchedulesPermissions::READ]);
-    Route::namedRoute('update', 'put', '{id}', [SchedulesPermissions::MANAGE, SchedulesPermissions::UPDATE]);
-    Route::namedRoute('destroy', 'delete', '{id}', [SchedulesPermissions::MANAGE, SchedulesPermissions::DELETE]);
+    Route::namedRoute('search', 'get', '/', [SchedulesPermission::MANAGE, SchedulesPermission::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [SchedulesPermission::MANAGE, SchedulesPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [SchedulesPermission::MANAGE, SchedulesPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [SchedulesPermission::MANAGE, SchedulesPermission::READ]);
+    Route::namedRoute('update', 'put', '{id}', [SchedulesPermission::MANAGE, SchedulesPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [SchedulesPermission::MANAGE, SchedulesPermission::DELETE]);
 });
 
 // STUDENTS
 Route::namedGroup('students',ManagerApi\StudentController::class, static function () {
-    Route::namedRoute('index', 'get', '/', [StudentsPermissions::MANAGE, StudentsPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [StudentsPermissions::MANAGE, StudentsPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [StudentsPermissions::MANAGE, StudentsPermissions::READ]);
-    Route::namedRoute('update', 'put', '{id}', [StudentsPermissions::MANAGE, StudentsPermissions::UPDATE]);
-    Route::namedRoute('destroy', 'delete', '{id}', [StudentsPermissions::MANAGE, StudentsPermissions::DELETE]);
+    Route::namedRoute('index', 'get', '/', [StudentsPermission::MANAGE, StudentsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [StudentsPermission::MANAGE, StudentsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [StudentsPermission::MANAGE, StudentsPermission::READ]);
+    Route::namedRoute('update', 'put', '{id}', [StudentsPermission::MANAGE, StudentsPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [StudentsPermission::MANAGE, StudentsPermission::DELETE]);
 });
 
 // USERS
 Route::namedGroup('users',ManagerApi\UserController::class, static function () {
-    Route::namedRoute('index', 'get', '/', [UsersPermissions::MANAGE, UsersPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [UsersPermissions::MANAGE, UsersPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [UsersPermissions::MANAGE, UsersPermissions::READ]);
-    Route::namedRoute('update', 'put', '{id}', [UsersPermissions::MANAGE, UsersPermissions::UPDATE]);
-    Route::namedRoute('destroy', 'delete', '{id}', [UsersPermissions::MANAGE, UsersPermissions::DELETE]);
+    Route::namedRoute('index', 'get', '/', [UsersPermission::MANAGE, UsersPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [UsersPermission::MANAGE, UsersPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [UsersPermission::MANAGE, UsersPermission::READ]);
+    Route::namedRoute('update', 'put', '{id}', [UsersPermission::MANAGE, UsersPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id}', [UsersPermission::MANAGE, UsersPermission::DELETE]);
 });
 
 // VISITS
 Route::namedGroup('visits',ManagerApi\VisitController::class, static function () {
-    Route::namedRoute('search', 'get', '/', [VisitsPermissions::MANAGE, VisitsPermissions::READ]);
-    Route::namedRoute('store', 'post', '/', [VisitsPermissions::MANAGE, VisitsPermissions::CREATE]);
-    Route::namedRoute('show', 'get', '{id}', [VisitsPermissions::MANAGE, VisitsPermissions::READ]);
-    Route::namedRoute('destroy', 'delete', '{id}', [VisitsPermissions::MANAGE, VisitsPermissions::DELETE]);
+    Route::namedRoute('search', 'get', '/', [VisitsPermission::MANAGE, VisitsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [VisitsPermission::MANAGE, VisitsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id}', [VisitsPermission::MANAGE, VisitsPermission::READ]);
+    Route::namedRoute('destroy', 'delete', '{id}', [VisitsPermission::MANAGE, VisitsPermission::DELETE]);
 });

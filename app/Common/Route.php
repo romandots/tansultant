@@ -23,6 +23,6 @@ class Route extends \Illuminate\Support\Facades\Route
             default => throw new \Exception('To be implemented'),
         };
 
-        return $route->name($action)->middleware('permissions:' . implode('|', $permissions));
+        return $route->name($action)->middleware('permission:' . implode('|', $permissions));
     }
 }
