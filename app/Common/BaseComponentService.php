@@ -116,7 +116,11 @@ abstract class BaseComponentService extends BaseService
         try {
             $this->debug('Creating record of model ' . $this->modelClass, (array)$dto);
             $record = $this->getRepository()->create($dto);
-            $this->history->logCreate($dto->getUser(), $record);
+
+            if ($dto->getUser()) {
+                $this->history->logCreate($dto->getUser(), $record);
+            }
+
             $this->debug('Record of model ' . $this->modelClass . ' is created with ID#' . $record->id, $record->toArray());
             return $record;
         } catch (\Throwable $exception) {
@@ -135,7 +139,11 @@ abstract class BaseComponentService extends BaseService
             $this->debug('Updating record #' . $record->id . ' of model ' . $this->modelClass, (array)$dto);
             $originalRecord = clone $record;
             $this->getRepository()->update($record, $dto);
-            $this->history->logUpdate($dto->getUser(), $record, $originalRecord);
+
+            if ($dto->getUser()) {
+                $this->history->logUpdate($dto->getUser(), $record, $originalRecord);
+            }
+
             $this->debug('Record of model #' . $record->id . ' of model ' . $this->modelClass . ' is updated', $record->toArray());
         } catch (\Throwable $exception) {
             $this->error('Failed updating record #' . $record->id . ' of model ' . $this->modelClass, (array)$dto);

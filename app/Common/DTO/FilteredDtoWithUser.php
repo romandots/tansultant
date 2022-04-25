@@ -9,6 +9,7 @@
 namespace App\Common\DTO;
 
 use App\Common\Contracts\FilteredInterface;
+use App\Models\User;
 
 class FilteredDtoWithUser implements FilteredInterface, \App\Common\Contracts\DtoWithUser
 {
@@ -36,7 +37,7 @@ class FilteredDtoWithUser implements FilteredInterface, \App\Common\Contracts\Dt
         return $this->with_deleted;
     }
 
-    public function getUser(): \App\Models\User
+    public function getUser(): ?User
     {
         return $this->user;
     }
