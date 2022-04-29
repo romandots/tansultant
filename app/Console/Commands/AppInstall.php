@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Components\Loader;
-use App\Models\Enum\UserStatus;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Spatie\Permission\Models\Role;
 
 class AppInstall extends Command
 {
@@ -44,11 +44,12 @@ class AppInstall extends Command
         $person = Loader::people()->create($personDto);
 
         $userDto = new \App\Components\User\Dto();
-        $userDto->status = UserStatus::APPROVED;
         $userDto->username = self::ADMIN_USERNAME;
         $userDto->password = $password ?? '12345678';
         $user = Loader::users()->createFromPerson($userDto, $person);
-        $user->assignRole(\App\Services\Permissions\UserRoles::ADMIN);
+        Loader::users()->approve($user);
+        $adminRole = Role::findByName(\App\Services\Permissions\UserRoles::ADMIN, 'api');
+        $user->assignRole($adminRole);
 
         $this->info("User {$user->name} <{$user->username}> created!");
     }
