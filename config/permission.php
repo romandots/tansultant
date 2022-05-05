@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 return [
 
+    'guard_name' => 'sanctum',
+
     'models' => [
 
         /*

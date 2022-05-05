@@ -44,6 +44,7 @@ class RouteServiceProvider extends ServiceProvider
     /**
      * Define the "api" routes for the application.
      * These routes are typically stateless.
+     * @see middleware groups in App\Http\Kernel
      * @return void
      */
     protected function mapApiRoutes(): void

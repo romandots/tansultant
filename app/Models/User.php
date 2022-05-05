@@ -17,7 +17,9 @@ use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;
+use Laravel\Sanctum\HasApiTokens;
+use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -72,8 +74,9 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     use HasName;
-    use HasApiTokens;
     use HasRoles;
+    use HasPermissions;
+    use HasApiTokens;
     use HasFactory;
     use Notifiable;
     use Notifiable;
@@ -130,13 +133,8 @@ class User extends Authenticatable
         return $this->person ? $this->person->instructor : null;
     }
 
-    /**
-     * Find the user instance for the given username.
-     * @param string $username
-     * @return \Illuminate\Database\Eloquent\Model|User|null
-     */
-    public function findForPassport($username): ?\Illuminate\Database\Eloquent\Model
+    public function tokens()
     {
-        return $this->where('username', $username)->first();
+        return $this->morphMany(Sanctum::$personalAccessTokenModel, 'tokenable', "tokenable_type", "tokenable_uuid");
     }
 }

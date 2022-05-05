@@ -30,17 +30,18 @@ class AppInstall extends Command
 
         $existingUser = User::query()->where('username', self::ADMIN_USERNAME)->first();
         if (null !== $existingUser) {
+            $this->info('Admin user already exists.');
             $existingUser->password = \Hash::make($password);
             $existingUser->save();
-            $this->info('Admin user already exists. Password updated.');
+            $this->info('Password updated.');
+            $this->assignAdminRole($existingUser);
+            $this->info('Admin role set');
             return;
         }
 
         $personDto = new \App\Components\Person\Dto();
-
         $personDto->first_name = $this->ask('Admin first name');
         $personDto->last_name = $this->ask('Admin last name');
-
         $person = Loader::people()->create($personDto);
 
         $userDto = new \App\Components\User\Dto();
@@ -48,9 +49,19 @@ class AppInstall extends Command
         $userDto->password = $password ?? '12345678';
         $user = Loader::users()->createFromPerson($userDto, $person);
         Loader::users()->approve($user);
-        $adminRole = Role::findByName(\App\Services\Permissions\UserRoles::ADMIN, 'api');
-        $user->assignRole($adminRole);
+        $this->assignAdminRole($user);
 
         $this->info("User {$user->name} <{$user->username}> created!");
+    }
+
+    /**
+     * @param User $user
+     * @return void
+     */
+    protected function assignAdminRole(User $user): void
+    {
+        $guardName = \config('permission.guard_name', 'api');
+        $adminRole = Role::findByName(\App\Services\Permissions\UserRoles::ADMIN, $guardName);
+        $user->assignRole($adminRole);
     }
 }

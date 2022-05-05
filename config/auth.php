@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 return [
 
@@ -15,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'api',
+        'guard' => 'sanctum',
         'passwords' => 'users',
     ],
 
@@ -37,14 +36,22 @@ return [
     */
 
     'guards' => [
-        'api' => [
-            'driver' => 'passport',
+        'web' => [
+            'driver' => 'session',
             'provider' => 'users',
         ],
-        // 'web' => [
-            // 'driver' => 'session',
-            // 'provider' => 'users',
-        // ],
+
+        'api' => [
+            'driver' => 'token',
+            'provider' => 'users',
+            'hash' => false,
+        ],
+
+        'sanctum' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
+            'hash' => false,
+        ],
     ],
 
     /*

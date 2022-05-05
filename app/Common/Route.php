@@ -23,6 +23,9 @@ class Route extends \Illuminate\Support\Facades\Route
             default => throw new \Exception('To be implemented'),
         };
 
-        return $route->name($action)->middleware('permission:' . implode('|', $permissions));
+        $guardName = \config('permission.guard_name', 'api');
+        $middleware = sprintf('permission:%s,%s', implode('|', $permissions), $guardName);
+
+        return $route->name($action)->middleware($middleware);
     }
 }

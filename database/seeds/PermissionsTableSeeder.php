@@ -116,8 +116,9 @@ class PermissionsTableSeeder extends Seeder
     private function createPermissions(array $permissions, array $descriptions): void
     {
         foreach ($permissions as $permission) {
+            $guardName = \config('permission.guard_name', 'api');
             try {
-                $perm = \Spatie\Permission\Models\Permission::findByName($permission, 'api');
+                $perm = \Spatie\Permission\Models\Permission::findByName($permission, $guardName);
                 /** @var Permission $perm */
                 if ($perm->description !== $descriptions[$permission]) {
                     $perm->description = $descriptions[$permission];
@@ -128,7 +129,7 @@ class PermissionsTableSeeder extends Seeder
                 \Spatie\Permission\Models\Permission::create([
                     'name' => $permission,
                     'description' => $descriptions[$permission] ?? null,
-                    'guard_name' => 'api'
+                    'guard_name' => $guardName
                 ]);
             }
         }

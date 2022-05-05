@@ -43,7 +43,7 @@ class RolesTableSeeder extends Seeder
     private function createRoles(array $roles, array $descriptions): void
     {
         foreach ($roles as $role => $permissions) {
-            $guardName = 'api';
+            $guardName = \config('permission.guard_name', 'api');
             /* @var \Spatie\Permission\Models\Role $roleModel */
             try {
                 $roleModel = \Spatie\Permission\Models\Role::findByName($role, $guardName);

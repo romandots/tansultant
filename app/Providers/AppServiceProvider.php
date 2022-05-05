@@ -7,12 +7,14 @@ use App\Services\TextMessaging\TextMessagingService;
 use App\Services\TextMessaging\TextMessagingServiceInterface;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\Sanctum;
 use Nutnet\LaravelSms\SmsSender;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        Sanctum::usePersonalAccessTokenModel(\App\Models\PersonalAccessToken::class);
         $this->app->bind(TextMessagingServiceInterface::class, static function (Application $app) {
             $sender = $app->get(SmsSender::class);
 

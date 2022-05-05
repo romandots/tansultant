@@ -71,7 +71,7 @@ class Kernel extends HttpKernel
 
         'member_api' => [
             'api',
-            'auth:api',
+            'auth:sanctum',
         ],
 
         'manager_api' => [

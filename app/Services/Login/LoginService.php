@@ -49,11 +49,7 @@ class LoginService extends BaseService
         return $user;
     }
 
-    /**
-     * @param Login $login
-     * @return \Laravel\Passport\PersonalAccessTokenResult
-     */
-    public function login(Login $login): \Laravel\Passport\PersonalAccessTokenResult
+    public function login(Login $login): \Laravel\Sanctum\NewAccessToken
     {
         $user = $this->attemptLogin($login->username, $login->password);
 

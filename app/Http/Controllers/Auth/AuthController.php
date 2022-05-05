@@ -34,7 +34,7 @@ class AuthController extends Controller
     {
         $token = $this->service->login($request->getDto());
 
-        return \json_response($token);
+        return \json_response(['accessToken' => $token->plainTextToken]);
     }
 
     /**

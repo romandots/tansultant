@@ -8,9 +8,9 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Class CreateUsersTable
@@ -31,6 +31,7 @@ class CreateUsersTable extends Migration
             $table->text('status')->index();
             $table->text('password');
             $table->text('remember_token')->nullable();
+            $table->text('api_token')->nullable();
             $table->timestamp('created_at');
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('seen_at')->nullable();
