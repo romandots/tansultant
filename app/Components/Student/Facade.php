@@ -14,7 +14,7 @@ use App\Models\Student;
  * @method array suggest(?string $query, string|\Closure $labelField = 'name', string|\Closure $valueField = 'id', array $extraFields = [])
  * @method \Illuminate\Support\Collection<\App\Models\Student> getAll()
  * @method \Illuminate\Support\Collection<\App\Models\Student> search(PaginatedInterface $searchParams, array $relations = []):
- * @method array getMeta(\App\Common\Contracts\PaginatedInterface $searchParams)
+ * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\Student create(Dto $dto, array $relations = [])
  * @method \App\Models\Student find(string $id, array $relations = [])
  * @method void findAndDelete(string $id)

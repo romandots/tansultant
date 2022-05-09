@@ -2,8 +2,8 @@
 
 namespace App\Common;
 
-use App\Common\Contracts\FilteredInterface;
-use App\Common\Contracts\PaginatedInterface;
+use App\Common\DTO\SearchDto;
+use App\Common\DTO\SearchFilterDto;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,27 +18,33 @@ abstract class BaseComponentRepository extends BaseRepository
 
     abstract public function fill(Model $record, Contracts\DtoWithUser $dto): void;
 
-    public function getSearchableAttributes(): array
+    final public function getSearchableAttributes(): array
     {
         return $this->searchableAttributes;
     }
 
-    public function withSoftDeletes(): bool
+    final public function withSoftDeletes(): bool
     {
         return isset(class_uses($this->modelClass)[SoftDeletes::class]);
     }
 
-    public function getQuery(): \Illuminate\Database\Eloquent\Builder
+    final public function getQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return $this->modelClass::query();
+        $query = $this->modelClass::query();
+
+        if ($this->withSoftDeletes()) {
+            $query->withTrashed();
+        }
+
+        return $query;
     }
 
-    public function make(): Model
+    final public function make(): Model
     {
         return new $this->modelClass();
     }
 
-    protected function getFilterQuery(FilteredInterface $filter): \Illuminate\Database\Eloquent\Builder
+    final protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
     {
         $query = $this->getQuery();
 
@@ -61,32 +67,36 @@ abstract class BaseComponentRepository extends BaseRepository
         return $query;
     }
 
-    public function getSuggestQuery(FilteredInterface $filter): \Illuminate\Database\Eloquent\Builder
+    public function getSuggestQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
     {
         return $this->getFilterQuery($filter);
     }
 
-    public function countFiltered(FilteredInterface $search): int
+    public function countFiltered(SearchFilterDto $search): int
     {
         return $this->getFilterQuery($search)->count();
     }
 
-    protected function getFilteredQuery(FilteredInterface $filter, array $withRelations = []): \Illuminate\Database\Eloquent\Builder
-    {
+    protected function getFilteredQuery(
+        SearchFilterDto $filter,
+        array $withRelations = []
+    ): \Illuminate\Database\Eloquent\Builder {
         return $this->getFilterQuery($filter)
             ->with($withRelations);
     }
 
-    public function findFilteredPaginated(PaginatedInterface $search, array $withRelations = []): \Illuminate\Database\Eloquent\Collection
-    {
-        return $this->getFilteredQuery($search->filter, $withRelations)
-            ->orderBy($search->sort, $search->order)
-            ->offset($search->offset)
-            ->limit($search->limit)
+    public function findFilteredPaginated(
+        SearchDto $search,
+        array $withRelations = []
+    ): \Illuminate\Database\Eloquent\Collection {
+        return $this->getFilteredQuery($search->getFilter(), $withRelations)
+            ->orderBy($search->getSort(), $search->getOrder())
+            ->offset($search->getOffset())
+            ->limit($search->getLimit())
             ->get();
     }
 
-    public function find(string $id): Model
+    final public function find(string $id): Model
     {
         $query = $this->getQuery();
         if ($this->withSoftDeletes()) {
@@ -97,7 +107,7 @@ abstract class BaseComponentRepository extends BaseRepository
             ->firstOrFail();
     }
 
-    public function findTrashed(string $id): Model
+    final public function findTrashed(string $id): Model
     {
         $query = $this->getQuery();
         if ($this->withSoftDeletes()) {

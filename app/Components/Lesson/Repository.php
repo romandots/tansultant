@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method bool withSoftDeletes()
  * @method \Illuminate\Database\Eloquent\Builder getQuery()
  * @method Lesson make()
- * @method int countFiltered(\App\Common\Contracts\FilteredInterface $search)
+ * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method \Illuminate\Database\Eloquent\Collection<Lesson> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
  * @method Lesson find(string $id)
  * @method Lesson findTrashed(string $id)

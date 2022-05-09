@@ -10,12 +10,12 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi\DTO;
 
-use App\Common\DTO\FilteredPaginatedDto;
+use App\Common\DTO\SearchDto;
 
 /**
  * Class StoreInstructor
  * @package App\Http\Requests\ManagerApi\DTO
  */
-class SearchPeopleDto extends FilteredPaginatedDto
+class SearchPeopleDto extends SearchDto
 {
 }

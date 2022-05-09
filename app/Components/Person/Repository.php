@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Person;
 
-use App\Common\Contracts\FilteredInterface;
+use App\Common\DTO\SearchFilterDto;
 use App\Models\Enum\Gender;
 use App\Models\Person;
 use Carbon\Carbon;
@@ -16,7 +16,7 @@ use Ramsey\Uuid\Uuid;
  * @method bool withSoftDeletes()
  * @method \Illuminate\Database\Eloquent\Builder getQuery()
  * @method Person make()
- * @method int countFiltered(\App\Common\Contracts\FilteredInterface $search)
+ * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method \Illuminate\Database\Eloquent\Collection<Person> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
  * @method Person find(string $id)
  * @method Person findTrashed(string $id)
@@ -43,7 +43,7 @@ class Repository extends \App\Common\BaseComponentRepository
         );
     }
 
-    protected function getFilterQuery(FilteredInterface $filter): \Illuminate\Database\Eloquent\Builder
+    protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
     {
         $query = parent::getFilterQuery($filter);
 

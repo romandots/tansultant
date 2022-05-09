@@ -15,7 +15,7 @@ use Spatie\Tags\Tag;
  * @method bool withSoftDeletes()
  * @method \Illuminate\Database\Eloquent\Builder getQuery()
  * @method Genre make()
- * @method int countFiltered(\App\Common\Contracts\FilteredInterface $search)
+ * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method \Illuminate\Database\Eloquent\Collection<Genre> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
  * @method Genre find(string $id)
  * @method Genre findTrashed(string $id)

@@ -6,7 +6,7 @@ namespace App\Components\Instructor;
 
 use App\Models\Enum\InstructorStatus;
 
-class Dto extends \App\Common\DTO\DtoWIthUser
+class Dto extends \App\Common\DTO\DtoWithUser
 {
     public ?string $id;
     public string $person_id;

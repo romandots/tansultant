@@ -14,7 +14,7 @@ use Illuminate\Database\Query\Builder;
  * @method bool withSoftDeletes()
  * @method \Illuminate\Database\Eloquent\Builder getQuery()
  * @method Contract make()
- * @method int countFiltered(\App\Common\Contracts\FilteredInterface $search)
+ * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method \Illuminate\Database\Eloquent\Collection<Contract> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
  * @method Contract find(string $id)
  * @method Contract findTrashed(string $id)

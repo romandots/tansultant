@@ -2,7 +2,7 @@
 
 namespace App\Common;
 
-use App\Common\Contracts\PaginatedInterface;
+use App\Common\DTO\SearchDto;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -63,11 +63,11 @@ abstract class BaseComponentFacade extends BaseFacade
      * Search records by defined params
      * and return paginated result
      *
-     * @param PaginatedInterface $searchParams
+     * @param SearchDto $searchParams
      * @param array $relations
      * @return \Illuminate\Support\Collection
      */
-    public function search(PaginatedInterface $searchParams, array $relations = []): \Illuminate\Support\Collection
+    public function search(SearchDto $searchParams, array $relations = []): \Illuminate\Support\Collection
     {
         return $this->getService()->search($searchParams, $relations);
     }
@@ -76,10 +76,10 @@ abstract class BaseComponentFacade extends BaseFacade
      * Build meta data (pagination info)
      * for defined search params
      *
-     * @param PaginatedInterface $searchParams
+     * @param SearchDto $searchParams
      * @return array
      */
-    public function getMeta(PaginatedInterface $searchParams): array
+    public function getMeta(SearchDto $searchParams): array
     {
         return $this->getService()->getMeta($searchParams);
     }
@@ -130,7 +130,7 @@ abstract class BaseComponentFacade extends BaseFacade
      */
     public function findAndRestore(string $id, array $relations, \App\Models\User $user): Model
     {
-        $record = $this->getRepository()->find($id);
+        $record = $this->getRepository()->findTrashed($id);
         $this->getService()->restore($record, $user);
 
         return $record->load($relations);
@@ -151,5 +151,10 @@ abstract class BaseComponentFacade extends BaseFacade
         $record = $this->getRepository()->find($id);
         $this->getService()->update($record, $dto);
         return $record->load($relations);
+    }
+
+    public function usesSoftDeletes(): bool
+    {
+        return $this->getRepository()->withSoftDeletes();
     }
 }

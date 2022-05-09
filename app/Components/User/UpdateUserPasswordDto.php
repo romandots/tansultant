@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Components\User;
 
-use App\Common\DTO\DtoWIthUser;
+use App\Common\DTO\DtoWithUser;
 
-class UpdateUserPasswordDto extends DtoWIthUser
+class UpdateUserPasswordDto extends DtoWithUser
 {
     public string $old_password;
     public string $new_password;

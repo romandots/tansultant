@@ -8,9 +8,9 @@
 
 namespace App\Http\Requests\ManagerApi\DTO;
 
-use App\Common\DTO\FilteredDtoWithUser;
+use App\Common\DTO\SearchFilterDto;
 
-class SearchPeopleFilterDto extends FilteredDtoWithUser
+class SearchPeopleFilterDto extends SearchFilterDto
 {
     public ?\Carbon\Carbon $birth_date_from;
     public ?\Carbon\Carbon $birth_date_to;

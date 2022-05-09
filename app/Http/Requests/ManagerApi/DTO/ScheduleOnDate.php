@@ -10,14 +10,14 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi\DTO;
 
-use App\Common\DTO\DtoWIthUser;
+use App\Common\DTO\DtoWithUser;
 use App\Models\Enum\Weekday;
 
 /**
  * Class ScheduleOnDate
  * @package App\Http\Requests\ManagerApi\DTO
  */
-class ScheduleOnDate extends DtoWIthUser
+class ScheduleOnDate extends DtoWithUser
 {
     public ?string $branch_id;
 

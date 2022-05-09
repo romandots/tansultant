@@ -43,7 +43,7 @@ enum LogRecordObjectType: string implements ClassBackedEnum
         };
     }
 
-    public function getFromClass(string $className): self
+    public static function getFromClass(string $className): self
     {
         return match($className) {
             \App\Models\Course::class => self::COURSE,

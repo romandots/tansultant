@@ -71,13 +71,13 @@ class StoreScheduleRequest extends StoreRequest
             'cycle' => [
                 'required',
                 'string',
-                Rule::in(ScheduleCycle::cases()),
+                Rule::in(enum_strings(ScheduleCycle::class)),
             ],
             'weekday' => [
                 'nullable',
                 'required_if:cycle,' . ScheduleCycle::EVERY_WEEK->value,
                 'int',
-                Rule::in(Weekday::cases()),
+                Rule::in(enum_strings(Weekday::class)),
             ],
         ];
     }

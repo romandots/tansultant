@@ -29,7 +29,7 @@ class StoreIntentRequest extends StoreRequest
             'event_type' => [
                 'required',
                 'string',
-                Rule::in(IntentEventType::cases()),
+                Rule::in(enum_strings(IntentEventType::class)),
             ],
         ];
     }

@@ -2,8 +2,8 @@
 
 namespace App\Common;
 
-use App\Common\Contracts\PaginatedInterface;
-use App\Common\DTO\FilteredDtoWithUser;
+use App\Common\DTO\SearchDto;
+use App\Common\DTO\SearchFilterDto;
 use App\Common\Traits\WithCache;
 use App\Components\Loader;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +20,6 @@ abstract class BaseComponentService extends BaseService
         protected string $modelClass,
         string $repositoryClass,
         protected string $dtoClass,
-        protected ?string $searchFilterDtoClass
     ) {
         $this->repository = \app($repositoryClass);
         $this->history = Loader::logRecords();
@@ -32,6 +31,10 @@ abstract class BaseComponentService extends BaseService
         string|\Closure $valueField = 'id',
         array $additionalFields = []
     ): array {
+        if (empty($query)) {
+            return [];
+        }
+
         $cacheKey = 'suggest_' . md5($query);
         $cached = $this->getFromCache($cacheKey);
 
@@ -40,7 +43,7 @@ abstract class BaseComponentService extends BaseService
             return $cached;
         }
 
-        $dto = $this->makeSearchFilterDto();
+        $dto = new SearchFilterDto();
         $dto->query = $query;
         $dto->with_deleted = false;
 
@@ -96,12 +99,12 @@ abstract class BaseComponentService extends BaseService
         return $result;
     }
 
-    public function search(PaginatedInterface $searchParams, array $relations = []): Collection
+    public function search(SearchDto $searchParams, array $relations = []): Collection
     {
         return $this->getRepository()->findFilteredPaginated($searchParams, $relations);
     }
 
-    public function getMeta(PaginatedInterface $searchParams): array
+    public function getMeta(SearchDto $searchParams): array
     {
         $totalRecords = $this->getRepository()->countFiltered($searchParams->filter);
         return $searchParams->getMeta($totalRecords);
@@ -158,9 +161,11 @@ abstract class BaseComponentService extends BaseService
     {
         try {
             $this->debug('Deleting record #' . $record->id . ' of model ' . $this->modelClass);
+            $oldCopy = clone $record;
             $this->getRepository()->delete($record);
-            $this->history->logDelete($user, $record);
-            $this->debug('Record of model #' . $record->id . ' of model ' . $this->modelClass . ' is deleted');
+            $this->history->logDelete($user, $oldCopy);
+            $this->debug('Record of model #' . $oldCopy->id . ' of model ' . $this->modelClass . ' is deleted');
+            unset($oldCopy);
         } catch (\Throwable $exception) {
             $this->error('Failed deleting record #' . $record->id . ' of model ' . $this->modelClass);
             throw $exception;
@@ -191,11 +196,6 @@ abstract class BaseComponentService extends BaseService
     public function getModelClassName(): string
     {
         return $this->modelClass;
-    }
-
-    public function makeSearchFilterDto(): FilteredDtoWithUser
-    {
-        return new $this->searchFilterDtoClass();
     }
 
     protected function getLoggerPrefix(): string

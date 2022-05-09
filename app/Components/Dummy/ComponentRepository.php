@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method bool withSoftDeletes()
  * @method \Illuminate\Database\Eloquent\Builder getQuery()
  * @method Dummy make()
- * @method int countFiltered(\App\Common\Contracts\FilteredInterface $search)
+ * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method \Illuminate\Database\Eloquent\Collection<Dummy> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
  * @method Dummy find(string $id)
  * @method Dummy findTrashed(string $id)

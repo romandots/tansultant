@@ -8,80 +8,45 @@
 
 namespace App\Common\Requests;
 
-use App\Common\Contracts\FilteredInterface;
-use App\Common\Contracts\PaginatedInterface;
-use Illuminate\Validation\Rule;
+use App\Common\DTO\DtoWithUser;
+use App\Common\DTO\SearchDto;
+use App\Common\DTO\SearchFilterDto;
 
-class FilteredPaginatedRequest extends BaseRequest
+abstract class FilteredPaginatedRequest extends BaseRequest
 {
-    protected PaginatedInterface $paginationDto;
-    protected FilteredInterface $filterDto;
-    protected array $sortable = [];
+    abstract protected function makeSearchDto(): SearchDto;
+    abstract protected function makeSearchFilterDto(): SearchFilterDto;
+    abstract protected function getSortable(): array;
+    abstract protected function mapSearchDto(SearchDto $dto, array $datum): void;
+    abstract protected function mapSearchFilterDto(SearchFilterDto $dto, array $datum): void;
+    abstract public function rules(): array;
 
-    public function rules(): array
+    /**
+     * @return SearchDto
+     */
+    final public function getDto(): DtoWithUser
     {
-        return [
-            'offset' => [
-                'nullable',
-                'int'
-            ],
-            'limit' => [
-                'nullable',
-                'int'
-            ],
-            'sort' => [
-                'nullable',
-                'string',
-                Rule::in($this->getSortable())
-            ],
-            'order' => [
-                'nullable',
-                'string',
-                Rule::in(['desc', 'asc'])
-            ],
-            'with_deleted' => [
-                'nullable',
-                'boolean'
-            ],
-            'query' => [
-                'nullable',
-                'string'
-            ],
-        ];
-    }
-
-    public function getDto(): PaginatedInterface
-    {
-        $dto = $this->getPaginationDto();
-        $dto->filter = $this->getFilterDto();
+        $dto = $this->getSearchDto();
+        $dto->filter = $this->getSearchFilterDto();
 
         return $dto;
     }
 
-    protected function getPaginationDto(): PaginatedInterface
+    final protected function getSearchDto(): SearchDto
     {
         $validated = $this->validated();
-        $dto = clone $this->paginationDto;
-        $dto->offset = (int)($validated['offset'] ?? 0);
-        $dto->limit = (int)($validated['limit'] ?? 20);
-        $dto->sort = $validated['sort'] ?? 'id';
-        $dto->order = $validated['order'] ?? 'asc';
+        $dto = $this->makeSearchDto();
+        $this->mapSearchDto($dto, $validated);
 
         return $dto;
     }
 
-    protected function getFilterDto(): FilteredInterface
+    final protected function getSearchFilterDto(): SearchFilterDto
     {
         $validated = $this->validated();
-        $dto = clone $this->filterDto;
-        $dto->with_deleted = (bool)($validated['with_deleted'] ?? false);
-        $dto->query = $validated['query'] ?? null;
+        $dto = $this->makeSearchFilterDto();
+        $this->mapSearchFilterDto($dto, $validated);
 
         return $dto;
-    }
-
-    public function getSortable(): array
-    {
-        return (array)$this->sortable;
     }
 }

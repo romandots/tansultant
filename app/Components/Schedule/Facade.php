@@ -15,7 +15,7 @@ use Ramsey\Collection\Collection;
  * @method array suggest(?string $query, string|\Closure $labelField = 'name', string|\Closure $valueField = 'id', array $extraFields = [])
  * @method \Illuminate\Support\Collection<\App\Models\Schedule> getAll()
  * @method \Illuminate\Support\Collection<\App\Models\Schedule> search(PaginatedInterface $searchParams, array $relations = []):
- * @method array getMeta(\App\Common\Contracts\PaginatedInterface $searchParams)
+ * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\Schedule create(Dto $dto, array $relations = [])
  * @method \App\Models\Schedule find(string $id, array $relations = [])
  * @method void findAndDelete(string $id)

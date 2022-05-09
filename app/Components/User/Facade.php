@@ -14,7 +14,7 @@ use App\Models\User;
  * @method array suggest(?string $query, string|\Closure $labelField = 'name', string|\Closure $valueField = 'id', array $extraFields = [])
  * @method \Illuminate\Support\Collection<\App\Models\User> getAll()
  * @method \Illuminate\Support\Collection<\App\Models\User> search(PaginatedInterface $searchParams, array $relations = []):
- * @method array getMeta(\App\Common\Contracts\PaginatedInterface $searchParams)
+ * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\User create(Dto $dto, array $relations = [])
  * @method \App\Models\User find(string $id, array $relations = [])
  * @method void findAndDelete(string $id)
@@ -50,6 +50,11 @@ class Facade extends BaseComponentFacade
 
     public function approve(User $user): void
     {
-        $this->getRepository()->setApproved($user);
+        $this->getService()->approve($user);
+    }
+
+    public function disable(User $user): void
+    {
+        $this->getService()->disable($user);
     }
 }

@@ -7,7 +7,7 @@ namespace App\Components\Intent;
 use App\Models\Enum\IntentEventType;
 use App\Models\Enum\IntentStatus;
 
-class Dto extends \App\Common\DTO\DtoWIthUser
+class Dto extends \App\Common\DTO\DtoWithUser
 {
     public ?string $id;
 

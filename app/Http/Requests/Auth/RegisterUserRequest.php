@@ -33,7 +33,7 @@ class RegisterUserRequest extends FormRequest
             'user_type' => [
                 'required',
                 'string',
-                Rule::in(UserType::cases()),
+                Rule::in(enum_strings(UserType::class)),
             ],
             'verification_code_id' => [
                 'required',

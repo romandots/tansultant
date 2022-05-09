@@ -7,7 +7,7 @@ namespace App\Components\Course;
 use App\Models\Enum\CourseStatus;
 use JetBrains\PhpStorm\ArrayShape;
 
-class Dto extends \App\Common\DTO\DtoWIthUser
+class Dto extends \App\Common\DTO\DtoWithUser
 {
     public ?string $id;
     public string $name;

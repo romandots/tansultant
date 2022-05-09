@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Common\Contracts\FilteredInterface;
+use App\Common\Contracts\SearchFilterDtoContract;
 use App\Common\Requests\SearchRequest;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
@@ -52,9 +52,9 @@ class SearchPeopleRequest extends SearchRequest
         ]);
     }
 
-    protected function getFilterDto(): FilteredInterface
+    protected function getSearchFilterDto(): SearchFilterDtoContract
     {
-        $filter = parent::getFilterDto();
+        $filter = parent::getSearchFilterDto();
         $validated = $this->validated();
 
         $filter->birth_date_from = isset($validated['birth_date_from'])

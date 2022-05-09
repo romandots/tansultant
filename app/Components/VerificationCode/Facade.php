@@ -13,7 +13,7 @@ use App\Models\VerificationCode;
  * @method array suggest(?string $query, string|\Closure $labelField = 'name', string|\Closure $valueField = 'id', array $extraFields = [])
  * @method \Illuminate\Support\Collection<\App\Models\VerificationCode> getAll()
  * @method \Illuminate\Support\Collection<\App\Models\VerificationCode> search(PaginatedInterface $searchParams, array $relations = []):
- * @method array getMeta(\App\Common\Contracts\PaginatedInterface $searchParams)
+ * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\VerificationCode create(Dto $dto, array $relations = [])
  * @method \App\Models\VerificationCode find(string $id, array $relations = [])
  * @method void findAndDelete(string $id)

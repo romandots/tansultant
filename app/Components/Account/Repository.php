@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Account;
 
-use App\Models\{Account, Enum\AccountOwnerType, Enum\AccountType, Instructor, Student};
+use App\Models\{Account, Enum\AccountOwnerType, Enum\AccountType};
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method bool withSoftDeletes()
  * @method \Illuminate\Database\Eloquent\Builder getQuery()
  * @method Account make()
- * @method int countFiltered(\App\Common\Contracts\FilteredInterface $search)
+ * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method Collection<Account> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
  * @method Account find(string $id)
  * @method Account findTrashed(string $id)
@@ -93,76 +93,5 @@ class Repository extends \App\Common\BaseComponentRepository
             ->where('owner_type', AccountOwnerType::BRANCH)
             ->where('owner_id', $ownerId)
             ->firstOrFail();
-    }
-
-    /**
-     * @param Student $student
-     * @return Account
-     * @throws \Exception
-     */
-    public function createStudentPersonalAccount(Student $student): Account
-    {
-        $name = \trans('account.name_presets.student', ['student' => $student->name]);
-        $type = AccountType::PERSONAL;
-        $ownerType = AccountOwnerType::STUDENT;
-        $ownerId = $student->id;
-
-        return $this->create($this->buildDto($name, $type, $ownerType, $ownerId));
-    }
-
-    /**
-     * @param Instructor $instructor
-     * @return Account
-     * @throws \Exception
-     */
-    public function createInstructorPersonalAccount(Instructor $instructor): Account
-    {
-        $name = \trans('account.name_presets.instructor', ['instructor' => $instructor->name]);
-        $type = AccountType::PERSONAL;
-        $ownerType = AccountOwnerType::INSTRUCTOR;
-        $ownerId = $instructor->id;
-
-        return $this->create($this->buildDto($name, $type, $ownerType, $ownerId));
-    }
-
-    /**
-     * @param object $branch
-     * @return Account
-     * @throws \Exception
-     */
-    public function createBranchSavingsAccount($branch): Account
-    {
-        $name = \trans('account.name_presets.branch_savings', ['branch' => $branch->name]);
-        $type = AccountType::SAVINGS;
-        $ownerType = AccountOwnerType::BRANCH;
-        $ownerId = $branch->id;
-
-        return $this->create($this->buildDto($name, $type, $ownerType, $ownerId));
-    }
-
-    /**
-     * @param object $branch
-     * @return Account
-     * @throws \Exception
-     */
-    public function createBranchOperationalAccount($branch): Account
-    {
-        $name = \trans('account.name_presets.branch_operational', ['branch' => $branch->name]);
-        $type = AccountType::OPERATIONAL;
-        $ownerType = AccountOwnerType::BRANCH;
-        $ownerId = $branch->id;
-
-        return $this->create($this->buildDto($name, $type, $ownerType, $ownerId));
-    }
-
-    private function buildDto(?string $name, AccountType $type, AccountOwnerType $ownerType, string $ownerId): Dto
-    {
-        $dto = new Dto();
-        $dto->name = $name;
-        $dto->type = $type;
-        $dto->owner_type = $ownerType;
-        $dto->owner_id = $ownerId;
-
-        return $dto;
     }
 }

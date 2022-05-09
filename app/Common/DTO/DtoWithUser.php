@@ -2,7 +2,7 @@
 
 namespace App\Common\DTO;
 
-class DtoWIthUser implements \App\Common\Contracts\DtoWithUser
+class DtoWithUser implements \App\Common\Contracts\DtoWithUser
 {
     public ?\App\Models\User $user;
 

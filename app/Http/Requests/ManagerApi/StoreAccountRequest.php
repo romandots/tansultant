@@ -16,12 +16,12 @@ class StoreAccountRequest extends StoreRequest
             'type' => [
                 'required',
                 'string',
-                Rule::in(AccountType::cases()),
+                Rule::in(enum_strings(AccountType::class)),
             ],
             'owner_type' => [
                 'required',
                 'string',
-                Rule::in(AccountOwnerType::cases()),
+                Rule::in(enum_strings(AccountOwnerType::class)),
             ],
             'owner_id' => [
                 'required',

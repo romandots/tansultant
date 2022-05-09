@@ -37,6 +37,7 @@ class Service extends \App\Common\BaseComponentService
     public function create(DtoWithUser $dto): Model
     {
         // create
+        $dto->status = UserStatus::PENDING;
         $record = parent::create($dto);
         assert($record instanceof User);
 
@@ -69,5 +70,17 @@ class Service extends \App\Common\BaseComponentService
         }
 
         $this->getRepository()->updatePassword($user, $dto->new_password);
+    }
+
+    public function approve(User $user): void
+    {
+        $this->debug('Approving user #' . $user->id . ': setting status to `approved`');
+        $this->getRepository()->setApproved($user);
+    }
+
+    public function disable(User $user): void
+    {
+        $this->debug('Disabling user #' . $user->id . ': setting status to `disabled`');
+        $this->getRepository()->setDisabled($user);
     }
 }

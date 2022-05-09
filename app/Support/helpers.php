@@ -212,9 +212,15 @@ if (!function_exists('translate')) {
     }
 }
 
-if (!function_exists('gate')) {
-    function gate(array $permissions): string
+if (!function_exists('enum_strings')) {
+    /**
+     * @param string $enum
+     * @return array<string>
+     */
+    function enum_strings(string $enum): array
     {
-        return 'permission:' . implode('|', $permissions);
+        return array_map(static function ($case) {
+            return (string)$case->value;
+        }, $enum::cases());
     }
 }

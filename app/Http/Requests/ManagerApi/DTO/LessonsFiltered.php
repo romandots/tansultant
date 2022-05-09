@@ -10,9 +10,9 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi\DTO;
 
-use App\Common\DTO\DtoWIthUser;
+use App\Common\DTO\DtoWithUser;
 
-class LessonsFiltered extends DtoWIthUser
+class LessonsFiltered extends DtoWithUser
 {
     public \Carbon\Carbon $date;
 

@@ -8,19 +8,10 @@
 
 namespace App\Common\DTO;
 
-use App\Common\Contracts\FilteredInterface;
-use App\Models\User;
-
-class FilteredDtoWithUser implements FilteredInterface, \App\Common\Contracts\DtoWithUser
+class SearchFilterDto
 {
-    public ?\App\Models\User $user;
-    public ?string $query;
+    public ?string $query = null;
     public bool $with_deleted = false;
-
-    public function __construct(?\App\Models\User $user = null)
-    {
-        $this->user = $user;
-    }
 
     public function getQuery(): ?string
     {
@@ -35,10 +26,5 @@ class FilteredDtoWithUser implements FilteredInterface, \App\Common\Contracts\Dt
     public function withDeleted(): bool
     {
         return $this->with_deleted;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
     }
 }

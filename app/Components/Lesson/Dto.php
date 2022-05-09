@@ -7,7 +7,7 @@ namespace App\Components\Lesson;
 use App\Models\Enum\LessonStatus;
 use App\Models\Enum\LessonType;
 
-class Dto extends \App\Common\DTO\DtoWIthUser
+class Dto extends \App\Common\DTO\DtoWithUser
 {
     public ?string $id;
     public string $name;

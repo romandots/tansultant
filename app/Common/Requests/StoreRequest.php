@@ -2,7 +2,7 @@
 
 namespace App\Common\Requests;
 
-use App\Common\DTO\DtoWIthUser;
+use App\Common\DTO\DtoWithUser;
 
 abstract class StoreRequest extends BaseRequest
 {

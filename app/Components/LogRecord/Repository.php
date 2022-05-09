@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\LogRecord;
 
+use App\Common\BaseComponentRepository;
 use App\Models\LogRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method bool withSoftDeletes()
  * @method \Illuminate\Database\Eloquent\Builder getQuery()
  * @method LogRecord make()
- * @method int countFiltered(\App\Common\Contracts\FilteredInterface $search)
+ * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method \Illuminate\Database\Eloquent\Collection<LogRecord> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
  * @method LogRecord find(string $id)
  * @method LogRecord findTrashed(string $id)
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method void forceDelete(LogRecord $record)
  * @mixin \App\Common\BaseRepository
  */
-class Repository extends \App\Common\BaseRepository
+class Repository extends BaseComponentRepository
 {
     public function __construct() {
         parent::__construct(

@@ -6,7 +6,7 @@ namespace App\Components\Student;
 
 use App\Models\Enum\StudentStatus;
 
-class Dto extends \App\Common\DTO\DtoWIthUser
+class Dto extends \App\Common\DTO\DtoWithUser
 {
     public ?string $id;
     public string $person_id;

@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Hash;
  * @method bool withSoftDeletes()
  * @method \Illuminate\Database\Eloquent\Builder getQuery()
  * @method Course make()
- * @method int countFiltered(\App\Common\Contracts\FilteredInterface $search)
+ * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method \Illuminate\Database\Eloquent\Collection<Course> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
  * @method Course find(string $id)
  * @method Course findTrashed(string $id)

@@ -7,7 +7,7 @@ namespace App\Components\Bonus;
 use App\Models\Enum\BonusStatus;
 use App\Models\Enum\BonusType;
 
-class Dto extends \App\Common\DTO\DtoWIthUser
+class Dto extends \App\Common\DTO\DtoWithUser
 {
     public ?string $id;
     public string $name;

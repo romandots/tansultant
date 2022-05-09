@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method bool withSoftDeletes()
  * @method \Illuminate\Database\Eloquent\Builder getQuery()
  * @method Schedule make()
- * @method int countFiltered(\App\Common\Contracts\FilteredInterface $search)
+ * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method \Illuminate\Database\Eloquent\Collection<Schedule> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
  * @method Schedule find(string $id)
  * @method Schedule findTrashed(string $id)

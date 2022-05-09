@@ -12,6 +12,9 @@ namespace App\Http\Requests\ManagerApi;
 
 use App\Common\Requests\StoreRequest;
 use App\Components\User\Dto;
+use App\Models\Person;
+use App\Models\User;
+use Illuminate\Validation\Rule;
 
 /**
  * Class StoreUserRequest
@@ -19,19 +22,23 @@ use App\Components\User\Dto;
  */
 class StoreUserRequest extends StoreRequest
 {
-    /**
-     * @return array
-     */
     public function rules(): array
     {
         return [
             'username' => [
                 'required',
-                'string'
+                'string',
+                Rule::unique(User::TABLE, 'username')->ignore($this->getId()),
             ],
             'password' => [
                 'required',
-                'string'
+                'string',
+            ],
+            'person_id' => [
+                'required',
+                'string',
+                'uuid',
+                Rule::exists(Person::TABLE, 'id'),
             ],
         ];
     }
@@ -43,7 +50,13 @@ class StoreUserRequest extends StoreRequest
         $dto = new Dto($this->user());
         $dto->username = $validated['username'];
         $dto->password = $validated['password'];
+        $dto->person_id = $validated['person_id'];
 
         return $dto;
+    }
+
+    protected function getId(): ?string
+    {
+        return $this->route()?->parameter('id');
     }
 }

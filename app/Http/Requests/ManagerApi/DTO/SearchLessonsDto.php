@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\ManagerApi\DTO;
 
-use App\Common\DTO\FilteredPaginatedDto;
+use App\Common\DTO\SearchDto;
 
-class SearchLessonsDto extends FilteredPaginatedDto
+class SearchLessonsDto extends SearchDto
 {
 }

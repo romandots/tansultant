@@ -12,7 +12,7 @@ use App\Common\BaseComponentFacade;
  * @method array suggest(?string $query, string|\Closure $labelField = 'name', string|\Closure $valueField = 'id', array $extraFields = [])
  * @method \Illuminate\Support\Collection<\App\Models\Bonus> getAll()
  * @method \Illuminate\Support\Collection<\App\Models\Bonus> search(PaginatedInterface $searchParams, array $relations = []):
- * @method array getMeta(\App\Common\Contracts\PaginatedInterface $searchParams)
+ * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\Bonus create(Dto $dto, array $relations = [])
  * @method \App\Models\Bonus find(string $id, array $relations = [])
  * @method void findAndDelete(string $id)

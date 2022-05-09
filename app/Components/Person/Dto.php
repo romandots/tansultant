@@ -6,7 +6,7 @@ namespace App\Components\Person;
 
 use App\Models\Enum\Gender;
 
-class Dto extends \App\Common\DTO\DtoWIthUser
+class Dto extends \App\Common\DTO\DtoWithUser
 {
     public ?string $id;
 

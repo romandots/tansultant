@@ -6,7 +6,6 @@ namespace App\Common\Controllers;
 use App\Common\BaseFacade;
 use App\Common\Requests\StoreRequest;
 use App\Common\Requests\SuggestRequest;
-use App\Common\Requests\UpdateRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -44,7 +43,7 @@ abstract class AdminController extends Controller
 
     public function suggest(SuggestRequest $request): array
     {
-        return $this->getFacade()->suggest($request->getQuery());
+        return ['data' => $this->getFacade()->suggest($request->getQuery())];
     }
 
     public function show(string $id): JsonResource
@@ -67,12 +66,12 @@ abstract class AdminController extends Controller
 
     public function destroy(string $id, Request $request): void
     {
-        $this->getFacade()->findAndDelete($id, $request->getUser());
+        $this->getFacade()->findAndDelete($id, $request->user());
     }
 
     public function restore(string $id, Request $request): void
     {
-        $this->getFacade()->findAndRestore($id, $this->getSingleRecordRelations(), $request->getUser());
+        $this->getFacade()->findAndRestore($id, $this->getSingleRecordRelations(), $request->user());
     }
 
     final protected function getFacade(): BaseFacade

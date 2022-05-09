@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Common\Contracts\FilteredInterface;
+use App\Common\Contracts\SearchFilterDtoContract;
 use App\Common\Requests\SearchRequest;
 use App\Http\Requests\ManagerApi\DTO\SearchInstructorsFilterDto;
 use App\Models\Branch;
@@ -48,9 +48,9 @@ class SearchLessonsRequest extends SearchRequest
         ]);
     }
 
-    protected function getFilterDto(): FilteredInterface
+    protected function getSearchFilterDto(): SearchFilterDtoContract
     {
-        $filter = parent::getFilterDto();
+        $filter = parent::getSearchFilterDto();
         if (!$filter instanceof SearchInstructorsFilterDto) {
             return $filter;
         }

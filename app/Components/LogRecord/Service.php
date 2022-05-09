@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Components\LogRecord;
 
 use App\Models\Enum\LogRecordAction;
+use App\Models\Enum\LogRecordObjectType;
 use App\Models\User;
 
 class Service extends \App\Common\BaseService
@@ -24,17 +25,19 @@ class Service extends \App\Common\BaseService
      * @param object|null $oldValue
      * @throws \Exception
      */
-    public function log(User $user, LogRecordAction $action, object|string $objectOrClassName, ?object $oldValue = null): void
+    public function log(User $user, LogRecordAction $action, object|string $objectOrClassName, ?object $oldCopy = null): void
     {
         $className = \is_object($objectOrClassName) ? \get_class($objectOrClassName) : $objectOrClassName;
         $messageKey = "log_record.{$className}.{$action->value}";
 
-        $dto = new Dto();
+        $dto = new Dto($user);
         $dto->action = $action;
         $dto->message = \trans($messageKey, [
             'user' => $user->name,
             'object' => \is_object($objectOrClassName) ? $objectOrClassName->name : null,
-        ]);;
+        ]);
+        $dto->object_type = LogRecordObjectType::getFromClass($className);
+        $dto->object_id = is_object($objectOrClassName) ? (string)$objectOrClassName->id : $oldCopy?->id;
 
         $this->getRepository()->create($dto);
     }

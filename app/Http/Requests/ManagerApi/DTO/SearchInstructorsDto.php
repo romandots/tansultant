@@ -8,8 +8,8 @@
 
 namespace App\Http\Requests\ManagerApi\DTO;
 
-use App\Common\DTO\FilteredPaginatedDto;
+use App\Common\DTO\SearchDto;
 
-class SearchInstructorsDto extends FilteredPaginatedDto
+class SearchInstructorsDto extends SearchDto
 {
 }

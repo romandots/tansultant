@@ -7,7 +7,7 @@ namespace App\Components\Visit;
 use App\Models\Enum\VisitEventType;
 use App\Models\Enum\VisitPaymentType;
 
-class Dto extends \App\Common\DTO\DtoWIthUser
+class Dto extends \App\Common\DTO\DtoWithUser
 {
     public ?string $id;
     public string $manager_id;

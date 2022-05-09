@@ -9,7 +9,7 @@ use App\Models\Enum\PaymentStatus;
 use App\Models\Enum\PaymentTransferType;
 use App\Models\Enum\PaymentType;
 
-class Dto extends \App\Common\DTO\DtoWIthUser
+class Dto extends \App\Common\DTO\DtoWithUser
 {
     public ?string $id;
 

@@ -2,7 +2,7 @@
 
 namespace App\Common\Requests;
 
-use App\Common\DTO\DtoWIthUser;
+use App\Common\DTO\DtoWithUser;
 
 class SuggestRequest extends BaseRequest
 {
@@ -23,6 +23,6 @@ class SuggestRequest extends BaseRequest
 
     public function getDto(): \App\Common\Contracts\DtoWithUser
     {
-        return new DtoWIthUser();
+        return new DtoWithUser($this->user());
     }
 }

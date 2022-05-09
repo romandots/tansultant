@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method bool withSoftDeletes()
  * @method \Illuminate\Database\Eloquent\Builder getQuery()
  * @method Payment make()
- * @method int countFiltered(\App\Common\Contracts\FilteredInterface $search)
+ * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method \Illuminate\Database\Eloquent\Collection<Payment> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
  * @method Payment find(string $id)
  * @method Payment findTrashed(string $id)

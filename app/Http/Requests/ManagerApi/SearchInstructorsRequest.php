@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Common\Contracts\FilteredInterface;
+use App\Common\Contracts\SearchFilterDtoContract;
 use App\Common\Requests\FilteredPaginatedRequest;
 use App\Http\Requests\ManagerApi\DTO\SearchInstructorsFilterDto;
 use App\Models\Enum\InstructorStatus;
@@ -38,7 +38,7 @@ class SearchInstructorsRequest extends FilteredPaginatedRequest
                 'statuses.*' => [
                     'required_with:statuses',
                     'string',
-                    Rule::in(InstructorStatus::cases()),
+                    Rule::in(enum_strings(InstructorStatus::class)),
                 ],
                 'display' => [
                     'nullable',
@@ -48,9 +48,9 @@ class SearchInstructorsRequest extends FilteredPaginatedRequest
         );
     }
 
-    protected function getFilterDto(): FilteredInterface
+    protected function getSearchFilterDto(): SearchFilterDtoContract
     {
-        $filter = parent::getFilterDto();
+        $filter = parent::getSearchFilterDto();
         if (!$filter instanceof SearchInstructorsFilterDto) {
             return $filter;
         }

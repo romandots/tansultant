@@ -7,7 +7,7 @@ namespace App\Components\Schedule;
 use App\Models\Enum\ScheduleCycle;
 use App\Models\Enum\Weekday;
 
-class Dto extends \App\Common\DTO\DtoWIthUser
+class Dto extends \App\Common\DTO\DtoWithUser
 {
     public ?string $id;
 
