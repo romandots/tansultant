@@ -31,12 +31,13 @@ use App\Models\Classroom;
  */
 class ClassroomController extends AdminController
 {
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(
             facadeClass: Component\Facade::class,
             resourceClass: Component\Formatter::class,
-            searchRelations: ['person'],
-            singleRecordRelations: ['person'],
+            searchRelations: ['branch'],
+            singleRecordRelations: ['branch'],
         );
     }
 
@@ -57,19 +58,14 @@ class ClassroomController extends AdminController
 
     public function suggest(SuggestRequest $request): array
     {
+        $labelField = fn(Classroom $classroom) => sprintf('%s (%s)', $classroom->name, $classroom->branch->name);
         $extraFields = [
             'branch' => function (Classroom $classroom) {
                 return $classroom->branch->name;
             },
             'branch_id' => 'branch_id',
         ];
-        return $this->getFacade()->suggest(
-            $request->getQuery(),
-            function(Classroom $classroom) {
-                return sprintf('%s (%s)', $classroom->name, $classroom->branch->name);
-            },
-            'id',
-            $extraFields
-        );
+
+        return $this->_suggest($request, $labelField, 'id', $extraFields);
     }
 }

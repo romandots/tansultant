@@ -41,9 +41,18 @@ abstract class AdminController extends Controller
         return $this->makeResourceCollection($records)->additional(['meta' => $meta]);
     }
 
-    public function suggest(SuggestRequest $request): array
-    {
-        return ['data' => $this->getFacade()->suggest($request->getQuery())];
+    public function suggest(SuggestRequest $request): array {
+        return $this->_suggest($request);
+    }
+
+    final protected function _suggest(
+        SuggestRequest $request,
+        string|\Closure $labelField = 'name',
+        string|\Closure $valueField = 'id',
+        array $extraFields = []
+    ): array {
+        $data = $this->getFacade()->suggest($request->getQuery(), $labelField, $valueField, $extraFields);
+        return $this->formatList($data);
     }
 
     public function show(string $id): JsonResource
@@ -87,6 +96,11 @@ abstract class AdminController extends Controller
     final protected function makeResourceCollection(Collection $collection): AnonymousResourceCollection
     {
         return $this->resourceClass::collection($collection);
+    }
+
+    final protected function formatList(array $data = []): array
+    {
+        return ['data' => $data];
     }
 
     final protected function getSearchRelations(): array

@@ -224,3 +224,17 @@ if (!function_exists('enum_strings')) {
         }, $enum::cases());
     }
 }
+
+if (!function_exists('property_or_callback')) {
+    /**
+     * @param string|Closure $fieldOrCallback
+     * @param object $record
+     * @return mixed
+     */
+    function property_or_callback(object $record, string|\Closure $fieldOrCallback): mixed
+    {
+        return is_string($fieldOrCallback)
+            ? $record->{$fieldOrCallback}
+            : $fieldOrCallback($record);
+    }
+}

@@ -107,8 +107,11 @@ abstract class AdminControllerTest extends TestCase
             ->assertOk();
     }
 
-    final public function suggest(): void
-    {
+    final public function suggest(
+        string|\Closure $labelField = 'name',
+        string|\Closure $valueField = 'id',
+        array $extraFields = []
+    ): void {
         $query = 'Тестовая строка';
         $url = $this->getUrl('suggest');
 
@@ -137,7 +140,7 @@ abstract class AdminControllerTest extends TestCase
                 'query' => $query
             ]);
 
-        $numberOfRecords = 20;
+        $numberOfRecords = 10;
         $records = [];
         for ($i = 0; $i < $numberOfRecords; $i++) {
             $attributes = ($i > 4) ? [] : ['name' => $query . $i];
@@ -147,30 +150,28 @@ abstract class AdminControllerTest extends TestCase
         Cache::shouldReceive('get')->once()->andReturn(null);
         Cache::shouldReceive('add')->once();
 
-        $this
-            ->get($url)
+        $response = $this->get($url);
+
+        $response
             ->assertOk()
-            ->assertJsonCount(5, 'data')
-            ->assertJsonFragment([
-                'label' => $query . '0',
-                'value' => $records[0]->id,
-            ])
-            ->assertJsonFragment([
-                'label' => $query . '1',
-                'value' => $records[1]->id,
-            ])
-            ->assertJsonFragment([
-                'label' => $query . '2',
-                'value' => $records[2]->id,
-            ])
-            ->assertJsonFragment([
-                'label' => $query . '3',
-                'value' => $records[3]->id,
-            ])
-            ->assertJsonFragment([
-                'label' => $query . '4',
-                'value' => $records[4]->id,
-            ]);
+            ->assertJsonCount(5, 'data');
+
+        for ($i = 0; $i <= 4; $i++) {
+            $record = $records[$i];
+            $label = property_or_callback($record, $labelField);
+            $value = property_or_callback($record, $valueField);
+            $set = [
+                'label' => $label,
+                'value' => $value,
+            ];
+
+            if (!empty($extraFields)) {
+                foreach ($extraFields as $extraKey => $extraValue) {
+                    $set[$extraKey] = property_or_callback($record, $extraValue);
+                }
+            }
+            $response->assertJsonFragment($set);
+        }
     }
 
     final public function store(): void
