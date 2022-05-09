@@ -8,15 +8,6 @@ use App\Common\Requests\SearchRequest;
 
 class SearchAccountRequest extends SearchRequest
 {
-    public function __construct()
-    {
-        parent::__construct(
-            searchDtoClass: SearchDto::class,
-            searchFilterDtoClass: SearchFilterDto::class,
-            sortable: ['created_at'],
-        );
-    }
-
     public function rules(): array
     {
         return parent::rules();

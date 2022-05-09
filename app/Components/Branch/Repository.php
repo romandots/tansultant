@@ -50,12 +50,11 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->telegram_username = $dto->telegram_username;
         $record->instagram_username = $dto->instagram_username;
         $record->address = [
-            'country' => $dto->address['country'] ?? null,
-            'city' => $dto->address['city'] ?? null,
-            'street' => $dto->address['street'] ?? null,
-            'building' => $dto->address['building'] ?? null,
-            'coordinates' => isset($dto->address['coordinates'][0], $dto->address['coordinates'][1])
-                ? [$dto->address['coordinates'][0], $dto->address['coordinates'][1]] : null,
+            'country' => $dto->address?->country,
+            'city' => $dto->address?->city,
+            'street' => $dto->address?->street,
+            'building' => $dto->address?->building,
+            'coordinates' => $dto->address?->coordinates,
         ];
         $record->number = $dto->number;
     }

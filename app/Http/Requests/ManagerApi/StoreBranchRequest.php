@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\ManagerApi;
 
 use App\Common\Requests\StoreRequest;
+use App\Components\Branch\AddressDto;
 use App\Components\Branch\Dto;
 use App\Components\Loader;
 use App\Models\Branch;
@@ -119,7 +120,7 @@ class StoreBranchRequest extends StoreRequest
         $dto->facebook_url = $validated['facebook_url'] ?? null;
         $dto->telegram_username = $validated['telegram_username'] ?? null;
         $dto->instagram_username = $validated['instagram_username'] ?? null;
-        $dto->address = $validated['address'] ?? [];
+        $dto->address = new AddressDto($validated['address'] ?? []);
         $dto->number = isset($validated['number']) ? (int)$validated['number'] : $this->getNextNumberValue();
 
         return $dto;

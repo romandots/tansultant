@@ -12,17 +12,12 @@ class SearchRequest extends FilteredPaginatedRequest
     protected string $searchFilterDtoClass;
     protected array $sortable = ['created_at'];
 
-    /**
-     * @param string $searchDtoClass
-     * @param string $searchFilterDtoClass
-     * @param array|string[] $sortable
-     */
-    public function __construct(string $searchDtoClass, string $searchFilterDtoClass, array $sortable)
+    public function __construct()
     {
         parent::__construct();
-        $this->searchDtoClass = $searchDtoClass;
-        $this->searchFilterDtoClass = $searchFilterDtoClass;
-        $this->sortable = $sortable;
+        $this->searchDtoClass = SearchDto::class;
+        $this->searchFilterDtoClass = SearchFilterDto::class;
+        $this->sortable = ['created_at'];
     }
 
     public function rules(): array

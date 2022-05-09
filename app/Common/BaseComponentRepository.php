@@ -44,7 +44,7 @@ abstract class BaseComponentRepository extends BaseRepository
         return new $this->modelClass();
     }
 
-    final protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
+    protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
     {
         $query = $this->getQuery();
 

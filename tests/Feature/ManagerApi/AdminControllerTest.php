@@ -234,7 +234,6 @@ abstract class AdminControllerTest extends TestCase
             ->put($url)
             ->assertStatus(422);
 
-
         $this->assertDatabaseHas($this->tableName, $record->toArray());
         $this->assertDatabaseMissing($this->tableName, $newAttributes);
 

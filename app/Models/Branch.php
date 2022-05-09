@@ -14,6 +14,7 @@ use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Branch
@@ -61,6 +62,7 @@ class Branch extends Model
 {
     use UsesUuid;
     use HasFactory;
+    use SoftDeletes;
 
     public const TABLE = 'branches';
 
