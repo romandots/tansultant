@@ -161,51 +161,7 @@ class AccountServiceTest extends TestCase
         $user = $this->createFakeUser();
         $account = $this->createFakeAccount();
         $anotherAccount = $this->createFakeAccount();
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::CONFIRMED
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::CONFIRMED,
-            'deleted_at' => Carbon::now()
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::PENDING
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::CANCELED
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::EXPIRED
-        ]);
-        $this->createFakePayment(100, $anotherAccount, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::CONFIRMED
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::ACTIVATED
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::PENDING
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::CANCELED
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::EXPIRED
-        ]);
-        $this->createFakeBonus(100, $anotherAccount, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::ACTIVATED
-        ]);
+        $this->generatePayments($user, $account, $anotherAccount);
 
         $amount = $this->service->getAmount($account);
 
@@ -217,51 +173,7 @@ class AccountServiceTest extends TestCase
         $user = $this->createFakeUser();
         $account = $this->createFakeAccount();
         $anotherAccount = $this->createFakeAccount();
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::PENDING
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::PENDING,
-            'deleted_at' => Carbon::now()
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::CONFIRMED
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::CANCELED
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::EXPIRED
-        ]);
-        $this->createFakePayment(100, $anotherAccount, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::CONFIRMED
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::ACTIVATED
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::PENDING
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::CANCELED
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::EXPIRED
-        ]);
-        $this->createFakeBonus(100, $anotherAccount, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::PENDING
-        ]);
+        $this->generatePayments($user, $account, $anotherAccount);
 
         $amount = $this->service->getBonusAmount($account);
 
@@ -273,51 +185,7 @@ class AccountServiceTest extends TestCase
         $user = $this->createFakeUser();
         $account = $this->createFakeAccount();
         $anotherAccount = $this->createFakeAccount();
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::CONFIRMED
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::CONFIRMED,
-            'deleted_at' => Carbon::now()
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::PENDING
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::CANCELED
-        ]);
-        $this->createFakePayment(100, $account, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::EXPIRED
-        ]);
-        $this->createFakePayment(100, $anotherAccount, [
-            'user_id' => $user->id,
-            'status' => PaymentStatus::CONFIRMED
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::ACTIVATED
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::PENDING
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::CANCELED
-        ]);
-        $this->createFakeBonus(100, $account, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::EXPIRED
-        ]);
-        $this->createFakeBonus(100, $anotherAccount, [
-            'user_id' => $user->id,
-            'status' => BonusStatus::ACTIVATED
-        ]);
+        $this->generatePayments($user, $account, $anotherAccount);
 
         $amount = $this->service->getTotalAmount($account);
 
@@ -332,5 +200,32 @@ class AccountServiceTest extends TestCase
         $this->service->checkFunds($account, 300);
 
         $this->service->checkFunds($account, 200);
+    }
+
+    protected function generatePayments(\App\Models\User $user, Account $account, Account $anotherAccount): void
+    {
+        $userId = ['user_id' => $user->id];
+        $deleted = ['deleted_at' => Carbon::now()];
+        $statusConfirmed = ['status' => PaymentStatus::CONFIRMED];
+        $statusPending = ['status' => PaymentStatus::PENDING];
+        $statusCanceled = ['status' => PaymentStatus::CANCELED];
+        $statusExpired = ['status' => PaymentStatus::EXPIRED];
+        $bonusActivated = ['status' => BonusStatus::ACTIVATED];
+        $bonusPending = ['status' => BonusStatus::PENDING];
+        $bonusCanceled = ['status' => BonusStatus::CANCELED];
+        $bonusExpired = ['status' => BonusStatus::EXPIRED];
+
+        $this->createFakePayment(100, $account, $userId + $statusConfirmed);
+        $this->createFakePayment(1, $account, $userId + $statusConfirmed + $deleted);
+        $this->createFakePayment(1, $account, $userId + $statusPending);
+        $this->createFakePayment(1, $account, $userId + $statusCanceled);
+        $this->createFakePayment(1, $account, $userId + $statusExpired);
+        $this->createFakePayment(1, $anotherAccount, $userId + $statusConfirmed);
+
+        $this->createFakeBonus(100, $account, $userId + $bonusPending);
+        $this->createFakeBonus(1, $account, $userId + $bonusActivated);
+        $this->createFakeBonus(1, $account, $userId + $bonusCanceled);
+        $this->createFakeBonus(1, $account, $userId + $bonusExpired);
+        $this->createFakeBonus(1, $anotherAccount, $userId + $bonusActivated);
     }
 }

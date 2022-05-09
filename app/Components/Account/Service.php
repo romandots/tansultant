@@ -191,8 +191,8 @@ class Service extends \App\Common\BaseComponentService
      */
     public function getAmount(Account $account): int
     {
-        return $account->payments
-            ->where('status', PaymentStatus::CONFIRMED->value)
+        return $account->load('payments')->payments
+            ->where('status', PaymentStatus::CONFIRMED)
             ->sum('amount');
     }
 
@@ -202,8 +202,8 @@ class Service extends \App\Common\BaseComponentService
      */
     public function getBonusAmount(Account $account): int
     {
-        return $account->bonuses
-            ->where('status', BonusStatus::PENDING->value)
+        return $account->load('bonuses')->bonuses
+            ->where('status', BonusStatus::PENDING)
             ->sum('amount');
     }
 
