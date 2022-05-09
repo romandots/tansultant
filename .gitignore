@@ -1,6 +1,8 @@
 .idea
 .env
+.phpunit.result.cache
 docker/data/*
+docker/logs/*
 vendor/*
 node_modules/*
 Old*/

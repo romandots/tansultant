@@ -4,7 +4,7 @@
 ```shell
 docker-compose up -d
 ```
-По-умолчанию, приложение будет доступно по адресу http://localhost:8100 (порт можно изменить в файле `docker-compose.yml`)
+По-умолчанию, приложение будет доступно по адресу http://localhost:8080 (порт можно изменить в файле `docker-compose.yml`)
 
 # API
 См. документацию в swagger.yml
