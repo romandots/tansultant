@@ -11,9 +11,9 @@ declare(strict_types=1);
 namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\Auth\DTO\RegisterUser;
+use App\Models\Enum\Gender;
 use App\Models\Enum\UserType;
 use App\Models\VerificationCode;
-use App\Repository\VerificationCodeRepository;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -60,7 +60,7 @@ class RegisterUserRequest extends FormRequest
             'gender' => [
                 'required',
                 'string',
-                Rule::in(\App\Models\Enum\Gender::cases()),
+                Rule::in(enum_strings(\App\Models\Enum\Gender::class)),
             ],
             'email' => [
                 'nullable',
@@ -86,13 +86,13 @@ class RegisterUserRequest extends FormRequest
         $validated = $this->validated();
 
         $dto = new RegisterUser();
-        $dto->user_type = $validated['user_type'];
+        $dto->user_type = UserType::from($validated['user_type']);
         $dto->last_name = $validated['last_name'];
         $dto->first_name = $validated['first_name'];
         $dto->verification_code = $validated['verification_code_id'] ?? null;
         $dto->patronymic_name = $validated['patronymic_name'];
         $dto->birth_date = isset($validated['birth_date']) ? Carbon::parse($validated['birth_date']) : null;
-        $dto->gender = $validated['gender'];
+        $dto->gender = Gender::from($validated['gender']);
         $dto->email = $validated['email'] ?? null;
         $dto->description = $validated['description'] ?? null;
         $dto->password = $validated['password'];

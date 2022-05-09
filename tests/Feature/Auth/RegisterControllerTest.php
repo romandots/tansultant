@@ -14,7 +14,7 @@ use App\Events\InstructorCreatedEvent;
 use App\Events\StudentCreatedEvent;
 use App\Events\UserCreatedEvent;
 use App\Events\UserRegisteredEvent;
-use App\Models\Customer;
+use App\Models\Enum\UserType;
 use App\Models\Instructor;
 use App\Models\Person;
 use App\Models\Student;
@@ -64,148 +64,151 @@ class RegisterControllerTest extends TestCase
     }
 
     /**
-     * @param string $userType
+     * @param UserType $userType
      * @dataProvider registerUserData
      */
-    public function testRegisterUser(string $userType): void
+    public function testRegisterUser(UserType $userType): void
     {
         Event::fake();
 
-        $phoneNumber = $this->faker->phoneNumber;
-        $verificationCode = $this->createFakeVerificationCode($phoneNumber, '7777');
+        $this->freezeTime(function(Carbon $carbon) use ($userType) {
 
-        $postData = [
-            'verification_code_id' => $verificationCode->id,
-            'email' => $this->faker->email,
-            'last_name' => 'Dots',
-            'first_name' => 'Roman',
-            'patronymic_name' => 'A.',
-            'birth_date' => '1986-01-08',
-            'gender' => \App\Models\Enum\Gender::MALE,
-            'password' => '123456',
-        ];
+            $phoneNumber = $this->faker->phoneNumber;
+            $verificationCode = $this->createFakeVerificationCode($phoneNumber, '7777');
 
-        // Sending phone without user_type
-        $this
-            ->post(self::REGISTER_URL, $postData)
-            ->assertStatus(422)
-            ->assertJson([
-                'data' => [
-                    'user_type' => [
-                        ['name' => 'required']
-                    ]
-                ],
-                'error' => 'validation_error',
-                'message' => 'Ошибка валидации',
-            ]);
+            $postData = [
+                'verification_code_id' => $verificationCode->id,
+                'email' => $this->faker->email,
+                'last_name' => 'Dots',
+                'first_name' => 'Roman',
+                'patronymic_name' => 'A.',
+                'birth_date' => '1986-01-08',
+                'gender' => \App\Models\Enum\Gender::MALE->value,
+                'password' => '123456',
+            ];
 
-        // Sending phone with wrong user_type
-        $postData['user_type'] = 'wrong_user_type';
-        $this
-            ->post(self::REGISTER_URL, $postData)
-            ->assertStatus(422)
-            ->assertJson([
-                'data' => [
-                    'user_type' => [
-                        ['name' => 'in']
-                    ]
-                ],
-                'error' => 'validation_error',
-                'message' => 'Ошибка валидации',
-            ]);
+            // Sending phone without user_type
+            $this
+                ->post(self::REGISTER_URL, $postData)
+                ->assertStatus(422)
+                ->assertJson([
+                    'data' => [
+                        'user_type' => [
+                            ['name' => 'required']
+                        ]
+                    ],
+                    'error' => 'validation_error',
+                    'message' => 'Ошибка валидации',
+                ]);
 
-        // Sending phone with correct verification code
-        $now = Carbon::now();
-        $postData['user_type'] = $userType;
-        $this
-            ->post(self::REGISTER_URL, $postData)
-            ->assertStatus(201)
-            ->assertJson([
-                'data' =>
-                    [
-                        'name' => "{$postData['first_name']} {$postData['last_name']}",
-                        'username' => $phoneNumber,
-                        'person' => [
-                            'last_name' => $postData['last_name'],
-                            'first_name' => $postData['first_name'],
-                            'patronymic_name' => $postData['patronymic_name'],
-                            'birth_date' => $postData['birth_date'],
-                            'gender' => $postData['gender'],
-                            'phone' => \phone_format($phoneNumber),
-                            'email' => $postData['email'],
-                            'picture' => null,
-                            'picture_thumb' => null,
-                            'instagram_username' => null,
-                            'telegram_username' => null,
-                            'vk_uid' => null,
-                            'facebook_uid' => null,
-                            'note' => null,
-                            'is_customer' => $userType === \base_classname(Customer::class),
-                            'is_student' => $userType === \base_classname(Student::class),
-                            'is_instructor' => $userType === \base_classname(Instructor::class),
+            // Sending phone with wrong user_type
+            $postData['user_type'] = 'wrong_user_type';
+            $this
+                ->post(self::REGISTER_URL, $postData)
+                ->assertStatus(422)
+                ->assertJson([
+                    'data' => [
+                        'user_type' => [
+                            ['name' => 'in']
+                        ]
+                    ],
+                    'error' => 'validation_error',
+                    'message' => 'Ошибка валидации',
+                ]);
+
+            // Sending phone with correct verification code
+            $now = $carbon::now();
+            $postData['user_type'] = $userType->value;
+            $this
+                ->post(self::REGISTER_URL, $postData)
+                ->assertStatus(201)
+                ->assertJson([
+                    'data' =>
+                        [
+                            'name' => "{$postData['first_name']} {$postData['last_name']}",
+                            'username' => $phoneNumber,
+                            'person' => [
+                                'last_name' => $postData['last_name'],
+                                'first_name' => $postData['first_name'],
+                                'patronymic_name' => $postData['patronymic_name'],
+                                'birth_date' => $postData['birth_date'],
+                                'gender' => $postData['gender'],
+                                'phone' => \phone_format($phoneNumber),
+                                'email' => $postData['email'],
+                                'picture' => null,
+                                'picture_thumb' => null,
+                                'instagram_username' => null,
+                                'telegram_username' => null,
+                                'vk_uid' => null,
+                                'facebook_uid' => null,
+                                'note' => null,
+                                'is_customer' => $userType === UserType::CUSTOMER,
+                                'is_student' => $userType === UserType::STUDENT,
+                                'is_instructor' => $userType === UserType::INSTRUCTOR,
+                                'created_at' => $now->toDateTimeString(),
+                            ],
+                            'permissions' => [],
                             'created_at' => $now->toDateTimeString(),
-                        ],
-                        'permissions' => [],
-                        'created_at' => $now->toDateTimeString(),
-                        'updated_at' => $now->toDateTimeString(),
-                        'approved_at' => $userType === \base_classname(Student::class) ? $now->toDateTimeString() : null,
-                        'seen_at' => null,
-                    ]
+                            'updated_at' => $now->toDateTimeString(),
+                            'approved_at' => $userType === UserType::STUDENT ? $now->toDateTimeString() : null,
+                            'seen_at' => null,
+                        ]
+                ]);
+
+            $this->assertDatabaseHas(User::TABLE, [
+                'name' => "{$postData['first_name']} {$postData['last_name']}",
+                'username' => $phoneNumber,
+                'created_at' => $now->toDateTimeString(),
             ]);
 
-        $this->assertDatabaseHas(User::TABLE, [
-            'name' => "{$postData['first_name']} {$postData['last_name']}",
-            'username' => $phoneNumber,
-            'created_at' => $now->toDateTimeString(),
-        ]);
+            $this->assertDatabaseHas(Person::TABLE, [
+                'last_name' => $postData['last_name'],
+                'first_name' => $postData['first_name'],
+                'patronymic_name' => $postData['patronymic_name'],
+                'birth_date' => $postData['birth_date'],
+                'gender' => $postData['gender'],
+                'phone' => $phoneNumber,
+                'email' => $postData['email'],
+                'created_at' => $now->toDateTimeString(),
+            ]);
 
-        $this->assertDatabaseHas(Person::TABLE, [
-            'last_name' => $postData['last_name'],
-            'first_name' => $postData['first_name'],
-            'patronymic_name' => $postData['patronymic_name'],
-            'birth_date' => $postData['birth_date'],
-            'gender' => $postData['gender'],
-            'phone' => $phoneNumber,
-            'email' => $postData['email'],
-            'created_at' => $now->toDateTimeString(),
-        ]);
+            $person = Person::query()->where([
+                'last_name' => $postData['last_name'],
+                'first_name' => $postData['first_name'],
+                'patronymic_name' => $postData['patronymic_name'],
+                'birth_date' => $postData['birth_date'],
+                'gender' => $postData['gender'],
+                'phone' => $phoneNumber,
+                'email' => $postData['email'],
+                'created_at' => $now->toDateTimeString(),
+            ])->first();
 
-        $person = Person::query()->where([
-            'last_name' => $postData['last_name'],
-            'first_name' => $postData['first_name'],
-            'patronymic_name' => $postData['patronymic_name'],
-            'birth_date' => $postData['birth_date'],
-            'gender' => $postData['gender'],
-            'phone' => $phoneNumber,
-            'email' => $postData['email'],
-            'created_at' => $now->toDateTimeString(),
-        ])->first();
+            Event::assertDispatched(UserCreatedEvent::class);
+            Event::assertDispatched(UserRegisteredEvent::class);
 
-        Event::assertDispatched(UserCreatedEvent::class);
-        Event::assertDispatched(UserRegisteredEvent::class);
-
-        switch ($userType) {
-            case \base_classname(Student::class):
-                $this->assertDatabaseHas(Student::TABLE, [
-                    'name' => 'Dots Roman A.',
-                    'person_id' => $person->id,
-                    'created_at' => $now->toDateTimeString(),
-                ]);
-                Event::assertDispatched(StudentCreatedEvent::class);
-                break;
-            case \base_classname(Instructor::class):
-                $this->assertDatabaseHas(Instructor::TABLE, [
-                    'name' => 'Roman Dots',
-                    'person_id' => $person->id,
-                    'created_at' => $now->toDateTimeString(),
-                ]);
-                Event::assertDispatched(InstructorCreatedEvent::class);
-                break;
-            case \base_classname(User::class):
-                break;
-            default:
-                throw new \LogicException('Unsupported user type');
-        }
+            switch ($userType) {
+                case UserType::STUDENT:
+                    $this->assertDatabaseHas(Student::TABLE, [
+                        'name' => 'Dots Roman A.',
+                        'person_id' => $person->id,
+                        'created_at' => $now->toDateTimeString(),
+                    ]);
+                    Event::assertDispatched(StudentCreatedEvent::class);
+                    break;
+                case UserType::INSTRUCTOR:
+                    $this->assertDatabaseHas(Instructor::TABLE, [
+                        'name' => 'Roman Dots',
+                        'person_id' => $person->id,
+                        'created_at' => $now->toDateTimeString(),
+                    ]);
+                    Event::assertDispatched(InstructorCreatedEvent::class);
+                    break;
+                case UserType::USER:
+                    break;
+                default:
+                    throw new \LogicException('Unsupported user type');
+            }
+        });
     }
 
     /**
@@ -260,9 +263,9 @@ class RegisterControllerTest extends TestCase
     public function registerUserData(): array
     {
         return [
-            'User' => ['User'],
-            'Student' => ['Student'],
-            'Instructor' => ['Instructor'],
+            'User' => [UserType::USER],
+            'Student' => [UserType::STUDENT],
+            'Instructor' => [UserType::INSTRUCTOR],
         ];
     }
 
@@ -275,7 +278,7 @@ class RegisterControllerTest extends TestCase
                     'first_name' => 'Roman',
                     'patronymic_name' => 'A.',
                     'birth_date' => '1986-01-08',
-                    'gender' => \App\Models\Enum\Gender::MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE->value,
                     'password' => '123456',
                 ]
             ],
@@ -285,7 +288,7 @@ class RegisterControllerTest extends TestCase
                     'last_name' => 'Dots',
                     'patronymic_name' => 'A.',
                     'birth_date' => '1986-01-08',
-                    'gender' => \App\Models\Enum\Gender::MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE->value,
                     'password' => '123456',
                 ]
             ],
@@ -295,7 +298,7 @@ class RegisterControllerTest extends TestCase
                     'last_name' => 'Dots',
                     'first_name' => 'Roman',
                     'birth_date' => '1986-01-08',
-                    'gender' => \App\Models\Enum\Gender::MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE->value,
                     'password' => '123456',
                 ]
             ],
@@ -305,7 +308,7 @@ class RegisterControllerTest extends TestCase
                     'last_name' => 'Dots',
                     'first_name' => 'Roman',
                     'patronymic_name' => 'A.',
-                    'gender' => \App\Models\Enum\Gender::MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE->value,
                     'password' => '123456',
                 ]
             ],
@@ -337,7 +340,7 @@ class RegisterControllerTest extends TestCase
                     'first_name' => 'Roman',
                     'patronymic_name' => 'A.',
                     'birth_date' => '1986-01-08',
-                    'gender' => \App\Models\Enum\Gender::MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE->value,
                 ]
             ],
             [
@@ -346,7 +349,7 @@ class RegisterControllerTest extends TestCase
                     'first_name' => 'Roman',
                     'patronymic_name' => 'A.',
                     'birth_date' => '1986-01-08',
-                    'gender' => \App\Models\Enum\Gender::MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE->value,
                     'password' => '123456',
                 ]
             ],
@@ -356,7 +359,7 @@ class RegisterControllerTest extends TestCase
                     'last_name' => 'Dots',
                     'patronymic_name' => 'A.',
                     'birth_date' => '1986-01-08',
-                    'gender' => \App\Models\Enum\Gender::MALE,
+                    'gender' => \App\Models\Enum\Gender::MALE->value,
                     'password' => '123456',
                 ]
             ],
@@ -373,14 +376,14 @@ class RegisterControllerTest extends TestCase
         $this->assertDatabaseHas(Person::TABLE, ['phone' => $normalizedPhone]);
 
         $postData = [
-            'user_type' => \base_classname(Student::class),
+            'user_type' => UserType::STUDENT->value,
             'verification_code_id' => $verificationCode->id,
             'email' => $this->faker->email,
             'last_name' => 'Dots',
             'first_name' => 'Roman',
             'patronymic_name' => 'A.',
             'birth_date' => '1986-01-08',
-            'gender' => \App\Models\Enum\Gender::MALE,
+            'gender' => \App\Models\Enum\Gender::MALE->value,
             'password' => '123456',
         ];
 
@@ -396,7 +399,7 @@ class RegisterControllerTest extends TestCase
                         'first_name' => 'Roman',
                         'patronymic_name' => 'A.',
                         'birth_date' => '1986-01-08',
-                        'gender' => \App\Models\Enum\Gender::MALE,
+                        'gender' => \App\Models\Enum\Gender::MALE->value,
                     ]
                 ],
             ]);
@@ -414,14 +417,14 @@ class RegisterControllerTest extends TestCase
         $fakePerson->save();
 
         $postData = [
-            'user_type' => \base_classname(Student::class),
+            'user_type' => UserType::STUDENT->value,
             'verification_code_id' => $verificationCode->id,
             'email' => $this->faker->email,
             'last_name' => 'Dots',
             'first_name' => 'Roman',
             'patronymic_name' => 'A.',
             'birth_date' => '1986-01-08',
-            'gender' => \App\Models\Enum\Gender::MALE,
+            'gender' => \App\Models\Enum\Gender::MALE->value,
             'password' => '123456',
         ];
 
@@ -446,13 +449,13 @@ class RegisterControllerTest extends TestCase
             'first_name' => 'Roman',
             'patronymic_name' => 'A.',
             'birth_date' => '1986-01-08',
-            'gender' => \App\Models\Enum\Gender::MALE,
+            'gender' => \App\Models\Enum\Gender::MALE->value,
         ];
 
         $fakePerson = $this->createFakePerson($postData);
 
         $postData['verification_code_id'] = $verificationCode->id;
-        $postData['user_type'] = \base_classname(Student::class);
+        $postData['user_type'] = UserType::STUDENT->value;
         $postData['password'] = '123456';
 
         $this

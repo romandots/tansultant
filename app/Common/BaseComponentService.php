@@ -54,21 +54,13 @@ abstract class BaseComponentService extends BaseService
             ->map(function (Model $record) use ($additionalFields, $labelField, $valueField) {
                 assert(is_a($record, $this->getModelClassName()));
                 try {
-                    if ($labelField instanceof \Closure) {
-                        $label = $labelField($record);
-                    } else {
-                        $label = $record->{$labelField};
-                    }
+                    $label = property_or_callback($record, $labelField);
                 } catch (\Exception $exception) {
                     $label = (string)$record;
                 }
 
                 try {
-                    if ($valueField instanceof \Closure) {
-                        $value = $valueField($record);
-                    } else {
-                        $value = $record->{$valueField};
-                    }
+                    $value = property_or_callback($record, $valueField);
                 } catch (\Exception $exception) {
                     $value = $record->id;
                 }
@@ -80,11 +72,7 @@ abstract class BaseComponentService extends BaseService
 
                 foreach ($additionalFields as $key => $field) {
                     try {
-                        if ($field instanceof \Closure) {
-                            $fieldValue = $field($record);
-                        } else {
-                            $fieldValue = $record->{$field};
-                        }
+                        $fieldValue = property_or_callback($record, $field);
                         $set[$key] = $fieldValue;
                     } catch (\Exception $exception) {
                     }

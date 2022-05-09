@@ -79,8 +79,8 @@ class UserRegisterService extends BaseService
             match ($registerUser->user_type) {
                 UserType::INSTRUCTOR => $this->createInstructorIfNotExist($person, $registerUser),
                 UserType::STUDENT => $this->createStudentIfNotExist($person, $registerUser),
-                UserType::USER => throw new \Exception('To be implemented'),
-                UserType::CUSTOMER => throw new \Exception('To be implemented'),
+                UserType::USER => function () {},
+                UserType::CUSTOMER => function () {},
             };
 
             // Create User

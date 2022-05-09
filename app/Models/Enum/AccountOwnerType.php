@@ -18,4 +18,13 @@ enum AccountOwnerType: string implements ClassBackedEnum
             self::BRANCH => \App\Models\Branch::class,
         };
     }
+
+    public static function fromClass(string $className): self
+    {
+        return match ($className) {
+            \App\Models\Student::class => self::STUDENT,
+            \App\Models\Instructor::class => self::INSTRUCTOR,
+            \App\Models\Branch::class => self::BRANCH,
+        };
+    }
 }

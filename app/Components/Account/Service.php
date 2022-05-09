@@ -3,7 +3,14 @@
 namespace App\Components\Account;
 
 use App\Common\Contracts;
-use App\Models\{Account, Branch, Enum\AccountOwnerType, Enum\AccountType, Enum\BonusStatus, Instructor, Student};
+use App\Models\{Account,
+    Branch,
+    Enum\AccountOwnerType,
+    Enum\AccountType,
+    Enum\BonusStatus,
+    Enum\PaymentStatus,
+    Instructor,
+    Student};
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -185,7 +192,7 @@ class Service extends \App\Common\BaseComponentService
     public function getAmount(Account $account): int
     {
         return $account->payments
-            ->where('status', PaymentStatus::CONFIRMED)
+            ->where('status', PaymentStatus::CONFIRMED->value)
             ->sum('amount');
     }
 
@@ -196,7 +203,7 @@ class Service extends \App\Common\BaseComponentService
     public function getBonusAmount(Account $account): int
     {
         return $account->bonuses
-            ->where('status', BonusStatus::PENDING)
+            ->where('status', BonusStatus::PENDING->value)
             ->sum('amount');
     }
 

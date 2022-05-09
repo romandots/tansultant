@@ -8,21 +8,18 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit;
+namespace Tests\Unit\Service;
 
-use App\Models\Branch;
+use App\Components\Account\Exceptions\InsufficientFundsAccountException;
+use App\Components\Loader;
 use App\Models\Enum\AccountOwnerType;
 use App\Models\Enum\AccountType;
+use App\Models\Enum\PaymentObjectType;
 use App\Models\Enum\PaymentStatus;
 use App\Models\Enum\PaymentTransferType;
 use App\Models\Enum\PaymentType;
-use App\Models\Instructor;
-use App\Models\Lesson;
 use App\Models\Payment;
-use App\Models\Student;
 use App\Models\Visit;
-use App\Services\Account\Exceptions\InsufficientFundsAccountServiceException;
-use App\Services\Payment\PaymentService;
 use Tests\TestCase;
 use Tests\Traits\CreatesFakes;
 
@@ -32,17 +29,14 @@ use Tests\Traits\CreatesFakes;
  */
 class PaymentServiceTest extends TestCase
 {
-    use CreatesFakes, AssertExceptionTrait;
+    use CreatesFakes;
 
-    /**
-     * @var PaymentService
-     */
-    private $service;
+    protected \App\Components\Payment\Service $service;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = $this->app->get(PaymentService::class);
+        $this->service = Loader::payments()->getService();
     }
 
     /**
@@ -62,7 +56,7 @@ class PaymentServiceTest extends TestCase
         $user = $this->createFakeUser();
         $studentAccount = $this->createFakeAccount([
             'type' => AccountType::PERSONAL,
-            'owner_type' => Student::class,
+            'owner_type' => AccountOwnerType::STUDENT,
             'owner_id' => $student->id
         ]);
 
@@ -72,9 +66,8 @@ class PaymentServiceTest extends TestCase
             'owner_id' => $branchId
         ]);
 
-        $this->assertException(function () use ($user, $student, $visit, $price) {
-            $this->service->createVisitPayment($price, $visit, $student, $user);
-        }, InsufficientFundsAccountServiceException::class);
+        $this->expectException(InsufficientFundsAccountException::class);
+        $this->service->createVisitPayment($price, $visit, $student, $user);
 
         $this->createFakePayment(100, $studentAccount, [
             'status' => PaymentStatus::CONFIRMED,
@@ -136,7 +129,7 @@ class PaymentServiceTest extends TestCase
 
         $this->assertNotNull($lessonPayment);
         $this->assertEquals(-100, $lessonPayment->amount);
-        $this->assertEquals(Lesson::class, $lessonPayment->object_type);
+        $this->assertEquals(PaymentObjectType::LESSON, $lessonPayment->object_type);
         $this->assertEquals($lesson->id, $lessonPayment->object_id);
         $this->assertEquals($savingsAccount->id, $lessonPayment->account_id);
         $this->assertEquals(PaymentType::AUTO, $lessonPayment->type);
@@ -147,7 +140,7 @@ class PaymentServiceTest extends TestCase
         $relatedPayment = $lessonPayment->related_payment;
         $this->assertNotNull($relatedPayment);
         $this->assertEquals(100, $relatedPayment->amount);
-        $this->assertEquals(Lesson::class, $relatedPayment->object_type);
+        $this->assertEquals(PaymentObjectType::LESSON, $relatedPayment->object_type);
         $this->assertEquals($lesson->id, $relatedPayment->object_id);
         $this->assertEquals($instructorAccount->id, $relatedPayment->account_id);
         $this->assertEquals(PaymentType::AUTO, $relatedPayment->type);
@@ -198,7 +191,7 @@ class PaymentServiceTest extends TestCase
             'deleted_at' => null
         ]);
 
-        $this->service->delete($payment);
+        $this->service->delete($payment, $user);
 
         $this->assertDatabaseMissing(Payment::TABLE, [
             'id' => $payment->id,

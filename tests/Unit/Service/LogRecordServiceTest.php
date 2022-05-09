@@ -8,12 +8,13 @@
 
 declare(strict_types=1);
 
-namespace Tests\Services\LogRecord;
+namespace Tests\Unit\Service;
 
-use App\Models\Course;
+use App\Components\Loader;
+use App\Models\Enum\LogRecordAction;
+use App\Models\Enum\LogRecordObjectType;
 use App\Models\LogRecord;
 use App\Models\User;
-use App\Services\LogRecord\LogRecordService;
 use Tests\TestCase;
 use Tests\Traits\CreatesFakes;
 
@@ -21,14 +22,15 @@ class LogRecordServiceTest extends TestCase
 {
     use CreatesFakes;
 
-    private LogRecordService $service;
-
-    private User $user;
+    protected User $user;
+    protected \App\Components\LogRecord\Facade $facade;
+    protected \App\Components\LogRecord\Service $service;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = $this->app->get(LogRecordService::class);
+        $this->facade = Loader::logRecords();
+        $this->service = $this->facade->getService();
         $this->user = $this->createFakeUser([
             'name' => 'Roman Dots'
         ]);
@@ -40,9 +42,9 @@ class LogRecordServiceTest extends TestCase
             'name' => 'Dancehall'
         ]);
 
-        $this->service->logCreate($this->user, $course);
+        $this->service->log($this->user, LogRecordAction::CREATE, $course);
         $this->assertDatabaseHas(LogRecord::TABLE, [
-            'object_type' => Course::class,
+            'object_type' => LogRecordObjectType::COURSE->value,
             'object_id' => $course->id,
             'user_id' => $this->user->id,
             'message' => 'Roman Dots создаёт класс Dancehall'

@@ -8,28 +8,19 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit;
+namespace Tests\Unit\Service;
 
-use App\Components\Account\Exceptions\InsufficientFundsAccountException;
+use App\Components\Loader;
 use App\Models\Account;
-use App\Models\Bonus;
 use App\Models\Branch;
+use App\Models\Enum\AccountOwnerType;
 use App\Models\Enum\AccountType;
 use App\Models\Enum\BonusStatus;
 use App\Models\Enum\PaymentStatus;
 use App\Models\Instructor;
-use App\Models\Payment;
 use App\Models\Student;
-use App\Services\Account\AccountService;
-use App\Services\Account\Exceptions\InsufficientFundsAccountServiceException;
 use Carbon\Carbon;
 use Tests\TestCase;
-use Tests\Traits\CreatesFakeAccount;
-use Tests\Traits\CreatesFakeInstructor;
-use Tests\Traits\CreatesFakePayment;
-use Tests\Traits\CreatesFakePerson;
-use Tests\Traits\CreatesFakeStudent;
-use Tests\Traits\CreatesFakeUser;
 
 /**
  * Class AccountServiceTest
@@ -37,23 +28,15 @@ use Tests\Traits\CreatesFakeUser;
  */
 class AccountServiceTest extends TestCase
 {
-    use CreatesFakeUser, CreatesFakeStudent, CreatesFakePerson, CreatesFakeInstructor, CreatesFakeAccount,
-        CreatesFakePayment, AssertExceptionTrait;
-
-    /**
-     * @var AccountService
-     */
-    private $service;
-
-    /**
-     * @var Branch
-     */
-    private $branch;
+    protected \App\Components\Account\Facade $facade;
+    protected \App\Components\Account\Service $service;
+    protected Branch $branch;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = $this->app->get(AccountService::class);
+        $this->facade = Loader::accounts();
+        $this->service = $this->facade->getService();
         $this->branch = Branch::factory()->create();
     }
 
@@ -64,8 +47,8 @@ class AccountServiceTest extends TestCase
     {
         $this->assertDatabaseMissing(Account::TABLE, [
             'owner_id' => $this->branch->id,
-            'owner_type' => Branch::class,
-            'type' => AccountType::OPERATIONAL
+            'owner_type' => AccountOwnerType::fromClass(Branch::class),
+            'type' => AccountType::OPERATIONAL->value
         ]);
 
         $account = $this->service->getOperationalAccount($this->branch);
@@ -76,8 +59,8 @@ class AccountServiceTest extends TestCase
             'id' => $account->id,
             'name' => $name,
             'owner_id' => $this->branch->id,
-            'owner_type' => Branch::class,
-            'type' => AccountType::OPERATIONAL
+            'owner_type' => AccountOwnerType::fromClass(Branch::class),
+            'type' => AccountType::OPERATIONAL->value
         ]);
 
         $nextAccount = $this->service->getOperationalAccount($this->branch);
@@ -92,8 +75,8 @@ class AccountServiceTest extends TestCase
     {
         $this->assertDatabaseMissing(Account::TABLE, [
             'owner_id' => $this->branch->id,
-            'owner_type' => Branch::class,
-            'type' => AccountType::SAVINGS
+            'owner_type' => AccountOwnerType::fromClass(Branch::class),
+            'type' => AccountType::SAVINGS->value
         ]);
 
         $account = $this->service->getSavingsAccount($this->branch);
@@ -104,8 +87,8 @@ class AccountServiceTest extends TestCase
             'id' => $account->id,
             'name' => $name,
             'owner_id' => $this->branch->id,
-            'owner_type' => Branch::class,
-            'type' => AccountType::SAVINGS
+            'owner_type' => AccountOwnerType::fromClass(Branch::class),
+            'type' => AccountType::SAVINGS->value
         ]);
 
         $nextAccount = $this->service->getSavingsAccount($this->branch);
@@ -122,8 +105,8 @@ class AccountServiceTest extends TestCase
 
         $this->assertDatabaseMissing(Account::TABLE, [
             'owner_id' => $instructor->id,
-            'owner_type' => Instructor::class,
-            'type' => AccountType::PERSONAL
+            'owner_type' => AccountOwnerType::fromClass(Instructor::class),
+            'type' => AccountType::PERSONAL->value
         ]);
 
         $account = $this->service->getInstructorAccount($instructor);
@@ -134,8 +117,8 @@ class AccountServiceTest extends TestCase
             'id' => $account->id,
             'name' => $name,
             'owner_id' => $instructor->id,
-            'owner_type' => Instructor::class,
-            'type' => AccountType::PERSONAL
+            'owner_type' => AccountOwnerType::fromClass(Instructor::class),
+            'type' => AccountType::PERSONAL->value
         ]);
 
         $nextAccount = $this->service->getInstructorAccount($instructor);
@@ -152,8 +135,8 @@ class AccountServiceTest extends TestCase
 
         $this->assertDatabaseMissing(Account::TABLE, [
             'owner_id' => $student->id,
-            'owner_type' => Student::class,
-            'type' => AccountType::PERSONAL
+            'owner_type' => AccountOwnerType::fromClass(Student::class),
+            'type' => AccountType::PERSONAL->value
         ]);
 
         $account = $this->service->getStudentAccount($student);
@@ -164,8 +147,8 @@ class AccountServiceTest extends TestCase
             'id' => $account->id,
             'name' => $name,
             'owner_id' => $student->id,
-            'owner_type' => Student::class,
-            'type' => AccountType::PERSONAL
+            'owner_type' => AccountOwnerType::fromClass(Student::class),
+            'type' => AccountType::PERSONAL->value
         ]);
 
         $nextAccount = $this->service->getStudentAccount($student);
@@ -345,9 +328,8 @@ class AccountServiceTest extends TestCase
     {
         $account = $this->createFakeAccountWithBalance(200);
 
-        $this->assertException(function () use ($account) {
-            $this->service->checkFunds($account, 300);
-        }, InsufficientFundsAccountException::class);
+        $this->expectException(\App\Components\Account\Exceptions\InsufficientFundsAccountException::class);
+        $this->service->checkFunds($account, 300);
 
         $this->service->checkFunds($account, 200);
     }

@@ -16,4 +16,11 @@ enum VisitPaymentType: string implements ClassBackedEnum
             self::PROMOCODE => throw new \Exception('To be implemented'),
         };
     }
+
+    public static function fromClass(string $className): self
+    {
+        return match ($className) {
+            \App\Models\Payment::class => self::PAYMENT,
+        };
+    }
 }

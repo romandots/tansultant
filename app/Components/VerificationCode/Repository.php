@@ -28,7 +28,7 @@ class Repository extends \App\Common\BaseComponentRepository
     public function __construct() {
         parent::__construct(
             VerificationCode::class,
-            ['name']
+            []
         );
     }
 
@@ -39,7 +39,9 @@ class Repository extends \App\Common\BaseComponentRepository
      */
     public function fill(Model $record, \App\Common\Contracts\DtoWithUser $dto): void
     {
-        $record->name = $dto->name;
+        $record->phone_number = $dto->phone_number;
+        $record->verification_code = $dto->verification_code;
+        $record->expired_at = $dto->expired_at;
     }
 
 

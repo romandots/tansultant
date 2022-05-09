@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Enum\CourseStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,7 +24,7 @@ class CourseFactory extends Factory
         return [
             'id' => \uuid(),
             'name' => $this->faker->name,
-            'status' => \App\Models\CourseStatus::ACTIVE,
+            'status' => CourseStatus::ACTIVE->value,
             'summary' => $this->faker->words(10, true),
             'description' => $this->faker->words(20, true),
             'display' => true,

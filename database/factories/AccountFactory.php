@@ -25,8 +25,8 @@ class AccountFactory extends Factory
         return [
             'id' => \uuid(),
             'name' => $this->faker->name,
-            'type' => $this->faker->randomElement(AccountType::cases()),
-            'owner_type' => $this->faker->randomElement(AccountOwnerType::cases()),
+            'type' => $this->faker->randomElement(enum_strings(AccountType::class)),
+            'owner_type' => $this->faker->randomElement(enum_strings(AccountOwnerType::class)),
             'owner_id' => \uuid()
         ];
     }

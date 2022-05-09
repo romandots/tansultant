@@ -9,7 +9,7 @@ use Tests\TestCase;
 /**
  * Set up all repository tests here
  */
-class RepositoryTest extends TestCase
+abstract class RepositoryTest extends TestCase
 {
     protected string $table;
     protected BaseComponentRepository $repository;

@@ -24,9 +24,9 @@ class IntentFactory extends Factory
             'id' => \uuid(),
             'student_id' => \uuid(),
             'manager_id' => \uuid(),
-            'event_type' => \App\Models\Lesson::class,
+            'event_type' => \App\Models\Enum\IntentEventType::LESSON,
             'event_id' => \uuid(),
-            'status' => \App\Models\Intent::STATUS_EXPECTING,
+            'status' => \App\Models\Enum\IntentStatus::EXPECTING,
         ];
     }
 }

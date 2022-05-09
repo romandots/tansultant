@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Repository;
 
-
+use App\Components\Classroom\Dto;
+use App\Components\Loader;
 use App\Models\Classroom;
-use App\Repository\ClassroomRepository;
 
 final class ClassroomRepositoryTest extends RepositoryTest
 {
@@ -15,8 +15,8 @@ final class ClassroomRepositoryTest extends RepositoryTest
     {
         parent::setUp();
         $this->table = Classroom::TABLE;
-        $this->repository = app(ClassroomRepository::class);
-        $this->dtoClass = \App\Repository\DTO\Classroom::class;
+        $this->repository = Loader::classrooms()->getRepository();
+        $this->dtoClass = Dto::class;
 
         $this->attributes1 = [
             'name' => $this->faker->word,

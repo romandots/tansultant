@@ -13,8 +13,8 @@ namespace Tests\Traits;
 use App\Models\Account;
 use App\Models\Branch;
 use App\Models\Enum\AccountType;
+use App\Models\Enum\PaymentStatus;
 use App\Models\Instructor;
-use App\Models\Payment;
 use App\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
@@ -45,7 +45,7 @@ trait CreatesFakeAccount
         $account = $this->createFakeAccount($attributes);
         $user = $user ?: $this->createFakeUser();
         $this->createFakePayment($amount, $account, [
-            'status' => PaymentStatus::CONFIRMED,
+            'status' => PaymentStatus::CONFIRMED->value,
             'confirmed_at' => Carbon::now(),
             'user_id' => $user->id
         ]);

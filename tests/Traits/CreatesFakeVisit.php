@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Tests\Traits;
 
+use App\Models\Enum\VisitEventType;
 use App\Models\Lesson;
 use App\Models\Student;
 use App\Models\User;
@@ -34,7 +35,7 @@ trait CreatesFakeVisit
         ?User $manager = null,
         ?array $attributes = []
     ): Visit {
-        $attributes['event_type'] = Lesson::class;
+        $attributes['event_type'] = VisitEventType::LESSON;
         $lesson = $lesson ?: $this->createFakeLesson();
         $attributes['event_id'] = $lesson->id;
         $student = $student ?: $this->createFakeStudent();

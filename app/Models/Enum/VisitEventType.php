@@ -16,4 +16,11 @@ enum VisitEventType: string implements ClassBackedEnum
             self::EVENT => throw new \Exception('To be implemented'),
         };
     }
+
+    public static function fromClass(string $className): self
+    {
+        return match ($className) {
+            \App\Models\Lesson::class => static::LESSON,
+        };
+    }
 }

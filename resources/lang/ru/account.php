@@ -16,8 +16,13 @@ return [
         'branch_operational' => 'Операционный счет :branch'
     ],
     'type' => [
-        'operational' => 'Операционный',
-        'savings' => 'Дебетовый',
-        'personal' => 'Личный',
+        'operational' => 'Операционный счёт',
+        'savings' => 'Дебетовый счёт',
+        'personal' => 'Личный счёт',
+    ],
+    'owner_type' => [
+        'student' => 'студента',
+        'instructor' => 'инструктора',
+        'branch' => 'филиала',
     ]
 ];

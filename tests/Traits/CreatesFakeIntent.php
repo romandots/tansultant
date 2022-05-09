@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Tests\Traits;
 
+use App\Models\Enum\IntentEventType;
 use App\Models\Intent;
 use App\Models\Lesson;
 use App\Models\Student;
@@ -35,7 +36,7 @@ trait CreatesFakeIntent
         ?User $manager = null
     ): Intent {
         if (!isset($attributes['event_type'])) {
-            $attributes['event_type'] = Lesson::class;
+            $attributes['event_type'] = IntentEventType::LESSON;
         }
 
         if (!isset($attributes['event_id'])) {

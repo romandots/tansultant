@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Enum\StudentStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -24,7 +25,7 @@ class StudentFactory extends Factory
             'id' => \uuid(),
             'name' => $this->faker->name,
             'card_number' => $this->faker->unique()->numerify('####'),
-            'status' => $this->faker->randomElement(\App\Models\Student::STATUSES),
+            'status' => $this->faker->randomElement(enum_strings(StudentStatus::class)),
             'person_id' => \uuid(),
             'customer_id' => \uuid(),
             'seen_at' => \Carbon\Carbon::now(),
