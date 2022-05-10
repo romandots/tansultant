@@ -44,7 +44,7 @@ abstract class BaseComponentRepository extends BaseRepository
         return new $this->modelClass();
     }
 
-    protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
+    public function getSuggestQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
     {
         $query = $this->getQuery();
 
@@ -67,9 +67,9 @@ abstract class BaseComponentRepository extends BaseRepository
         return $query;
     }
 
-    public function getSuggestQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
+    protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
     {
-        return $this->getFilterQuery($filter);
+        return $this->getSuggestQuery($filter);
     }
 
     public function countFiltered(SearchFilterDto $search): int

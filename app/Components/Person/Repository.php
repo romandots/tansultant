@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Components\Person;
 
 use App\Common\DTO\SearchFilterDto;
+use App\Http\Requests\ManagerApi\DTO\SearchPeopleFilterDto;
 use App\Models\Enum\Gender;
 use App\Models\Person;
 use Carbon\Carbon;
@@ -45,6 +46,7 @@ class Repository extends \App\Common\BaseComponentRepository
 
     protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
     {
+        assert($filter instanceof SearchPeopleFilterDto);
         $query = parent::getFilterQuery($filter);
 
         if ($filter->gender) {

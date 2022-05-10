@@ -130,11 +130,13 @@ Route::namedGroup('lessons',ManagerApi\LessonController::class, static function 
 
 // PEOPLE
 Route::namedGroup('people',ManagerApi\PersonController::class, static function () {
-    Route::namedRoute('index', 'get', '/', [PersonsPermission::MANAGE, PersonsPermission::READ]);
+    Route::namedRoute('search', 'get', '/', [PersonsPermission::MANAGE, PersonsPermission::READ]);
+    Route::namedRoute('suggest', 'get', '/suggest', [PersonsPermission::MANAGE, PersonsPermission::READ]);
     Route::namedRoute('store', 'post', '/', [PersonsPermission::MANAGE, PersonsPermission::CREATE]);
     Route::namedRoute('show', 'get', '{id}', [PersonsPermission::MANAGE, PersonsPermission::READ]);
     Route::namedRoute('update', 'put', '{id}', [PersonsPermission::MANAGE, PersonsPermission::UPDATE]);
     Route::namedRoute('destroy', 'delete', '{id}', [PersonsPermission::MANAGE, PersonsPermission::DELETE]);
+    Route::namedRoute('restore', 'post', '{id}/restore', [PersonsPermission::MANAGE, PersonsPermission::RESTORE]);
 });
 
 // SCHEDULES

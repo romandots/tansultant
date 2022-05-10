@@ -12,6 +12,7 @@ namespace App\Http\Requests\ManagerApi;
 
 use App\Common\Requests\StoreRequest;
 use App\Components\Person\Dto;
+use App\Models\Enum\Gender;
 use Illuminate\Validation\Rule;
 
 /**
@@ -46,7 +47,7 @@ class StorePersonRequest extends StoreRequest
             'gender' => [
                 'nullable',
                 'string',
-                Rule::in(\App\Models\Enum\Gender::cases())
+                Rule::in(enum_strings(\App\Models\Enum\Gender::class)),
             ],
             'phone' => [
                 'nullable',
@@ -97,7 +98,7 @@ class StorePersonRequest extends StoreRequest
         $dto->first_name = $validated['first_name'] ?? null;
         $dto->patronymic_name = $validated['patronymic_name'] ?? null;
         $dto->birth_date = $validated['birth_date'] ? \Carbon\Carbon::parse($validated['birth_date']) : null;
-        $dto->gender = $validated['gender'] ?? null;
+        $dto->gender = isset($validated['gender']) ? Gender::from($validated['gender']) : null;
         $dto->phone = $validated['phone'] ? \phone_format($validated['phone']) : null;
         $dto->email = $validated['email'] ?? null;
         $dto->instagram_username = $validated['instagram_username'] ?? null;

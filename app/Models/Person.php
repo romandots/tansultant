@@ -14,6 +14,7 @@ use App\Models\Traits\Notifiable;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Tags\HasTags;
 
 /**
@@ -80,6 +81,7 @@ class Person extends Model
     use Notifiable;
     use HasTags;
     use HasFactory;
+    use SoftDeletes;
 
     public const TABLE = 'people';
 

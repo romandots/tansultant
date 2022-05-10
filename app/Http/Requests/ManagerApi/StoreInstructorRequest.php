@@ -36,7 +36,7 @@ class StoreInstructorRequest extends StoreRequest
             'status' => [
                 'required',
                 'string',
-                Rule::in(\App\Models\Enum\InstructorStatus::cases())
+                Rule::in(enum_strings(\App\Models\Enum\InstructorStatus::class)),
             ],
             'display' => [
                 'nullable',

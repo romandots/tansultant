@@ -10,18 +10,21 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Common\Contracts\SearchFilterDtoContract;
+use App\Common\DTO\SearchDto;
+use App\Common\DTO\SearchFilterDto;
 use App\Common\Requests\SearchRequest;
+use App\Http\Requests\ManagerApi\DTO\SearchPeopleFilterDto;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
 class SearchPeopleRequest extends SearchRequest
 {
+
     public function __construct()
     {
         parent::__construct();
-        $this->paginationDto = new \App\Http\Requests\ManagerApi\DTO\SearchPeopleDto();
-        $this->filterDto = new \App\Http\Requests\ManagerApi\DTO\SearchPeopleFilterDto();
+        $this->searchDtoClass = SearchDto::class;
+        $this->searchFilterDtoClass = SearchPeopleFilterDto::class;
         $this->sortable = [
             'last_name',
             'id',
@@ -37,32 +40,36 @@ class SearchPeopleRequest extends SearchRequest
             'birth_date_from' => [
                 'nullable',
                 'string',
-                'date'
+                'date',
             ],
             'birth_date_to' => [
                 'nullable',
                 'string',
-                'date'
+                'date',
             ],
             'gender' => [
                 'nullable',
                 'string',
-                Rule::in(\App\Models\Enum\Gender::cases())
+                Rule::in(enum_strings(\App\Models\Enum\Gender::class)),
             ],
         ]);
     }
 
-    protected function getSearchFilterDto(): SearchFilterDtoContract
+    protected function mapSearchDto(SearchDto $dto, array $datum): void
     {
-        $filter = parent::getSearchFilterDto();
-        $validated = $this->validated();
+        assert($dto instanceof $this->searchDtoClass);
+        parent::mapSearchDto($dto, $datum);
+    }
 
-        $filter->birth_date_from = isset($validated['birth_date_from'])
+    protected function mapSearchFilterDto(SearchFilterDto $dto, array $datum): void
+    {
+        assert($dto instanceof SearchPeopleFilterDto);
+        $dto->birth_date_from = isset($validated['birth_date_from'])
             ? Carbon::parse($validated['birth_date_from']) : null;
-        $filter->birth_date_to = isset($validated['birth_date_to'])
+        $dto->birth_date_to = isset($validated['birth_date_to'])
             ? Carbon::parse($validated['birth_date_to']) : null;
-        $filter->gender = $validated['gender'] ?? null;
+        $dto->gender = $validated['gender'] ?? null;
 
-        return $filter;
+        parent::mapSearchFilterDto($dto, $datum);
     }
 }

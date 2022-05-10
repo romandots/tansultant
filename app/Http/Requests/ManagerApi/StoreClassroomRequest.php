@@ -62,8 +62,8 @@ class StoreClassroomRequest extends StoreRequest
         $dto->name = $valid['name'];
         $dto->branch_id = $valid['branch_id'];
         $dto->color = $valid['color'] ?? null;
-        $dto->capacity = $valid['capacity'] ?? null;
-        $dto->number = $valid['number'] ?? null;
+        $dto->capacity = isset($valid['capacity']) ? (int)$valid['capacity'] : null;
+        $dto->number = isset($valid['number']) ? (int)$valid['number'] : null;
 
         return $dto;
     }

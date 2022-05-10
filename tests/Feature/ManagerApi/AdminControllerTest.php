@@ -23,6 +23,8 @@ abstract class AdminControllerTest extends TestCase
     protected bool $usesSoftDelete = false;
     protected DtoWithUser $dto;
 
+    protected string $nameAttribute = 'name';
+
     /**
      * @return DtoWithUser
      */
@@ -90,30 +92,31 @@ abstract class AdminControllerTest extends TestCase
             ]);
 
         $attributes = $this->getAttributes();
-        $attributes['name'] = $dto->query;
+        $attributes[$this->nameAttribute] = $dto->query;
         $alternateAttributes = $this->getAlternateAttributes();
         $recordOne = $this->createRecord($attributes);
         $recordTwo = $this->createRecord($alternateAttributes);
 
-        $this->assertEquals($recordOne->name, $dto->query);
-        $this->assertNotEquals($recordTwo->name, $dto->query);
+        $this->assertEquals($recordOne->{$this->nameAttribute}, $dto->query);
+        $this->assertNotEquals($recordTwo->{$this->nameAttribute}, $dto->query);
 
         $this
             ->get($url)
             ->assertJsonCount(1, 'data')
             ->assertJsonFragment([
-                'name' => $dto->query
+                $this->nameAttribute => $dto->query
             ])
             ->assertOk();
     }
 
     final public function suggest(
-        string|\Closure $labelField = 'name',
+        string|\Closure $labelField = '',
         string|\Closure $valueField = 'id',
         array $extraFields = []
     ): void {
         $query = 'Тестовая строка';
         $url = $this->getUrl('suggest');
+        $labelField = $labelField ?? $this->nameAttribute;
 
         $this
             ->get($url)
@@ -143,7 +146,7 @@ abstract class AdminControllerTest extends TestCase
         $numberOfRecords = 10;
         $records = [];
         for ($i = 0; $i < $numberOfRecords; $i++) {
-            $attributes = ($i > 4) ? [] : ['name' => $query . $i];
+            $attributes = ($i > 4) ? [] : [$this->nameAttribute => $query . $i];
             $records[] = $this->createRecord($attributes);
         }
 
