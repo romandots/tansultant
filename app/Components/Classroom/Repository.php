@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Classroom;
 
+use App\Common\DTO\SearchFilterDto;
 use App\Models\Classroom;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,6 +32,13 @@ class Repository extends \App\Common\BaseComponentRepository
             ['name']
         );
     }
+
+    public function getSuggestQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getSuggestQuery($filter)
+            ->orderBy('number', 'asc');
+    }
+
 
     /**
      * @param Classroom $record
