@@ -30,6 +30,11 @@ class Loader extends Locator
         return self::get(Contract\Facade::class);
     }
 
+    public static function courses(): Course\Facade
+    {
+        return self::get(Course\Facade::class);
+    }
+
     public static function customers(): Customer\Facade
     {
         return self::get(Customer\Facade::class);

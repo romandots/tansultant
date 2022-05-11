@@ -13,6 +13,7 @@ namespace App\Http\Requests\ManagerApi;
 use App\Common\Requests\StoreRequest;
 use App\Components\Course\Dto;
 use App\Models\Enum\CourseStatus;
+use App\Models\Enum\InstructorStatus;
 use App\Models\Instructor;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
@@ -36,7 +37,7 @@ class StoreCourseRequest extends StoreRequest
             'status' => [
                 'nullable',
                 'string',
-                Rule::in(CourseStatus::cases())
+                Rule::in(enum_strings(CourseStatus::class))
             ],
             'summary' => [
                 'nullable',
@@ -67,6 +68,7 @@ class StoreCourseRequest extends StoreRequest
                 'string',
                 'uuid',
                 Rule::exists(Instructor::TABLE, 'id')
+                    ->whereNot('status', InstructorStatus::FIRED->value)
             ],
             'starts_at' => [
                 'nullable',
@@ -95,7 +97,7 @@ class StoreCourseRequest extends StoreRequest
 
         $dto = new Dto($this->user());
         $dto->name = $validated['name'];
-        $dto->status = $validated['status'] ?? CourseStatus::PENDING;
+        $dto->status = isset($validated['status']) ? CourseStatus::from($validated['status']) : CourseStatus::PENDING;
         $dto->summary = $validated['summary'] ?? null;
         $dto->description = $validated['description'] ?? null;
         $dto->display = (bool)($validated['display'] ?? false);

@@ -35,8 +35,8 @@ class CourseController extends AdminController
         parent::__construct(
             facadeClass: Component\Facade::class,
             resourceClass: Component\Formatter::class,
-            searchRelations: ['classroom', 'instructor.person'],
-            singleRecordRelations: ['classroom', 'instructor.person'],
+            searchRelations: ['schedules', 'instructor.person'],
+            singleRecordRelations: ['schedules', 'instructor.person'],
         );
     }
 

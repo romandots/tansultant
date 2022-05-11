@@ -50,6 +50,26 @@ abstract class AdminControllerTest extends TestCase
 
     abstract protected function getAlternateAttributes(): array;
 
+    protected function getCreateAttributes(): array
+    {
+        return $this->getAttributes();
+    }
+
+    protected function getUpdateAttributes(): array
+    {
+        return $this->getAlternateAttributes();
+    }
+
+    protected function getExpectedAttributes(): array
+    {
+        return $this->castAttributes($this->getAttributes());
+    }
+
+    protected function getExpectedAlternateAttributes(): array
+    {
+        return $this->castAttributes($this->getAlternateAttributes());
+    }
+
     final protected function getUrl(string $methodName, array $params = []): string
     {
         $methodKey = 'admin.' . $this->baseRoutePrefix . '.' . $methodName;
@@ -116,7 +136,7 @@ abstract class AdminControllerTest extends TestCase
     ): void {
         $query = 'Тестовая строка';
         $url = $this->getUrl('suggest');
-        $labelField = $labelField ?? $this->nameAttribute;
+        $labelField = $labelField ?: $this->nameAttribute;
 
         $this
             ->get($url)
@@ -179,10 +199,11 @@ abstract class AdminControllerTest extends TestCase
 
     final public function store(): void
     {
-        $attributes = $this->getAttributes();
+        $attributes = $this->getCreateAttributes();
         $url = $this->getUrl('store');
+        $expectedAttributes = $this->getExpectedAttributes();
 
-        $this->assertDatabaseMissing($this->tableName, $attributes);
+        $this->assertDatabaseMissing($this->tableName, $expectedAttributes);
 
         $this
             ->post($url)
@@ -208,45 +229,49 @@ abstract class AdminControllerTest extends TestCase
             ->post($url, $attributes)
             ->assertCreated();
 
-        $this->assertDatabaseHas($this->tableName, $attributes);
+        $this->assertDatabaseHas($this->tableName, $expectedAttributes);
     }
 
     final public function update(): void
     {
-        $oldAttributes = $this->getAttributes();
-        $newAttributes = $this->getAlternateAttributes();
-        $record = $this->createRecord($oldAttributes);
-        $url = $this->getUrl('update', ['id' => $record->id]);
+        $this->freezeTime(function (Carbon $carbon) {
+            $oldAttributes = $this->getAttributes();
+            $newAttributes = $this->getUpdateAttributes();
+            $newExpectedAttributes = $this->getExpectedAlternateAttributes();
+            $record = $this->createRecord($oldAttributes);
+            $url = $this->getUrl('update', ['id' => $record->id]);
 
-        $this
-            ->put($url)
-            ->assertUnauthorized();
+            $this
+                ->put($url)
+                ->assertUnauthorized();
 
-        $this->addUserToRequests();
+            $this->addUserToRequests();
 
-        $this
-            ->put($url)
-            ->assertForbidden();
+            $this
+                ->put($url)
+                ->assertForbidden();
 
-        $permissions = [$this->permissionClass::UPDATE];
-        $this->user
-            ->assignRole(UserRoles::ADMIN)
-            ->givePermissionTo($permissions);
-        $this->assertTrue($this->user->can($permissions));
+            $permissions = [$this->permissionClass::UPDATE];
+            $this->user
+                ->assignRole(UserRoles::ADMIN)
+                ->givePermissionTo($permissions);
+            $this->assertTrue($this->user->can($permissions));
 
-        $this
-            ->put($url)
-            ->assertStatus(422);
+            $this
+                ->put($url)
+                ->assertStatus(422);
 
-        $this->assertDatabaseHas($this->tableName, $record->toArray());
-        $this->assertDatabaseMissing($this->tableName, $newAttributes);
+            $expectedAttributes = $this->castAttributes($record->toArray());
+            $this->assertDatabaseHas($this->tableName, $expectedAttributes);
+            $this->assertDatabaseMissing($this->tableName, $newExpectedAttributes);
 
-        $this
-            ->put($url, $newAttributes)
-            ->assertOk();
+            $this
+                ->put($url, $newAttributes)
+                ->assertOk();
 
-        $this->assertDatabaseMissing($this->tableName, $record->toArray());
-        $this->assertDatabaseHas($this->tableName, $newAttributes);
+            $this->assertDatabaseMissing($this->tableName, $expectedAttributes);
+            $this->assertDatabaseHas($this->tableName, $newExpectedAttributes);
+        });
     }
 
     final public function destroy(): void
@@ -339,5 +364,27 @@ abstract class AdminControllerTest extends TestCase
     protected function addUserToRequests(?User $user = null): void
     {
         Sanctum::actingAs($user ?? $this->user, ['*']);
+    }
+
+    protected function castAttributes(array $attributes): array
+    {
+        $expectedAttributes = [];
+        foreach ($attributes as $key => $value) {
+            if (is_array($value) || is_object($value)) {
+                if ($value instanceof Carbon) {
+                    $expectedAttributes[$key] = $value->format('Y-m-d H:i:s');
+                    continue;
+                }
+
+                foreach ($value as $subKey => $subValue) {
+                    $expectedAttributes["{$key}->${subKey}"] = $subValue;
+                }
+                continue;
+            }
+
+            $expectedAttributes[$key] = $value;
+        }
+
+        return $expectedAttributes;
     }
 }

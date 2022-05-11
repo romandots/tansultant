@@ -26,7 +26,6 @@ class Service extends \App\Common\BaseComponentService
             Course::class,
             Repository::class,
             Dto::class,
-            null
         );
     }
 
