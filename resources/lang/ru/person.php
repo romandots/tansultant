@@ -9,6 +9,7 @@
 declare(strict_types=1);
 
 return [
+    'name_attribute' => ':last_name :first_name :patronymic_name',
     'user_name' => ':first_name :last_name',
     'instructor_name' => ':first_name :last_name',
     'student_name' => ':last_name :first_name :patronymic_name',

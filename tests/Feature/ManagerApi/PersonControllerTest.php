@@ -86,7 +86,7 @@ class PersonControllerTest extends AdminControllerTest
 
     public function testSuggest(): void
     {
-        $this->suggest();
+        $this->suggest('name');
     }
 
     public function testStore(): void

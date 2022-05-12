@@ -143,4 +143,9 @@ class Person extends Model
             ),
         ];
     }
+
+    public function getNameAttribute(): string
+    {
+        return \trans('person.name_attribute', $this->compactName());
+    }
 }

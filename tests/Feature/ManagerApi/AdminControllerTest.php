@@ -8,21 +8,29 @@ use App\Common\DTO\SearchFilterDto;
 use App\Models\User;
 use App\Services\Permissions\UserRoles;
 use Carbon\Carbon;
+use Database\Seeders\PermissionsTableSeeder;
+use Database\Seeders\RolesTableSeeder;
+use Illuminate\Cache\CacheManager;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 abstract class AdminControllerTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected CacheManager $cacheManager;
     protected BaseFacade $facade;
     protected string $baseRoutePrefix;
     protected string $accessToken;
     protected string $tableName;
     protected string $permissionClass;
     protected bool $usesSoftDelete = false;
-    protected DtoWithUser $dto;
 
+    protected bool $dropTypes = true;
+    protected DtoWithUser $dto;
     protected string $nameAttribute = 'name';
 
     /**
@@ -36,10 +44,21 @@ abstract class AdminControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->cacheManager = \app('cache');
         $this->user = $this->createFakeUser();
         $this->dto = $this->createDto();
         $this->usesSoftDelete = $this->facade->usesSoftDeletes() ?? false;
-        $this->tableName = $this->createRecord([])::TABLE;
+        $testRecord = $this->createRecord([]);
+        $this->tableName = $testRecord::TABLE;
+        try {
+            $testRecord->forceDelete();
+        } catch (\Exception $exception) {
+            $this->usesSoftDelete = false;
+            $testRecord->delete();
+        }
+
+        $this->seed(PermissionsTableSeeder::class);
+        $this->seed(RolesTableSeeder::class);
     }
 
     abstract protected function createRecord(array $attributes): Model;
@@ -127,6 +146,18 @@ abstract class AdminControllerTest extends TestCase
                 $this->nameAttribute => $dto->query
             ])
             ->assertOk();
+
+        try {
+            $recordOne->forceDelete();
+        } catch (\Exception $exception) {
+            $recordOne->delete();
+        }
+
+        try {
+            $recordTwo->forceDelete();
+        } catch (\Exception $exception) {
+            $recordTwo->delete();
+        }
     }
 
     final public function suggest(
@@ -137,6 +168,7 @@ abstract class AdminControllerTest extends TestCase
         $query = 'Тестовая строка';
         $url = $this->getUrl('suggest');
         $labelField = $labelField ?: $this->nameAttribute;
+        $originalRecordsCount = count($this->facade->suggest());
 
         $this
             ->get($url)
@@ -154,21 +186,32 @@ abstract class AdminControllerTest extends TestCase
             ->givePermissionTo($permissions);
         $this->assertTrue($this->user->can($permissions));
 
+        Cache::shouldReceive('get')->once()->andReturn(null);
+        Cache::shouldReceive('add')->once();
+
         $this
             ->get($url)
             ->assertOk()
-            ->assertJsonCount(0, 'data');
+            ->assertJsonCount($originalRecordsCount, 'data');
 
-        $url .= '?' . \http_build_query([
-                'query' => $query
-            ]);
-
-        $numberOfRecords = 10;
+        $numberOfRecords = 11;
         $records = [];
         for ($i = 0; $i < $numberOfRecords; $i++) {
             $attributes = ($i > 4) ? [] : [$this->nameAttribute => $query . $i];
             $records[] = $this->createRecord($attributes);
         }
+
+        Cache::shouldReceive('get')->once()->andReturn(null);
+        Cache::shouldReceive('add')->once();
+
+        $this
+            ->get($url)
+            ->assertOk()
+            ->assertJsonCount(10, 'data');
+
+        $url .= '?' . \http_build_query([
+                'query' => $query
+            ]);
 
         Cache::shouldReceive('get')->once()->andReturn(null);
         Cache::shouldReceive('add')->once();

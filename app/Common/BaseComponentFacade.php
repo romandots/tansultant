@@ -37,7 +37,7 @@ abstract class BaseComponentFacade extends BaseFacade
      * @return array
      */
     public function suggest(
-        ?string $query,
+        ?string $query = null,
         string|\Closure $labelField = 'name',
         string|\Closure $valueField = 'id',
         array $extraFields = []

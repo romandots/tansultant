@@ -6,18 +6,23 @@ use App\Common\DTO\DtoWithUser;
 use App\Common\DTO\SearchFilterDto;
 use App\Components\Classroom\Dto;
 use App\Components\Loader;
+use App\Models\Branch;
 use App\Models\Classroom;
 use App\Services\Permissions\ClassroomsPermission;
 use Illuminate\Database\Eloquent\Model;
 
 class ClassroomControllerTest extends AdminControllerTest
 {
+    private Branch $secondBranch;
+
     public function setUp(): void
     {
         $this->facade = Loader::classrooms();
         $this->baseRoutePrefix = 'classrooms';
         $this->permissionClass = ClassroomsPermission::class;
         parent::setUp();
+
+        $this->secondBranch = $this->createFakeBranch();
     }
 
     /**
@@ -61,7 +66,7 @@ class ClassroomControllerTest extends AdminControllerTest
         assert($this->dto instanceof Dto);
         return [
             'name' => 'Другой зал',
-            'branch_id' => $this->createFakeBranch()->id,
+            'branch_id' => $this->secondBranch->id,
             'number' => 2,
             'capacity' => 20,
             'color' => 'white',

@@ -31,10 +31,6 @@ abstract class BaseComponentService extends BaseService
         string|\Closure $valueField = 'id',
         array $additionalFields = []
     ): array {
-        if (empty($query)) {
-            return [];
-        }
-
         $cacheKey = 'suggest_' . md5($query);
         $cached = $this->getFromCache($cacheKey);
 
@@ -62,7 +58,7 @@ abstract class BaseComponentService extends BaseService
                 try {
                     $value = property_or_callback($record, $valueField);
                 } catch (\Exception $exception) {
-                    $value = $record->id;
+                    $value = $record?->id;
                 }
 
                 $set = [
