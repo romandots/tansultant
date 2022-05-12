@@ -141,8 +141,6 @@ Route::namedGroup('people',ManagerApi\PersonController::class, static function (
 
 // SCHEDULES
 Route::namedGroup('schedules',ManagerApi\ScheduleController::class, static function () {
-    Route::namedRoute('search', 'get', '/', [SchedulesPermission::MANAGE, SchedulesPermission::READ]);
-    Route::namedRoute('suggest', 'get', '/suggest', [SchedulesPermission::MANAGE, SchedulesPermission::READ]);
     Route::namedRoute('store', 'post', '/', [SchedulesPermission::MANAGE, SchedulesPermission::CREATE]);
     Route::namedRoute('show', 'get', '{id}', [SchedulesPermission::MANAGE, SchedulesPermission::READ]);
     Route::namedRoute('update', 'put', '{id}', [SchedulesPermission::MANAGE, SchedulesPermission::UPDATE]);

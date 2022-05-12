@@ -96,6 +96,11 @@ abstract class BaseComponentRepository extends BaseRepository
             ->get();
     }
 
+    /**
+     * @param string $id
+     * @return Model
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
+     */
     final public function find(string $id): Model
     {
         $query = $this->getQuery();

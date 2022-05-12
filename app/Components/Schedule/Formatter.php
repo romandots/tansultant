@@ -21,7 +21,7 @@ class Formatter extends BaseFormatter
         return [
             'id' => $this->id,
             'cycle' => $this->cycle,
-            'weekday' => (int)$this->weekday->value,
+            'weekday' => $this->weekday?->value,
             'from_date' => $this->from_date,
             'to_date' => $this->to_date,
             'starts_at' => $this->starts_at,

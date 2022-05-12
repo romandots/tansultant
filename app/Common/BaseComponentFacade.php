@@ -100,7 +100,13 @@ abstract class BaseComponentFacade extends BaseFacade
             ->load($relations);
     }
 
-    public function find(string $id, array $relations): Model
+    /**
+     * @param string $id
+     * @param array $relations
+     * @return Model
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
+     */
+    public function find(string $id, array $relations = []): Model
     {
         return $this->getRepository()->find($id)->load($relations);
     }

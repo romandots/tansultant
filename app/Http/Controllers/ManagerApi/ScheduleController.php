@@ -13,7 +13,6 @@ namespace App\Http\Controllers\ManagerApi;
 use App\Common\Controllers\AdminController;
 use App\Components\Schedule as Component;
 use App\Http\Requests\ManagerApi\ScheduleOnDateRequest;
-use App\Http\Requests\ManagerApi\SearchScheduleRequest;
 use App\Http\Requests\ManagerApi\StoreScheduleRequest;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -39,11 +38,6 @@ class ScheduleController extends AdminController
             searchRelations: [],
             singleRecordRelations: [],
         );
-    }
-
-    public function search(SearchScheduleRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-    {
-        return $this->_search($request);
     }
 
     public function store(StoreScheduleRequest $request): \Illuminate\Http\Resources\Json\JsonResource

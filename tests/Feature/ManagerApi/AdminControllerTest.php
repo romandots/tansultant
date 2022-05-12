@@ -270,6 +270,7 @@ abstract class AdminControllerTest extends TestCase
 
         $this
             ->post($url, $attributes)
+            ->dump()
             ->assertCreated();
 
         $this->assertDatabaseHas($this->tableName, $expectedAttributes);

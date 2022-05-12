@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Enum\Weekday;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -28,7 +29,7 @@ class ScheduleFactory extends Factory
             'course_id' => \App\Models\Course::factory(),
             'starts_at' => $this->faker->time(),
             'ends_at' => $this->faker->time(),
-            'weekday' => 1,
+            'weekday' => Weekday::MONDAY,
             'created_at' => \Carbon\Carbon::now(),
             'updated_at' => \Carbon\Carbon::now(),
             'deleted_at' => null,

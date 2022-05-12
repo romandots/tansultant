@@ -28,11 +28,6 @@ use Illuminate\Validation\Validator;
  */
 class StoreScheduleRequest extends StoreRequest
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->classroomRepository = Loader::classrooms()->getRepository();
-    }
 
     /**
      * @return array
@@ -97,14 +92,11 @@ class StoreScheduleRequest extends StoreRequest
     {
         $validated = $this->validated();
 
-        $classroom = isset($validated['classroom_id'])
-            ? $this->classroomRepository->find($validated['classroom_id'])
-            : null;
-        $branchId = $validated['branch_id'] ?? null;
+        $classroom = Loader::classrooms()->find($validated['classroom_id']);
 
         $dto = new Dto($this->user());
-        $dto->branch_id = null !== $classroom ? $classroom->branch_id : $branchId;
-        $dto->classroom_id = $classroom?->id;
+        $dto->branch_id = $classroom->branch_id;
+        $dto->classroom_id = $classroom->id;
         $dto->course_id = $validated['course_id'];
         $dto->cycle = ScheduleCycle::from($validated['cycle']);
         $dto->weekday = isset($validated['weekday']) ? Weekday::from($validated['weekday']) : null;

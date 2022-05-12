@@ -238,3 +238,10 @@ if (!function_exists('property_or_callback')) {
             : $fieldOrCallback($record);
     }
 }
+
+if (!function_exists('is_enum')) {
+    function is_enum(object $object): bool
+    {
+        return $object instanceof \UnitEnum;
+    }
+}
