@@ -3,6 +3,6 @@
 .phpunit.result.cache
 docker/data/*
 docker/logs/*
+storage/logs/*
 vendor/*
 node_modules/*
-Old*/
