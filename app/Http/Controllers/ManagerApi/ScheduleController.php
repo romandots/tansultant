@@ -35,8 +35,8 @@ class ScheduleController extends AdminController
         parent::__construct(
             facadeClass: Component\Facade::class,
             resourceClass: Component\Formatter::class,
-            searchRelations: [],
-            singleRecordRelations: [],
+            searchRelations: ['schedules', 'classroom.branch'],
+            singleRecordRelations: ['schedules', 'classroom.branch'],
         );
     }
 
