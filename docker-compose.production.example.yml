@@ -10,8 +10,20 @@ services:
   api:
     restart: always
   queue:
+    image: api
+    volumes:
+      - ./:/app
+    entrypoint: php artisan queue:work --verbose --tries=3 --timeout=60
+    depends_on:
+      - api
     restart: always
   scheduler:
+    image: api
+    volumes:
+      - ./:/app
+    entrypoint: sh -c "while true; do php artisan schedule:run --verbose & sleep 60; done"
+    depends_on:
+      - api
     restart: always
   db:
     restart: always

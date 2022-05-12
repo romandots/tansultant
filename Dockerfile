@@ -48,7 +48,5 @@ ADD ./ /app
 WORKDIR /app
 
 RUN composer install
-RUN cp .env.example .env
-RUN php artisan key:generate
 
 ENTRYPOINT /tmp/entrypoint.sh
