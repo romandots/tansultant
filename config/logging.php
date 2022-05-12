@@ -78,6 +78,7 @@ return [
             'with' => [
                 'stream' => 'php://stdout',
             ],
+            'level' => 'debug',
         ],
 
         'syslog' => [
