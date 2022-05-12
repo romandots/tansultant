@@ -7,6 +7,7 @@ namespace App\Components\LogRecord;
 use App\Common\BaseComponentRepository;
 use App\Models\LogRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
  * @method array getSearchableAttributes()
@@ -48,5 +49,15 @@ class Repository extends BaseComponentRepository
         $record->user_id = $dto->getUser()->id;
         $record->old_value = $dto->old_value;
         $record->new_value = $dto->new_value;
+    }
+
+    public function getAllByObjectTypeAndObjectId(\App\Models\Enum\LogRecordObjectType $objectType, string $objectId): Collection
+    {
+        return $this
+            ->getQuery()
+            ->where('object_type', $objectType)
+            ->where('object_id', $objectId)
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 }

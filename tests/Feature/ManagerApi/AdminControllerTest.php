@@ -10,7 +10,6 @@ use App\Services\Permissions\UserRoles;
 use Carbon\Carbon;
 use Database\Seeders\PermissionsTableSeeder;
 use Database\Seeders\RolesTableSeeder;
-use Illuminate\Cache\CacheManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
@@ -21,7 +20,6 @@ abstract class AdminControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected CacheManager $cacheManager;
     protected BaseFacade $facade;
     protected string $baseRoutePrefix;
     protected string $accessToken;
@@ -33,18 +31,9 @@ abstract class AdminControllerTest extends TestCase
     protected DtoWithUser $dto;
     protected string $nameAttribute = 'name';
 
-    /**
-     * @return DtoWithUser
-     */
-    public function getDto(): DtoWithUser
-    {
-        return $this->dto;
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
-        $this->cacheManager = \app('cache');
         $this->user = $this->createFakeUser();
         $this->dto = $this->createDto();
         $this->usesSoftDelete = $this->facade->usesSoftDeletes() ?? false;
@@ -59,6 +48,14 @@ abstract class AdminControllerTest extends TestCase
 
         $this->seed(PermissionsTableSeeder::class);
         $this->seed(RolesTableSeeder::class);
+    }
+
+    /**
+     * @return DtoWithUser
+     */
+    public function getDto(): DtoWithUser
+    {
+        return $this->dto;
     }
 
     abstract protected function createRecord(array $attributes): Model;

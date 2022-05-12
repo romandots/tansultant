@@ -12,13 +12,14 @@ namespace App\Models;
 
 use App\Models\Enum\LogRecordAction;
 use App\Models\Enum\LogRecordObjectType;
+use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * App\Models\LogRecord
  *
- * @property int $id
+ * @property string $id
  * @property LogRecordAction $action
  * @property LogRecordObjectType $object_type
  * @property string $object_id
@@ -44,6 +45,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class LogRecord extends Model
 {
+    use UsesUuid;
+
     public const TABLE = 'log_records';
 
     public const UPDATED_AT = null;

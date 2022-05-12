@@ -8,6 +8,7 @@ use App\Common\BaseFacade;
 use App\Common\Locator;
 use App\Models\Enum\LogRecordAction;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 class Facade extends BaseFacade
 {
@@ -87,5 +88,10 @@ class Facade extends BaseFacade
     public function logSend(User $user, object $object): void
     {
         $this->getService()->log($user, LogRecordAction::SEND, $object);
+    }
+
+    public function getHistory(\App\Models\Enum\LogRecordObjectType $objectType, string $id): Collection
+    {
+        return $this->getService()->getRepository()->getAllByObjectTypeAndObjectId($objectType, $id);
     }
 }

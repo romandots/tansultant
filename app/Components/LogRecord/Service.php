@@ -28,7 +28,8 @@ class Service extends \App\Common\BaseService
     public function log(User $user, LogRecordAction $action, object|string $objectOrClassName, ?object $oldCopy = null): void
     {
         $className = \is_object($objectOrClassName) ? \get_class($objectOrClassName) : $objectOrClassName;
-        $messageKey = "log_record.{$className}.{$action->value}";
+        $objectType = LogRecordObjectType::getFromClass($className);
+        $messageKey = "log_record.{$objectType->value}.{$action->value}";
 
         $dto = new Dto($user);
         $dto->action = $action;

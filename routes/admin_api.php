@@ -38,6 +38,9 @@ use App\Services\Permissions\StudentsPermission;
 use App\Services\Permissions\UsersPermission;
 use App\Services\Permissions\VisitsPermission;
 
+Route::get('/history/{type}/{id}', '\App\Http\Controllers\ManagerApi\HistoryController@index')
+    ->name('history');
+
 // ACCOUNTS
 Route::namedGroup('accounts',ManagerApi\AccountController::class, static function () {
     Route::namedRoute('search', 'get', '/', [AccountsPermission::MANAGE, AccountsPermission::READ]);

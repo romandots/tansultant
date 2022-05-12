@@ -13,8 +13,8 @@ class Dto extends \App\Common\DTO\DtoWithUser
     public string $name;
     public LogRecordAction $action;
     public LogRecordObjectType $object_type;
-    public ?string $object_id;
-    public ?string $message;
-    public $old_value;
-    public $new_value;
+    public ?string $object_id = null;
+    public ?string $message = null;
+    public mixed $old_value = null;
+    public mixed $new_value = null;
 }
