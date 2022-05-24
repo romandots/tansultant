@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Components\Classroom;
 
 use App\Common\DTO\SearchFilterDto;
+use App\Http\Requests\ManagerApi\DTO\SearchClassroomsFilterDto;
 use App\Models\Classroom;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,6 +38,19 @@ class Repository extends \App\Common\BaseComponentRepository
     {
         return parent::getSuggestQuery($filter)
             ->orderBy('number', 'asc');
+    }
+
+    protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getFilterQuery($filter);
+
+        assert($filter instanceof SearchClassroomsFilterDto);
+
+        if ($filter->branch_id) {
+            $query->where('branch_id', $filter->branch_id);
+        }
+
+        return $query;
     }
 
 

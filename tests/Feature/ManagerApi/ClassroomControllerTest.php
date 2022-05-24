@@ -3,14 +3,17 @@
 namespace Tests\Feature\ManagerApi;
 
 use App\Common\DTO\DtoWithUser;
-use App\Common\DTO\SearchFilterDto;
 use App\Components\Classroom\Dto;
 use App\Components\Loader;
+use App\Http\Requests\ManagerApi\DTO\SearchClassroomsFilterDto;
 use App\Models\Branch;
 use App\Models\Classroom;
 use App\Services\Permissions\ClassroomsPermission;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property Dto $dto
+ */
 class ClassroomControllerTest extends AdminControllerTest
 {
     private Branch $secondBranch;
@@ -51,7 +54,6 @@ class ClassroomControllerTest extends AdminControllerTest
 
     protected function getAttributes(): array
     {
-        assert($this->dto instanceof Dto);
         return [
             'name' => $this->dto->name,
             'branch_id' => $this->dto->branch_id,
@@ -63,7 +65,6 @@ class ClassroomControllerTest extends AdminControllerTest
 
     protected function getAlternateAttributes(): array
     {
-        assert($this->dto instanceof Dto);
         return [
             'name' => 'Другой зал',
             'branch_id' => $this->secondBranch->id,
@@ -75,9 +76,41 @@ class ClassroomControllerTest extends AdminControllerTest
 
     public function testSearch(): void
     {
-        $dto = new SearchFilterDto();
+        $dto = new SearchClassroomsFilterDto();
         $dto->query = 'Тестовый зал';
+        $dto->branch_id = $this->dto->branch_id;
+
+        // Check access and all the basic stuff
         $this->search($dto);
+
+        // Then check custom search params
+        $url = $this->getUrl('search') . '?' . \http_build_query([
+            'branch_id' => $dto->branch_id,
+        ]);
+
+        $this
+            ->get($url)
+            ->assertOk();
+
+        $this->createFakeClassroom([
+            'branch_id' => $dto->branch_id,
+        ]);
+
+        $this->createFakeClassroom([
+            'branch_id' => $this->secondBranch->id,
+        ]);
+
+        $this->createFakeClassroom([
+            'branch_id' => $this->secondBranch->id,
+        ]);
+
+        $this
+            ->get($url)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment([
+                'branch_id' => $dto->branch_id,
+            ])
+            ->assertOk();
     }
 
     public function testSuggest(): void

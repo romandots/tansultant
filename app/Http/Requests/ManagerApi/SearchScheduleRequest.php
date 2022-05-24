@@ -9,7 +9,6 @@ use Carbon\Carbon;
 
 class SearchScheduleRequest extends SearchRequest
 {
-
     public function __construct()
     {
         parent::__construct();

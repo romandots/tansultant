@@ -72,9 +72,9 @@ class Repository extends \App\Common\BaseComponentRepository
             ->get();
     }
 
-    public function getSuggestQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
+    public function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
     {
-        $query = parent::getSuggestQuery($filter);
+        $query = parent::getFilterQuery($filter);
 
         assert($filter instanceof SearchSchedulesFilterDto);
         if ($filter->date) {
