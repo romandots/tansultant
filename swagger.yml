@@ -2,6 +2,8 @@ openapi: 3.0.0
 servers:
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/bezpravil/tansultant-api/1.0.0
+  - description: Development Stage
+    url: http://164.92.253.116:8080
 info:
   version: "1.0.0"
   title: Tansultant CRM API
@@ -30,9 +32,7 @@ tags:
     description: >-
       Курсы (классы) и расписание
 security:
-  - application:
-      - read
-      - write
+  - bearerAuth: []
 components:
   parameters:
     Page:
@@ -71,6 +71,13 @@ components:
         enum: [asc, desc]
         nullable: true
         default: 'asc'
+    FilterByName:
+      description: Фильтровать по имени
+      name: query
+      in: query
+      schema:
+        type: string
+        nullable: true
     FilterByUserStatus:
       description: Фильтровать по статусу пользователя
       name: status
@@ -136,6 +143,23 @@ components:
         type: string
         format: uuid
   schemas:
+    SuggestList:
+      description: Список для автоподстановки
+      type: object
+      properties:
+        data:
+          type: array
+          description: Список профайлов
+          items:
+            type: object
+            properties:
+              label:
+                type: string
+                description: Отображаемое значение
+              value:
+                type: string
+                format: uuid
+                description: Ключ (идентификатор)
     Token:
       description: Токен доступа
       type: object
@@ -328,6 +352,59 @@ components:
           type: string
           format: date-time
           description: Дата изменения
+    StorePerson:
+      type: object
+      description: Данные профиля
+      required:
+        - phone
+        - last_name
+        - first_name
+        - patrinymic_name
+        - gender
+        - birth_date
+      properties:
+        phone:
+          type: string
+          format: phone
+          description: Номер телефона
+          example: '79996339777'
+        email:
+          type: string
+          format: email
+          description: Адрес электронной почты
+          example: ram.d.kreiz@gmail.com
+        last_name:
+          type: string
+          description: Фамилия
+          example: Доц
+        first_name:
+          type: string
+          description: Имя
+          example: Роман
+        patrinymic_name:
+          type: string
+          description: Отчество
+          example: Александрович
+        gender:
+          type: string
+          enum: [male, female]
+          description: Пол
+        birth_date:
+          type: string
+          format: date
+          description: Дата рождения
+        instagram_username:
+          description: Юзернейм в Инстаграм
+          type: string
+        telegram_username:
+          description: Юзернейм в Телеграме
+          type: string
+        vk_uid:
+          description: ID пользователя в VK
+          type: string
+        facebook_uid:
+          description: ID пользователя в Facebook
+          type: string
     User:
       type: object
       description: Пользователь системы
@@ -887,12 +964,52 @@ components:
             type: string
             description: Тэг
             example: hip-hop
+  responses:
+    401:
+      description: Пользователь не авторизован
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: unauthenticated
+    403:
+      description: Доступ запрещен
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: access_denied
+    404:
+      description: Объект не найден
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: entity_not_found
+              message:
+                type: string
+                example: "Не найдено"
+              data:
+                type: object
+                properties:
+                  model:
+                    type: string
+                    example: App\Models\...
+                  ids:
+                    type: array
   securitySchemes:
-    application:
-      type: oauth2
-      flows:
-        clientCredentials:
-          tokenUrl: 'http://example.com/oauth/token'
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
 paths:
   # Auth routes
   /verify:
@@ -1176,6 +1293,222 @@ paths:
           description: Неверно указан номер кода подтверждения
 
   # AdminApi routes
+  ## People
+  /admin/people:
+    get:
+      operationId: admin.people.search
+      summary: Поиск по профайлам
+      description: >-
+        Возвращает список профайлов системы с учетом фильтра,
+        сортировки и пагинации
+      tags:
+        - AdminApi
+        - People
+      parameters:
+        - $ref: '#/components/parameters/FilterByName'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Order'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: Список профайлов
+                    items:
+                      $ref: '#/components/schemas/Person'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+    post:
+      operationId: admin.people.store
+      summary: Создать профайл
+      description: >-
+        Валидирует введенные данные, сохраняет новый профайл
+        и возвращает данные профайла
+      tags:
+        - AdminApi
+        - People
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StorePerson'
+      responses:
+        201:
+          description: Профайл созан
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Person'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+  /admin/people/suggest:
+    get:
+      operationId: admin.people.suggest
+      summary: Автоподстановка для поиска по профайлам
+      description: >-
+        Возвращает короткий список из первых найденных по поисковому запросу
+        профайлов и их идентификаторов
+      tags:
+        - AdminApi
+        - People
+      parameters:
+        - $ref: '#/components/parameters/FilterByName'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestList'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+  /admin/people/{person_id}:
+    get:
+      operationId: admin.people.search
+      summary: Профайл
+      description: Возвращает данные профайла
+      tags:
+        - AdminApi
+        - People
+      parameters:
+        - name: person_id
+          in: path
+          description: ID профайла
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Person'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+    patch:
+      operationId: admin.people.update
+      summary: Изменение профайла
+      description: >-
+        Изменяет профайл и возвращает новые данные
+      tags:
+        - AdminApi
+        - People
+      parameters:
+        - name: person_id
+          in: path
+          description: ID профайла
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StorePerson'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Person'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+    delete:
+      operationId: admin.people.delete
+      summary: Удаление профайла
+      description: Удаляет профайл
+      tags:
+        - AdminApi
+        - People
+      parameters:
+        - name: person_id
+          in: path
+          description: ID профайла
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+      responses:
+        200:
+          description: Успех
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+  /admin/people/{person_id}/restore:
+    post:
+      operationId: admin.people.restore
+      summary: Восстановление профайла
+      description: Восстанавливает удаленный профайл и возвращает его данные
+      tags:
+        - AdminApi
+        - People
+      parameters:
+        - name: person_id
+          in: path
+          description: ID профайла
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Person'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
   ## Users
   /admin/users:
     get:
@@ -1209,7 +1542,7 @@ paths:
                   meta:
                     $ref: '#/components/schemas/PaginationMeta'
         401:
-          description: Пользователь не авторизован
+          $ref: '#/components/responses/401'
         403:
           description: Доступ запрещен
         422:
