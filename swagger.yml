@@ -1030,6 +1030,9 @@ components:
                     example: App\Models\...
                   ids:
                     type: array
+                    items:
+                      type: string
+                      format: uuid
   securitySchemes:
     bearerAuth: # arbitrary name for the security scheme
       type: http
