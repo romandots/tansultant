@@ -630,6 +630,30 @@ components:
           description: Дата последнего появления в сети
           type: string
           format: date-time
+    StoreInstructor:
+      type: object
+      description: Данные инструктора
+      required:
+        - person_id
+        - display
+        - status
+      properties:
+        person_id:
+          description: ID профайла
+          format: uuid
+          type: string
+        description:
+          description: Описание (био)
+          type: string
+          example: Классный преподаватель
+        display:
+          description: Отображать в списках?
+          type: boolean
+        status:
+          description: Статус преподавателя
+          type: string
+          enum: [hired, freelance, fired]
+          example: active
     Course:
       type: object
       description: Курс (класс)
@@ -1382,7 +1406,7 @@ paths:
           $ref: '#/components/responses/403'
   /admin/people/{person_id}:
     get:
-      operationId: admin.people.search
+      operationId: admin.people.show
       summary: Профайл
       description: Возвращает данные профайла
       tags:
@@ -1503,6 +1527,223 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Person'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+
+  ## Instructors
+  /admin/instructors:
+    get:
+      operationId: admin.instructors.search
+      summary: Поиск по инструкторам
+      description: >-
+        Возвращает список инструкторов с учетом фильтра,
+        сортировки и пагинации
+      tags:
+        - AdminApi
+        - People
+      parameters:
+        - $ref: '#/components/parameters/FilterByName'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Order'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: Список инструкторов
+                    items:
+                      $ref: '#/components/schemas/Instructor'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+    post:
+      operationId: admin.instructors.store
+      summary: Создать инструктора
+      description: >-
+        Валидирует введенные данные, сохраняет новую запись
+        и возвращает данные инструктора
+      tags:
+        - AdminApi
+        - People
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreInstructor'
+      responses:
+        201:
+          description: Профайл созан
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Instructor'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+  /admin/instructors/suggest:
+    get:
+      operationId: admin.instructors.suggest
+      summary: Автоподстановка для поиска по инструкторам
+      description: >-
+        Возвращает короткий список из первых найденных по поисковому запросу
+        инструкторов и их идентификаторов
+      tags:
+        - AdminApi
+        - People
+      parameters:
+        - $ref: '#/components/parameters/FilterByName'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestList'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+  /admin/instructors/{instructor_id}:
+    get:
+      operationId: admin.instructors.show
+      summary: Инструктор
+      description: Возвращает данные инструктора
+      tags:
+        - AdminApi
+        - People
+      parameters:
+        - name: instructor_id
+          in: path
+          description: ID инструктора
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Instructor'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+    patch:
+      operationId: admin.instructors.update
+      summary: Изменение инструктора
+      description: >-
+        Изменяет профайл и возвращает новые данные
+      tags:
+        - AdminApi
+        - People
+      parameters:
+        - name: instructor_id
+          in: path
+          description: ID инструктора
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreInstructor'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Instructor'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+    delete:
+      operationId: admin.instructors.delete
+      summary: Удаление инструктора
+      description: Удаляет инструктора
+      tags:
+        - AdminApi
+        - People
+      parameters:
+        - name: instructor_id
+          in: path
+          description: ID инструктора
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+      responses:
+        200:
+          description: Успех
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+  /admin/instructors/{instructor_id}/restore:
+    post:
+      operationId: admin.instructors.restore
+      summary: Восстановление инструктора
+      description: Восстанавливает удаленного инструктора и возвращает его данные
+      tags:
+        - AdminApi
+        - People
+      parameters:
+        - name: instructor_id
+          in: path
+          description: ID инструктора
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+      responses:
+        200:
+          description: Успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Instructor'
         401:
           $ref: '#/components/responses/401'
         403:
