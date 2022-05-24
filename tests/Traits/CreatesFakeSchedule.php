@@ -37,7 +37,7 @@ trait CreatesFakeSchedule
             $attributes['course_id'] = $attributes['course_id'] ?? $course->id;
         }
 
-        if (!isset($attributes['classroom_id']) || !isset($attributes['branch_id'])) {
+        if (!isset($attributes['classroom_id']) && !isset($attributes['branch_id'])) {
             $classroom = $classroom ?? $this->createFakeClassroom();
             $attributes['classroom_id'] = $attributes['classroom_id'] ?? $classroom->id;
             $attributes['branch_id'] = $attributes['branch_id'] ?? $classroom->branch_id;

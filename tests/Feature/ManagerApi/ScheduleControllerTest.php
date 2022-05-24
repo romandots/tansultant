@@ -5,6 +5,7 @@ namespace Tests\Feature\ManagerApi;
 use App\Common\DTO\DtoWithUser;
 use App\Components\Loader;
 use App\Components\Schedule\Dto;
+use App\Http\Requests\ManagerApi\DTO\SearchSchedulesFilterDto;
 use App\Models\Enum\ScheduleCycle;
 use App\Models\Enum\Weekday;
 use App\Models\Schedule;
@@ -12,6 +13,9 @@ use App\Services\Permissions\SchedulesPermission;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property Dto $dto
+ */
 class ScheduleControllerTest extends AdminControllerTest
 {
     private \App\Models\Branch $secondBranch;
@@ -28,6 +32,7 @@ class ScheduleControllerTest extends AdminControllerTest
         $this->secondBranch = $this->createFakeBranch();
         $this->secondClassroom = $this->createFakeClassroom(['branch_id' => $this->secondBranch->id]);
         $this->secondCourse = $this->createFakeCourse();
+        $this->nameAttribute = null;
     }
 
     /**
@@ -91,6 +96,71 @@ class ScheduleControllerTest extends AdminControllerTest
             'cycle' => ScheduleCycle::EVERY_MONTH->value,
             'weekday' => null,
         ];
+    }
+
+    public function testSearch(): void
+    {
+        $dto = new SearchSchedulesFilterDto();
+        $dto->branch_id = $this->dto->branch_id;
+        $dto->date = $this->dto->from_date;
+
+        // Check access and all the basic stuff
+        $this->search($dto);
+
+        // Then check custom search params
+        $url = $this->getUrl('search') . '?' . \http_build_query([
+            'branch_id' => $dto->branch_id,
+            'date' => Carbon::today()->format('Y-m-d'),
+        ]);
+
+        $this
+            ->get($url)
+            ->assertOk();
+
+        $tomorrow = (clone $dto->date)->addDay();
+        $yesterday = (clone $dto->date)->subDay();
+
+        $this->createFakeSchedule([
+            'branch_id' => $dto->branch_id,
+            'from_date' => $yesterday,
+            'to_date' => $tomorrow,
+            'starts_at' => '11:00',
+            'ends_at' => '12:00',
+        ]);
+
+        $this->createFakeSchedule([
+            'branch_id' => $this->secondBranch->id,
+            'from_date' => $yesterday,
+            'to_date' => $tomorrow,
+            'starts_at' => '11:00',
+            'ends_at' => '12:00',
+        ]);
+
+        $this->createFakeSchedule([
+            'branch_id' => $dto->branch_id,
+            'from_date' => $tomorrow,
+            'to_date' => (clone $tomorrow)->addDay(),
+            'starts_at' => '11:00',
+            'ends_at' => '12:00',
+        ]);
+
+        $this->createFakeSchedule([
+            'branch_id' => $dto->branch_id,
+            'from_date' => (clone $yesterday)->subDay(),
+            'to_date' => $yesterday,
+            'starts_at' => '11:00',
+            'ends_at' => '12:00',
+        ]);
+
+        $this
+            ->get($url)
+            ->assertJsonCount(1, 'data')
+            ->assertJsonFragment([
+                'branch_id' => $dto->branch_id,
+                'from_date' => $yesterday->format('Y-m-d'),
+                'to_date' => $tomorrow->format('Y-m-d'),
+            ])
+            ->assertOk();
     }
 
     public function testStore(): void

@@ -64,11 +64,11 @@ class SearchPeopleRequest extends SearchRequest
     protected function mapSearchFilterDto(SearchFilterDto $dto, array $datum): void
     {
         assert($dto instanceof SearchPeopleFilterDto);
-        $dto->birth_date_from = isset($validated['birth_date_from'])
-            ? Carbon::parse($validated['birth_date_from']) : null;
-        $dto->birth_date_to = isset($validated['birth_date_to'])
-            ? Carbon::parse($validated['birth_date_to']) : null;
-        $dto->gender = $validated['gender'] ?? null;
+        $dto->birth_date_from = isset($datum['birth_date_from'])
+            ? Carbon::parse($datum['birth_date_from']) : null;
+        $dto->birth_date_to = isset($datum['birth_date_to'])
+            ? Carbon::parse($datum['birth_date_to']) : null;
+        $dto->gender = $datum['gender'] ?? null;
 
         parent::mapSearchFilterDto($dto, $datum);
     }

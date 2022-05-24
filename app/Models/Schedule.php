@@ -94,4 +94,9 @@ class Schedule extends Model
     {
         return $this->belongsTo(Classroom::class);
     }
+
+    public function lessons(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Lesson::class);
+    }
 }

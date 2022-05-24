@@ -29,7 +29,7 @@ abstract class AdminControllerTest extends TestCase
 
     protected bool $dropTypes = true;
     protected DtoWithUser $dto;
-    protected string $nameAttribute = 'name';
+    protected ?string $nameAttribute = 'name';
 
     protected function setUp(): void
     {
@@ -123,9 +123,15 @@ abstract class AdminControllerTest extends TestCase
             ->get($url)
             ->assertOk();
 
+        // We cannot check query search if there's not name attribute
+        // Use custom search test cases
+        if (!$this->nameAttribute) {
+            return;
+        }
+
         $url .= '?' . \http_build_query([
-                'query' => $dto->query
-            ]);
+            'query' => $dto->query
+        ]);
 
         $attributes = $this->getAttributes();
         $attributes[$this->nameAttribute] = $dto->query;
