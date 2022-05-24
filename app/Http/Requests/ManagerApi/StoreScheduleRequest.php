@@ -99,7 +99,7 @@ class StoreScheduleRequest extends StoreRequest
         $dto->classroom_id = $classroom->id;
         $dto->course_id = $validated['course_id'];
         $dto->cycle = ScheduleCycle::from($validated['cycle']);
-        $dto->weekday = isset($validated['weekday']) ? Weekday::from($validated['weekday']) : null;
+        $dto->weekday = isset($validated['weekday']) ? Weekday::from((int)$validated['weekday']) : null;
         $dto->from_date = isset($validated['from_date']) ? Carbon::parse($validated['from_date']) : null;
         $dto->to_date = isset($validated['to_date']) ? Carbon::parse($validated['to_date']) : null;
         $dto->starts_at = Carbon::parse($validated['starts_at']);
