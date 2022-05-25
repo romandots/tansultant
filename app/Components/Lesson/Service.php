@@ -5,16 +5,13 @@ declare(strict_types=1);
 namespace App\Components\Lesson;
 
 use App\Common\Contracts\DtoWithUser;
-use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
-use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
-use App\Jobs\GenerateLessonsOnDateJob;
 use App\Models\Course;
+use App\Models\Enum\LessonStatus;
 use App\Models\Enum\LessonType;
 use App\Models\Lesson;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 /**
  * @method Repository getRepository()
@@ -62,6 +59,31 @@ class Service extends \App\Common\BaseComponentService
      */
     public function create(DtoWithUser $dto): Model
     {
+        assert($dto instanceof Dto);
+        if ($dto->type === LessonType::LESSON) {
+            $course = $this->courses->find($dto->course_id);
+            $dto->name = $this->generateCourseLessonName($course);
+            if (null === $dto->instructor_id) {
+                $dto->instructor_id = $course->instructor_id;
+            }
+        } else {
+            $dto->name = \translate('lesson', LessonType::LESSON);
+        }
+        $dto->status = LessonStatus::BOOKED;
+
+        $dto->branch_id = $this->getBranchIdByClassroomId($dto->classroom_id);
+
+        return parent::create($dto);
+    }
+
+    public function update(Model $record, DtoWithUser $dto): void
+    {
+        assert($dto instanceof Dto);
+        assert($record instanceof Lesson);
+
+        // Cannot update some stuff via this method
+        $dto->status = $record->status;
+
         if ($dto->type === LessonType::LESSON) {
             $course = $this->courses->find($dto->course_id);
             $dto->name = $this->generateCourseLessonName($course);
@@ -74,8 +96,9 @@ class Service extends \App\Common\BaseComponentService
 
         $dto->branch_id = $this->getBranchIdByClassroomId($dto->classroom_id);
 
-        return parent::create($dto);
+        parent::update($record, $dto);
     }
+
 
     public function checkIfScheduleLessonExist(Schedule $schedule, Carbon $date): bool
     {
@@ -85,30 +108,6 @@ class Service extends \App\Common\BaseComponentService
         return $this->getRepository()->checkIfScheduleLessonExist(
             $schedule->id, $startTime->toDateTimeString(), $endTime->toDateTimeString()
         );
-    }
-
-    /**
-     * @param LessonsOnDate $lessonsOnDate
-     * @return Collection<Lesson>
-     */
-    public function generateAndGetLessonsOnDate(LessonsOnDate $lessonsOnDate): Collection
-    {
-        $job = new GenerateLessonsOnDateJob($lessonsOnDate->date);
-        dispatch($job);
-
-        return $this->getRepository()->getLessonsOnDate($lessonsOnDate->date);
-    }
-
-    /**
-     * @param LessonsFiltered $lessonsFiltered
-     * @return Collection<Lesson>
-     */
-    public function generateAndGetLessonsFiltered(LessonsFiltered $lessonsFiltered): Collection
-    {
-        $job = new GenerateLessonsOnDateJob($lessonsFiltered->date);
-        dispatch($job);
-
-        return $this->getRepository()->getLessonsFiltered($lessonsFiltered, ['instructor', 'course', 'controller']);
     }
 
     protected function getBranchIdByClassroomId(string $classroomId): string

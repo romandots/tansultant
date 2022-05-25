@@ -13,7 +13,7 @@ namespace App\Http\Controllers\ManagerApi;
 use App\Common\Controllers\AdminController;
 use App\Common\Requests\SuggestRequest;
 use App\Components\Classroom as Component;
-use App\Http\Requests\ManagerApi\SearchClassroomRequest;
+use App\Http\Requests\ManagerApi\SearchClassroomsRequest;
 use App\Http\Requests\ManagerApi\StoreClassroomRequest;
 use App\Models\Classroom;
 
@@ -41,7 +41,7 @@ class ClassroomController extends AdminController
         );
     }
 
-    public function search(SearchClassroomRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    public function search(SearchClassroomsRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         return $this->_search($request);
     }

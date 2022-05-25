@@ -21,9 +21,9 @@ abstract class BaseException extends \RuntimeException implements ReadableExcept
      * Data to render in response
      * @var array|null $data
      */
-    protected $data;
+    protected ?array $data;
 
-    protected $statusCode;
+    protected int $statusCode;
 
     /**
      * BaseException constructor.

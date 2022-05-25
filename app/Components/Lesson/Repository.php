@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Components\Lesson;
 
-use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
+use App\Common\DTO\SearchFilterDto;
+use App\Http\Requests\ManagerApi\DTO\SearchLessonsFilterDto;
 use App\Models\Enum\LessonStatus;
 use App\Models\Lesson;
 use Carbon\Carbon;
@@ -61,6 +62,7 @@ class Repository extends \App\Common\BaseComponentRepository
      * @param Carbon $date
      * @param array $relations
      * @return Collection<Lesson>
+     * @deprecated
      */
     public function getLessonsOnDate(Carbon $date, array $relations = []): Collection
     {
@@ -73,33 +75,32 @@ class Repository extends \App\Common\BaseComponentRepository
             ->load($relations);
     }
 
-    /**
-     * @param LessonsFiltered $dto
-     * @param array $relations
-     * @return Collection<Lesson>
-     */
-    public function getLessonsFiltered(LessonsFiltered $dto, array $relations = []): Collection
+    protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
     {
-        $query = $this->getQuery()
-            ->whereRaw('DATE(starts_at) = ?', [$dto->date]);
+        $query = parent::getFilterQuery($filter);
 
-        if (null !== $dto->course_id) {
-            $query = $query->where('course_id', $dto->course_id);
+        assert($filter instanceof SearchLessonsFilterDto);
+
+        if (null !== $filter->date) {
+            $query
+                ->whereRaw('DATE(starts_at) = ?', [$filter->date]);
         }
 
-        if (null !== $dto->branch_id) {
-            $query = $query->where('branch_id', $dto->branch_id);
+        if (null !== $filter->course_id) {
+            $query = $query->where('course_id', $filter->course_id);
         }
 
-        if (null !== $dto->classroom_id) {
-            $query = $query->where('classroom_id', $dto->classroom_id);
+        if (null !== $filter->branch_id) {
+            $query = $query->where('branch_id', $filter->branch_id);
+        }
+
+        if (null !== $filter->classroom_id) {
+            $query = $query->where('classroom_id', $filter->classroom_id);
         }
 
         return $query
             ->distinct()
-            ->orderBy('starts_at')
-            ->get()
-            ->load($relations);
+            ->orderBy('starts_at');
     }
 
     /**

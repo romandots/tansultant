@@ -69,6 +69,8 @@ class Schedule extends Model
     protected $casts = [
         'cycle' => ScheduleCycle::class,
         'weekday' => Weekday::class,
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
     ];
 
     /**

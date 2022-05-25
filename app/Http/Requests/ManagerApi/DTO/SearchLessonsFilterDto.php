@@ -12,6 +12,13 @@ use App\Common\DTO\SearchFilterDto;
 
 class SearchLessonsFilterDto extends SearchFilterDto
 {
-    /** @var string[]|null  */
-    public ?array $statuses;
+    public array $statuses = [];
+
+    public ?\Carbon\Carbon $date = null;
+
+    public ?string $branch_id = null;
+
+    public ?string $classroom_id = null;
+
+    public ?string $course_id = null;
 }

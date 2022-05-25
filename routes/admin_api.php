@@ -125,10 +125,11 @@ Route::namedGroup('lessons',ManagerApi\LessonController::class, static function 
     Route::namedRoute('show', 'get', '{id}', [LessonsPermission::MANAGE, LessonsPermission::READ]);
     Route::namedRoute('update', 'put', '{id}', [LessonsPermission::MANAGE, LessonsPermission::UPDATE]);
     Route::namedRoute('destroy', 'delete', '{id}', [LessonsPermission::MANAGE, LessonsPermission::DELETE]);
-    Route::namedRoute('cancel', 'post', '{id}\cancel', [LessonsPermission::MANAGE, LessonsPermission::CANCEL]);
-    Route::namedRoute('book', 'post', '{id}\book', [LessonsPermission::MANAGE, LessonsPermission::BOOK]);
-    Route::namedRoute('close', 'post', '{id}\close', [LessonsPermission::MANAGE, LessonsPermission::CLOSE]);
-    Route::namedRoute('open', 'post', '{id}\open', [LessonsPermission::MANAGE, LessonsPermission::OPEN]);
+    Route::namedRoute('restore', 'post', '{id}/restore', [LessonsPermission::MANAGE, LessonsPermission::RESTORE]);
+    Route::namedRoute('cancel', 'post', '{id}/cancel', [LessonsPermission::MANAGE, LessonsPermission::CANCEL]);
+    Route::namedRoute('book', 'post', '{id}/book', [LessonsPermission::MANAGE, LessonsPermission::BOOK]);
+    Route::namedRoute('close', 'post', '{id}/close', [LessonsPermission::MANAGE, LessonsPermission::CLOSE]);
+    Route::namedRoute('open', 'post', '{id}/open', [LessonsPermission::MANAGE, LessonsPermission::OPEN]);
 });
 
 // PEOPLE

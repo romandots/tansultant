@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Common\Contracts\SearchFilterDtoContract;
+use App\Common\DTO\SearchFilterDto;
 use App\Common\Requests\SearchRequest;
-use App\Http\Requests\ManagerApi\DTO\SearchInstructorsFilterDto;
+use App\Http\Requests\ManagerApi\DTO\SearchLessonsFilterDto;
 use App\Models\Branch;
 use App\Models\Classroom;
 use App\Models\Course;
@@ -12,20 +12,20 @@ use Illuminate\Validation\Rule;
 
 class SearchLessonsRequest extends SearchRequest
 {
+
     public function __construct()
     {
         parent::__construct();
-        $this->paginationDto = new DTO\SearchLessonsDto();
-        $this->filterDto = new DTO\SearchLessonsFilterDto();
+        $this->searchFilterDtoClass = SearchLessonsFilterDto::class;
         $this->sortable = ['name', 'status', 'created_at', 'updated_at', 'deleted_at'];
     }
 
     public function rules(): array
     {
-        return array_merge(parent::rules(), [
+        return \array_merge(parent::rules(), [
             'date' => [
-                'required',
-                'date'
+                'nullable',
+                'date',
             ],
             'branch_id' => [
                 'nullable',
@@ -48,17 +48,14 @@ class SearchLessonsRequest extends SearchRequest
         ]);
     }
 
-    protected function getSearchFilterDto(): SearchFilterDtoContract
+    protected function mapSearchFilterDto(SearchFilterDto $dto, array $datum): void
     {
-        $filter = parent::getSearchFilterDto();
-        if (!$filter instanceof SearchInstructorsFilterDto) {
-            return $filter;
-        }
+        assert($dto instanceof SearchLessonsFilterDto);
+        $dto->branch_id = $datum['branch_id'] ?? null;
+        $dto->classroom_id = $datum['classroom_id'] ?? null;
+        $dto->course_id = $datum['course_id'] ?? null;
+        $dto->statuses = isset($datum['statuses']) ? (array)$datum['statuses'] : [];
 
-        $validated = $this->validated();
-        $filter->statuses = isset($validated['statuses']) ? (array)$validated['statuses'] : null;
-        $filter->display = isset($validated['display']) ? (bool)$validated['display'] : null;
-
-        return $filter;
+        parent::mapSearchFilterDto($dto, $datum);
     }
 }

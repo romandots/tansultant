@@ -6,7 +6,7 @@ use App\Common\DTO\SearchFilterDto;
 use App\Common\Requests\SearchRequest;
 use App\Http\Requests\ManagerApi\DTO\SearchClassroomsFilterDto;
 
-class SearchClassroomRequest extends SearchRequest
+class SearchClassroomsRequest extends SearchRequest
 {
 
     public function __construct()

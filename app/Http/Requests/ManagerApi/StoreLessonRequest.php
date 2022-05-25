@@ -43,7 +43,7 @@ class StoreLessonRequest extends StoreRequest
                 Rule::exists(Course::TABLE, 'id')
             ],
             'instructor_id' => [
-                'required_when:type,' . LessonType::LESSON,
+                'nullable',
                 'string',
                 'uuid',
                 Rule::exists(Instructor::TABLE, 'id')
@@ -51,7 +51,7 @@ class StoreLessonRequest extends StoreRequest
             'type' => [
                 'required',
                 'string',
-                Rule::in(LessonType::cases())
+                Rule::in(enum_strings(LessonType::class))
             ],
             'starts_at' => [
                 'required',
@@ -72,7 +72,7 @@ class StoreLessonRequest extends StoreRequest
         $dto->classroom_id = $validated['classroom_id'] ?? null;
         $dto->course_id = $validated['course_id'] ?? null;
         $dto->instructor_id = $validated['instructor_id'] ?? null;
-        $dto->type = $validated['type'] ?? LessonType::LESSON;
+        $dto->type = isset($validated['type']) ? LessonType::from($validated['type']) : LessonType::LESSON;
         $dto->starts_at = \Carbon\Carbon::parse($validated['starts_at']);
         $dto->ends_at = \Carbon\Carbon::parse($validated['ends_at']);
 

@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace App\Components\Lesson;
 
 use App\Common\BaseComponentFacade;
-use App\Http\Requests\ManagerApi\DTO\LessonsFiltered;
-use App\Http\Requests\PublicApi\DTO\LessonsOnDate;
 use App\Models\Lesson;
 use App\Models\Schedule;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 
 /**
  * @method Service getService()
@@ -87,37 +84,5 @@ class Facade extends BaseComponentFacade
     public function generateLessonsOnDate(Carbon $date): void
     {
         $this->generator->generateLessonsOnDate($date);
-    }
-
-    /**
-     * @param LessonsOnDate $lessonsOnDate
-     * @return Collection<Lesson>
-     */
-    public function generateAndGetLessonsOnDate(LessonsOnDate $lessonsOnDate): Collection
-    {
-        return $this->getService()->generateAndGetLessonsOnDate($lessonsOnDate);
-    }
-
-    /**
-     * @param LessonsFiltered $lessonsFiltered
-     * @return Collection<Lesson>
-     */
-    public function generateAndGetLessonsFiltered(LessonsFiltered $lessonsFiltered): Collection
-    {
-        return $this->getService()->generateAndGetLessonsFiltered($lessonsFiltered);
-    }
-
-    /**
-     * @param LessonsFiltered $lessonsFiltered
-     * @return Collection<Lesson>
-     */
-    public function getLessonsFiltered(LessonsFiltered $lessonsFiltered): Collection
-    {
-        return $this->getService()->generateAndGetLessonsFiltered($lessonsFiltered);
-    }
-
-    public function getLessonsOnDate(LessonsOnDate $lessonsOnDate): Collection
-    {
-        return $this->getService()->generateAndGetLessonsOnDate($lessonsOnDate);
     }
 }

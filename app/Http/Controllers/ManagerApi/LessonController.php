@@ -25,7 +25,7 @@ use App\Http\Requests\ManagerApi\StoreLessonRequest;
  * @method void destroy(string $id, \Illuminate\Http\Request $request)
  * @method void restore(string $id, \Illuminate\Http\Request $request)
  * @method Component\Facade getFacade()
- * @method \Illuminate\Http\Resources\Json\JsonResource makeResource(\App\Models\Contract $record)
+ * @method Component\Formatter makeResource(\App\Models\Contract $record)
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection makeResourceCollection(\Illuminate\Support\Collection $collection)
  */
 class LessonController extends AdminController
@@ -34,8 +34,8 @@ class LessonController extends AdminController
         parent::__construct(
             facadeClass: Component\Facade::class,
             resourceClass: Component\Formatter::class,
-            searchRelations: [],
-            singleRecordRelations: [],
+            searchRelations: ['schedule', 'course'],
+            singleRecordRelations: ['schedule', 'course'],
         );
     }
 
