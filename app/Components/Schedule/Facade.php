@@ -7,7 +7,7 @@ namespace App\Components\Schedule;
 use App\Common\BaseComponentFacade;
 use App\Http\Requests\ManagerApi\DTO\ScheduleOnDate;
 use App\Models\Schedule;
-use Ramsey\Collection\Collection;
+use Illuminate\Support\Collection;
 
 /**
  * @method Service getService()

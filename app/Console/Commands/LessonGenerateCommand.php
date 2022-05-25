@@ -17,12 +17,19 @@ class LessonGenerateCommand extends LessonCommand
 
         if ($courseId) {
             $this->info("Generating lessons for course #{$courseId} on {$date->toFormattedDateString()}");
+            $beforeCount = $this->lessons->getRepository()->countCourseLessonsOnDate($courseId, $date);
             $this->lessons->generateCourseLessonsOnDate($date, $courseId);
+            $afterCount = $this->lessons->getRepository()->countCourseLessonsOnDate($courseId, $date);
         } else {
             $this->info("Generating lessons on {$date->toFormattedDateString()}");
+            $beforeCount = $this->lessons->getRepository()->countLessonsOnDate($date);
             $this->lessons->generateLessonsOnDate($date);
+            $afterCount = $this->lessons->getRepository()->countLessonsOnDate($date);
         }
 
         $this->info('Done!');
+        $this->info('Lessons count before generation: ' . $beforeCount);
+        $this->info('Total lessons generated: ' . $afterCount - $beforeCount);
+
     }
 }

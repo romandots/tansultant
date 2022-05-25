@@ -47,6 +47,7 @@ class Service extends \App\Common\BaseComponentService
         $dto->starts_at = $startTime;
         $dto->ends_at = $endTime;
         $dto->type = LessonType::LESSON;
+        $dto->status = LessonStatus::BOOKED;
         $dto->name = $this->generateCourseLessonName($schedule->course);
 
         return $this->getRepository()->create($dto);

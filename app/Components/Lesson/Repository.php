@@ -62,7 +62,6 @@ class Repository extends \App\Common\BaseComponentRepository
      * @param Carbon $date
      * @param array $relations
      * @return Collection<Lesson>
-     * @deprecated
      */
     public function getLessonsOnDate(Carbon $date, array $relations = []): Collection
     {
@@ -73,6 +72,25 @@ class Repository extends \App\Common\BaseComponentRepository
             ->orderBy('starts_at')
             ->get()
             ->load($relations);
+    }
+
+    public function countLessonsOnDate(Carbon $date): int
+    {
+        return (int)$this->getQuery()
+            ->whereNull('deleted_at')
+            ->whereRaw('DATE(starts_at) = ?', [$date->toDateString()])
+            ->distinct()
+            ->count(['id']);
+    }
+
+    public function countCourseLessonsOnDate(string $courseId, Carbon $date): int
+    {
+        return (int)$this->getQuery()
+            ->whereNull('deleted_at')
+            ->wher('course_id', $courseId)
+            ->whereRaw('DATE(starts_at) = ?', [$date->toDateString()])
+            ->distinct()
+            ->count(['id']);
     }
 
     protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
