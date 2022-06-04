@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Components\Loader;
+use App\Models\Enum\Gender;
 
 class UserCreateCommand extends UserCommand
 {
@@ -22,7 +23,9 @@ class UserCreateCommand extends UserCommand
         $personDto->patronymic_name = $this->ask('Patronymic name');
         $personDto->phone = $this->ask('Phone number');
         $personDto->email = $this->ask('Email');
-        $personDto->gender = $this->choice('Gender', \App\Models\Enum\Gender::cases());
+        $personDto->gender = Gender::tryFrom(
+            $this->choice('Gender', \enum_strings(Gender::class))
+        );
 
         $birthDate = $this->ask('Birth date');
         $personDto->birth_date = $birthDate ? \Carbon\Carbon::parse($birthDate) : null;
@@ -31,7 +34,7 @@ class UserCreateCommand extends UserCommand
         $user = $this->users->createFromPerson($userDto, $person);
 
         $this->info(
-            "User #{$user->id} <{$user->name}> with password '{$userDto->password}' created in status [{$user->status}]"
+            "User #{$user->id} <{$user->name}> with password '{$userDto->password}' created in status [{$user->status->value}]"
         );
     }
 }

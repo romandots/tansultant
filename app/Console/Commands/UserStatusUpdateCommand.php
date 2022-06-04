@@ -14,11 +14,11 @@ class UserStatusUpdateCommand extends UserCommand
         $username = $this->argument('username');
         $user = $this->users->findByUsername($username);
 
-        $this->info("User {$username}'s current status is {$user->status}");
+        $this->info("User {$username}'s current status is {$user->status->value}");
 
-        $user->status = UserStatus::from($this->choice('Choose new status', UserStatus::cases()));
+        $user->status = UserStatus::from($this->choice('Choose new status', \enum_strings(UserStatus::class)));
         $user->save();
 
-        $this->info("User {$username}'s current status is {$user->status}");
+        $this->info("User {$username}'s current status is {$user->status->value}");
     }
 }
