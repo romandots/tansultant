@@ -11,4 +11,9 @@ enum Weekday: int
     case FRIDAY = 5;
     case SATURDAY = 6;
     case SUNDAY = 7;
+
+    public function trans(): string
+    {
+        return \trans('schedule.weekday.' . $this->value);
+    }
 }

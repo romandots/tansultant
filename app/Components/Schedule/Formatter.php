@@ -20,6 +20,7 @@ class Formatter extends BaseFormatter
     {
         return [
             'id' => $this->id,
+            'name' => (string)$this->resource,
             'cycle' => $this->cycle,
             'weekday' => $this->weekday?->value,
             'from_date' => $this->from_date,

@@ -38,8 +38,8 @@ class Formatter extends BaseFormatter
                 return new \App\Components\Instructor\Formatter($this->instructor);
             }),
             'genres' => $this->tagsWithType(Genre::class)->pluck('name')->all(),
-            'schedules' => $this->whenLoaded('instructor', function () {
-                \App\Components\Schedule\Formatter::collection($this->schedules);
+            'schedules' => $this->whenLoaded('schedules', function () {
+                return \App\Components\Schedule\Formatter::collection($this->schedules);
             }),
             'starts_at' => $this->starts_at?->toDateString(),
             'ends_at' => $this->ends_at?->toDateString(),

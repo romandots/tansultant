@@ -104,4 +104,15 @@ class Schedule extends Model
     {
         return $this->hasMany(Lesson::class);
     }
+
+    public function __toString(): string
+    {
+        return $this->cycle->trans([
+            'weekday' => $this->weekday?->trans(),
+            'day' => $this->starts_at->format('d'),
+            'date' => $this->starts_at->format('d.m.Y'),
+            'time' => $this->starts_at->format('H:m'),
+        ]);
+    }
+
 }
