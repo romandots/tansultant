@@ -71,6 +71,9 @@ class Schedule extends Model
         'weekday' => Weekday::class,
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**

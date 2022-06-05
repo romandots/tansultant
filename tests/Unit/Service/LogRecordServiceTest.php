@@ -47,7 +47,7 @@ class LogRecordServiceTest extends TestCase
             'object_type' => LogRecordObjectType::COURSE->value,
             'object_id' => $course->id,
             'user_id' => $this->user->id,
-            'message' => 'Roman Dots создаёт класс Dancehall'
+            'message' => 'Roman Dots создаёт курс Dancehall'
         ]);
     }
 

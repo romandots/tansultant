@@ -127,4 +127,14 @@ class Service extends \App\Common\BaseComponentService
         CourseEvent::deleted($record, $user);
         $this->debug('Fired CourseDeletedEvent for course #' . $record->id);
     }
+
+    public function restore(Model $record, User $user): void
+    {
+        // restore
+        parent::restore($record, $user);
+
+        // fire event
+        CourseEvent::restored($record, $user);
+        $this->debug('Fired CourseRestoredEvent for course #' . $record->id);
+    }
 }

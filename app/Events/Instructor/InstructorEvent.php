@@ -16,12 +16,12 @@ abstract class InstructorEvent extends BaseModelEvent
     ) {
     }
 
-    protected function getType(): LogRecordObjectType
+    public function getType(): LogRecordObjectType
     {
         return LogRecordObjectType::STUDENT;
     }
 
-    protected function getRecordId(): string
+    public function getRecordId(): string
     {
         return $this->getInstructor()->id;
     }
@@ -44,6 +44,6 @@ abstract class InstructorEvent extends BaseModelEvent
 
     public static function created(Instructor $instructor, ?User $user = null): void
     {
-        (new InstructorCreatedEvent($instructor, $user))::dispatch();
+        InstructorCreatedEvent::dispatch($instructor, $user);
     }
 }

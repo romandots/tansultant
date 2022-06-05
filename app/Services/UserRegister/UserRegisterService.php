@@ -14,10 +14,8 @@ use App\Common\BaseService;
 use App\Components;
 use App\Components\Loader;
 use App\Events\Instructor\InstructorEvent;
-use App\Events\InstructorCreatedEvent;
 use App\Events\Student\StudentEvent;
-use App\Events\User\UserRegisteredEvent;
-use App\Events\UserEvent;
+use App\Events\User\UserEvent;
 use App\Http\Requests\Auth\DTO\RegisterUser;
 use App\Models\Enum\InstructorStatus;
 use App\Models\Enum\UserType;
@@ -97,7 +95,8 @@ class UserRegisterService extends BaseService
 
             $newUser->load(['person.instructor', 'person.student', 'person.customer', 'person.user']);
 
-            \event(new UserRegisteredEvent($newUser));
+            //\event(new UserRegisteredEvent($newUser));
+            UserEvent::registered($newUser);
 
             return $newUser;
         });

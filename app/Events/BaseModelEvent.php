@@ -13,9 +13,9 @@ use JetBrains\PhpStorm\Pure;
 abstract class BaseModelEvent extends BaseEvent
 {
 
-    abstract protected function getType(): LogRecordObjectType;
+    abstract public function getType(): LogRecordObjectType;
 
-    abstract protected function getRecordId(): string;
+    abstract public function getRecordId(): string;
 
     #[Pure] public function getChannelName(): string
     {

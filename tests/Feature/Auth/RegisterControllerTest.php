@@ -387,6 +387,8 @@ class RegisterControllerTest extends TestCase
             'password' => '123456',
         ];
 
+        Event::fake();
+
         $this
             ->post(self::REGISTER_URL, $postData)
             ->assertStatus(201)
@@ -403,6 +405,10 @@ class RegisterControllerTest extends TestCase
                     ]
                 ],
             ]);
+
+        Event::assertDispatched(UserRegisteredEvent::class, function (UserRegisteredEvent $event) {
+            return $event->getUser() instanceof User;
+        });
     }
 
     public function testRegisterWithExistingUserByPhoneNumber(): void

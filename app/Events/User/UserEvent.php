@@ -36,11 +36,11 @@ abstract class UserEvent extends BaseEvent
 
     public static function created(User $user): void
     {
-        (new UserCreatedEvent($user))::dispatch();
+        UserCreatedEvent::dispatch($user);
     }
 
     public static function registered(User $user): void
     {
-        (new UserRegisteredEvent($user))::dispatch();
+        UserRegisteredEvent::dispatch($user);
     }
 }

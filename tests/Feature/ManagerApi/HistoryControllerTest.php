@@ -3,6 +3,7 @@
 namespace Tests\Feature\ManagerApi;
 
 use App\Components\Loader;
+use App\Events\User\UserCreatedEvent;
 use App\Models\Enum\LogRecordAction;
 use App\Models\Enum\LogRecordObjectType;
 use App\Models\Enum\UserStatus;
@@ -11,6 +12,7 @@ use Carbon\Carbon;
 use Database\Seeders\PermissionsTableSeeder;
 use Database\Seeders\RolesTableSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -42,7 +44,13 @@ class HistoryControllerTest extends TestCase
             $dto->username = 'testing_test';
             $dto->person_id = $this->createFakePerson()->id;
 
+            Event::fake();
+
             $record = Loader::users()->create($dto);
+
+            Event::assertDispatched(UserCreatedEvent::class, function (UserCreatedEvent $event) use ($record) {
+                return $event->getUserId() === $record->id;
+            });
 
             $url = $this->getRoute($logRecordObjectType, $record->id);
 

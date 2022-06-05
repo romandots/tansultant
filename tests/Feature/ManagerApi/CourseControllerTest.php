@@ -6,6 +6,10 @@ use App\Common\DTO\DtoWithUser;
 use App\Common\DTO\SearchFilterDto;
 use App\Components\Course\Dto;
 use App\Components\Loader;
+use App\Events\Course\CourseCreatedEvent;
+use App\Events\Course\CourseDeletedEvent;
+use App\Events\Course\CourseRestoredEvent;
+use App\Events\Course\CourseUpdatedEvent;
 use App\Models\Course;
 use App\Models\Enum\CourseStatus;
 use App\Services\Permissions\CoursesPermission;
@@ -142,5 +146,25 @@ class CourseControllerTest extends AdminControllerTest
     public function testRestore(): void
     {
         $this->restore();
+    }
+
+    protected function getCreatedEvent(): ?string
+    {
+        return CourseCreatedEvent::class;
+    }
+
+    protected function getUpdatedEvent(): ?string
+    {
+        return CourseUpdatedEvent::class;
+    }
+
+    protected function getDeletedEvent(): ?string
+    {
+        return CourseDeletedEvent::class;
+    }
+
+    protected function getRestoredEvent(): ?string
+    {
+        return CourseRestoredEvent::class;
     }
 }

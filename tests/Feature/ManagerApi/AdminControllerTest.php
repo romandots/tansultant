@@ -5,6 +5,7 @@ namespace Tests\Feature\ManagerApi;
 use App\Common\BaseFacade;
 use App\Common\DTO\DtoWithUser;
 use App\Common\DTO\SearchFilterDto;
+use App\Events\BaseModelEvent;
 use App\Models\User;
 use App\Services\Permissions\UserRoles;
 use Carbon\Carbon;
@@ -13,9 +14,18 @@ use Database\Seeders\RolesTableSeeder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Event;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
+/**
+ * How to use:
+ *
+ * - Extend this class into your SomeControllerTest
+ * - Explicitly declare each test for each action you want to test
+ * - If you wish to test broadcasting events then override also get...Event() methods
+ *
+ */
 abstract class AdminControllerTest extends TestCase
 {
     use RefreshDatabase;
@@ -65,6 +75,26 @@ abstract class AdminControllerTest extends TestCase
     abstract protected function getAttributes(): array;
 
     abstract protected function getAlternateAttributes(): array;
+
+    protected function getCreatedEvent(): ?string
+    {
+        return null;
+    }
+
+    protected function getUpdatedEvent(): ?string
+    {
+        return null;
+    }
+
+    protected function getDeletedEvent(): ?string
+    {
+        return null;
+    }
+
+    protected function getRestoredEvent(): ?string
+    {
+        return null;
+    }
 
     protected function getCreateAttributes(): array
     {
@@ -271,10 +301,19 @@ abstract class AdminControllerTest extends TestCase
             ->post($url)
             ->assertStatus(422);
 
+        Event::fake();
+
         $this
             ->post($url, $attributes)
             ->dump()
             ->assertCreated();
+
+        $event = $this->getCreatedEvent();
+        if ($event) {
+            Event::assertDispatched($event, function (BaseModelEvent $event) {
+                return $event->getRecordId() !== null;
+            });
+        }
 
         $this->assertDatabaseHas($this->tableName, $expectedAttributes);
     }
@@ -308,13 +347,22 @@ abstract class AdminControllerTest extends TestCase
                 ->put($url)
                 ->assertStatus(422);
 
-            $expectedAttributes = $this->castAttributes($record->toArray());
+            $expectedAttributes = $this->castAttributes($record->getAttributes());
             $this->assertDatabaseHas($this->tableName, $expectedAttributes);
             $this->assertDatabaseMissing($this->tableName, $newExpectedAttributes);
+
+            Event::fake();
 
             $this
                 ->put($url, $newAttributes)
                 ->assertOk();
+
+            $event = $this->getUpdatedEvent();
+            if ($event) {
+                Event::assertDispatched($event, function (BaseModelEvent $event) use ($record) {
+                    return $event->getRecordId() === $record->id;
+                });
+            }
 
             $this->assertDatabaseMissing($this->tableName, $expectedAttributes);
             $this->assertDatabaseHas($this->tableName, $newExpectedAttributes);
@@ -350,9 +398,18 @@ abstract class AdminControllerTest extends TestCase
 
         $this->assertDatabaseHas($this->tableName, $attributes);
 
+        Event::fake();
+
         $this
             ->delete($url)
             ->assertOk();
+
+        $event = $this->getDeletedEvent();
+        if ($event) {
+            Event::assertDispatched($event, function (BaseModelEvent $event) use ($record) {
+                return $event->getRecordId() === $record->id;
+            });
+        }
 
         $this->assertDatabaseMissing($this->tableName, $attributes);
 
@@ -394,9 +451,18 @@ abstract class AdminControllerTest extends TestCase
 
         $this->assertDatabaseMissing($this->tableName, $attributes);
 
+        Event::fake();
+
         $this
             ->post($url)
             ->assertOk();
+
+        $event = $this->getRestoredEvent();
+        if ($event) {
+            Event::assertDispatched($event, function (BaseModelEvent $event) use ($record) {
+                return $event->getRecordId() === $record->id;
+            });
+        }
 
         $this->assertDatabaseHas($this->tableName, $attributes);
     }

@@ -24,12 +24,12 @@ abstract class CourseEvent extends BaseModelEvent
     ) {
     }
 
-    protected function getType(): LogRecordObjectType
+    public function getType(): LogRecordObjectType
     {
         return LogRecordObjectType::COURSE;
     }
 
-    protected function getRecordId(): string
+    public function getRecordId(): string
     {
         return $this->getCourse()->id;
     }
@@ -45,36 +45,36 @@ abstract class CourseEvent extends BaseModelEvent
     }
     public static function created(Course $course, User $user): void
     {
-        (new CourseCreatedEvent($course, $user))::dispatch();
+        CourseCreatedEvent::dispatch($course, $user);
     }
 
     public static function deleted(Course $course, User $user): void
     {
-        (new CourseDeletedEvent($course, $user))::dispatch();
+        CourseDeletedEvent::dispatch($course, $user);
     }
 
     public static function disabled(Course $course, User $user): void
     {
-        (new CourseDisabledEvent($course, $user))::dispatch();
+        CourseDisabledEvent::dispatch($course, $user);
     }
 
     public static function enabled(Course $course, User $user): void
     {
-        (new CourseEnabledEvent($course, $user))::dispatch();
+        CourseEnabledEvent::dispatch($course, $user);
     }
 
     public static function restored(Course $course, User $user): void
     {
-        (new CourseRestoredEvent($course, $user))::dispatch();
+        CourseRestoredEvent::dispatch($course, $user);
     }
 
     public static function scheduleUpdated(Course $course, User $user): void
     {
-        (new CourseScheduleUpdatedEvent($course, $user))::dispatch();
+        CourseScheduleUpdatedEvent::dispatch($course, $user);
     }
 
     public static function updated(Course $course, User $user): void
     {
-        (new CourseUpdatedEvent($course, $user))::dispatch();
+        CourseUpdatedEvent::dispatch($course, $user);
     }
 }
