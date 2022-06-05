@@ -7,7 +7,20 @@ services:
     restart: always
     ports:
       - "8000:80"
+    depends_on:
+      - api
   api:
+    restart: always
+    depends_on:
+      - db
+      - redis
+  websocket-server:
+    image: api
+    volumes:
+      - ./:/app
+    entrypoint: php artisan websockets:serve
+    depends_on:
+      - api
     restart: always
   queue:
     image: api

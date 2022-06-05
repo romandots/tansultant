@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Events\Course;
 
-class CourseDeletedEvent extends BaseCourseEvent
+class CourseDeletedEvent extends CourseEvent
 {
     //
 }

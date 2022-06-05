@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace App\Events\Course;
 
-class CourseRecoveredEvent extends BaseCourseEvent
+class CourseRestoredEvent extends CourseEvent
 {
     //
 }

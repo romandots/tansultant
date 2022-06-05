@@ -13,10 +13,11 @@ namespace App\Services\UserRegister;
 use App\Common\BaseService;
 use App\Components;
 use App\Components\Loader;
+use App\Events\Instructor\InstructorEvent;
 use App\Events\InstructorCreatedEvent;
-use App\Events\StudentCreatedEvent;
-use App\Events\UserCreatedEvent;
-use App\Events\UserRegisteredEvent;
+use App\Events\Student\StudentEvent;
+use App\Events\User\UserRegisteredEvent;
+use App\Events\UserEvent;
 use App\Http\Requests\Auth\DTO\RegisterUser;
 use App\Models\Enum\InstructorStatus;
 use App\Models\Enum\UserType;
@@ -188,7 +189,8 @@ class UserRegisterService extends BaseService
         $newStudent = $this->students->createFromPerson($dto, $person);
 
         // Fire event
-        \event(new StudentCreatedEvent($newStudent));
+        //\event(new StudentCreatedEvent($newStudent));
+        StudentEvent::created($newStudent);
 
         $person->load('student');
     }
@@ -214,7 +216,8 @@ class UserRegisterService extends BaseService
         $newInstructor = $this->instructors->createFromPerson($dto, $person);
 
         // Fire event
-        \event(new InstructorCreatedEvent($newInstructor));
+        //\event(new InstructorCreatedEvent($newInstructor));
+        InstructorEvent::created($newInstructor);
 
         $person->load('instructor');
     }
@@ -234,7 +237,8 @@ class UserRegisterService extends BaseService
         $newUser = $this->users->createFromPerson($dto, $person);
 
         // Fire event
-        \event(new UserCreatedEvent($newUser));
+        //\event(new UserCreatedEvent($newUser));
+        UserEvent::created($newUser);
 
         return $newUser;
     }

@@ -6,7 +6,7 @@ namespace App\Components\User;
 
 use App\Common\Contracts\DtoWithUser;
 use App\Components\User\Exceptions\OldPasswordInvalidException;
-use App\Events\UserCreatedEvent;
+use App\Events\User\UserCreatedEvent;
 use App\Models\Enum\UserStatus;
 use App\Models\Person;
 use App\Models\User;

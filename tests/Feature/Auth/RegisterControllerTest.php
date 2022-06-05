@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Auth;
 
-use App\Events\InstructorCreatedEvent;
-use App\Events\StudentCreatedEvent;
-use App\Events\UserCreatedEvent;
-use App\Events\UserRegisteredEvent;
+use App\Events\Instructor\InstructorCreatedEvent;
+use App\Events\Student\StudentCreatedEvent;
+use App\Events\User\UserCreatedEvent;
+use App\Events\User\UserRegisteredEvent;
 use App\Models\Enum\UserType;
 use App\Models\Instructor;
 use App\Models\Person;

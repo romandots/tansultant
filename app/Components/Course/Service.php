@@ -5,11 +5,7 @@ declare(strict_types=1);
 namespace App\Components\Course;
 
 use App\Common\Contracts;
-use App\Events\Course\CourseCreatedEvent;
-use App\Events\Course\CourseDeletedEvent;
-use App\Events\Course\CourseDisabledEvent;
-use App\Events\Course\CourseEnabledEvent;
-use App\Events\Course\CourseUpdatedEvent;
+use App\Events\Course\CourseEvent;
 use App\Models\Course;
 use App\Models\Genre;
 use App\Models\User;
@@ -41,7 +37,8 @@ class Service extends \App\Common\BaseComponentService
         $this->debug('Assigned genres with course #' . $record->id, $dto->genres);
 
         // fire event
-        \event(new CourseCreatedEvent($record, $dto->getUser()));
+        //\event(new CourseCreatedEvent($record, $dto->getUser()));
+        CourseEvent::created($record, $dto->getUser());
         $this->debug('Fired CourseCreatedEvent for course #' . $record->id);
 
         return $record;
@@ -59,7 +56,8 @@ class Service extends \App\Common\BaseComponentService
         $this->debug('Assigned genres with course #' . $record->id, $dto->genres);
 
         // fire event
-        \event(new CourseUpdatedEvent($record, $dto->getUser()));
+        //\event(new CourseUpdatedEvent($record, $dto->getUser()));
+        CourseEvent::updated($record, $dto->getUser());
         $this->debug('Fired CourseUpdatedEvent for course #' . $record->id);
     }
 
@@ -85,7 +83,8 @@ class Service extends \App\Common\BaseComponentService
         $this->history->logEnable($user, $course, $oldCourse);
 
         // fire event
-        \event(new CourseEnabledEvent($course, $user));
+        //\event(new CourseEnabledEvent($course, $user));
+        CourseEvent::enabled($course, $user);
         $this->debug('Fired CourseEnabledEvent for course #' . $course->id);
     }
 
@@ -108,7 +107,8 @@ class Service extends \App\Common\BaseComponentService
         $this->history->logDisable($user, $course, $oldCourse);
 
         // fire event
-        \event(new CourseDisabledEvent($course, $user));
+        //\event(new CourseDisabledEvent($course, $user));
+        CourseEvent::disabled($course, $user);
         $this->debug('Fired CourseDisabledEvent for course #' . $course->id);
     }
 
@@ -123,7 +123,8 @@ class Service extends \App\Common\BaseComponentService
         parent::delete($record, $user);
 
         // fire event
-        \event(new CourseDeletedEvent($record, $user));
+        //\event(new CourseDeletedEvent($record, $user));
+        CourseEvent::deleted($record, $user);
         $this->debug('Fired CourseDeletedEvent for course #' . $record->id);
     }
 }

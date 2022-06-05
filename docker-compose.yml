@@ -14,14 +14,13 @@ services:
       - /manager-app/node_modules
     ports:
       - "80:8080"
-    depends_on:
-      - api
   api:
     build:
       context: ./
     image: api
     ports:
       - "8080:80"
+      - "6001:6001"
     volumes:
       - ./:/app
       - /app/vendor
@@ -42,9 +41,16 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: null
       REDIS_PORT: 6379
-    depends_on:
-      - db
-      - redis
+#  websocket_server:
+#    image: api
+#    volumes:
+#      - ./:/app
+#    ports:
+#      - "6001:6001"
+#    entrypoint: php artisan websockets:serve
+#    depends_on:
+#      - api
+#    restart: always
   db_test:
     image: postgres:14.2
     ports:
