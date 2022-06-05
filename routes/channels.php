@@ -17,6 +17,6 @@ Broadcast::routes([
     'middleware' => 'manager_api',
 ]);
 
-Broadcast::channel('schedule.{classroom_id}.{date}', \App\Broadcasting\ScheduleChannel::class);
+Broadcast::channel('schedule.{date}.{branch_id}', \App\Broadcasting\ScheduleChannel::class);
 Broadcast::channel('events.{type}.{id}', \App\Broadcasting\EventsChannel::class);
 Broadcast::channel('user.{id}', \App\Broadcasting\UserChannel::class);

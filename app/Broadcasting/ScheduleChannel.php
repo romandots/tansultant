@@ -6,7 +6,7 @@ use Carbon\Carbon;
 
 class ScheduleChannel
 {
-    public function join(\App\Models\User $user, string $classroomId, Carbon $date): bool
+    public function join(\App\Models\User $user, Carbon $date, string $branchId): bool
     {
         return true;
     }

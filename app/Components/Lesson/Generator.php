@@ -3,6 +3,8 @@
 namespace App\Components\Lesson;
 
 use App\Common\Traits\WithLogger;
+use App\Events\Schedule\ScheduleUpdatedEvent;
+use App\Models\Lesson;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -28,9 +30,11 @@ class Generator
     /**
      * @param Collection<Schedule> $schedules
      * @param Carbon $date
+     * @return array
      */
-    public function generateLessonsBySchedules(Collection $schedules, Carbon $date): void
+    protected function generateLessonsBySchedules(Collection $schedules, Carbon $date): array
     {
+        $lessons = [];
         $lessonsIds = [];
         foreach ($schedules as $schedule) {
             if ($this->service->checkIfScheduleLessonExist($schedule, $date)) {
@@ -40,25 +44,58 @@ class Generator
             $this->debug("Creating lesson for #{$schedule->id}...");
             $lesson = $this->service->createFromScheduleOnDate($schedule, $date);
             $lessonsIds[] = $lesson->id;
+            $lessons[] = $lesson;
         }
 
         $count = count($lessonsIds);
         if ($count > 0) {
             $this->debug("{$count} lessons generated", $lessonsIds);
         }
+
+        return $lessons;
     }
 
     public function generateCourseLessonsOnDate(Carbon $date, string $courseId): void
     {
         $this->debug("Generating lessons for course #{$courseId} on date {$date->format('Y-m-d')}");
         $schedules = $this->schedules->getSchedulesForCourseOnDate($courseId, $date);
-        $this->generateLessonsBySchedules($schedules, $date);
+        $lessons = $this->generateLessonsBySchedules($schedules, $date);
+        $this->dispatchEvents($lessons);
     }
 
     public function generateLessonsOnDate(Carbon $date): void
     {
         $this->debug("Generating lessons on date {$date->format('Y-m-d')}");
         $schedules = $this->schedules->getSchedulesOnDate($date);
-        $this->generateLessonsBySchedules($schedules, $date);
+        $lessons = $this->generateLessonsBySchedules($schedules, $date);
+        $this->dispatchEvents($lessons);
+    }
+
+    /**
+     * Dispatch ScheduleUpdatedEvent for each date and branch_id
+     *
+     * @param array|Lesson[] $lessons
+     * @return void
+     */
+    protected function dispatchEvents(array $lessons): void
+    {
+        $channels = [];
+        foreach ($lessons as $lesson) {
+            $key = $lesson->branch_id . $lesson->starts_at->format('Y-m-d');
+
+            if (array_key_exists($key, $channels)) {
+                continue;
+            }
+
+            $channels[$key] = [
+                'branch_id' => $lesson->branch_id,
+                'date' => $lesson->starts_at,
+            ];
+        }
+
+        foreach ($channels as $channel) {
+            $this->debug("Dispatching ScheduleUpdatedEvent for branch #{$channel['branch_id']} on {$channel['date']}");
+            ScheduleUpdatedEvent::dispatch($channel['date'], $channel['branch_id']);
+        }
     }
 }
