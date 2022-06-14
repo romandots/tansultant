@@ -8,6 +8,7 @@ use App\Http\Requests\ManagerApi\DTO\SearchLessonsFilterDto;
 use App\Models\Branch;
 use App\Models\Classroom;
 use App\Models\Course;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 
 class SearchLessonsRequest extends SearchRequest
@@ -55,6 +56,7 @@ class SearchLessonsRequest extends SearchRequest
         $dto->classroom_id = $datum['classroom_id'] ?? null;
         $dto->course_id = $datum['course_id'] ?? null;
         $dto->statuses = isset($datum['statuses']) ? (array)$datum['statuses'] : [];
+        $dto->date = isset($datum['date']) ? Carbon::parse($datum['date']) : null;
 
         parent::mapSearchFilterDto($dto, $datum);
     }

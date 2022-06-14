@@ -87,7 +87,7 @@ class Repository extends \App\Common\BaseComponentRepository
     {
         return (int)$this->getQuery()
             ->whereNull('deleted_at')
-            ->wher('course_id', $courseId)
+            ->where('course_id', $courseId)
             ->whereRaw('DATE(starts_at) = ?', [$date->toDateString()])
             ->distinct()
             ->count(['id']);
