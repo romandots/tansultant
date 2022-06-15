@@ -24,12 +24,15 @@ class Formatter extends BaseFormatter
             'status_label' => \trans('lesson.' . $this->status->value),
             'type' => $this->type,
             'type_label' => \trans('lesson.' . $this->type->value),
+            'instructor_id' => $this->instructor_id,
             'instructor' => $this->whenLoaded('instructor', function () {
                 return new \App\Components\Instructor\Formatter($this->instructor);
             }),
+            'course_id' => $this->course_id,
             'course' => $this->whenLoaded('course', function () {
                 return new \App\Components\Course\Formatter($this->course);
             }),
+            'classroom_id' => $this->classroom_id,
             'classroom' => $this->whenLoaded('classroom', function () {
                 return new \App\Components\Classroom\Formatter($this->classroom);
             }),
