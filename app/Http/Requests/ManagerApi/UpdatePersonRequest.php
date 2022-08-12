@@ -10,17 +10,14 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Common\Requests\StoreRequest;
-use App\Components\Person\Dto;
-use App\Models\Enum\Gender;
 use App\Models\Person;
 use Illuminate\Validation\Rule;
 
 /**
- * Class StorePersonRequest
+ * Class UpdatePersonRequest
  * @package App\Http\Requests
  */
-class StorePersonRequest extends StoreRequest
+class UpdatePersonRequest extends StorePersonRequest
 {
     /**
      * @return array
@@ -53,12 +50,13 @@ class StorePersonRequest extends StoreRequest
             'phone' => [
                 'required',
                 'string',
+                Rule::unique(Person::TABLE, 'phone')->ignore($this->getId()),
             ],
             'email' => [
-                'required',
+                'nullable',
                 'string',
                 'email',
-                Rule::unique(Person::TABLE, 'email'),
+                Rule::unique(Person::TABLE, 'email')->ignore($this->getId()),
             ],
             'instagram_username' => [
                 'nullable',
@@ -89,32 +87,5 @@ class StorePersonRequest extends StoreRequest
                 'mimes:jpeg,png,pdf'
             ]
         ];
-    }
-
-    public function getDto(): Dto
-    {
-        $validated = $this->validated();
-        $dto = new Dto($this->user());
-
-        $dto->last_name = $validated['last_name'] ?? null;
-        $dto->first_name = $validated['first_name'] ?? null;
-        $dto->patronymic_name = $validated['patronymic_name'] ?? null;
-        $dto->birth_date = $validated['birth_date'] ? \Carbon\Carbon::parse($validated['birth_date']) : null;
-        $dto->gender = isset($validated['gender']) ? Gender::from($validated['gender']) : null;
-        $dto->phone = $validated['phone'] ? \phone_format($validated['phone']) : null;
-        $dto->email = $validated['email'] ?? null;
-        $dto->instagram_username = $validated['instagram_username'] ?? null;
-        $dto->telegram_username = $validated['telegram_username'] ?? null;
-        $dto->vk_url = $validated['vk_url'] ?? null;
-        $dto->facebook_url = $validated['facebook_url'] ?? null;
-        $dto->note = $validated['note'] ?? null;
-        $dto->picture = $this->file('picture');
-
-        return $dto;
-    }
-
-    protected function getId(): ?string
-    {
-        return $this->route()->parameter('id');
     }
 }

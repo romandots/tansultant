@@ -8,6 +8,7 @@ use App\Common\Controllers\AdminController;
 use App\Components\Person as Component;
 use App\Http\Requests\ManagerApi\SearchPeopleRequest;
 use App\Http\Requests\ManagerApi\StorePersonRequest;
+use App\Http\Requests\ManagerApi\UpdatePersonRequest;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
@@ -42,7 +43,7 @@ class PersonController extends AdminController
         return $this->_store($request);
     }
 
-    public function update(string $id, StorePersonRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    public function update(string $id, UpdatePersonRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         return $this->_update($id, $request);
     }

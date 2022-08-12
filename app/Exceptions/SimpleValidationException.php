@@ -4,8 +4,13 @@ namespace App\Exceptions;
 
 class SimpleValidationException extends BaseException
 {
-    public function __construct(?string $message = null, array $data = [])
+    public function __construct(string $field, string $rule)
     {
-        parent::__construct($message ?? 'validation_error', $data, 422);
+        $data = [
+            $field => [
+                'name' => $rule,
+            ],
+        ];
+        parent::__construct('validation_error', $data, 422);
     }
 }

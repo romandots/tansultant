@@ -37,6 +37,7 @@ use Spatie\Tags\HasTags;
  * @property string $facebook_uid
  * @property string $facebook_url
  * @property string $note
+ * @property string $name
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property \Carbon\Carbon|null $deleted_at

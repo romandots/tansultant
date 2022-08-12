@@ -55,6 +55,7 @@ class Handler extends BaseExceptionHandler
     protected function getCustomHandlers(): array
     {
         return [
+            SimpleValidationException::class => [$this, 'renderAsJson'],
             UnauthorizedException::class => [$this, 'renderAsJson'],
             UserNotFoundException::class => [$this, 'renderAsJson'],
             WrongPasswordException::class => [$this, 'renderAsJson'],

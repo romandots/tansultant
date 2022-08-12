@@ -76,7 +76,7 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->patronymic_name = $dto->patronymic_name;
         $record->birth_date = isset($dto->birth_date) ? $dto->birth_date : null;
         $record->gender = $dto->gender;
-        $record->phone = $dto->phone;
+        $record->phone = \normalize_phone_number($dto->phone);
         $record->email = $dto->email;
         $record->instagram_username = $dto->instagram_username;
         $record->telegram_username = $dto->telegram_username;
