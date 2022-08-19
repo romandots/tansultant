@@ -9,7 +9,7 @@ use App\Common\BaseFormatter;
 /**
  * @mixin \App\Models\Customer
  */
-class Formatter extends BaseFormatter
+class WithPersonFormatter extends BaseFormatter
 {
     /**
      * @param $request
@@ -20,7 +20,7 @@ class Formatter extends BaseFormatter
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'person' => $this->whenLoaded('person', fn () => new \App\Components\Person\Formatter($this->person)),
+            'person' => new \App\Components\Person\Formatter($this->person)
         ];
     }
 }

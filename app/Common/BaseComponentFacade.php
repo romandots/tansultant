@@ -163,4 +163,9 @@ abstract class BaseComponentFacade extends BaseFacade
     {
         return $this->getRepository()->withSoftDeletes();
     }
+
+    public function format(Model $record, string $formatterClass): array
+    {
+        return (new $formatterClass($record))->toArray(\request());
+    }
 }

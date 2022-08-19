@@ -33,6 +33,7 @@ class Service extends \App\Common\BaseComponentService
      */
     public function create(Contracts\DtoWithUser $dto): Model
     {
+        $this->checkIfPhoneRequiredAndDefined($dto);
         $this->checkIfPersonExists($dto, null);
         return parent::create($dto); //
     }
@@ -47,6 +48,7 @@ class Service extends \App\Common\BaseComponentService
      */
     public function update(Model $record, Contracts\DtoWithUser $dto): void
     {
+        $this->checkIfPhoneRequiredAndDefined($dto);
         $this->checkIfPersonExists($dto, $record->id);
         parent::update($record, $dto);
     }
@@ -61,12 +63,6 @@ class Service extends \App\Common\BaseComponentService
      */
     protected function checkIfPersonExists(Dto $dto, ?string $ignoreId): void
     {
-        // Check by phone
-        $existingRecord = Loader::people()->getByPhoneNumber($dto->phone);
-        if ($existingRecord && $ignoreId !== $existingRecord->id) {
-            throw new Exceptions\PhoneAlreadyRegistered($dto->phone, $existingRecord);
-        }
-
         // Check by bio
         $existingRecord = Loader::people()->getByNameGenderAndBirthDate(
             $dto->last_name,
@@ -76,7 +72,26 @@ class Service extends \App\Common\BaseComponentService
             $dto->birth_date
         );
         if ($existingRecord && $ignoreId !== $existingRecord->id) {
-            throw new Exceptions\PersonAlreadyRegistered($dto, $existingRecord);
+            throw new Exceptions\PersonAlreadyRegistered($existingRecord);
+        }
+
+        // Check by phone
+        if (empty($dto->phone)) {
+            return;
+        }
+
+        $existingRecord = Loader::people()->getByPhoneNumber($dto->phone);
+        if ($existingRecord && $ignoreId !== $existingRecord->id) {
+            throw new Exceptions\PhoneAlreadyRegistered($existingRecord);
+        }
+
+    }
+
+    protected function checkIfPhoneRequiredAndDefined(Dto $dto): void
+    {
+        // Check by phone
+        if ($dto->birth_date->age >= 12 && empty($dto->phone)) {
+            throw new Exceptions\PhoneIsRequired();
         }
     }
 }

@@ -19,4 +19,7 @@ return [
     'instructor_status_incompatible' => 'Недопустимый статус инструктора',
     'schedule_slot_is_occupied' => 'Выбранное время в данном зале занято',
     'user_has_no_person_attached' => 'Пользователь не имеет профайла',
+    'already_exists' => 'Запись уже существует',
+    'person_with_such_phone_already_exists' => 'Анкета с таким телефоном уже существует',
+    'person_with_such_bio_already_exists' => 'Анкета с таким именем, полом и датой рождения уже существует',
 ];

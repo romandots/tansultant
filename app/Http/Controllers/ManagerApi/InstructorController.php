@@ -30,7 +30,7 @@ class InstructorController extends AdminController
             facadeClass: Component\Facade::class,
             resourceClass: Component\Formatter::class,
             searchRelations: [],
-            singleRecordRelations: [],
+            singleRecordRelations: ['person'],
         );
     }
 

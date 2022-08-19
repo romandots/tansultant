@@ -29,7 +29,7 @@ class PersonController extends AdminController
             facadeClass: Component\Facade::class,
             resourceClass: Component\Formatter::class,
             searchRelations: [],
-            singleRecordRelations: [],
+            singleRecordRelations: ['instructors', 'students', 'customers'],
         );
     }
 

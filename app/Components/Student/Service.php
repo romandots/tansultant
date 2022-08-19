@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Components\Student;
 
 use App\Common\Contracts;
+use App\Components\Customer\Exceptions\CustomerAlreadyExists;
 use App\Components\Loader;
+use App\Models\Customer;
 use App\Models\Enum\StudentStatus;
 use App\Models\Person;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -38,16 +41,83 @@ class Service extends \App\Common\BaseComponentService
     }
 
     /**
+     * @param Model $record
+     * @param Dto $dto
+     * @return void
+     * @throws \Throwable
+     */
+    public function update(Model $record, Contracts\DtoWithUser $dto): void
+    {
+        $person = Loader::people()->find($dto->person_id);
+        $this->updateFromPerson($record, $dto, $person);
+    }
+
+
+    /**
      * @param Dto $dto
      * @param Person $person
      * @return Student
      */
     public function createFromPerson(Dto $dto, Person $person): Student
     {
-        $dto->name = $dto->name ?? \trans('person.student_name', $person->compactName());
+        $this->validatePerson($person, null);
+
+        $customer = $dto->student_is_customer
+            ? $this->findOrCreateNewCustomerFromPerson($person, $dto->getUser())
+            : Loader::customers()->find($dto->customer_id);
+
+        $dto->name = $this->getNameFromPerson($dto, $person);
         $dto->person_id = $person->id;
+        $dto->customer_id = $customer?->id;
         $dto->status = StudentStatus::POTENTIAL;
 
         return $this->getRepository()->create($dto);
+    }
+
+    /**
+     * @param Student $record
+     * @param Dto $dto
+     * @param Person $person
+     */
+    public function updateFromPerson(Student $record, Dto $dto, Person $person): void
+    {
+        $this->validatePerson($person, $record);
+
+        Loader::customers()->find($dto->customer_id);
+
+        $dto->name = $this->getNameFromPerson($dto, $person);
+        $dto->person_id = $person->id;
+        $dto->status = $record->status;
+
+        $this->getRepository()->update($record, $dto);
+    }
+
+    private function findOrCreateNewCustomerFromPerson(Person $person, User $user): Customer
+    {
+        try {
+            return Loader::customers()->createFromPerson(new \App\Components\Customer\Dto($user), $person);
+        } catch (CustomerAlreadyExists $alreadyExistsException) {
+            return $alreadyExistsException->getCustomer();
+        }
+    }
+
+    /**
+     * @param Dto $dto
+     * @param Person $person
+     * @return array|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Translation\Translator|string|null
+     */
+    private function getNameFromPerson(
+        Dto $dto,
+        Person $person
+    ): \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Translation\Translator|string|array|null {
+        return $dto->name ?? \trans('person.student_name', $person->compactName());
+    }
+
+    private function validatePerson(Person $person, ?Student $student): void
+    {
+        $person->load('students');
+        if ($person->student && $person->student->id === $student?->id) {
+            throw new Exceptions\StudentAlreadyExists($person->student);
+        }
     }
 }

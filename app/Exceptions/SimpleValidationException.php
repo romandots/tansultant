@@ -8,7 +8,7 @@ class SimpleValidationException extends BaseException
     {
         $data = [
             $field => [
-                'name' => $rule,
+                ['name' => $rule]
             ],
         ];
         parent::__construct('validation_error', $data, 422);

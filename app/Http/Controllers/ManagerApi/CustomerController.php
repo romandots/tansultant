@@ -14,6 +14,7 @@ use App\Common\Controllers\AdminController;
 use App\Components\Customer as Component;
 use App\Http\Requests\ManagerApi\SearchCustomerRequest;
 use App\Http\Requests\ManagerApi\StoreCustomerRequest;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
@@ -34,10 +35,18 @@ class CustomerController extends AdminController
         parent::__construct(
             facadeClass: Component\Facade::class,
             resourceClass: Component\Formatter::class,
-            searchRelations: ['classroom', 'instructor.person'],
-            singleRecordRelations: ['classroom', 'instructor.person'],
+            searchRelations: ['person'],
+            singleRecordRelations: ['person'],
         );
     }
+
+
+    public function show(string $id): JsonResource
+    {
+        $record = $this->getFacade()->find($id, $this->getSingleRecordRelations());
+        return $this->makeResource($record);
+    }
+
 
     public function search(SearchCustomerRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {

@@ -8,6 +8,7 @@ use App\Common\Controllers\AdminController;
 use App\Components\Student as Component;
 use App\Http\Requests\ManagerApi\SearchStudentsRequest;
 use App\Http\Requests\ManagerApi\StoreStudentRequest;
+use App\Http\Requests\ManagerApi\UpdateStudentRequest;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
@@ -29,7 +30,7 @@ class StudentController extends AdminController
             facadeClass: Component\Facade::class,
             resourceClass: Component\Formatter::class,
             searchRelations: [],
-            singleRecordRelations: [],
+            singleRecordRelations: ['person', 'customer.person'],
         );
     }
 
@@ -43,7 +44,7 @@ class StudentController extends AdminController
         return $this->_store($request);
     }
 
-    public function update(string $id, StoreStudentRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    public function update(string $id, UpdateStudentRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         return $this->_update($id, $request);
     }

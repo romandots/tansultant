@@ -106,7 +106,7 @@ class User extends Authenticatable
      */
     public function person(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Person::class)->with('student', 'customer', 'instructor');
+        return $this->belongsTo(Person::class)->with('students', 'customers', 'instructors');
     }
 
     /**

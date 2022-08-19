@@ -51,11 +51,12 @@ class StorePersonRequest extends StoreRequest
                 Rule::in(enum_strings(\App\Models\Enum\Gender::class)),
             ],
             'phone' => [
-                'required',
+                'nullable',
                 'string',
+                //Rule::unique(Person::TABLE, 'phone'), // manual validation used instead
             ],
             'email' => [
-                'required',
+                'nullable',
                 'string',
                 'email',
                 Rule::unique(Person::TABLE, 'email'),

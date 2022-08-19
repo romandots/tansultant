@@ -2,19 +2,16 @@
 
 namespace App\Components\Person\Exceptions;
 
-use App\Exceptions\SimpleValidationException;
+use App\Components\Loader;
+use App\Components\Person\Formatter;
+use App\Exceptions\AlreadyExistsException;
 use App\Models\Person;
 
-class PhoneAlreadyRegistered extends SimpleValidationException
+class PhoneAlreadyRegistered extends AlreadyExistsException
 {
-    protected string $phone;
-    protected Person $existingRecord;
-
-    public function __construct(string $phone, Person $existingRecord)
+    public function __construct(Person $existingRecord)
     {
-        $this->phone = $phone;
-        $this->existingRecord = $existingRecord;
-
-        parent::__construct('phone', 'unique');
+        $formattedRecord = Loader::people()->format($existingRecord, Formatter::class);
+        parent::__construct($formattedRecord, 'person_with_such_phone_already_exists');
     }
 }

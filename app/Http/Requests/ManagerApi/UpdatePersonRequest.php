@@ -48,9 +48,9 @@ class UpdatePersonRequest extends StorePersonRequest
                 Rule::in(enum_strings(\App\Models\Enum\Gender::class)),
             ],
             'phone' => [
-                'required',
+                'nullable',
                 'string',
-                Rule::unique(Person::TABLE, 'phone')->ignore($this->getId()),
+                //Rule::unique(Person::TABLE, 'phone')->ignore($this->getId()),
             ],
             'email' => [
                 'nullable',

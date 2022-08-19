@@ -35,28 +35,28 @@ class Formatter extends BaseFormatter
             'vk_uid' => $this->vk_uid,
             'facebook_uid' => $this->facebook_uid,
             'note' => $this->note,
-            'is_customer' => (bool)$this->whenLoaded('customer', function () {
+            'is_customer' => (bool)$this->whenLoaded('customers', function () {
                 return null !== $this->customer;
-            }, false),
-            'is_student' => (bool)$this->whenLoaded('student', function () {
+            }, null),
+            'is_student' => (bool)$this->whenLoaded('students', function () {
                 return null !== $this->student;
-            }, false),
-            'is_instructor' => (bool)$this->whenLoaded('instructor', function () {
+            }, null),
+            'is_instructor' => (bool)$this->whenLoaded('instructors', function () {
                 return null !== $this->instructor;
-            }, false),
-            'is_user' => (bool)$this->whenLoaded('user', function () {
+            }, null),
+            'is_user' => (bool)$this->whenLoaded('users', function () {
                 return null !== $this->user;
-            }, false),
-            'instructor_id' => $this->whenLoaded('instructor', function () {
+            }, null),
+            'instructor_id' => $this->whenLoaded('instructors', function () {
                 return $this->instructor?->id;
             }),
-            'student_id' => $this->whenLoaded('student', function () {
+            'student_id' => $this->whenLoaded('students', function () {
                 return $this->student?->id;
             }),
-            'customer_id' => $this->whenLoaded('customer', function () {
+            'customer_id' => $this->whenLoaded('customers', function () {
                 return $this->customer?->id;
             }),
-            'user_id' => $this->whenLoaded('user', function () {
+            'user_id' => $this->whenLoaded('users', function () {
                 return $this->user?->id;
             }),
             'created_at' => $this->created_at->toDateTimeString(),

@@ -14,4 +14,5 @@ class Dto extends \App\Common\DTO\DtoWithUser
     public string $name;
     public StudentStatus $status;
     public ?string $card_number = null;
+    public bool $student_is_customer = false;
 }

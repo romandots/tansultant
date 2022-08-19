@@ -31,7 +31,8 @@ class StoreCustomerRequest extends StoreRequest
                 'required',
                 'string',
                 'uuid',
-                Rule::in(Person::TABLE, 'id'),
+                Rule::exists(Person::TABLE, 'id'),
+                //Rule::unique(Customer::TABLE, 'person_id')->ignore($this->getCustomerId()), // performed inside service
             ],
         ];
     }
@@ -44,5 +45,10 @@ class StoreCustomerRequest extends StoreRequest
         $dto->person_id = $validated['person_id'];
 
         return $dto;
+    }
+
+    private function getCustomerId(): ?string
+    {
+        return $this->route()?->parameter('id');
     }
 }

@@ -41,10 +41,14 @@ use Spatie\Tags\HasTags;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property \Carbon\Carbon|null $deleted_at
- * @property-read \App\Models\Customer $customer
- * @property-read \App\Models\Instructor $instructor
- * @property-read \App\Models\Student $student
- * @property-read \App\Models\User $user
+ * @property-read \Illuminate\Database\Eloquent\Relations\HasMany<Customer>|null $customers
+ * @property-read \Illuminate\Database\Eloquent\Relations\HasMany<Instructor>|null $instructors
+ * @property-read \Illuminate\Database\Eloquent\Relations\HasMany<Student>|null $students
+ * @property-read \Illuminate\Database\Eloquent\Relations\HasMany<User>|null $users
+ * @property-read \App\Models\Customer|null $customer
+ * @property-read \App\Models\Instructor|null $instructor
+ * @property-read \App\Models\Student|null $student
+ * @property-read \App\Models\User|null $user
  * @property \Illuminate\Database\Eloquent\Collection|\Spatie\Tags\Tag[] $tags
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Person newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Person newQuery()
@@ -95,35 +99,55 @@ class Person extends Model
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne|Student|null
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Student>|null
      */
-    public function student(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function students(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasOne(Student::class);
+        return $this->hasMany(Student::class)->orderBy('created_at', 'desc');
+    }
+
+    public function getStudentAttribute(): ?Student
+    {
+        return $this->students?->first();
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne|Customer|null
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Customer>|null
      */
-    public function customer(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function customers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasOne(Customer::class);
+        return $this->hasMany(Customer::class)->orderBy('created_at', 'desc');
+    }
+
+    public function getCustomerAttribute(): ?Customer
+    {
+        return $this->customers?->first();
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne|Instructor|null
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Instructor>|null
      */
-    public function instructor(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function instructors(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasOne(Instructor::class);
+        return $this->hasMany(Instructor::class)->orderBy('created_at', 'desc');
+    }
+
+    public function getInstructorAttribute(): ?Instructor
+    {
+        return $this->instructors?->first();
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne|User|null
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<User>|null
      */
-    public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function users(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasOne(User::class);
+        return $this->hasMany(User::class)->orderBy('created_at', 'desc');
+    }
+
+    public function getUserAttribute(): ?User
+    {
+        return $this->users?->first();
     }
 
     /**

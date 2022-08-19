@@ -94,6 +94,20 @@ abstract class BaseComponentService extends BaseService
         return $searchParams->getMeta($totalRecords);
     }
 
+    public function find(string $id, array $relations = []): Model
+    {
+        $cacheKey = 'record_' . $id;
+        $cached = $this->getFromCache($cacheKey);
+
+        if (null !== $cached) {
+            $this->debug('Model loaded from cache');
+            return $cached;
+        }
+
+        $result = $this->getRepository()->find($id)->load($relations);
+        $this->storeInCache($cacheKey, $result);
+    }
+
     /**
      * @throws \Throwable
      */

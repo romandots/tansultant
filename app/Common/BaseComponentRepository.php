@@ -6,7 +6,9 @@ use App\Common\DTO\SearchDto;
 use App\Common\DTO\SearchFilterDto;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Ramsey\Uuid\Uuid;
 
 abstract class BaseComponentRepository extends BaseRepository
 {
@@ -96,6 +98,13 @@ abstract class BaseComponentRepository extends BaseRepository
             ->get();
     }
 
+    protected function validateUuid($id): void
+    {
+        if (!Uuid::isValid($id)) {
+            throw new ModelNotFoundException();
+        }
+    }
+
     /**
      * @param string $id
      * @return Model
@@ -103,6 +112,7 @@ abstract class BaseComponentRepository extends BaseRepository
      */
     final public function find(string $id): Model
     {
+        $this->validateUuid($id);
         $query = $this->getQuery();
         if ($this->withSoftDeletes()) {
             $query->whereNull('deleted_at');
@@ -114,6 +124,7 @@ abstract class BaseComponentRepository extends BaseRepository
 
     final public function findTrashed(string $id): Model
     {
+        $this->validateUuid($id);
         $query = $this->getQuery();
         if ($this->withSoftDeletes()) {
             $query->whereNotNull('deleted_at');

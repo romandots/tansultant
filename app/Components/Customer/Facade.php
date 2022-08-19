@@ -28,8 +28,8 @@ class Facade extends BaseComponentFacade
         parent::__construct(Service::class);
     }
 
-    public function createFromPerson(Person $person): Customer
+    public function createFromPerson(Dto $dto, Person $person): Customer
     {
-        return $this->getService()->createFromPerson($person);
+        return $this->getService()->createFromPerson($dto, $person);
     }
 }

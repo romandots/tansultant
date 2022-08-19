@@ -46,7 +46,8 @@ class StoreInstructorRequest extends StoreRequest
                 'required',
                 'string',
                 'uuid',
-                Rule::exists(Person::TABLE, 'id')
+                Rule::exists(Person::TABLE, 'id'),
+                //Rule::unique(Instructor::TABLE, 'person_id')->ignore($this->getInstructorId()), // Handled by Servicea
             ],
         ];
     }
@@ -56,12 +57,17 @@ class StoreInstructorRequest extends StoreRequest
         $validated = $this->validated();
         $dto = new Dto($this->user());
 
-        $dto->name = $validated['name'] ?? null;
+        //$dto->name = $validated['name'] ?? null;
         $dto->description = $validated['description'] ?? null;
         $dto->status = InstructorStatus::from($validated['status']);
         $dto->display = (bool)($validated['display'] ?? false);
         $dto->person_id = $validated['person_id'];
 
         return $dto;
+    }
+
+    protected function getInstructorId(): ?string
+    {
+        return $this->route()->parameter('id');
     }
 }
