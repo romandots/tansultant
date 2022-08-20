@@ -25,9 +25,9 @@ class CreatePeopleTables extends Migration
     {
         Schema::create('people', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->text('last_name')->nullable();
-            $table->text('first_name')->nullable();
-            $table->text('patronymic_name')->nullable();
+            $table->text('last_name')->nullable()->index();
+            $table->text('first_name')->nullable()->index();
+            $table->text('patronymic_name')->nullable()->index();
             $table->date('birth_date')->nullable();
             $table->text('gender')->nullable();
             $table->text('phone')->unique()->nullable();
@@ -50,7 +50,7 @@ class CreatePeopleTables extends Migration
 
         Schema::create('customers', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->text('name');
+            $table->text('name')->index();
             $table->uuid('person_id')->nullable()->index();
             $table->timestamp('created_at');
             $table->timestamp('seen_at')->nullable();
@@ -65,8 +65,8 @@ class CreatePeopleTables extends Migration
 
         Schema::create('students', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->text('name');
-            $table->text('card_number')->nullable();
+            $table->text('name')->index();
+            $table->text('card_number')->nullable()->index();
             $table->text('status');
             $table->uuid('person_id')->nullable()->index();
             $table->uuid('customer_id')->nullable()->index();
@@ -90,7 +90,7 @@ class CreatePeopleTables extends Migration
 
         Schema::create('instructors', static function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->text('name');
+            $table->text('name')->index();
             $table->text('description')->nullable();
             $table->text('picture')->nullable();
             $table->text('status');
