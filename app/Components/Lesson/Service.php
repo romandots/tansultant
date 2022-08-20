@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Components\Lesson;
 
 use App\Common\Contracts\DtoWithUser;
+use App\Common\DTO\SearchDto;
+use App\Components\Loader;
+use App\Http\Requests\ManagerApi\DTO\SearchLessonsFilterDto;
 use App\Models\Course;
 use App\Models\Enum\LessonStatus;
 use App\Models\Enum\LessonType;
@@ -12,6 +15,7 @@ use App\Models\Lesson;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
  * @method Repository getRepository()
@@ -31,6 +35,18 @@ class Service extends \App\Common\BaseComponentService
         );
         $this->courses = \app(\App\Components\Course\Facade::class);
         $this->classrooms = \app(\App\Components\Classroom\Facade::class);
+    }
+
+    public function search(SearchDto $searchParams, array $relations = []): Collection
+    {
+        assert($searchParams->filter instanceof SearchLessonsFilterDto);
+
+        // If lessons for date are requested, dispatch lesson generation job
+        if ($searchParams->filter->date) {
+            Loader::lessons()->generateLessonsOnDate($searchParams->filter->date);
+        }
+
+        return parent::search($searchParams, $relations);
     }
 
     public function createFromScheduleOnDate(Schedule $schedule, Carbon $date): Lesson
