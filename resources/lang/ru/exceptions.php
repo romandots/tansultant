@@ -22,4 +22,8 @@ return [
     'already_exists' => 'Запись уже существует',
     'person_with_such_phone_already_exists' => 'Анкета с таким телефоном уже существует',
     'person_with_such_bio_already_exists' => 'Анкета с таким именем, полом и датой рождения уже существует',
+    'user_assistance_required' => 'Требуется выбор пользователя',
+    'no_subscriptions' => 'Нет подходящих подписок',
+    'choose_subscription' => 'Выберите подходящую подписку',
+    'account_has_insufficient_funds' => 'На балансе недостаточно средств',
 ];

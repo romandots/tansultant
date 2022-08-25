@@ -4,8 +4,8 @@ namespace App\Exceptions;
 
 class AlreadyExistsException extends BaseException
 {
-    public function __construct(array $record, string $message = 'already_exists')
+    public function __construct(array $data, string $message = 'already_exists')
     {
-        parent::__construct($message, $record, 409);
+        parent::__construct($message, $data, 409);
     }
 }

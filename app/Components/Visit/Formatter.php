@@ -11,7 +11,6 @@ use App\Http\Resources\StudentResource;
 use App\Http\Resources\UserResource;
 use App\Models\Enum\PaymentStatus;
 use App\Models\Lesson;
-use App\Models\Payment;
 
 /**
  * @mixin \App\Models\Visit
@@ -36,11 +35,13 @@ class Formatter extends BaseFormatter
                 return $this->event_type === Lesson::class
                     ? new \App\Components\Lesson\Formatter($this->event) : null;
             }),
-            'event_type' => \base_classname($this->event_type),
-            'payment_type' => \base_classname($this->payment_type),
+            'event_type' => $this->event_type->value,
+            'payment_type' => $this->payment_type->value,
             'payment' => $this->whenLoaded('payment', function () {
-                return Payment::class === $this->payment_type
-                    ? new \App\Components\Payment\Formatter($this->payment) : null;
+                return new \App\Components\Payment\Formatter($this->payment);
+            }),
+            'subscription' => $this->whenLoaded('subscription', function () {
+                return new \App\Components\Subscription\Formatter($this->subscription);
             }),
 //            'promocode' => $this->whenLoaded('payment', static function () {
 //                return Promocode::class === $this->payment_type

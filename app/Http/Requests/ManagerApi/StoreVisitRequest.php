@@ -37,11 +37,9 @@ class StoreVisitRequest extends StoreRequest
                 'uuid',
                 Rule::exists(Lesson::TABLE, 'id')
             ],
-            'promocode_id' => [
+            'pay_from_balance' => [
                 'nullable',
-                'string',
-                'uuid',
-//                Rule::exists(\App\Models\Promocode::TABLE, 'id')
+                'bool',
             ],
         ];
     }
@@ -54,7 +52,7 @@ class StoreVisitRequest extends StoreRequest
         $dto->student_id = $validated['student_id'];
         $dto->event_id = $validated['lesson_id'];
         $dto->event_type = VisitEventType::LESSON;
-        $dto->promocode_id = $validated['promocode_id'] ?? null;
+        $dto->pay_from_balance = (bool)($validated['pay_from_balance'] ?? false);
 
         return $dto;
     }

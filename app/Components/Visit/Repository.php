@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Components\Visit;
 
+use App\Common\DTO\SearchFilterDto;
+use App\Http\Requests\ManagerApi\DTO\SearchVisitsFilterDto;
+use App\Models\Enum\VisitEventType;
 use App\Models\Visit;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,9 +30,31 @@ class Repository extends \App\Common\BaseComponentRepository
 {
     public function __construct() {
         parent::__construct(
-            Visit::class,
-            ['name']
+            modelClass: Visit::class,
+            searchableAttributes: ['name'],
         );
+    }
+
+    protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getFilterQuery($filter);
+
+        assert($filter instanceof SearchVisitsFilterDto);
+
+        if (null !== $filter->date) {
+            $query
+                ->whereRaw('DATE(starts_at) = ?', [$filter->date]);
+        }
+
+        if (null !== $filter->lesson_id) {
+            $query = $query
+                ->where('event_type', VisitEventType::LESSON->value)
+                ->where('event_id', $filter->lesson_id);
+        }
+
+        return $query
+            ->distinct()
+            ->orderBy('created_at', 'asc');
     }
 
     /**
@@ -45,5 +70,20 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->event_id = $dto->event_id;
         $record->payment_type = $dto->payment_type;
         $record->payment_id = $dto->payment_id;
+        $record->subscription_id = $dto->subscription_id;
+    }
+
+    /**
+     * @param string $studentId
+     * @param string $eventId
+     * @return Visit
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
+     */
+    public function findByStudentIdAndEventId(string $studentId, string $eventId): Visit
+    {
+        return $this->getQuery()
+            ->where('student_id', $studentId)
+            ->where('event_id', $eventId)
+            ->firstOrFail();
     }
 }

@@ -14,7 +14,9 @@ class Dto extends \App\Common\DTO\DtoWithUser
     public string $student_id;
     public string $event_id;
     public ?string $payment_id = null;
+    public ?string $subscription_id = null;
     public ?string $promocode_id = null;
     public VisitEventType $event_type;
     public VisitPaymentType $payment_type;
+    public bool $pay_from_balance;
 }

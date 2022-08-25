@@ -28,8 +28,8 @@ class VisitController extends AdminController
         parent::__construct(
             facadeClass: Component\Facade::class,
             resourceClass: Component\Formatter::class,
-            searchRelations: [],
-            singleRecordRelations: [],
+            searchRelations: ['payment', 'subscription', 'student.person'],
+            singleRecordRelations: ['payment', 'subscription', 'student.person'],
         );
     }
 
