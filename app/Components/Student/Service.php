@@ -71,7 +71,7 @@ class Service extends \App\Common\BaseComponentService
         $dto->customer_id = $customer?->id;
         $dto->status = StudentStatus::POTENTIAL;
 
-        return $this->getRepository()->create($dto);
+        return parent::create($dto);
     }
 
     /**
@@ -89,7 +89,7 @@ class Service extends \App\Common\BaseComponentService
         $dto->person_id = $person->id;
         $dto->status = $record->status;
 
-        $this->getRepository()->update($record, $dto);
+        parent::update($record, $dto);
     }
 
     private function findOrCreateNewCustomerFromPerson(Person $person, User $user): Customer

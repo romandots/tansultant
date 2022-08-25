@@ -51,7 +51,7 @@ class Service extends \App\Common\BaseComponentService
         $dto->name = $dto->name ?? \trans('person.instructor_name', $person->compactName());
         $dto->person_id = $person->id;
 
-        return $this->getRepository()->create($dto);
+        return parent::create($dto);
     }
 
     /**
@@ -67,7 +67,7 @@ class Service extends \App\Common\BaseComponentService
         $dto->name = $dto->name ?? \trans('person.instructor_name', $person->compactName());
         $dto->person_id = $person->id;
 
-        $this->getRepository()->update($record, $dto);
+        parent::update($record, $dto);
     }
 
     private function validatePerson(Person $person, ?Instructor $instructor): void
