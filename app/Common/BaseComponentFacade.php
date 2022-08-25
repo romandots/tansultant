@@ -69,7 +69,7 @@ abstract class BaseComponentFacade extends BaseFacade
      */
     public function search(SearchDto $searchParams, array $relations = []): \Illuminate\Support\Collection
     {
-        return $this->getService()->search($searchParams, $relations);
+        return $this->getService()->search($searchParams, $searchParams->with + $relations);
     }
 
     /**
