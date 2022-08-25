@@ -27,6 +27,21 @@ class Generator
         return __CLASS__;
     }
 
+
+    public function updateLessonsStatuses(): int
+    {
+        $ongoing = $this->service->getRepository()->updateOngoingLessonsStatus();
+        $this->debug("{$ongoing->count()} lessons set to ONGOING status");
+
+        $passed = $this->service->getRepository()->updatePassedLessonsStatus();
+        $this->debug("{$passed->count()} lessons set to PASSED status");
+
+        $lessons = $ongoing->merge($passed);
+        $this->dispatchEvents($lessons);
+
+        return $lessons->count();
+    }
+
     /**
      * @param Collection<Schedule> $schedules
      * @param Carbon $date
@@ -52,6 +67,8 @@ class Generator
             $this->debug("{$count} lessons generated", $lessonsIds);
         }
 
+        $this->updateLessonsStatuses();
+
         return $lessons;
     }
 
@@ -74,10 +91,10 @@ class Generator
     /**
      * Dispatch ScheduleUpdatedEvent for each date and branch_id
      *
-     * @param array|Lesson[] $lessons
+     * @param iterable<Lesson> $lessons
      * @return void
      */
-    protected function dispatchEvents(array $lessons): void
+    protected function dispatchEvents(iterable $lessons): void
     {
         $channels = [];
         foreach ($lessons as $lesson) {

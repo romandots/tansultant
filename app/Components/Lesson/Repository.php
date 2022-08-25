@@ -32,8 +32,10 @@ class Repository extends \App\Common\BaseComponentRepository
 {
     public function __construct() {
         parent::__construct(
-            Lesson::class,
-            ['name']
+            modelClass:Lesson::class,
+            searchableAttributes: [
+                'name',
+            ],
         );
     }
 
@@ -174,4 +176,23 @@ class Repository extends \App\Common\BaseComponentRepository
             ->exists();
     }
 
+    public function updateOngoingLessonsStatus(): Collection
+    {
+        $query = $this->getQuery()
+            ->where('starts_at', '<=', Carbon::now())
+            ->where('status', LessonStatus::BOOKED);
+        $collection = $query->get();
+        $query->update(['status' => LessonStatus::ONGOING]);
+        return $collection;
+    }
+
+    public function updatePassedLessonsStatus(): Collection
+    {
+        $query = $this->getQuery()
+            ->where('ends_at', '<=', Carbon::now())
+            ->where('status', LessonStatus::ONGOING);
+        $collection = $query->get();
+        $query->update(['status' => LessonStatus::PASSED]);
+        return $collection;
+    }
 }

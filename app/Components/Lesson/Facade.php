@@ -85,4 +85,9 @@ class Facade extends BaseComponentFacade
     {
         $this->generator->generateLessonsOnDate($date);
     }
+
+    public function updateLessonsStatuses(): int
+    {
+        return $this->generator->updateLessonsStatuses();
+    }
 }

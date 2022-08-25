@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\LessonGenerateCommand;
+use App\Console\Commands\LessonUpdateCommand;
 use App\Console\Commands\UserCreateCommand;
 use App\Console\Commands\UserStatusUpdateCommand;
 use Illuminate\Console\Scheduling\Schedule;
@@ -19,6 +20,7 @@ class Kernel extends ConsoleKernel
         UserCreateCommand::class,
         UserStatusUpdateCommand::class,
         LessonGenerateCommand::class,
+        LessonUpdateCommand::class,
     ];
 
     /**
@@ -29,8 +31,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+         $schedule->command('update:lesson')
+                  ->everyMinute();
     }
 
     /**
