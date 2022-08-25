@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Components\Payment;
 
 use App\Models\Account;
-use App\Models\Enum\PaymentStatus;
 use App\Models\Enum\PaymentTransferType;
 use App\Models\Payment;
 use Carbon\Carbon;
@@ -64,7 +63,7 @@ class Repository extends \App\Common\BaseComponentRepository
     public function createInternalTransaction(Dto $dto, Account $fromAccount, Account $toAccount): array
     {
         $dto->transfer_type = PaymentTransferType::INTERNAL;
-        $dto->status = PaymentStatus::CONFIRMED;
+        //$dto->status = PaymentStatus::CONFIRMED;
         $dto->confirmed_at = Carbon::now();
 
         $firstDto = clone $dto;

@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Components\Payment;
 
+use App\Components\Account\Exceptions\InsufficientFundsAccountException;
 use App\Models\Enum\PaymentObjectType;
+use App\Models\Enum\PaymentStatus;
 use App\Models\Enum\PaymentType;
 use App\Models\Instructor;
 use App\Models\Lesson;
@@ -44,7 +46,6 @@ class Service extends \App\Common\BaseComponentService
     public function createVisitPayment(int $price, Visit $visit, Student $student, ?User $user = null): Payment
     {
         $studentAccount = $this->accounts->getStudentAccount($student);
-        $this->accounts->checkFunds($studentAccount, $price);
         $savingsAccount = $this->accounts->getSavingsAccount($visit->event->branch);
 
         $dto = new Dto;
@@ -54,6 +55,13 @@ class Service extends \App\Common\BaseComponentService
         $dto->name = \trans('payment.name_presets.visit', ['lesson' => $visit->event->name]);
         $dto->object_id = $visit->id;
         $dto->user_id = $user?->id;
+
+        try {
+            $this->accounts->checkFunds($studentAccount, $price);
+            $dto->status = PaymentStatus::CONFIRMED;
+        } catch (InsufficientFundsAccountException $insufficientFundsAccountException) {
+            $dto->status = PaymentStatus::PENDING;
+        }
 
         [, $incoming] = $this->getRepository()->createInternalTransaction($dto, $studentAccount, $savingsAccount);
 
