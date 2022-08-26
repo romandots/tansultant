@@ -110,6 +110,20 @@ class AdminRole extends Permission
         StudentsPermission::DELETE,
         StudentsPermission::RESTORE,
 
+        SubscriptionsPermission::MANAGE,
+        SubscriptionsPermission::CREATE,
+        SubscriptionsPermission::READ,
+        SubscriptionsPermission::UPDATE,
+        SubscriptionsPermission::DELETE,
+        SubscriptionsPermission::RESTORE,
+
+        TariffsPermission::MANAGE,
+        TariffsPermission::CREATE,
+        TariffsPermission::READ,
+        TariffsPermission::UPDATE,
+        TariffsPermission::DELETE,
+        TariffsPermission::RESTORE,
+
         UsersPermission::MANAGE,
         UsersPermission::CREATE,
         UsersPermission::READ,

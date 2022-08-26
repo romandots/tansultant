@@ -20,5 +20,5 @@ trait CreatesFakes
 {
     use CreatesFakeUser, CreatesFakeLesson, CreatesFakeSchedule, CreatesFakeInstructor, CreatesFakeCourse,
         CreatesFakePerson, CreatesFakeIntent, CreatesFakeStudent, CreatesFakeBranch, CreatesFakeClassroom,
-        CreatesFakeVisit, CreatesFakeAccount, CreatesFakePayment, WithFaker;
+        CreatesFakeVisit, CreatesFakeAccount, CreatesFakePayment, CreatesFakeTariff, CreatesFakeSubscription, WithFaker;
 }

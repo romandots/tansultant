@@ -27,11 +27,11 @@ class ResetPasswordController extends Controller
         // If no verification code - generate and send it
         if (null === $resetPassword->verification_code) {
             $service->resetPassword($resetPassword);
-            return \json_response(\get_status_message('verification_code_sent'), 201);
+            return \json_response(\get_status_message('verification_code_sent', 'verification'), 201);
         }
 
         $service->resetPassword($resetPassword);
 
-        return \json_response(\get_status_message('new_password_sent'), 200);
+        return \json_response(\get_status_message('new_password_sent', 'verification'), 200);
     }
 }

@@ -34,6 +34,7 @@ class PermissionsTableSeeder extends Seeder
         $this->runBranchesAndClassrooms();
         $this->runCoursesAndLessons();
         $this->runVisitsAndIntents();
+        $this->runTariffsAndSubscriptions();
         $this->runFinance();
     }
 
@@ -98,6 +99,15 @@ class PermissionsTableSeeder extends Seeder
     {
         $this->_runPermissions(\App\Services\Permissions\IntentsPermission::class);
         $this->_runPermissions(\App\Services\Permissions\VisitsPermission::class);
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    private function runTariffsAndSubscriptions(): void
+    {
+        $this->_runPermissions(\App\Services\Permissions\TariffsPermission::class);
+        $this->_runPermissions(\App\Services\Permissions\SubscriptionsPermission::class);
     }
 
     /**

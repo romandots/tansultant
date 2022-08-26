@@ -26,4 +26,7 @@ return [
     'no_subscriptions' => 'Нет подходящих подписок',
     'choose_subscription' => 'Выберите подходящую подписку',
     'account_has_insufficient_funds' => 'На балансе недостаточно средств',
+    'invalid_status' => 'Недоступно в текущем статусе',
+    'invalid_subscription_status' => 'Недоступно в текущем статусе подписки',
+    'prolongation_period_expired' => 'Период продления истёк',
 ];

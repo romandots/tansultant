@@ -30,9 +30,9 @@ class Formatter extends BaseFormatter
             'display' => $this->display,
             'picture' => $this->picture,
             'picture_thumb' => $this->picture_thumb,
-            'age_restrictions_from' => $this->age_restrictions['from'],
-            'age_restrictions_to' => $this->age_restrictions['to'],
-            'age_restrictions_string' => $this->getAgeRestrictionsString($this->age_restrictions),
+            'age_restrictions_from' => $this->age_restrictions['from'] ?? null,
+            'age_restrictions_to' => $this->age_restrictions['to'] ?? null,
+            'age_restrictions_string' => $this->getAgeRestrictionsString($this->age_restrictions ?? []),
             'instructor_id' => $this->instructor_id,
             'instructor' => $this->whenLoaded('instructor', function () {
                 return new \App\Components\Instructor\Formatter($this->instructor);

@@ -140,14 +140,21 @@ abstract class BaseComponentRepository extends BaseRepository
         $record->id = \uuid();
         $this->fill($record, $dto);
         $this->fillDate($record, 'created_at');
-        $record->save();
+        $this->save($record);
         return $record;
     }
 
-    public function update($record, Contracts\DtoWithUser $dto): void
+    public function update(Model $record, Contracts\DtoWithUser $dto): void
     {
         $this->fill($record, $dto);
-        $this->fillDate($record, 'updated_at');
+        $this->save($record);
+    }
+
+    public function save(Model $record): void
+    {
+        if ($record::UPDATED_AT !== null) {
+            $this->fillDate($record, 'updated_at');
+        }
         $record->save();
     }
 

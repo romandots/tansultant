@@ -1,0 +1,107 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Components\Subscription;
+
+use App\Models\Course;
+use App\Models\Enum\CourseStatus;
+use App\Models\Enum\SubscriptionStatus;
+use App\Models\Subscription;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+
+/**
+ * @method array getSearchableAttributes()
+ * @method bool withSoftDeletes()
+ * @method \Illuminate\Database\Eloquent\Builder getQuery()
+ * @method Subscription make()
+ * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
+ * @method \Illuminate\Database\Eloquent\Collection<Subscription> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
+ * @method Subscription find(string $id)
+ * @method Subscription findTrashed(string $id)
+ * @method Subscription create(Dto $dto)
+ * @method void update($record, Dto $dto)
+ * @method void delete(Subscription $record)
+ * @method void restore(Subscription $record)
+ * @method void forceDelete(Subscription $record)
+ * @mixin \App\Common\BaseComponentRepository
+ */
+class Repository extends \App\Common\BaseComponentRepository
+{
+    public function __construct()
+    {
+        parent::__construct(
+            Subscription::class,
+            ['name']
+        );
+    }
+
+    /**
+     * @param Subscription $record
+     * @param Dto $dto
+     * @return void
+     */
+    public function fill(Model $record, \App\Common\Contracts\DtoWithUser $dto): void
+    {
+        $record->name = $dto->name;
+        $record->status = $dto->status;
+        $record->tariff_id = $dto->tariff_id;
+        $record->student_id = $dto->student_id;
+        $record->days_count = $dto->days_count;
+        $record->courses_count = $dto->courses_count;
+        $record->visits_count = $dto->visits_count;
+        $record->holds_count = $dto->holds_count;
+    }
+
+    public function getStudentActiveSubscriptionsForCourse(
+        string $studentId,
+        string $courseId,
+        \App\Models\Enum\SubscriptionStatus $subscriptionStatus
+    ): Collection {
+        $subscriptions = Subscription::TABLE;
+        $pivot = 'subscription_has_courses';
+        return $this->getQuery()
+            ->join($pivot, "{$pivot}.subscription_id", '=', "{$subscriptions}.id")
+            ->where("{$subscriptions}.status", $subscriptionStatus->value)
+            ->where("{$subscriptions}.student_id", $studentId)
+            ->where("{$pivot}.course_id", $courseId)
+            ->get();
+    }
+
+    /**
+     * @param Subscription $subscription
+     * @param iterable<Course> $courses
+     * @return void
+     */
+    public function attachCourses(Subscription $subscription, iterable $courses): void
+    {
+        foreach ($courses as $course) {
+            if ($course->status === CourseStatus::DISABLED) {
+                throw new Exceptions\CannotAttachDisabledCourse($course);
+            }
+            $subscription->courses()->attach($course->id);
+        }
+    }
+
+    /**
+     * @param Subscription $subscription
+     * @param iterable<Course> $courses
+     * @return void
+     */
+    public function detachCourses(Subscription $subscription, iterable $courses): void
+    {
+        foreach ($courses as $course) {
+            $subscription->courses()->detach($course->id);
+        }
+    }
+
+    public function updateStatus(Subscription $subscription, SubscriptionStatus $status): void
+    {
+        $subscription->status = $status;
+        if (SubscriptionStatus::ACTIVE === $status) {
+            $this->fillDate($subscription, 'activated_at');
+        }
+        $this->save($subscription);
+    }
+}

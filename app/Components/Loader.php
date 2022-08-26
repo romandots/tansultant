@@ -85,6 +85,16 @@ class Loader extends Locator
         return self::get(Student\Facade::class);
     }
 
+    public static function subscriptions(): Subscription\Facade
+    {
+        return self::get(Subscription\Facade::class);
+    }
+
+    public static function tariffs(): Tariff\Facade
+    {
+        return self::get(Tariff\Facade::class);
+    }
+
     public static function users(): User\Facade
     {
         return self::get(User\Facade::class);

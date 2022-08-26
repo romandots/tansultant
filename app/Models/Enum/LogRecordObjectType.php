@@ -20,6 +20,8 @@ enum LogRecordObjectType: string implements ClassBackedEnum
     case PERSON = 'person';
     case SCHEDULE = 'schedule';
     case STUDENT = 'student';
+    case SUBSCRIPTION = 'subscription';
+    case TARIFF = 'tariff';
     case USER = 'user';
     case VISIT = 'visit';
 
@@ -40,6 +42,8 @@ enum LogRecordObjectType: string implements ClassBackedEnum
             self::PERSON => \App\Models\Person::class,
             self::SCHEDULE => \App\Models\Schedule::class,
             self::STUDENT => \App\Models\Student::class,
+            self::SUBSCRIPTION => \App\Models\Subscription::class,
+            self::TARIFF => \App\Models\Tariff::class,
             self::USER => \App\Models\User::class,
             self::VISIT => \App\Models\Visit::class,
         };
@@ -62,6 +66,8 @@ enum LogRecordObjectType: string implements ClassBackedEnum
             \App\Models\Person::class => self::PERSON,
             \App\Models\Schedule::class => self::SCHEDULE,
             \App\Models\Student::class => self::STUDENT,
+            \App\Models\Subscription::class => self::SUBSCRIPTION,
+            \App\Models\Tariff::class => self::TARIFF,
             \App\Models\User::class => self::USER,
             \App\Models\Visit::class => self::VISIT,
         };

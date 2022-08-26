@@ -165,11 +165,11 @@ if (!function_exists('json_response')) {
 }
 
 if (!function_exists('get_status_message')) {
-    function get_status_message(string $status): array
+    function get_status_message(string $status, string $keyPrefix = ''): array
     {
         return [
             'status' => $status,
-            'message' => \trans('statuses.' . $status)
+            'message' => \trans(($keyPrefix ? $keyPrefix  . '.' : '') . 'status.' . $status)
         ];
     }
 }

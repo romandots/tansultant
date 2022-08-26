@@ -31,7 +31,7 @@ class VerificationController extends Controller
 
         if (null === $dto->verification_code) {
             $verificationService->initNewVerificationCode($dto->phone);
-            return \json_response(\get_status_message('verification_code_sent'), 201);
+            return \json_response(\get_status_message('verification_code_sent', 'verification'), 201);
         }
 
         $verificationCode = $verificationService->checkVerificationCode($dto->phone, $dto->verification_code);

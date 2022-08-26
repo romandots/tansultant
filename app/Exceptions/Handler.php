@@ -6,6 +6,7 @@ namespace App\Exceptions;
 
 use App\Components\Account\Exceptions\InsufficientFundsAccountException;
 use App\Components\Schedule\Exceptions\ScheduleSlotIsOccupied;
+use App\Components\Subscription\Exceptions\ProlongationPeriodExpired;
 use App\Components\User\Exceptions\OldPasswordInvalidException;
 use App\Exceptions\Auth\UnauthorizedException;
 use App\Services\Course\Exceptions\InstructorStatusIncompatible;
@@ -57,9 +58,11 @@ class Handler extends BaseExceptionHandler
     {
         return [
             AlreadyExistsException::class => [$this, 'renderAsJson'],
+            InvalidStatusException::class => [$this, 'renderAsJson'],
             UserAssistanceRequiredException::class => [$this, 'renderAsJson'],
             SimpleValidationException::class => [$this, 'renderAsJson'],
             InsufficientFundsAccountException::class => [$this, 'renderAsJson'],
+            ProlongationPeriodExpired::class => [$this, 'renderAsJson'],
             UnauthorizedException::class => [$this, 'renderAsJson'],
             UserNotFoundException::class => [$this, 'renderAsJson'],
             WrongPasswordException::class => [$this, 'renderAsJson'],

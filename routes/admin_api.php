@@ -35,6 +35,7 @@ use App\Services\Permissions\LessonsPermission;
 use App\Services\Permissions\PersonsPermission;
 use App\Services\Permissions\SchedulesPermission;
 use App\Services\Permissions\StudentsPermission;
+use App\Services\Permissions\SubscriptionsPermission;
 use App\Services\Permissions\UsersPermission;
 use App\Services\Permissions\VisitsPermission;
 
@@ -160,6 +161,27 @@ Route::namedGroup('students',ManagerApi\StudentController::class, static functio
     Route::namedRoute('show', 'get', '{id:uuid}', [StudentsPermission::MANAGE, StudentsPermission::READ]);
     Route::namedRoute('update', 'put', '{id:uuid}', [StudentsPermission::MANAGE, StudentsPermission::UPDATE]);
     Route::namedRoute('destroy', 'delete', '{id:uuid}', [StudentsPermission::MANAGE, StudentsPermission::DELETE]);
+});
+
+// SUBSCRIPTIONS
+Route::namedGroup('subscriptions',ManagerApi\SubscriptionController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::READ]);
+    Route::namedRoute('update', 'put', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::DELETE]);
+    Route::namedRoute('restore', 'post', '{id:uuid}/restore', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::RESTORE]);
+});
+
+// TARIFFS
+Route::namedGroup('tariffs',ManagerApi\TariffController::class, static function () {
+    Route::namedRoute('suggest', 'get', '/suggest', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::READ]);
+    Route::namedRoute('search', 'get', '/', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::READ]);
+    Route::namedRoute('update', 'put', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::CREATE]);
+    Route::namedRoute('destroy', 'delete', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::DELETE]);
+    Route::namedRoute('restore', 'post', '{id:uuid}/restore', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::RESTORE]);
 });
 
 // USERS

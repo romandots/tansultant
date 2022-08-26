@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $student_id
  * @property int|null $manager_id
  * @property int|null $payment_id
+ * @property int|null $subscription_id
  * @property int $event_id
  * @property VisitPaymentType $payment_type
  * @property VisitEventType $event_type
@@ -33,6 +34,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Relations\MorphTo|\App\Models\Lesson $event
  * @property-read \App\Models\User $manager
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null $payment
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Subscription>|null $subscription
  * @property-read \App\Models\Student $student
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit newQuery()
@@ -70,11 +72,11 @@ class Visit extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo|\App\Models\Lesson
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function event(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    public function event(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(Lesson::class, 'event_id');
     }
 
     /**
@@ -91,5 +93,13 @@ class Visit extends Model
     public function payment(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Payment::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Subscription>|null
+     */
+    public function subscription(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Subscription::class);
     }
 }
