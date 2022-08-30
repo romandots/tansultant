@@ -2,23 +2,11 @@
 
 namespace App\Common\Requests;
 
-use App\Common\DTO\DtoWithUser;
 use App\Common\DTO\ShowDto;
 
-abstract class StoreRequest extends BaseRequest
+class ShowRequest extends BaseRequest
 {
-    public function buildDto(DtoWithUser $dto)
-    {
-        $dto->user = $this->user();
-        return $dto;
-    }
-
     public function rules(): array
-    {
-        return $this->showRules();
-    }
-
-    public function showRules(): array
     {
         return [
             'with' => [
@@ -38,15 +26,24 @@ abstract class StoreRequest extends BaseRequest
         ];
     }
 
-    public function getShowDto(): ShowDto
+    /**
+     * @return ShowDto
+     */
+    public function getDto(): \App\Common\Contracts\DtoWithUser
     {
         $validated = $this->validated();
 
         $dto = new ShowDto();
         $dto->user = $this->getUser();
+        $dto->id = $this->getId();
         $dto->with = $validated['with'] ?? [];
         $dto->with_count = $validated['with_count'] ?? [];
 
         return $dto;
+    }
+
+    protected function getId(): string
+    {
+        return $this->route()->parameter('id');
     }
 }

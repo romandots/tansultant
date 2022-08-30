@@ -90,6 +90,31 @@ class Facade extends BaseFacade
         $this->getService()->log($user, LogRecordAction::SEND, $object);
     }
 
+    public function logOpen(User $user, object $object): void
+    {
+        $this->getService()->log($user, LogRecordAction::OPEN, $object);
+    }
+
+    public function logClose(User $user, object $object): void
+    {
+        $this->getService()->log($user, LogRecordAction::CLOSE, $object);
+    }
+
+    public function logBook(User $user, object $object): void
+    {
+        $this->getService()->log($user, LogRecordAction::BOOK, $object);
+    }
+
+    public function logCancel(User $user, object $object): void
+    {
+        $this->getService()->log($user, LogRecordAction::CANCEL, $object);
+    }
+
+    public function logCheckout(User $user, object $object): void
+    {
+        $this->getService()->log($user, LogRecordAction::CHECKOUT, $object);
+    }
+
     public function getHistory(\App\Models\Enum\LogRecordObjectType $objectType, string $id): Collection
     {
         return $this->getService()->getRepository()->getAllByObjectTypeAndObjectId($objectType, $id);

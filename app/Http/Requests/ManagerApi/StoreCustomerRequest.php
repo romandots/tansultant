@@ -26,7 +26,7 @@ class StoreCustomerRequest extends StoreRequest
      */
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'person_id' =>  [
                 'required',
                 'string',
@@ -34,7 +34,7 @@ class StoreCustomerRequest extends StoreRequest
                 Rule::exists(Person::TABLE, 'id'),
                 //Rule::unique(Customer::TABLE, 'person_id')->ignore($this->getCustomerId()), // performed inside service
             ],
-        ];
+        ]);
     }
 
     public function getDto(): \App\Common\Contracts\DtoWithUser

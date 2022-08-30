@@ -24,7 +24,7 @@ class StoreUserRequest extends StoreRequest
 {
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'username' => [
                 'required',
                 'string',
@@ -40,7 +40,7 @@ class StoreUserRequest extends StoreRequest
                 'uuid',
                 Rule::exists(Person::TABLE, 'id'),
             ],
-        ];
+        ]);
     }
 
     public function getDto(): \App\Common\Contracts\DtoWithUser

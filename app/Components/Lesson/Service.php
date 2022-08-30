@@ -37,7 +37,7 @@ class Service extends \App\Common\BaseComponentService
         $this->classrooms = \app(\App\Components\Classroom\Facade::class);
     }
 
-    public function search(SearchDto $searchParams, array $relations = []): Collection
+    public function search(SearchDto $searchParams, array $relations = [], array $countRelations = []): Collection
     {
         assert($searchParams->filter instanceof SearchLessonsFilterDto);
 
@@ -46,7 +46,7 @@ class Service extends \App\Common\BaseComponentService
             Loader::lessons()->generateLessonsOnDate($searchParams->filter->date);
         }
 
-        return parent::search($searchParams, $relations);
+        return parent::search($searchParams, $relations, $countRelations);
     }
 
     public function createFromScheduleOnDate(Schedule $schedule, Carbon $date): Lesson

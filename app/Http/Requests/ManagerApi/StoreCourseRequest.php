@@ -29,7 +29,7 @@ class StoreCourseRequest extends StoreRequest
      */
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'name' => [
                 'required',
                 'string'
@@ -85,7 +85,7 @@ class StoreCourseRequest extends StoreRequest
             'genres.*' => [
                 'string',
             ],
-        ];
+        ]);
     }
 
     /**

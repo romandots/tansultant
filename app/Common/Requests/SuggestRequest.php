@@ -2,7 +2,7 @@
 
 namespace App\Common\Requests;
 
-use App\Common\DTO\DtoWithUser;
+use App\Common\DTO\SuggestDto;
 
 class SuggestRequest extends BaseRequest
 {
@@ -12,7 +12,21 @@ class SuggestRequest extends BaseRequest
             'query' => [
                 'nullable',
                 'string',
-            ]
+            ],
+            'with' => [
+                'nullable',
+                'array',
+            ],
+            'with.*' => [
+                'string',
+            ],
+            'with_count' => [
+                'nullable',
+                'array',
+            ],
+            'with_count.*' => [
+                'string',
+            ],
         ];
     }
 
@@ -23,6 +37,11 @@ class SuggestRequest extends BaseRequest
 
     public function getDto(): \App\Common\Contracts\DtoWithUser
     {
-        return new DtoWithUser($this->user());
+        $dto = new SuggestDto($this->user());
+        $dto->query = $datum['query'] ?? null;
+        $dto->with = $datum['with'] ?? [];
+        $dto->with_count = $datum['with_count'] ?? [];
+
+        return $dto;
     }
 }

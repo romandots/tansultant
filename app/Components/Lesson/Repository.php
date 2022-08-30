@@ -95,9 +95,12 @@ class Repository extends \App\Common\BaseComponentRepository
             ->count(['id']);
     }
 
-    protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
-    {
-        $query = parent::getFilterQuery($filter);
+    protected function getFilterQuery(
+        SearchFilterDto $filter,
+        array $relations = [],
+        array $countRelations = []
+    ): \Illuminate\Database\Eloquent\Builder {
+        $query = parent::getFilterQuery($filter, $relations, $countRelations);
 
         assert($filter instanceof SearchLessonsFilterDto);
 
@@ -161,9 +164,24 @@ class Repository extends \App\Common\BaseComponentRepository
      */
     public function book(Lesson $lesson): void
     {
-        $lesson->status = LessonStatus::BOOKED;
+        if ($lesson->starts_at->isPast()) {
+            $lesson->status = $lesson->ends_at->isPast()
+                ? LessonStatus::PASSED : LessonStatus::ONGOING;
+        } else {
+            $lesson->status = LessonStatus::BOOKED;
+        }
         $lesson->updated_at = Carbon::now();
         $lesson->canceled_at = null;
+        $lesson->save();
+    }
+    /**
+     * @param Lesson $lesson
+     */
+    public function checkout(Lesson $lesson): void
+    {
+        $lesson->status = LessonStatus::CHECKED_OUT;
+        $lesson->updated_at = Carbon::now();
+        $lesson->checked_out_at = Carbon::now();
         $lesson->save();
     }
 

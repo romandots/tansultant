@@ -131,6 +131,7 @@ Route::namedGroup('lessons',ManagerApi\LessonController::class, static function 
     Route::namedRoute('book', 'post', '{id:uuid}/book', [LessonsPermission::MANAGE, LessonsPermission::BOOK]);
     Route::namedRoute('close', 'post', '{id:uuid}/close', [LessonsPermission::MANAGE, LessonsPermission::CLOSE]);
     Route::namedRoute('open', 'post', '{id:uuid}/open', [LessonsPermission::MANAGE, LessonsPermission::OPEN]);
+    Route::namedRoute('checkout', 'post', '{id:uuid}/checkout', [LessonsPermission::MANAGE, LessonsPermission::OPEN]);
 });
 
 // PEOPLE

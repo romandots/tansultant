@@ -13,7 +13,7 @@ class StoreIntentRequest extends StoreRequest
 {
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'student_id' => [
                 'required',
                 'string',
@@ -31,7 +31,7 @@ class StoreIntentRequest extends StoreRequest
                 'string',
                 Rule::in(enum_strings(IntentEventType::class)),
             ],
-        ];
+        ]);
     }
 
     public function getDto(): \App\Common\Contracts\DtoWithUser

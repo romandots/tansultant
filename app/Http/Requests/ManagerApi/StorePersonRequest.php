@@ -27,7 +27,7 @@ class StorePersonRequest extends StoreRequest
      */
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'last_name' => [
                 'required',
                 'string'
@@ -89,7 +89,7 @@ class StorePersonRequest extends StoreRequest
                 'max:' . \config('uploads.max', 10240),
                 'mimes:jpeg,png,pdf'
             ]
-        ];
+        ]);
     }
 
     public function getDto(): Dto

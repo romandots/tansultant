@@ -20,12 +20,11 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  * @property string $id
- * @property int $lesson_id
- * @property int $student_id
- * @property int|null $manager_id
- * @property int|null $payment_id
- * @property int|null $subscription_id
- * @property int $event_id
+ * @property string $student_id
+ * @property string|null $manager_id
+ * @property string|null $payment_id
+ * @property string|null $subscription_id
+ * @property string $event_id
  * @property VisitPaymentType $payment_type
  * @property VisitEventType $event_type
  * @property int|null $price

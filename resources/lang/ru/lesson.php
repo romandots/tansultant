@@ -12,13 +12,18 @@ return [
     'lesson' => 'Урок',
     'lessons' => 'Уроки',
 
-    'event' => 'Событие',
-    'rent' => 'Аренда',
+    'type' => [
+        \App\Models\Enum\LessonType::LESSON->value => 'Урок',
+        \App\Models\Enum\LessonType::EVENT->value => 'Событие',
+        \App\Models\Enum\LessonType::RENT->value => 'Аренда',
+    ],
 
-    'booked' => 'Забронирован',
-    'ongoing' => 'Идёт',
-    'passed' => 'Закончен',
-    'canceled' => 'Отменён',
-    'closed' => 'Закрыт',
-
+    'status' => [
+        \App\Models\Enum\LessonStatus::BOOKED->value => 'Забронирован',
+        \App\Models\Enum\LessonStatus::ONGOING->value => 'Идёт',
+        \App\Models\Enum\LessonStatus::PASSED->value => 'Закончен',
+        \App\Models\Enum\LessonStatus::CANCELED->value => 'Отменён',
+        \App\Models\Enum\LessonStatus::CLOSED->value => 'Закрыт',
+        \App\Models\Enum\LessonStatus::CHECKED_OUT->value => 'Рассчитан',
+    ],
 ];

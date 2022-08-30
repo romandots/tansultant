@@ -12,6 +12,7 @@ namespace App\Models;
 
 use App\Models\Enum\LessonStatus;
 use App\Models\Enum\LessonType;
+use App\Models\Enum\VisitEventType;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -48,6 +49,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\Branch|null $branch
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Intent> $intents
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Visit> $visits
+ * @property-read int|null $visits_count
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null $payment
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newQuery()
@@ -142,7 +144,9 @@ class Lesson extends Model
      */
     public function visits(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Visit::class)->where('event_type', self::class);
+        return $this
+            ->hasMany(Visit::class, 'event_id')
+            ->where('event_type', VisitEventType::fromClass(self::class));
     }
 
     /**
@@ -150,7 +154,9 @@ class Lesson extends Model
      */
     public function intents(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Intent::class)->where('event_type', self::class);
+        return $this
+            ->hasMany(Intent::class, 'event_id')
+            ->where('event_type', VisitEventType::fromClass(self::class));
     }
 
     /**

@@ -29,7 +29,7 @@ class StoreLessonRequest extends StoreRequest
      */
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'classroom_id' => [
                 'required',
                 'string',
@@ -61,7 +61,7 @@ class StoreLessonRequest extends StoreRequest
                 'required',
                 'date_format:"Y-m-d H:i:s"',
             ],
-        ];
+        ]);
     }
 
     public function getDto(): Dto

@@ -34,7 +34,7 @@ class StoreScheduleRequest extends StoreRequest
      */
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'course_id' => [
                 'required',
                 'string',
@@ -74,7 +74,7 @@ class StoreScheduleRequest extends StoreRequest
                 'int',
                 Rule::in(enum_strings(Weekday::class)),
             ],
-        ];
+        ]);
     }
 
     public function withValidator(Validator $validator): void

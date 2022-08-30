@@ -30,9 +30,13 @@ abstract class BaseComponentRepository extends BaseRepository
         return isset(class_uses($this->modelClass)[SoftDeletes::class]);
     }
 
-    final public function getQuery(): \Illuminate\Database\Eloquent\Builder
-    {
-        $query = $this->modelClass::query();
+    final public function getQuery(
+        array $relations = [],
+        array $countRelations = []
+    ): \Illuminate\Database\Eloquent\Builder {
+        $query = $this->modelClass::query()
+            ->with($relations)
+            ->withCount($countRelations);
 
         if ($this->withSoftDeletes()) {
             $query->withTrashed();
@@ -46,9 +50,12 @@ abstract class BaseComponentRepository extends BaseRepository
         return new $this->modelClass();
     }
 
-    public function getSuggestQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
-    {
-        $query = $this->getQuery();
+    public function getSuggestQuery(
+        SearchFilterDto $filter,
+        array $relations = [],
+        array $countRelations = []
+    ): \Illuminate\Database\Eloquent\Builder {
+        $query = $this->getQuery($relations, $countRelations);
 
         if ($this->withSoftDeletes() && !$filter->withDeleted()) {
             $query->whereNull('deleted_at');
@@ -69,8 +76,11 @@ abstract class BaseComponentRepository extends BaseRepository
         return $query;
     }
 
-    protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
-    {
+    protected function getFilterQuery(
+        SearchFilterDto $filter,
+        array $relations = [],
+        array $countRelations = []
+    ): \Illuminate\Database\Eloquent\Builder {
         return $this->getSuggestQuery($filter);
     }
 
@@ -81,17 +91,18 @@ abstract class BaseComponentRepository extends BaseRepository
 
     protected function getFilteredQuery(
         SearchFilterDto $filter,
-        array $withRelations = []
+        array $withRelations = [],
+        array $withCountRelations = []
     ): \Illuminate\Database\Eloquent\Builder {
-        return $this->getFilterQuery($filter)
-            ->with($withRelations);
+        return $this->getFilterQuery($filter, $withRelations, $withCountRelations);
     }
 
     public function findFilteredPaginated(
         SearchDto $search,
-        array $withRelations = []
+        array $withRelations = [],
+        array $withCountRelations = []
     ): \Illuminate\Database\Eloquent\Collection {
-        return $this->getFilteredQuery($search->getFilter(), $withRelations)
+        return $this->getFilteredQuery($search->getFilter(), $withRelations, $withCountRelations)
             ->orderBy($search->getSort(), $search->getOrder())
             ->offset($search->getOffset())
             ->limit($search->getLimit())
@@ -107,10 +118,12 @@ abstract class BaseComponentRepository extends BaseRepository
 
     /**
      * @param string $id
+     * @param array $relations
+     * @param array $countRelations
      * @return Model
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
      */
-    final public function find(string $id): Model
+    final public function find(string $id, array $relations = [], array $countRelations = []): Model
     {
         $this->validateUuid($id);
         $query = $this->getQuery();
@@ -119,6 +132,8 @@ abstract class BaseComponentRepository extends BaseRepository
         }
         return $query
             ->where('id', $id)
+            ->with($relations)
+            ->withCount($countRelations)
             ->firstOrFail();
     }
 

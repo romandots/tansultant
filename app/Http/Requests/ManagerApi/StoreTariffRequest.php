@@ -20,7 +20,7 @@ class StoreTariffRequest extends StoreRequest
 {
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'name' => [
                 'required',
                 'string',
@@ -56,7 +56,7 @@ class StoreTariffRequest extends StoreRequest
                 'integer',
                 'min:0',
             ],
-        ];
+        ]);
     }
 
     public function getDto(): \App\Common\Contracts\DtoWithUser

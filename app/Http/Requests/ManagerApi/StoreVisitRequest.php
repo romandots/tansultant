@@ -24,7 +24,7 @@ class StoreVisitRequest extends StoreRequest
      */
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'student_id' => [
                 'required',
                 'string',
@@ -41,7 +41,7 @@ class StoreVisitRequest extends StoreRequest
                 'nullable',
                 'bool',
             ],
-        ];
+        ]);
     }
 
     public function getDto(): Dto

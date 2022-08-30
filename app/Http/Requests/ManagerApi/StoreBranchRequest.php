@@ -25,7 +25,7 @@ class StoreBranchRequest extends StoreRequest
 {
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'name' => [
                 'required',
                 'string',
@@ -102,7 +102,7 @@ class StoreBranchRequest extends StoreRequest
                 'int',
                 'min:0'
             ],
-        ];
+        ]);
     }
 
     public function getDto(): Dto

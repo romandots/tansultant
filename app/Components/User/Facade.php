@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace App\Components\User;
 
 use App\Common\BaseComponentFacade;
+use App\Common\DTO\ShowDto;
 use App\Models\Person;
 use App\Models\User;
 
 /**
  * @method Service getService()
  * @method Repository getRepository()
- * @method array suggest(?string $query, string|\Closure $labelField = 'name', string|\Closure $valueField = 'id', array $extraFields = [])
+ * @method array suggest(\App\Common\DTO\SuggestDto $suggestDto, string|\Closure $labelField = 'name', string|\Closure $valueField = 'id', array $extraFields = [])
  * @method \Illuminate\Support\Collection<\App\Models\User> getAll()
  * @method \Illuminate\Support\Collection<\App\Models\User> search(PaginatedInterface $searchParams, array $relations = []):
  * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\User create(Dto $dto, array $relations = [])
- * @method \App\Models\User find(string $id, array $relations = [])
+ * @method \App\Models\User find(ShowDto $showDto)
  * @method void findAndDelete(string $id)
  * @method \App\Models\User findAndRestore(string $id, array $relations = [])
  * @method \App\Models\User findAndUpdate(string $id, Dto $dto, array $relations = [])

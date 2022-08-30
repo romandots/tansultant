@@ -26,7 +26,7 @@ class StoreClassroomRequest extends StoreRequest
      */
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'name' => [
                 'required',
                 'string',
@@ -51,7 +51,7 @@ class StoreClassroomRequest extends StoreRequest
                 'nullable',
                 'integer',
             ],
-        ];
+        ]);
     }
 
     public function getDto(): Dto

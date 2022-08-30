@@ -34,15 +34,21 @@ class Repository extends \App\Common\BaseComponentRepository
         );
     }
 
-    public function getSuggestQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
-    {
-        return parent::getSuggestQuery($filter)
+    public function getSuggestQuery(
+        SearchFilterDto $filter,
+        array $relations = [],
+        array $countRelations = []
+    ): \Illuminate\Database\Eloquent\Builder {
+        return parent::getSuggestQuery($filter, $relations, $countRelations)
             ->orderBy('number', 'asc');
     }
 
-    protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
-    {
-        $query = parent::getFilterQuery($filter);
+    protected function getFilterQuery(
+        SearchFilterDto $filter,
+        array $relations = [],
+        array $countRelations = []
+    ): \Illuminate\Database\Eloquent\Builder {
+        $query = parent::getFilterQuery($filter, $relations, $countRelations);
 
         assert($filter instanceof SearchClassroomsFilterDto);
 

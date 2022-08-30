@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Common\Controllers;
 
 use App\Common\BaseFacade;
+use App\Common\Requests\ShowRequest;
 use App\Common\Requests\StoreRequest;
 use App\Common\Requests\SuggestRequest;
 use App\Http\Controllers\Controller;
@@ -51,13 +52,14 @@ abstract class AdminController extends Controller
         string|\Closure $valueField = 'id',
         array $extraFields = []
     ): array {
-        $data = $this->getFacade()->suggest($request->getQuery(), $labelField, $valueField, $extraFields);
+        $data = $this->getFacade()->suggest($request->getDto(), $labelField, $valueField, $extraFields);
         return $this->formatList($data);
     }
 
-    public function show(string $id): JsonResource
+    public function show(ShowRequest $request): JsonResource
     {
-        $record = $this->getFacade()->find($id, $this->getSingleRecordRelations());
+        $dto = $request->getDto();
+        $record = $this->getFacade()->find($dto);
         return $this->makeResource($record);
     }
 

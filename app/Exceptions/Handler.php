@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Exceptions;
 
 use App\Components\Account\Exceptions\InsufficientFundsAccountException;
+use App\Components\Lesson\Exceptions\Exception as LessonException;
 use App\Components\Schedule\Exceptions\ScheduleSlotIsOccupied;
 use App\Components\Subscription\Exceptions\ProlongationPeriodExpired;
 use App\Components\User\Exceptions\OldPasswordInvalidException;
 use App\Exceptions\Auth\UnauthorizedException;
-use App\Services\Course\Exceptions\InstructorStatusIncompatible;
 use App\Services\Login\Exceptions\UserNotFoundException;
 use App\Services\Login\Exceptions\WrongPasswordException;
 use App\Services\PasswordReset\Exceptions\UserHasNoPerson;
@@ -78,6 +78,7 @@ class Handler extends BaseExceptionHandler
             InstructorStatusIncompatible::class => [$this, 'renderAsJson'],
             ScheduleSlotIsOccupied::class => [$this, 'renderAsJson'],
             UserHasNoPersonException::class => [$this, 'renderAsJson'],
+            LessonException::class => [$this, 'renderAsJson'],
         ];
     }
 

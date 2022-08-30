@@ -11,4 +11,9 @@ enum LogRecordAction: string
     case ENABLE = 'enable';
     case DISABLE = 'disable';
     case SEND = 'send';
+    case OPEN = 'open';
+    case CLOSE = 'close';
+    case BOOK = 'book';
+    case CANCEL = 'cancel';
+    case CHECKOUT = 'checkout';
 }

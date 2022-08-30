@@ -12,7 +12,7 @@ class StoreAccountRequest extends StoreRequest
 
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'type' => [
                 'required',
                 'string',
@@ -28,7 +28,7 @@ class StoreAccountRequest extends StoreRequest
                 'string',
                 'uuid',
             ],
-        ];
+        ]);
     }
 
     public function getDto(): \App\Common\Contracts\DtoWithUser

@@ -21,9 +21,9 @@ class Formatter extends BaseFormatter
             'id' => $this->id,
             'name' => $this->name,
             'status' => $this->status,
-            'status_label' => \trans('lesson.' . $this->status->value),
+            'status_label' => \translate('lesson.status', $this->status),
             'type' => $this->type,
-            'type_label' => \trans('lesson.' . $this->type->value),
+            'type_label' => \translate('lesson.type', $this->type),
             'instructor_id' => $this->instructor_id,
             'instructor' => $this->whenLoaded('instructor', function () {
                 return new \App\Components\Instructor\Formatter($this->instructor);
@@ -38,6 +38,10 @@ class Formatter extends BaseFormatter
             }),
             'controller' => $this->whenLoaded('controller', function () {
                 return new \App\Components\User\Formatter($this->controller);
+            }),
+            'visits_count' => $this->visits_count,
+            'visits' => $this->whenLoaded('visits', function () {
+                return \App\Components\Visit\Formatter::collection($this->visits);
             }),
             'is_closed' => (bool)$this->closed_at,
             'is_canceled' => (bool)$this->canceled_at,

@@ -3,6 +3,7 @@
 namespace App\Common;
 
 use App\Common\DTO\SearchDto;
+use App\Common\DTO\ShowDto;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,14 +31,14 @@ abstract class BaseComponentFacade extends BaseFacade
      * Method only return index of elements with
      * $valueField as keys and $labelField as values
      *
-     * @param string|null $query
+     * @param null|DTO\SuggestDto $query
      * @param string|\Closure $labelField
      * @param string|\Closure $valueField
      * @param array $extraFields
      * @return array
      */
     public function suggest(
-        ?string $query = null,
+        \App\Common\DTO\SuggestDto $suggestDto,
         string|\Closure $labelField = 'name',
         string|\Closure $valueField = 'id',
         array $extraFields = []
@@ -45,7 +46,7 @@ abstract class BaseComponentFacade extends BaseFacade
     {
         return $this
             ->getService()
-            ->suggest($query, $labelField, $valueField, $extraFields);
+            ->suggest($suggestDto, $labelField, $valueField, $extraFields);
     }
 
     /**
@@ -69,7 +70,8 @@ abstract class BaseComponentFacade extends BaseFacade
      */
     public function search(SearchDto $searchParams, array $relations = []): \Illuminate\Support\Collection
     {
-        return $this->getService()->search($searchParams, $searchParams->with + $relations);
+        return $this->getService()
+            ->search($searchParams, $searchParams->with + $relations, $searchParams->with_count);
     }
 
     /**
@@ -101,14 +103,13 @@ abstract class BaseComponentFacade extends BaseFacade
     }
 
     /**
-     * @param string $id
-     * @param array $relations
+     * @param DTO\ShowDto $id
      * @return Model
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
      */
-    public function find(string $id, array $relations = []): Model
+    public function find(ShowDto $showDto): Model
     {
-        return $this->getRepository()->find($id)->load($relations);
+        return $this->getRepository()->find($showDto->id, $showDto->with, $showDto->with_count);
     }
 
     /**

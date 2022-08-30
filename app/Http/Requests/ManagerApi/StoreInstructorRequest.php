@@ -28,7 +28,7 @@ class StoreInstructorRequest extends StoreRequest
      */
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'description' => [
                 'nullable',
                 'string'
@@ -49,7 +49,7 @@ class StoreInstructorRequest extends StoreRequest
                 Rule::exists(Person::TABLE, 'id'),
                 //Rule::unique(Instructor::TABLE, 'person_id')->ignore($this->getInstructorId()), // Handled by Servicea
             ],
-        ];
+        ]);
     }
 
     public function getDto(): Dto

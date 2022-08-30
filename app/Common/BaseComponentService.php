@@ -4,6 +4,7 @@ namespace App\Common;
 
 use App\Common\DTO\SearchDto;
 use App\Common\DTO\SearchFilterDto;
+use App\Common\DTO\SuggestDto;
 use App\Common\Traits\WithCache;
 use App\Components\Loader;
 use Illuminate\Database\Eloquent\Model;
@@ -26,12 +27,12 @@ abstract class BaseComponentService extends BaseService
     }
 
     public function suggest(
-        ?string $query,
+        SuggestDto $suggestDto,
         string|\Closure $labelField = 'name',
         string|\Closure $valueField = 'id',
         array $additionalFields = []
     ): array {
-        $cacheKey = 'suggest_' . md5($query);
+        $cacheKey = 'suggest_' . md5($suggestDto->query);
         $cached = $this->getFromCache($cacheKey);
 
         if (null !== $cached) {
@@ -40,7 +41,7 @@ abstract class BaseComponentService extends BaseService
         }
 
         $dto = new SearchFilterDto();
-        $dto->query = $query;
+        $dto->query = $suggestDto->query;
         $dto->with_deleted = false;
 
         $result = $this->getRepository()
@@ -83,9 +84,9 @@ abstract class BaseComponentService extends BaseService
         return $result;
     }
 
-    public function search(SearchDto $searchParams, array $relations = []): Collection
+    public function search(SearchDto $searchParams, array $relations = [], array $countRelations = []): Collection
     {
-        return $this->getRepository()->findFilteredPaginated($searchParams, $relations);
+        return $this->getRepository()->findFilteredPaginated($searchParams, $relations, $countRelations);
     }
 
     public function getMeta(SearchDto $searchParams): array
@@ -94,7 +95,7 @@ abstract class BaseComponentService extends BaseService
         return $searchParams->getMeta($totalRecords);
     }
 
-    public function find(string $id, array $relations = []): Model
+    public function find(string $id, array $relations = [], array $countRelations = []): Model
     {
         $cacheKey = 'record_' . $id;
         $cached = $this->getFromCache($cacheKey);
@@ -104,7 +105,7 @@ abstract class BaseComponentService extends BaseService
             return $cached;
         }
 
-        $result = $this->getRepository()->find($id)->load($relations);
+        $result = $this->getRepository()->find($id, $relations, $countRelations);
         $this->storeInCache($cacheKey, $result);
     }
 

@@ -35,9 +35,12 @@ class Repository extends \App\Common\BaseComponentRepository
         );
     }
 
-    protected function getFilterQuery(SearchFilterDto $filter): \Illuminate\Database\Eloquent\Builder
-    {
-        $query = parent::getFilterQuery($filter);
+    protected function getFilterQuery(
+        SearchFilterDto $filter,
+        array $relations = [],
+        array $countRelations = []
+    ): \Illuminate\Database\Eloquent\Builder {
+        $query = parent::getFilterQuery($filter, $relations, $countRelations);
 
         assert($filter instanceof SearchVisitsFilterDto);
 

@@ -24,7 +24,7 @@ class UpdatePersonRequest extends StorePersonRequest
      */
     public function rules(): array
     {
-        return [
+        return \array_merge($this->showRules(), [
             'last_name' => [
                 'required',
                 'string'
@@ -86,6 +86,6 @@ class UpdatePersonRequest extends StorePersonRequest
                 'max:' . \config('uploads.max', 10240),
                 'mimes:jpeg,png,pdf'
             ]
-        ];
+        ]);
     }
 }

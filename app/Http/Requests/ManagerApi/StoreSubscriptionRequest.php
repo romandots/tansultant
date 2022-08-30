@@ -20,7 +20,7 @@ class StoreSubscriptionRequest extends StoreRequest
 {
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'tariff_id' => [
                 'required',
                 'string',
@@ -33,7 +33,7 @@ class StoreSubscriptionRequest extends StoreRequest
                 'uuid',
                 Rule::exists(Student::TABLE, 'id'),
             ],
-        ];
+        ]);
     }
 
     public function getDto(): \App\Common\Contracts\DtoWithUser

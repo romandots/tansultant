@@ -20,7 +20,7 @@ class StoreStudentRequest extends StoreRequest
 {
     public function rules(): array
     {
-        return [
+        return \array_merge(parent::rules(), [
             'person_id' => [
                 'required',
                 'string',
@@ -45,7 +45,7 @@ class StoreStudentRequest extends StoreRequest
             //    'string',
             //    Rule::unique(Student::TABLE)->ignore($this->getStudentId()),
             //],
-        ];
+        ]);
     }
 
     public function getDto(): \App\Common\Contracts\DtoWithUser

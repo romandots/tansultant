@@ -20,7 +20,7 @@ class UpdateUserRequest extends StoreRequest
      */
     public function rules(): array
     {
-        return [
+        return \array_merge($this->showRules(), [
             'name' => [
                 'nullable',
                 'string'
@@ -33,7 +33,7 @@ class UpdateUserRequest extends StoreRequest
                 'required',
                 'string'
             ],
-        ];
+        ]);
     }
 
     public function getDto(): \App\Common\Contracts\DtoWithUser

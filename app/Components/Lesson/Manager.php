@@ -3,9 +3,11 @@
 namespace App\Components\Lesson;
 
 use App\Common\Traits\WithLogger;
+use App\Components\Loader;
+use App\Events\Lesson\LessonStatusUpdatedEvent;
 use App\Models\Enum\LessonStatus;
 use App\Models\Lesson;
-use Carbon\Carbon;
+use App\Models\User;
 
 class Manager
 {
@@ -35,47 +37,50 @@ class Manager
      * @throws Exceptions\LessonNotPassedYetException
      * @throws Exceptions\LessonNotCompletelyPaidException
      */
-    public function close(Lesson $lesson): void
+    public function close(Lesson $lesson, User $user): void
     {
-        $now = Carbon::now();
-        if ($lesson->starts_at->gt($now) || $lesson->ends_at->gt($now)) {
-            throw new Exceptions\LessonNotPassedYetException();
-        }
-
-        if ($lesson->status === LessonStatus::CLOSED) {
-            throw new Exceptions\LessonAlreadyClosedException();
-        }
+        $this->validateStatus($lesson, [
+            LessonStatus::PASSED,
+        ]);
 
         if (false === $this->visits->visitsArePaid($lesson->visits)) {
             throw new Exceptions\LessonNotCompletelyPaidException();
         }
 
-        $this->intents->updateIntents($lesson->visits, $lesson->intents);
+        \DB::transaction(function () use ($user, $lesson) {
+            $this->intents->updateIntents($lesson->visits, $lesson->intents);
+            $this->repository->close($lesson);
 
-        $this->repository->close($lesson);
+            Loader::logRecords()->logClose($user, $lesson);
+
+            $this->debug("Close lesson {$lesson->id}");
+            $this->triggerLessonStatusUpdatedEvent($lesson);
+        });
     }
 
-    /**
-     * @param Lesson $lesson
-     * @throws Exceptions\LessonNotClosedException
-     */
-    public function open(Lesson $lesson): void
+    public function open(Lesson $lesson, User $user): void
     {
-        if ($lesson->status !== LessonStatus::CLOSED) {
-            throw new Exceptions\LessonNotClosedException();
-        }
+        $this->validateStatus($lesson, [
+            LessonStatus::CLOSED,
+        ]);
 
-        $this->repository->open($lesson);
+        \DB::transaction(function () use ($user, $lesson) {
+            $this->repository->open($lesson);
+
+            Loader::logRecords()->logOpen($user, $lesson);
+
+            $this->debug("Opened lesson {$lesson->id}");
+            $this->triggerLessonStatusUpdatedEvent($lesson);
+        });
     }
 
-    /**
-     * @param Lesson $lesson
-     * @throws Exceptions\LessonAlreadyCanceledException
-     * @throws Exceptions\LessonAlreadyClosedException
-     * @throws Exceptions\LessonHasVisitsException
-     */
-    public function cancel(Lesson $lesson): void
+    public function cancel(Lesson $lesson, User $user): void
     {
+        $this->validateStatus($lesson, [
+            LessonStatus::BOOKED,
+            LessonStatus::PASSED,
+            LessonStatus::ONGOING,
+        ]);
         if ($lesson->status === LessonStatus::CANCELED) {
             throw new Exceptions\LessonAlreadyCanceledException();
         }
@@ -88,19 +93,61 @@ class Manager
             throw new Exceptions\LessonHasVisitsException();
         }
 
-        $this->repository->cancel($lesson);
+        \DB::transaction(function () use ($user, $lesson) {
+            $this->repository->cancel($lesson);
+
+            Loader::logRecords()->logCancel($user, $lesson);
+
+            $this->debug("Canceled lesson {$lesson->id}");
+            $this->triggerLessonStatusUpdatedEvent($lesson);
+        });
     }
 
-    /**
-     * @param Lesson $lesson
-     * @throws Exceptions\LessonNotCanceledYetException
-     */
-    public function book(Lesson $lesson): void
+    public function book(Lesson $lesson, User $user): void
     {
-        if ($lesson->status !== LessonStatus::CANCELED) {
-            throw new Exceptions\LessonNotCanceledYetException();
-        }
+        $this->validateStatus($lesson, [
+            LessonStatus::CANCELED
+        ]);
 
-        $this->repository->book($lesson);
+        \DB::transaction(function () use ($user, $lesson) {
+            $this->repository->book($lesson);
+
+            Loader::logRecords()->logBook($user, $lesson);
+
+            $this->debug("Booked lesson {$lesson->id}");
+            $this->triggerLessonStatusUpdatedEvent($lesson);
+        });
+    }
+
+    public function checkout(Lesson $lesson, User $user): void
+    {
+        $this->validateStatus($lesson, [
+            LessonStatus::CLOSED
+        ]);
+
+        \DB::transaction(function () use ($user, $lesson) {
+
+            // @todo Create transactions
+
+            $this->repository->checkout($lesson);
+
+            Loader::logRecords()->logCheckout($user, $lesson);
+
+            $this->debug("Checked out lesson {$lesson->id}");
+            $this->triggerLessonStatusUpdatedEvent($lesson);
+        });
+    }
+
+    private function triggerLessonStatusUpdatedEvent(Lesson $lesson): void
+    {
+        LessonStatusUpdatedEvent::dispatch($lesson->id);
+        $this->debug('Dispatched LessonStatusUpdated event');
+    }
+
+    private function validateStatus(Lesson $lesson, array $validStatuses): void
+    {
+        if (!\in_array($lesson->status, $validStatuses, true)) {
+            throw new Exceptions\InvalidLessonStatusException($lesson->status, $validStatuses);
+        }
     }
 }

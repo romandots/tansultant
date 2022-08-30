@@ -14,6 +14,7 @@ use App\Common\Controllers\AdminController;
 use App\Components\Lesson as Component;
 use App\Http\Requests\ManagerApi\SearchLessonsRequest;
 use App\Http\Requests\ManagerApi\StoreLessonRequest;
+use Illuminate\Http\Request;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
@@ -34,8 +35,8 @@ class LessonController extends AdminController
         parent::__construct(
             facadeClass: Component\Facade::class,
             resourceClass: Component\Formatter::class,
-            searchRelations: ['schedule', 'course', 'instructor'],
-            singleRecordRelations: ['schedule', 'course', 'instructor'],
+            searchRelations: [],
+            singleRecordRelations: [],
         );
     }
 
@@ -54,27 +55,33 @@ class LessonController extends AdminController
         return $this->_update($id, $request);
     }
 
-    public function close(string $id): Component\Formatter
+    public function close(string $id, Request $request): Component\Formatter
     {
-        $lesson = $this->getFacade()->findAndClose($id);
+        $lesson = $this->getFacade()->findAndClose($id, $request->user());
         return $this->makeResource($lesson);
     }
 
-    public function open(string $id): Component\Formatter
+    public function open(string $id, Request $request): Component\Formatter
     {
-        $lesson = $this->getFacade()->findAndOpen($id);
+        $lesson = $this->getFacade()->findAndOpen($id, $request->user());
         return $this->makeResource($lesson);
     }
 
-    public function cancel(string $id): Component\Formatter
+    public function cancel(string $id, Request $request): Component\Formatter
     {
-        $lesson = $this->getFacade()->findAndCancel($id);
+        $lesson = $this->getFacade()->findAndCancel($id, $request->user());
         return $this->makeResource($lesson);
     }
 
-    public function book(string $id): Component\Formatter
+    public function book(string $id, Request $request): Component\Formatter
     {
-        $lesson = $this->getFacade()->findAndBook($id);
+        $lesson = $this->getFacade()->findAndBook($id, $request->user());
+        return $this->makeResource($lesson);
+    }
+
+    public function checkout(string $id, Request $request): Component\Formatter
+    {
+        $lesson = $this->getFacade()->findAndCheckout($id, $request->user());
         return $this->makeResource($lesson);
     }
 }

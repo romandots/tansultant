@@ -18,6 +18,7 @@ class SearchDto extends DtoWithUser
     public string $sort;
     public string $order;
     public array $with = [];
+    public array $with_count = [];
 
     public function getMeta(int $totalRecords): array
     {
@@ -27,6 +28,7 @@ class SearchDto extends DtoWithUser
             'offset' => $this->offset,
             'limit' => $this->limit,
             'with' => $this->with,
+            'with_count' => $this->with_count,
             'total' => $totalRecords,
         ];
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Components\Visit;
 
 use App\Components\Loader;
+use App\Events\Lesson\LessonVisitsUpdatedEvent;
 use App\Models\Enum\SubscriptionStatus;
 use App\Models\Enum\VisitPaymentType;
 use App\Models\Subscription;
@@ -94,19 +95,23 @@ class Service extends \App\Common\BaseComponentService
                 }
             }
 
-            // Create visit
-            /** @var Visit $visit */
-            $visit = parent::create($dto);
+            return \DB::transaction(function () use ($student, $price, $dto) {
+                // Create visit
+                /** @var Visit $visit */
+                $visit = parent::create($dto);
 
-            // Create payment
-            if ($dto->payment_type === VisitPaymentType::PAYMENT) {
-                $payment = Loader::payments()->createVisitPayment($price, $visit, $student, $dto->getUser());
-                $visit->payment_id = $payment->id;
-                $visit->subscription_id = null;
-                $visit->save();
-            }
+                // Create payment
+                if ($dto->payment_type === VisitPaymentType::PAYMENT) {
+                    $payment = Loader::payments()->createVisitPayment($price, $visit, $student, $dto->getUser());
+                    $visit->payment_id = $payment->id;
+                    $visit->subscription_id = null;
+                    $visit->save();
+                }
 
-            return $visit->load('payment', 'subscription', 'student.person');
+                $this->triggerLessonVisitsUpdatedEvent($visit);
+
+                return $visit->load('payment', 'subscription', 'student.person');
+            });
         });
     }
 
@@ -138,6 +143,7 @@ class Service extends \App\Common\BaseComponentService
             Loader::payments()->findAndDelete($record->payment_id, $user);
         }
         parent::delete($record, $user);
+        $this->triggerLessonVisitsUpdatedEvent($record);
     }
 
     protected function checkIfVisitAlreadyExists(string $student_id, string $event_id): void
@@ -147,5 +153,15 @@ class Service extends \App\Common\BaseComponentService
             throw new Exceptions\VisitAlreadyExistsException($visit);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
         }
+    }
+
+    /**
+     * @param Visit $visit
+     * @return void
+     */
+    private function triggerLessonVisitsUpdatedEvent(Visit $visit): void
+    {
+        LessonVisitsUpdatedEvent::dispatch($visit->event_id);
+        $this->debug('Dispatched LessonVisitsUpdated event');
     }
 }

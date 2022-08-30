@@ -28,5 +28,8 @@ return [
     'account_has_insufficient_funds' => 'На балансе недостаточно средств',
     'invalid_status' => 'Недоступно в текущем статусе',
     'invalid_subscription_status' => 'Недоступно в текущем статусе подписки',
+    'invalid_lesson_status' => 'Недоступно в текущем статусе урока',
     'prolongation_period_expired' => 'Период продления истёк',
+    'lesson_has_visits' => 'Сначала удалите все посещения',
+    'lesson_not_completely_paid' => 'Не все посещения оплачены',
 ];

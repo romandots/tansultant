@@ -52,6 +52,13 @@ class SearchRequest extends FilteredPaginatedRequest
             'with.*' => [
                 'string',
             ],
+            'with_count' => [
+                'nullable',
+                'array',
+            ],
+            'with_count.*' => [
+                'string',
+            ],
             'query' => [
                 'nullable',
                 'string'
@@ -66,6 +73,7 @@ class SearchRequest extends FilteredPaginatedRequest
         $dto->sort = $datum['sort'] ?? 'id';
         $dto->order = $datum['order'] ?? 'asc';
         $dto->with = $datum['with'] ?? [];
+        $dto->with_count = $datum['with_count'] ?? [];
     }
 
     protected function mapSearchFilterDto(SearchFilterDto $dto, array $datum): void
