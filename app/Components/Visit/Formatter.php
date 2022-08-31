@@ -25,6 +25,7 @@ class Formatter extends BaseFormatter
     {
         return [
             'id' => $this->id,
+            'event_id' => $this->event_id,
             'student' => $this->whenLoaded('student', function () {
                 return new \App\Components\Student\Formatter($this->student);
             }),

@@ -103,13 +103,29 @@ abstract class BaseComponentFacade extends BaseFacade
     }
 
     /**
-     * @param DTO\ShowDto $id
+     * @param ShowDto|string $showDto
+     * @param array $relations
+     * @param array $countRelations
      * @return Model
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
      */
-    public function find(ShowDto $showDto): Model
+    public function find(ShowDto|string $showDto, array $relations = [], array $countRelations = []): Model
     {
-        return $this->getRepository()->find($showDto->id, $showDto->with, $showDto->with_count);
+        return is_string($showDto)
+            ? $this->findById($showDto, $relations, $countRelations)
+                : $this->findById($showDto->id, $showDto->with, $showDto->with_count);
+    }
+
+    /**
+     * @param string $id
+     * @param array $relations
+     * @param array $countRelations
+     * @return Model
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
+     */
+    public function findById(string $id, array $relations = [], array $countRelations = []): Model
+    {
+        return $this->getRepository()->find($id, $relations, $countRelations);
     }
 
     /**

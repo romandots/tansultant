@@ -37,6 +37,8 @@ class SuggestRequest extends BaseRequest
 
     public function getDto(): \App\Common\Contracts\DtoWithUser
     {
+        $datum = $this->validated();
+
         $dto = new SuggestDto($this->user());
         $dto->query = $datum['query'] ?? null;
         $dto->with = $datum['with'] ?? [];

@@ -81,7 +81,7 @@ abstract class BaseComponentRepository extends BaseRepository
         array $relations = [],
         array $countRelations = []
     ): \Illuminate\Database\Eloquent\Builder {
-        return $this->getSuggestQuery($filter);
+        return $this->getSuggestQuery($filter, $relations, $countRelations);
     }
 
     public function countFiltered(SearchFilterDto $search): int
