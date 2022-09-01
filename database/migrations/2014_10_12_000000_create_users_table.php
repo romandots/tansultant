@@ -31,7 +31,7 @@ class CreateUsersTable extends Migration
             $table->text('status')->index();
             $table->text('password');
             $table->text('remember_token')->nullable();
-            $table->text('api_token')->nullable();
+            $table->text('api_token')->nullable()->index();
             $table->timestamp('created_at');
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('seen_at')->nullable();

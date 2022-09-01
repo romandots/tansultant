@@ -29,17 +29,25 @@ abstract class AdminController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        $records = $this->getFacade()->getAll([]);
-        return $this->makeResourceCollection($records);
+        return \clock()->event('Serving INDEX action')->run(function () use ($request) {
+
+            $records = $this->getFacade()->getAll([]);
+            return $this->makeResourceCollection($records);
+
+        });
     }
 
     protected function _search(\App\Common\Requests\SearchRequest $request): AnonymousResourceCollection
     {
-        $searchRecords = $request->getDto();
-        $records = $this->getFacade()->search($searchRecords, $this->getSearchRelations());
-        $meta = $this->getFacade()->getMeta($searchRecords);
+        return \clock()->event('Serving SEARCH action')->run(function () use ($request) {
 
-        return $this->makeResourceCollection($records)->additional(['meta' => $meta]);
+            $searchRecords = $request->getDto();
+            $records = $this->getFacade()->search($searchRecords, $this->getSearchRelations());
+            $meta = $this->getFacade()->getMeta($searchRecords);
+
+            return $this->makeResourceCollection($records)->additional(['meta' => $meta]);
+
+        });
     }
 
     public function suggest(SuggestRequest $request): array {
@@ -52,37 +60,62 @@ abstract class AdminController extends Controller
         string|\Closure $valueField = 'id',
         array $extraFields = []
     ): array {
-        $data = $this->getFacade()->suggest($request->getDto(), $labelField, $valueField, $extraFields);
-        return $this->formatList($data);
+        return \clock()->event('Serving SUGGEST action')
+            ->run(function () use ($extraFields, $valueField, $labelField, $request) {
+
+                $data = $this->getFacade()->suggest($request->getDto(), $labelField, $valueField, $extraFields);
+                return  $this->formatList($data);
+
+            });
     }
 
     public function show(ShowRequest $request): JsonResource
     {
-        $dto = $request->getDto();
-        $record = $this->getFacade()->find($dto);
-        return $this->makeResource($record);
+        return \clock()->event('Serving SHOW action')->run(function () use ($request) {
+
+            $dto = $request->getDto();
+            $record = $this->getFacade()->find($dto);
+            return $this->makeResource($record);
+
+        });
     }
 
     protected function _store(StoreRequest $request): JsonResource
     {
-        $record = $this->getFacade()->create($request->getDto(), $this->getSingleRecordRelations());
-        return $this->makeResource($record);
+        return \clock()->event('Serving STORE action')->run(function () use ($request) {
+
+            $record = $this->getFacade()->create($request->getDto(), $this->getSingleRecordRelations());
+            return $this->makeResource($record);
+
+        });
     }
 
     protected function _update(string $id, StoreRequest $request): JsonResource
     {
-        $record = $this->getFacade()->findAndUpdate($id, $request->getDto(), $this->getSingleRecordRelations());
-        return $this->makeResource($record);
+        return \clock()->event('Serving UPDATE action')->run(function () use ($request) {
+
+            $record = $this->getFacade()->findAndUpdate($id, $request->getDto(), $this->getSingleRecordRelations());
+            return $this->makeResource($record);
+
+        });
     }
 
     public function destroy(string $id, Request $request): void
     {
-        $this->getFacade()->findAndDelete($id, $request->user());
+        \clock()->event('Serving DESTROY action')->run(function () use ($request) {
+
+            $this->getFacade()->findAndDelete($id, $request->user());
+
+        });
     }
 
     public function restore(string $id, Request $request): void
     {
-        $this->getFacade()->findAndRestore($id, $this->getSingleRecordRelations(), $request->user());
+        \clock()->event('Serving RESTORE action')->run(function () use ($request) {
+
+            $this->getFacade()->findAndRestore($id, $this->getSingleRecordRelations(), $request->user());
+
+        });
     }
 
     final protected function getFacade(): BaseFacade
@@ -92,12 +125,16 @@ abstract class AdminController extends Controller
 
     final protected function makeResource(Model $record): JsonResource
     {
-        return new $this->resourceClass($record);
+        return \clock()->event('Formatting record')->run(function () use ($record) {
+            return new $this->resourceClass($record);
+        });
     }
 
     final protected function makeResourceCollection(Collection $collection): AnonymousResourceCollection
     {
-        return $this->resourceClass::collection($collection);
+        return \clock()->event('Formatting record')->run(function () use ($collection) {
+            return $this->resourceClass::collection($collection);
+        });
     }
 
     final protected function formatList(array $data = []): array
@@ -114,5 +151,4 @@ abstract class AdminController extends Controller
     {
         return $this->singleRecordRelations;
     }
-
 }
