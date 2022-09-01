@@ -30,16 +30,20 @@ class Generator
 
     public function updateLessonsStatuses(): int
     {
-        $ongoing = $this->service->getRepository()->updateOngoingLessonsStatus();
-        $this->debug("{$ongoing->count()} lessons set to ONGOING status");
+        return \clock()->event('Updating lessons status')->run(function () {
 
-        $passed = $this->service->getRepository()->updatePassedLessonsStatus();
-        $this->debug("{$passed->count()} lessons set to PASSED status");
+            $ongoing = $this->service->getRepository()->updateOngoingLessonsStatus();
+            $this->debug("{$ongoing->count()} lessons set to ONGOING status");
 
-        $lessons = $ongoing->merge($passed);
-        $this->dispatchEvents($lessons);
+            $passed = $this->service->getRepository()->updatePassedLessonsStatus();
+            $this->debug("{$passed->count()} lessons set to PASSED status");
 
-        return $lessons->count();
+            $lessons = $ongoing->merge($passed);
+            $this->dispatchEvents($lessons);
+
+            return $lessons->count();
+
+        });
     }
 
     /**
@@ -49,43 +53,51 @@ class Generator
      */
     protected function generateLessonsBySchedules(Collection $schedules, Carbon $date): array
     {
-        $lessons = [];
-        $lessonsIds = [];
-        foreach ($schedules as $schedule) {
-            if ($this->service->checkIfScheduleLessonExist($schedule, $date)) {
-                $this->debug("Lesson for schedule #{$schedule->id} has been created earlier");
-                continue;
+        return \clock()->event('Generating lessons by schedules')->run(function () use ($schedules, $date) {
+            $lessons = [];
+            $lessonsIds = [];
+            foreach ($schedules as $schedule) {
+                if ($this->service->checkIfScheduleLessonExist($schedule, $date)) {
+                    $this->debug("Lesson for schedule #{$schedule->id} has been created earlier");
+                    continue;
+                }
+                $this->debug("Creating lesson for #{$schedule->id}...");
+                $lesson = $this->service->createFromScheduleOnDate($schedule, $date);
+                $lessonsIds[] = $lesson->id;
+                $lessons[] = $lesson;
             }
-            $this->debug("Creating lesson for #{$schedule->id}...");
-            $lesson = $this->service->createFromScheduleOnDate($schedule, $date);
-            $lessonsIds[] = $lesson->id;
-            $lessons[] = $lesson;
-        }
 
-        $count = count($lessonsIds);
-        if ($count > 0) {
-            $this->debug("{$count} lessons generated", $lessonsIds);
-        }
+            $count = count($lessonsIds);
+            if ($count > 0) {
+                $this->debug("{$count} lessons generated", $lessonsIds);
+            }
 
-        $this->updateLessonsStatuses();
+            $this->updateLessonsStatuses();
 
-        return $lessons;
+            return $lessons;
+        });
     }
 
     public function generateCourseLessonsOnDate(Carbon $date, string $courseId): void
     {
-        $this->debug("Generating lessons for course #{$courseId} on date {$date->format('Y-m-d')}");
-        $schedules = $this->schedules->getSchedulesForCourseOnDate($courseId, $date);
-        $lessons = $this->generateLessonsBySchedules($schedules, $date);
-        $this->dispatchEvents($lessons);
+        \clock()->event('Generating course lessons on date')->run(function () use ($date, $courseId) {
+
+            $this->debug("Generating lessons for course #{$courseId} on date {$date->format('Y-m-d')}");
+            $schedules = $this->schedules->getSchedulesForCourseOnDate($courseId, $date);
+            $lessons = $this->generateLessonsBySchedules($schedules, $date);
+            $this->dispatchEvents($lessons);
+
+        });
     }
 
     public function generateLessonsOnDate(Carbon $date): void
     {
-        $this->debug("Generating lessons on date {$date->format('Y-m-d')}");
-        $schedules = $this->schedules->getSchedulesOnDate($date);
-        $lessons = $this->generateLessonsBySchedules($schedules, $date);
-        $this->dispatchEvents($lessons);
+        \clock()->event('Generating lessons on date')->run(function () use ($date) {
+            $this->debug("Generating lessons on date {$date->format('Y-m-d')}");
+            $schedules = $this->schedules->getSchedulesOnDate($date);
+            $lessons = $this->generateLessonsBySchedules($schedules, $date);
+            $this->dispatchEvents($lessons);
+        });
     }
 
     /**

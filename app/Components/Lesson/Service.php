@@ -6,8 +6,8 @@ namespace App\Components\Lesson;
 
 use App\Common\Contracts\DtoWithUser;
 use App\Common\DTO\SearchDto;
-use App\Components\Loader;
 use App\Http\Requests\ManagerApi\DTO\SearchLessonsFilterDto;
+use App\Jobs\GenerateLessonsOnDateJob;
 use App\Models\Course;
 use App\Models\Enum\LessonStatus;
 use App\Models\Enum\LessonType;
@@ -43,7 +43,8 @@ class Service extends \App\Common\BaseComponentService
 
         // If lessons for date are requested, dispatch lesson generation job
         if ($searchParams->filter->date) {
-            Loader::lessons()->generateLessonsOnDate($searchParams->filter->date);
+            $this->debug('Dispatch GenerateLessonsOnDateJob');
+            GenerateLessonsOnDateJob::dispatch($searchParams->filter->date);
         }
 
         return parent::search($searchParams, $relations, $countRelations);
