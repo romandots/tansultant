@@ -75,10 +75,10 @@ class Handler extends BaseExceptionHandler
             VerificationCodeExpired::class => [$this, 'renderAsJson'],
             TextMessageSendingFailed::class => [$this, 'renderAsJson'],
             UserHasNoPerson::class => [$this, 'renderAsJson'],
-            InstructorStatusIncompatible::class => [$this, 'renderAsJson'],
             ScheduleSlotIsOccupied::class => [$this, 'renderAsJson'],
             UserHasNoPersonException::class => [$this, 'renderAsJson'],
             LessonException::class => [$this, 'renderAsJson'],
+            \BadMethodCallException::class => [$this, 'renderBadMethodCall'],
         ];
     }
 
@@ -98,5 +98,31 @@ class Handler extends BaseExceptionHandler
         }
 
         return \json_response($output, $exception->getStatusCode());
+    }
+
+    /**
+     * @param \Throwable $exception
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function renderNativeAsJson(\Throwable $exception): \Illuminate\Http\JsonResponse
+    {
+        $output = [
+            'error' => $exception->getMessage(),
+            'message' => \trans('exceptions.' . $exception->getMessage()),
+            'data' => $exception->getTrace(),
+        ];
+
+        return \json_response($output, 400);
+    }
+
+    public function renderBadMethodCall(\BadMethodCallException $exception): \Illuminate\Http\JsonResponse
+    {
+        $output = [
+            'error' => 'invalid_relation',
+            'message' => \trans('exceptions.invalid_relation'),
+            'data' => $exception->getTrace()[0]['args'] ?? [],
+        ];
+
+        return \json_response($output, 400);
     }
 }

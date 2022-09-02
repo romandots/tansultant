@@ -32,4 +32,5 @@ return [
     'prolongation_period_expired' => 'Период продления истёк',
     'lesson_has_visits' => 'Сначала удалите все посещения',
     'lesson_not_completely_paid' => 'Не все посещения оплачены',
+    'invalid_relation' => 'Связь не найдена',
 ];
