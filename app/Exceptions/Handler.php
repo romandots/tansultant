@@ -20,6 +20,7 @@ use App\Services\Verification\Exception\VerificationCodeAlreadySentRecently;
 use App\Services\Verification\Exception\VerificationCodeExpired;
 use App\Services\Verification\Exception\VerificationCodeIsInvalid;
 use App\Services\Verification\Exception\VerificationCodeWasSentTooManyTimes;
+use Illuminate\Database\Eloquent\RelationNotFoundException;
 
 /**
  * Class Handler
@@ -78,7 +79,8 @@ class Handler extends BaseExceptionHandler
             ScheduleSlotIsOccupied::class => [$this, 'renderAsJson'],
             UserHasNoPersonException::class => [$this, 'renderAsJson'],
             LessonException::class => [$this, 'renderAsJson'],
-            \BadMethodCallException::class => [$this, 'renderBadMethodCall'],
+            \BadMethodCallException::class => [$this, 'renderBadMethodCallAsJson'],
+            RelationNotFoundException::class => [$this, 'renderRelationNotFoundAsJson'],
         ];
     }
 
@@ -115,12 +117,27 @@ class Handler extends BaseExceptionHandler
         return \json_response($output, 400);
     }
 
-    public function renderBadMethodCall(\BadMethodCallException $exception): \Illuminate\Http\JsonResponse
+    public function renderBadMethodCallAsJson(\BadMethodCallException $exception): \Illuminate\Http\JsonResponse
     {
         $output = [
             'error' => 'invalid_relation',
             'message' => \trans('exceptions.invalid_relation'),
-            'data' => $exception->getTrace()[0]['args'] ?? [],
+            'data' => [
+                'relation' => $exception->getTrace()[0]['args'][0] ?? null,
+            ],
+        ];
+
+        return \json_response($output, 400);
+    }
+
+    public function renderRelationNotFoundAsJson(RelationNotFoundException $exception): \Illuminate\Http\JsonResponse
+    {
+        $output = [
+            'error' => 'invalid_relation',
+            'message' => \trans('exceptions.invalid_relation'),
+            'data' => [
+                'relation' => $exception->relation,
+            ],
         ];
 
         return \json_response($output, 400);
