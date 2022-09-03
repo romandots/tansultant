@@ -161,7 +161,11 @@ class Service extends \App\Common\BaseComponentService
      */
     private function triggerLessonVisitsUpdatedEvent(Visit $visit): void
     {
-        LessonVisitsUpdatedEvent::dispatch($visit->event_id);
-        $this->debug('Dispatched LessonVisitsUpdated event');
+        try {
+            LessonVisitsUpdatedEvent::dispatch($visit->event_id);
+            $this->debug('Dispatched LessonVisitsUpdated event');
+        } catch (\Throwable $exception) {
+            $this->error('Failed dispatching LessonVisitsUpdated event', $exception);
+        }
     }
 }

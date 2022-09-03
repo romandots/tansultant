@@ -212,8 +212,15 @@ abstract class BaseComponentService extends BaseService
         $this->getLogger()->debug($message, $context);
     }
 
-    protected function error(string $message, array $context = []): void
+    protected function error(string $message, array|\Throwable $context = []): void
     {
+        if (!is_array($context)) {
+            $context = [
+                'message' => $context->getMessage(),
+                'trace' => $context->getTrace(),
+            ];
+        }
+
         $this->getLogger()->error($message, $context);
     }
 }

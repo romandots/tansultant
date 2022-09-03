@@ -9,6 +9,7 @@ use App\Components\Lesson\Exceptions\Exception as LessonException;
 use App\Components\Schedule\Exceptions\ScheduleSlotIsOccupied;
 use App\Components\Subscription\Exceptions\ProlongationPeriodExpired;
 use App\Components\User\Exceptions\OldPasswordInvalidException;
+use App\Components\Visit\Exceptions\NoSubscriptionsException;
 use App\Exceptions\Auth\UnauthorizedException;
 use App\Services\Login\Exceptions\UserNotFoundException;
 use App\Services\Login\Exceptions\WrongPasswordException;
@@ -48,6 +49,7 @@ class Handler extends BaseExceptionHandler
         UserHasNoPersonException::class,
         InstructorStatusIncompatible::class,
         ScheduleSlotIsOccupied::class,
+        NoSubscriptionsException::class,
     ];
 
     /**

@@ -44,16 +44,24 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: null
       REDIS_PORT: 6379
-#  websocket_server:
-#    image: api
-#    volumes:
-#      - ./:/app
-#    ports:
-#      - "6001:6001"
-#    entrypoint: php artisan websockets:serve
-#    depends_on:
-#      - api
-#    restart: always
+  queue:
+    image: api
+    volumes:
+      - ./:/app
+      - /app/vendor
+      - ./docker/logs/laravel:/app/storage/logs
+    entrypoint: php artisan queue:work --verbose --tries=3 --timeout=60
+    depends_on:
+      - api
+  scheduler:
+    image: api
+    volumes:
+      - ./:/app
+      - /app/vendor
+      - ./docker/logs/laravel:/app/storage/logs
+    entrypoint: sh -c "while true; do php artisan schedule:run --verbose & sleep 60; done"
+    depends_on:
+      - api
   db_test:
     image: postgres:14.2
     ports:
