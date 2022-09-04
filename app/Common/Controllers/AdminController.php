@@ -29,7 +29,7 @@ abstract class AdminController extends Controller
 
     public function index(): AnonymousResourceCollection
     {
-        return \clock()->event('Serving INDEX action')->run(function () use ($request) {
+        return \clock()->event('Serving INDEX action')->run(function () {
 
             $records = $this->getFacade()->getAll([]);
             return $this->makeResourceCollection($records);
@@ -92,7 +92,7 @@ abstract class AdminController extends Controller
 
     protected function _update(string $id, StoreRequest $request): JsonResource
     {
-        return \clock()->event('Serving UPDATE action')->run(function () use ($request) {
+        return \clock()->event('Serving UPDATE action')->run(function () use ($id, $request) {
 
             $record = $this->getFacade()->findAndUpdate($id, $request->getDto(), $this->getSingleRecordRelations());
             return $this->makeResource($record);
@@ -102,7 +102,7 @@ abstract class AdminController extends Controller
 
     public function destroy(string $id, Request $request): void
     {
-        \clock()->event('Serving DESTROY action')->run(function () use ($request) {
+        \clock()->event('Serving DESTROY action')->run(function () use ($id, $request) {
 
             $this->getFacade()->findAndDelete($id, $request->user());
 
@@ -111,7 +111,7 @@ abstract class AdminController extends Controller
 
     public function restore(string $id, Request $request): void
     {
-        \clock()->event('Serving RESTORE action')->run(function () use ($request) {
+        \clock()->event('Serving RESTORE action')->run(function () use ($id, $request) {
 
             $this->getFacade()->findAndRestore($id, $this->getSingleRecordRelations(), $request->user());
 
