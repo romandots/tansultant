@@ -53,6 +53,7 @@ class Repository extends BaseComponentRepository
 
     public function getAllByObjectTypeAndObjectId(\App\Models\Enum\LogRecordObjectType $objectType, string $objectId): Collection
     {
+        $this->validateUuid($objectId);
         return $this
             ->getQuery()
             ->where('object_type', $objectType)
