@@ -29,8 +29,15 @@ trait WithLogger
         $this->getLogger()->debug($message, $context);
     }
 
-    protected function error(string $message, array $context = []): void
+    protected function error(string $message, array|\Throwable $context = []): void
     {
+        if (is_object($context)) {
+            $context = [
+                'exception_message' => $context->getMessage(),
+                'exception_trace' => $context->getTraceAsString(),
+            ];
+        }
+
         $prefix = $this->getLoggerPrefix();
         $message = $prefix ? $prefix . ': ' . $message : $message;
         $this->getLogger()->error($message, $context);

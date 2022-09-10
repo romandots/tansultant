@@ -123,8 +123,14 @@ class Generator
         }
 
         foreach ($channels as $channel) {
-            $this->debug("Dispatching ScheduleUpdatedEvent for branch #{$channel['branch_id']} on {$channel['date']}");
-            ScheduleUpdatedEvent::dispatch($channel['date'], $channel['branch_id']);
+            try {
+                $this->debug(
+                    "Dispatching ScheduleUpdatedEvent for branch #{$channel['branch_id']} on {$channel['date']}"
+                );
+                ScheduleUpdatedEvent::dispatch($channel['date'], $channel['branch_id']);
+            } catch (\Exception $exception) {
+                $this->error('Failed dispatching ScheduleUpdatedEvent', $exception);
+            }
         }
     }
 }

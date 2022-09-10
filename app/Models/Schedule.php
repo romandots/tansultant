@@ -107,12 +107,18 @@ class Schedule extends Model
 
     public function __toString(): string
     {
-        return $this->cycle->trans([
+        $timestamp = $this->cycle->trans([
             'weekday' => $this->weekday?->trans(),
             'day' => $this->starts_at->format('d'),
             'date' => $this->starts_at->format('d.m.Y'),
-            'time' => $this->starts_at->format('H:m'),
+            'time' => $this->starts_at->format('H:i'),
         ]);
+
+        if (!$this->relationLoaded('classroom')) {
+            return $timestamp;
+        }
+
+        return \sprintf('%s — %s', $timestamp, $this->classroom->name);
     }
 
 }
