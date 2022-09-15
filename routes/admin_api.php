@@ -145,6 +145,14 @@ Route::namedGroup('people',ManagerApi\PersonController::class, static function (
     Route::namedRoute('restore', 'post', '{id:uuid}/restore', [PersonsPermission::MANAGE, PersonsPermission::RESTORE]);
 });
 
+// PRICES
+Route::namedGroup('prices',ManagerApi\PriceController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [CoursesPermission::MANAGE, CoursesPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [CoursesPermission::MANAGE, CoursesPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id:uuid}', [CoursesPermission::MANAGE, CoursesPermission::READ]);
+    Route::namedRoute('destroy', 'delete', '{id:uuid}', [CoursesPermission::MANAGE, CoursesPermission::DELETE]);
+});
+
 // SCHEDULES
 Route::namedGroup('schedules',ManagerApi\ScheduleController::class, static function () {
     Route::namedRoute('search', 'get', '/', [SchedulesPermission::MANAGE, SchedulesPermission::READ]);

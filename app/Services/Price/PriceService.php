@@ -19,14 +19,12 @@ use App\Common\BaseService;
 class PriceService extends BaseService
 {
     /**
-     * @todo Implement price policies
-     *
      * @param \App\Models\Lesson $lesson
      * @param \App\Models\Student|null $student
-     * @return int
+     * @return float
      */
-    public function calculateLessonVisitPrice(\App\Models\Lesson $lesson, ?\App\Models\Student $student): int
+    public function calculateLessonVisitPrice(\App\Models\Lesson $lesson, ?\App\Models\Student $student): float
     {
-        return 100;
+        return (new Policy\VisitPricePolicy($lesson, $student))->getPrice();
     }
 }

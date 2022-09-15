@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Tags\HasTags;
@@ -42,6 +43,7 @@ use Spatie\Tags\HasTags;
  * @property \Carbon\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Instructor|null $instructor
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Collection<Schedule>|null $schedules
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Price|null $price
  * @package App\Models
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Course newModelQuery()
@@ -91,6 +93,14 @@ class Course extends Model
     public $timestamps = [
         'deleted_at',
     ];
+
+    /**
+     * @return BelongsTo<Price>
+     */
+    public function price(): BelongsTo
+    {
+        return $this->belongsTo(Price::class);
+    }
 
     public function schedules(): HasMany
     {

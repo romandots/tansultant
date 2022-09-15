@@ -28,6 +28,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property StudentStatus $status [potential|active|recent|former]
  * @property string $person_id
  * @property string $customer_id
+ * @property int|null $personal_discount
  * @property \Carbon\Carbon $seen_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at

@@ -47,6 +47,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\Classroom $classroom
  * @property-read \App\Models\Schedule|null $schedule
  * @property-read \App\Models\Branch|null $branch
+ * @property-read \App\Models\Price|null $price
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Intent> $intents
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Visit> $visits
  * @property-read int|null $visits_count

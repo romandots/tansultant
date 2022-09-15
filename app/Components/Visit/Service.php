@@ -73,7 +73,7 @@ class Service extends \App\Common\BaseComponentService
                     SubscriptionStatus::ACTIVE
                 )
                 : new Collection();
-            $price = ServiceLoader::price()->calculateLessonVisitPrice($lesson, $student);
+            $price = (int)ServiceLoader::price()->calculateLessonVisitPrice($lesson, $student);
             $isChosenSubscriptionValid = $dto->subscription_id && $subscriptions->where(
                     'id',
                     $dto->subscription_id
