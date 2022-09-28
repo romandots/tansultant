@@ -34,6 +34,7 @@ return new class extends Migration
             $table->text('name')->index();
             $table->uuid('tariff_id');
             $table->uuid('student_id');
+            $table->uuid('payment_id')->nullable();
             $table->text('status');
             $table->unsignedInteger('courses_limit')->nullable();
             $table->unsignedInteger('visits_limit')->nullable();
@@ -53,6 +54,11 @@ return new class extends Migration
             $table->foreign('student_id')
                 ->references('id')
                 ->on('students')
+                ->onDelete('cascade');
+
+            $table->foreign('payment_id')
+                ->references('id')
+                ->on('payments')
                 ->onDelete('cascade');
         });
 
