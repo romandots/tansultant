@@ -12,9 +12,9 @@ class Dto extends \App\Common\DTO\DtoWithUser
     public string $name;
     public float $price;
     public float $prolongation_price;
-    public ?int $courses_count;
-    public ?int $visits_count;
-    public ?int $days_count;
-    public ?int $holds_count;
+    public ?int $courses_limit;
+    public ?int $visits_limit;
+    public ?int $days_limit;
+    public ?int $holds_limit;
     public TariffStatus $status;
 }

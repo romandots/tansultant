@@ -13,10 +13,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property string $tariff_id
  * @property string $student_id
- * @property int|null $courses_count
- * @property int|null $visits_count
- * @property int|null $days_count
- * @property int|null $holds_count
+ * @property int|null $courses_limit
+ * @property int|null $visits_limit
+ * @property int|null $days_limit
+ * @property int|null $holds_limit
  * @property-read BelongsTo<Tariff>|Tariff|null $tariff
  * @property-read BelongsTo<Student>|Student|null $student
  * @property-read BelongsToMany<Course>|null $courses

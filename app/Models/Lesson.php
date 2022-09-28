@@ -50,7 +50,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\Price|null $price
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Intent> $intents
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Visit> $visits
- * @property-read int|null $visits_count
+ * @property-read int|null $visits_limit
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null $payment
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newQuery()

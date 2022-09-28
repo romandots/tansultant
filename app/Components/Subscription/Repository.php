@@ -48,10 +48,10 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->status = $dto->status;
         $record->tariff_id = $dto->tariff_id;
         $record->student_id = $dto->student_id;
-        $record->days_count = $dto->days_count;
-        $record->courses_count = $dto->courses_count;
-        $record->visits_count = $dto->visits_count;
-        $record->holds_count = $dto->holds_count;
+        $record->days_limit = $dto->days_limit;
+        $record->courses_limit = $dto->courses_limit;
+        $record->visits_limit = $dto->visits_limit;
+        $record->holds_limit = $dto->holds_limit;
     }
 
     public function getStudentActiveSubscriptionsForCourse(

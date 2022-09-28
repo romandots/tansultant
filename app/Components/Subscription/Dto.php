@@ -13,8 +13,8 @@ class Dto extends \App\Common\DTO\DtoWithUser
     public string $student_id;
     public string $name;
     public SubscriptionStatus $status;
-    public ?int $days_count = null;
-    public ?int $courses_count = null;
-    public ?int $visits_count = null;
-    public ?int $holds_count = null;
+    public ?int $days_limit = null;
+    public ?int $courses_limit = null;
+    public ?int $visits_limit = null;
+    public ?int $holds_limit = null;
 }

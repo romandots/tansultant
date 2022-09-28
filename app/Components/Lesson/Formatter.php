@@ -39,7 +39,7 @@ class Formatter extends BaseFormatter
             'controller' => $this->whenLoaded('controller', function () {
                 return new \App\Components\User\Formatter($this->controller);
             }),
-            'visits_count' => $this->visits_count,
+            'visits_limit' => $this->visits_limit,
             'visits' => $this->whenLoaded('visits', function () {
                 return \App\Components\Visit\Formatter::collection($this->visits);
             }),

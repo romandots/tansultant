@@ -80,10 +80,10 @@ class Service extends BaseComponentService
         if ($changingTariff) {
             $this->addTariffValues($dto, $tariff);
         } else {
-            $dto->days_count = $record->days_count;
-            $dto->courses_count = $record->courses_count;
-            $dto->visits_count = $record->visits_count;
-            $dto->holds_count = $record->holds_count;
+            $dto->days_limit = $record->days_limit;
+            $dto->courses_limit = $record->courses_limit;
+            $dto->visits_limit = $record->visits_limit;
+            $dto->holds_limit = $record->holds_limit;
         }
 
         parent::update($record, $dto);
@@ -137,10 +137,10 @@ class Service extends BaseComponentService
 
     private function addTariffValues(Subscription|Dto $subscription, \App\Models\Tariff $tariff): void
     {
-        $subscription->days_count = $tariff->days_count === null ? null : $subscription->days_count + $tariff->days_count;
-        $subscription->courses_count = $tariff->courses_count === null ? null : $subscription->courses_count + $tariff->courses_count;
-        $subscription->visits_count = $tariff->visits_count === null ? null : $subscription->visits_count + $tariff->visits_count;
-        $subscription->holds_count = $tariff->holds_count === null ? null : $subscription->holds_count + $tariff->holds_count;
+        $subscription->days_limit = $tariff->days_limit === null ? null : $subscription->days_limit + $tariff->days_limit;
+        $subscription->courses_limit = $tariff->courses_limit === null ? null : $subscription->courses_limit + $tariff->courses_limit;
+        $subscription->visits_limit = $tariff->visits_limit === null ? null : $subscription->visits_limit + $tariff->visits_limit;
+        $subscription->holds_limit = $tariff->holds_limit === null ? null : $subscription->holds_limit + $tariff->holds_limit;
     }
 
     private function setExpirationDate(Subscription $subscription, bool $save = false): void
@@ -149,7 +149,7 @@ class Service extends BaseComponentService
             return;
         }
 
-        $days = $subscription->tariff->days_count ?? 3650;
+        $days = $subscription->tariff->days_limit ?? 3650;
         $subscription->expired_at = $subscription->activated_at->clone()
             ->addDays($days)
             ->setHour(23)

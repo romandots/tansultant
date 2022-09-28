@@ -45,10 +45,10 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->name = $dto->name;
         $record->price = $dto->price;
         $record->prolongation_price = $dto->prolongation_price;
-        $record->courses_count = $dto->courses_count;
-        $record->visits_count = $dto->visits_count;
-        $record->days_count = $dto->days_count;
-        $record->holds_count = $dto->holds_count;
+        $record->courses_limit = $dto->courses_limit;
+        $record->visits_limit = $dto->visits_limit;
+        $record->days_limit = $dto->days_limit;
+        $record->holds_limit = $dto->holds_limit;
         $record->status = $dto->status;
     }
 

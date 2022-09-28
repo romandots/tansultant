@@ -12,10 +12,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property float $price
  * @property float $prolongation_price
- * @property int|null $courses_count
- * @property int|null $visits_count
- * @property int|null $days_count
- * @property int|null $holds_count
+ * @property int|null $courses_limit
+ * @property int|null $visits_limit
+ * @property int|null $days_limit
+ * @property int|null $holds_limit
  * @property-read HasMany<Subscription>|null $subscriptions
  * @property-read BelongsToMany<Course>|null $courses
  * @property Enum\TariffStatus $status

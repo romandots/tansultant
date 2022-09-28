@@ -39,10 +39,10 @@ class TariffControllerTest extends AdminControllerTest
         $dto->name = 'Тестовый тариф';
         $dto->price = 1200;
         $dto->prolongation_price = 1000;
-        $dto->courses_count = 12;
-        $dto->visits_count = 12;
-        $dto->days_count = 28;
-        $dto->holds_count = 0;
+        $dto->courses_limit = 12;
+        $dto->visits_limit = 12;
+        $dto->days_limit = 28;
+        $dto->holds_limit = 0;
 
         return $dto;
     }
@@ -53,10 +53,10 @@ class TariffControllerTest extends AdminControllerTest
         return [
             'price' => $this->dto->price,
             'prolongation_price' => $this->dto->prolongation_price,
-            'courses_count' => $this->dto->courses_count,
-            'visits_count' => $this->dto->visits_count,
-            'days_count' => $this->dto->days_count,
-            'holds_count' => $this->dto->holds_count,
+            'courses_limit' => $this->dto->courses_limit,
+            'visits_limit' => $this->dto->visits_limit,
+            'days_limit' => $this->dto->days_limit,
+            'holds_limit' => $this->dto->holds_limit,
         ];
     }
 
@@ -66,10 +66,10 @@ class TariffControllerTest extends AdminControllerTest
         return [
             'price' => 2000,
             'prolongation_price' => 1500,
-            'courses_count' => 20,
-            'visits_count' => 24,
-            'days_count' => 30,
-            'holds_count' => 1,
+            'courses_limit' => 20,
+            'visits_limit' => 24,
+            'days_limit' => 30,
+            'holds_limit' => 1,
         ];
     }
 

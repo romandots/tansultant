@@ -36,22 +36,22 @@ class StoreTariffRequest extends StoreRequest
                 'integer',
                 'min:0',
             ],
-            'courses_count' => [
+            'courses_limit' => [
                 'nullable',
                 'integer',
                 'min:0',
             ],
-            'visits_count' => [
+            'visits_limit' => [
                 'nullable',
                 'integer',
                 'min:0',
             ],
-            'days_count' => [
+            'days_limit' => [
                 'nullable',
                 'integer',
                 'min:0',
             ],
-            'holds_count' => [
+            'holds_limit' => [
                 'nullable',
                 'integer',
                 'min:0',
@@ -68,10 +68,10 @@ class StoreTariffRequest extends StoreRequest
         $dto->name = $validated['name'];
         $dto->price = (float)$validated['price'];
         $dto->prolongation_price = (float)($validated['prolongation_price'] ?? $validated['price']);
-        $dto->courses_count = isset($validated['courses_count']) ? (int)$validated['courses_count'] : null;
-        $dto->visits_count = isset($validated['visits_count']) ? (int)$validated['visits_count'] : null;
-        $dto->days_count = isset($validated['days_count']) ? (int)$validated['days_count'] : null;
-        $dto->holds_count = isset($validated['holds_count']) ? (int)$validated['holds_count'] : null;
+        $dto->courses_limit = isset($validated['courses_limit']) ? (int)$validated['courses_limit'] : null;
+        $dto->visits_limit = isset($validated['visits_limit']) ? (int)$validated['visits_limit'] : null;
+        $dto->days_limit = isset($validated['days_limit']) ? (int)$validated['days_limit'] : null;
+        $dto->holds_limit = isset($validated['holds_limit']) ? (int)$validated['holds_limit'] : null;
 
         return $dto;
     }
