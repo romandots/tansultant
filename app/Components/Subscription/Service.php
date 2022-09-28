@@ -137,8 +137,8 @@ class Service extends BaseComponentService
 
     private function addTariffValues(Subscription|Dto $subscription, \App\Models\Tariff $tariff): void
     {
+        $subscription->courses_limit = $tariff->courses_limit;
         $subscription->days_limit = $tariff->days_limit === null ? null : $subscription->days_limit + $tariff->days_limit;
-        $subscription->courses_limit = $tariff->courses_limit === null ? null : $subscription->courses_limit + $tariff->courses_limit;
         $subscription->visits_limit = $tariff->visits_limit === null ? null : $subscription->visits_limit + $tariff->visits_limit;
         $subscription->holds_limit = $tariff->holds_limit === null ? null : $subscription->holds_limit + $tariff->holds_limit;
     }
