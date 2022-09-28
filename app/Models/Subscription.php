@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $name
  * @property string $tariff_id
  * @property string $student_id
- * @property string|null $payment_id
  * @property int|null $courses_limit
  * @property int|null $visits_limit
  * @property int|null $days_limit
@@ -22,7 +21,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $visits_count
  * @property int|null $days_count
  * @property int|null $holds_count
- * @property-read BelongsTo<Payment>|Payment|null $payment
  * @property-read BelongsTo<Tariff>|Tariff|null $tariff
  * @property-read BelongsTo<Student>|Student|null $student
  * @property-read BelongsToMany<Course>|null $courses
