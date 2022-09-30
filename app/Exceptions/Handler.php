@@ -7,6 +7,7 @@ namespace App\Exceptions;
 use App\Components\Account\Exceptions\InsufficientFundsAccountException;
 use App\Components\Lesson\Exceptions\Exception as LessonException;
 use App\Components\Schedule\Exceptions\ScheduleSlotIsOccupied;
+use App\Components\Subscription\Exceptions\Exception as SubscriptionException;
 use App\Components\Subscription\Exceptions\ProlongationPeriodExpired;
 use App\Components\User\Exceptions\OldPasswordInvalidException;
 use App\Components\Visit\Exceptions\NoSubscriptionsException;
@@ -83,6 +84,7 @@ class Handler extends BaseExceptionHandler
             LessonException::class => [$this, 'renderAsJson'],
             \BadMethodCallException::class => [$this, 'renderBadMethodCallAsJson'],
             RelationNotFoundException::class => [$this, 'renderRelationNotFoundAsJson'],
+            SubscriptionException::class => [$this, 'renderAsJson'],
         ];
     }
 
@@ -92,11 +94,11 @@ class Handler extends BaseExceptionHandler
      */
     protected function renderAsJson(ReadableExceptionInterface $exception): \Illuminate\Http\JsonResponse
     {
+        $payload = $exception->getData();
         $output = [
             'error' => $exception->getMessage(),
-            'message' => \trans('exceptions.' . $exception->getMessage()),
+            'message' => \trans('exceptions.' . $exception->getMessage(), $payload),
         ];
-        $payload = $exception->getData();
         if (null !== $payload) {
             $output['data'] = $payload;
         }

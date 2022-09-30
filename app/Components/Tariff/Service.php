@@ -7,6 +7,7 @@ namespace App\Components\Tariff;
 use App\Common\BaseComponentService;
 use App\Common\Contracts;
 use App\Models\Course;
+use App\Models\Enum\CourseStatus;
 use App\Models\Enum\TariffStatus;
 use App\Models\Tariff;
 use App\Models\User;
@@ -68,9 +69,16 @@ class Service extends BaseComponentService
      * @param User $user
      * @return void
      * @throws \Exception
+     * @throws Exceptions\CannotAttachDisabledCourse
      */
     public function attachCourses(Tariff $tariff, iterable $courses, User $user): void
     {
+        foreach ($courses as $course) {
+            if ($course->status === CourseStatus::DISABLED) {
+                throw new Exceptions\CannotAttachDisabledCourse($course);
+            }
+        }
+
         $originalRecord = clone $tariff;
         $this->getRepository()->attachCourses($tariff, $courses);
         $this->debug("Attach courses to tariff {$tariff->name}", (array)$courses);

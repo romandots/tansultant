@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Components\Subscription;
 
 use App\Models\Course;
-use App\Models\Enum\CourseStatus;
 use App\Models\Enum\SubscriptionStatus;
 use App\Models\Subscription;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -18,7 +18,6 @@ use Illuminate\Support\Collection;
  * @method Subscription make()
  * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method \Illuminate\Database\Eloquent\Collection<Subscription> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
- * @method Subscription find(string $id)
  * @method Subscription findTrashed(string $id)
  * @method Subscription create(Dto $dto)
  * @method void update($record, Dto $dto)
@@ -77,10 +76,11 @@ class Repository extends \App\Common\BaseComponentRepository
     public function attachCourses(Subscription $subscription, iterable $courses): void
     {
         foreach ($courses as $course) {
-            if ($course->status === CourseStatus::DISABLED) {
-                throw new Exceptions\CannotAttachDisabledCourse($course);
+            if ($subscription->courses->where('id', $course->id)->count()) {
+                continue;
             }
-            $subscription->courses()->attach($course->id);
+
+            $subscription->courses()->attach($course->id, ['created_at' => Carbon::now()]);
         }
     }
 

@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Components\Subscription;
 
 use App\Common\BaseComponentFacade;
+use App\Common\DTO\IdsDto;
 use App\Common\DTO\ShowDto;
-use App\Models\Course;
+use App\Components\Loader;
 use App\Models\Enum\SubscriptionStatus;
 use App\Models\Subscription;
 use App\Models\User;
@@ -46,26 +47,36 @@ class Facade extends BaseComponentFacade
     }
 
     /**
-     * @param Subscription $subscription
-     * @param iterable<Course> $courses
-     * @param User $user
-     * @return void
+     * @param IdsDto $dto
+     * @return Subscription
      * @throws \Exception
      */
-    public function attachCourses(Subscription $subscription, iterable $courses, User $user): void
+    public function findAndAttachCourses(IdsDto $dto): Subscription
     {
-        $this->getService()->attachCourses($subscription, $courses, $user);
+        /** @var Subscription $subscription */
+        $subscription = $this->getRepository()->find($dto->id);
+        $courses = Loader::courses()->getMany($dto->relations_ids);
+        $this->getService()->attachCourses($subscription, $courses, $dto->user);
+
+        return $subscription
+            ->load($dto->with)
+            ->loadCount($dto->with_count);
     }
 
     /**
-     * @param Subscription $subscription
-     * @param iterable<Course> $courses
-     * @param User $user
-     * @return void
+     * @param IdsDto $dto
+     * @return Subscription
      * @throws \Exception
      */
-    public function detachCourses(Subscription $subscription, iterable $courses, User $user): void
+    public function findAndDetachCourses(IdsDto $dto): Subscription
     {
-        $this->getService()->detachCourses($subscription, $courses, $user);
+        /** @var Subscription $subscription */
+        $subscription = $this->getRepository()->find($dto->id);
+        $courses = Loader::courses()->getMany($dto->relations_ids);
+        $this->getService()->detachCourses($subscription, $courses, $dto->user);
+
+        return $subscription
+            ->load($dto->with)
+            ->loadCount($dto->with_count);
     }
 }

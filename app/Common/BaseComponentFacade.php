@@ -61,6 +61,18 @@ abstract class BaseComponentFacade extends BaseFacade
     }
 
     /**
+     * Method returns many records by ids
+     *
+     * @param iterable $ids
+     * @param array $relations
+     * @return Collection
+     */
+    public function getMany(iterable $ids, array $relations = []): Collection
+    {
+        return $this->getRepository()->getMany($ids, $relations, 'id');
+    }
+
+    /**
      * Search records by defined params
      * and return paginated result
      *

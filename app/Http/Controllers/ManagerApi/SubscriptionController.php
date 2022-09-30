@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
+use App\Common\Requests\ManageRelationsRequest;
 use App\Components\Subscription as Component;
 use App\Http\Requests\ManagerApi\SearchSubscriptionRequest;
 use App\Http\Requests\ManagerApi\StoreSubscriptionRequest;
@@ -45,5 +46,17 @@ class SubscriptionController extends AdminController
     public function update(string $id, StoreSubscriptionRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         return $this->_update($id, $request);
+    }
+
+    public function attachCourses(ManageRelationsRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    {
+        $subscription = $this->getFacade()->findAndAttachCourses($request->getDto());
+        return new \App\Components\Subscription\Formatter($subscription);
+    }
+
+    public function detachCourses(ManageRelationsRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    {
+        $subscription = $this->getFacade()->findAndDetachCourses($request->getDto());
+        return new \App\Components\Subscription\Formatter($subscription);
     }
 }

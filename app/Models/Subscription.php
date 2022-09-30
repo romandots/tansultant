@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * @property string $id
@@ -23,8 +24,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $holds_count
  * @property-read BelongsTo<Tariff>|Tariff|null $tariff
  * @property-read BelongsTo<Student>|Student|null $student
- * @property-read BelongsToMany<Course>|null $courses
- * @property-read BelongsToMany<Payment>|null $payments
+ * @property-read BelongsToMany|Collection<Course>|null $courses
+ * @property-read BelongsToMany|Collection<Payment>|null $payments
  * @property-read HasMany<Hold>|null $holds
  * @property-read HasMany<Visit>|null $visits
  * @property Enum\SubscriptionStatus $status

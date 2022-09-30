@@ -6,6 +6,7 @@ use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * @property string $id
@@ -16,8 +17,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int|null $visits_limit
  * @property int|null $days_limit
  * @property int|null $holds_limit
- * @property-read HasMany<Subscription>|null $subscriptions
- * @property-read BelongsToMany<Course>|null $courses
+ * @property-read HasMany<Subscription>|Collection<Subscription>|null $subscriptions
+ * @property-read BelongsToMany<Course>|Collection<Course>|null $courses
  * @property Enum\TariffStatus $status
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon|null $updated_at

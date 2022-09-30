@@ -36,6 +36,7 @@ use App\Services\Permissions\PersonsPermission;
 use App\Services\Permissions\SchedulesPermission;
 use App\Services\Permissions\StudentsPermission;
 use App\Services\Permissions\SubscriptionsPermission;
+use App\Services\Permissions\TariffsPermission;
 use App\Services\Permissions\UsersPermission;
 use App\Services\Permissions\VisitsPermission;
 
@@ -180,17 +181,21 @@ Route::namedGroup('subscriptions',ManagerApi\SubscriptionController::class, stat
     Route::namedRoute('update', 'put', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
     Route::namedRoute('destroy', 'delete', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::DELETE]);
     Route::namedRoute('restore', 'post', '{id:uuid}/restore', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::RESTORE]);
+    Route::namedRoute('attachCourses', 'post', '{id:uuid}/courses', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
+    Route::namedRoute('detachCourses', 'delete', '{id:uuid}/courses', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
 });
 
 // TARIFFS
 Route::namedGroup('tariffs',ManagerApi\TariffController::class, static function () {
-    Route::namedRoute('suggest', 'get', '/suggest', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::READ]);
-    Route::namedRoute('search', 'get', '/', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::READ]);
-    Route::namedRoute('store', 'post', '/', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::CREATE]);
-    Route::namedRoute('show', 'get', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::READ]);
-    Route::namedRoute('update', 'put', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::CREATE]);
-    Route::namedRoute('destroy', 'delete', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::DELETE]);
-    Route::namedRoute('restore', 'post', '{id:uuid}/restore', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::RESTORE]);
+    Route::namedRoute('suggest', 'get', '/suggest', [TariffsPermission::MANAGE, TariffsPermission::READ]);
+    Route::namedRoute('search', 'get', '/', [TariffsPermission::MANAGE, TariffsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [TariffsPermission::MANAGE, TariffsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id:uuid}', [TariffsPermission::MANAGE, TariffsPermission::READ]);
+    Route::namedRoute('update', 'put', '{id:uuid}', [TariffsPermission::MANAGE, TariffsPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id:uuid}', [TariffsPermission::MANAGE, TariffsPermission::DELETE]);
+    Route::namedRoute('restore', 'post', '{id:uuid}/restore', [TariffsPermission::MANAGE, TariffsPermission::RESTORE]);
+    Route::namedRoute('attachCourses', 'post', '{id:uuid}/courses', [TariffsPermission::MANAGE, TariffsPermission::UPDATE]);
+    Route::namedRoute('detachCourses', 'delete', '{id:uuid}/courses', [TariffsPermission::MANAGE, TariffsPermission::UPDATE]);
 });
 
 // USERS

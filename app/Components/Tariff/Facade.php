@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Components\Tariff;
 
 use App\Common\BaseComponentFacade;
+use App\Common\DTO\IdsDto;
 use App\Common\DTO\ShowDto;
-use App\Models\Course;
+use App\Components\Loader;
 use App\Models\Tariff;
-use App\Models\User;
 
 /**
  * @method Service getService()
@@ -31,26 +31,30 @@ class Facade extends BaseComponentFacade
     }
 
     /**
-     * @param Tariff $tariff
-     * @param iterable<Course> $courses
-     * @param User $user
-     * @return void
+     * @param IdsDto $dto
+     * @return Tariff
      * @throws \Exception
      */
-    public function findAndAttachCourses(Tariff $tariff, iterable $courses, User $user): void
+    public function findAndAttachCourses(IdsDto $dto): Tariff
     {
-        $this->getService()->attachCourses($tariff, $courses, $user);
+        $tariff = $this->getRepository()->find($dto->id);
+        $courses = Loader::courses()->getMany($dto->relations_ids);
+        $this->getService()->attachCourses($tariff, $courses, $dto->user);
+
+        return $tariff->load('courses.instructor');
     }
 
     /**
-     * @param Tariff $tariff
-     * @param iterable $courses
-     * @param User $user
-     * @return void
+     * @param IdsDto $dto
+     * @return Tariff
      * @throws \Exception
      */
-    public function findAndDetachCourses(Tariff $tariff, iterable $courses, User $user): void
+    public function findAndDetachCourses(IdsDto $dto): Tariff
     {
-        $this->getService()->detachCourses($tariff, $courses, $user);
+        $tariff = $this->getRepository()->find($dto->id);
+        $courses = Loader::courses()->getMany($dto->relations_ids);
+        $this->getService()->detachCourses($tariff, $courses, $dto->user);
+
+        return $tariff->load('courses.instructor');
     }
 }

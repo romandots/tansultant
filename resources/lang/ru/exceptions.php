@@ -33,4 +33,6 @@ return [
     'lesson_has_visits' => 'Сначала удалите все посещения',
     'lesson_not_completely_paid' => 'Не все посещения оплачены',
     'invalid_relation' => 'Связь не найдена',
+    'courses_limit_reached' => 'Достигнут лимит (:limit) количества курсов для подписки',
+    'tariff_does_not_include_course' => 'Тариф :tariff не включает курс :course',
 ];

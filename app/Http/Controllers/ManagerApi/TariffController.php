@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
+use App\Common\Requests\ManageRelationsRequest;
 use App\Components\Tariff as Component;
 use App\Http\Requests\ManagerApi\SearchTariffRequest;
 use App\Http\Requests\ManagerApi\StoreTariffRequest;
@@ -47,10 +48,15 @@ class TariffController extends AdminController
         return $this->_update($id, $request);
     }
 
-    public function attachCourses(string $id, AttachCoursesToTariffRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    public function attachCourses(ManageRelationsRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $record = $this->getFacade()->attachCourses($id, $request->getDto(), $this->getSingleRecordRelations());
-        return $this->makeResource($record);
+        $tariff = $this->getFacade()->findAndAttachCourses($request->getDto());
+        return new \App\Components\Tariff\Formatter($tariff);
+    }
 
+    public function detachCourses(ManageRelationsRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    {
+        $tariff = $this->getFacade()->findAndDetachCourses($request->getDto());
+        return new \App\Components\Tariff\Formatter($tariff);
     }
 }

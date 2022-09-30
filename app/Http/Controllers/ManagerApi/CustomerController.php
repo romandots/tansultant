@@ -14,13 +14,11 @@ use App\Common\Controllers\AdminController;
 use App\Components\Customer as Component;
 use App\Http\Requests\ManagerApi\SearchCustomerRequest;
 use App\Http\Requests\ManagerApi\StoreCustomerRequest;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection _search(\App\Common\Requests\SearchRequest $request)
  * @method array suggest(\App\Common\Requests\SuggestRequest $request)
- * @method \Illuminate\Http\Resources\Json\JsonResource show(string $id)
  * @method \Illuminate\Http\Resources\Json\JsonResource _store(\App\Common\Requests\StoreRequest $request)
  * @method \Illuminate\Http\Resources\Json\JsonResource _update(string $id, \App\Common\Requests\StoreRequest $request)
  * @method void destroy(string $id)
@@ -39,14 +37,6 @@ class CustomerController extends AdminController
             singleRecordRelations: ['person'],
         );
     }
-
-
-    public function show(string $id): JsonResource
-    {
-        $record = $this->getFacade()->find($id, $this->getSingleRecordRelations());
-        return $this->makeResource($record);
-    }
-
 
     public function search(SearchCustomerRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {

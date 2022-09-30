@@ -9,6 +9,7 @@ use App\Common\Contracts;
 use App\Common\Contracts\DtoWithUser;
 use App\Components\Loader;
 use App\Models\Course;
+use App\Models\Enum\CourseStatus;
 use App\Models\Enum\SubscriptionStatus;
 use App\Models\Enum\TariffStatus;
 use App\Models\Subscription;
@@ -169,9 +170,27 @@ class Service extends BaseComponentService
      * @param User $user
      * @return void
      * @throws \Exception
+     * @throws Exceptions\CoursesLimitReached
+     * @throws Exceptions\CannotAttachDisabledCourse
      */
     public function attachCourses(Subscription $subscription, iterable $courses, User $user): void
     {
+        if ($subscription->courses_limit !== null
+            && $subscription->loadCount('courses')->courses_count >= $subscription->courses_limit) {
+            throw new Exceptions\CoursesLimitReached($subscription->courses_limit);
+        }
+
+        $allowedCoursesIds = $subscription->tariff->load('courses')->courses->pluck('id')->toArray();
+        foreach ($courses as $course) {
+            if ($course->status === CourseStatus::DISABLED) {
+                throw new Exceptions\CannotAttachDisabledCourse($course);
+            }
+
+            if (!\in_array($course->id, $allowedCoursesIds, true)) {
+                throw new Exceptions\TariffDoesNotIncludeCourse($subscription->tariff, $course);
+            }
+        }
+
         $originalRecord = clone $subscription;
         $this->getRepository()->attachCourses($subscription, $courses);
         $this->debug("Attach courses to subscription {$subscription->name}", (array)$courses);

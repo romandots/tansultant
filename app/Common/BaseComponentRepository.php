@@ -210,6 +210,14 @@ abstract class BaseComponentRepository extends BaseRepository
         return $this->getQuery()->with($relations)->get();
     }
 
+    public function getMany(iterable $ids, array $relations = [], string $key = 'id'): Collection
+    {
+        return $this->getQuery()
+            ->whereIn($key, $ids)
+            ->with($relations)
+            ->get();
+    }
+
     protected function fillDate(Model $record, string $attribute): void
     {
         $record->{$attribute} = \Carbon\Carbon::now();
