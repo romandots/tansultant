@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components\Tariff\Exceptions;
+namespace App\Components\Course\Exceptions;
 
 use App\Exceptions\InvalidStatusException;
 use App\Models\Course;

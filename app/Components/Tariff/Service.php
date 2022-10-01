@@ -73,6 +73,10 @@ class Service extends BaseComponentService
      */
     public function attachCourses(Tariff $tariff, iterable $courses, User $user): void
     {
+        if ($tariff->status !== TariffStatus::ACTIVE) {
+            throw new Exceptions\CannotAttachArchivedTariff($tariff);
+        }
+
         foreach ($courses as $course) {
             if ($course->status === CourseStatus::DISABLED) {
                 throw new Exceptions\CannotAttachDisabledCourse($course);

@@ -104,4 +104,14 @@ class Repository extends \App\Common\BaseComponentRepository
 
         return "{$path}/{$name[0]}/{$name}";
     }
+
+    public function attachTariffs(Course $course, iterable $tariffs): void
+    {
+        $this->attachRelations($course, 'tariffs', $tariffs, ['created_at' => Carbon::now()]);
+    }
+
+    public function detachTariff(Course $course, iterable $tariffs): void
+    {
+        $this->detachRelations($course, 'tariffs', $tariffs);
+    }
 }

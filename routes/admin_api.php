@@ -87,6 +87,8 @@ Route::namedGroup('courses',ManagerApi\CourseController::class, static function 
     Route::namedRoute('restore', 'post', '{id:uuid}/restore', [CoursesPermission::MANAGE, CoursesPermission::RESTORE]);
     Route::namedRoute('disable', 'post', '{id:uuid}/disable', [CoursesPermission::MANAGE, CoursesPermission::DISABLE]);
     Route::namedRoute('enable', 'post', '{id:uuid}/enable', [CoursesPermission::MANAGE, CoursesPermission::ENABLE]);
+    Route::namedRoute('attachTariffs', 'post', '{id:uuid}/tariffs', [TariffsPermission::MANAGE, TariffsPermission::UPDATE]);
+    Route::namedRoute('detachTariffs', 'delete', '{id:uuid}/tariffs', [TariffsPermission::MANAGE, TariffsPermission::UPDATE]);
 });
 
 // CUSTOMERS

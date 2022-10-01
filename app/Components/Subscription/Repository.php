@@ -75,13 +75,7 @@ class Repository extends \App\Common\BaseComponentRepository
      */
     public function attachCourses(Subscription $subscription, iterable $courses): void
     {
-        foreach ($courses as $course) {
-            if ($subscription->courses->where('id', $course->id)->count()) {
-                continue;
-            }
-
-            $subscription->courses()->attach($course->id, ['created_at' => Carbon::now()]);
-        }
+        $this->attachRelations($subscription, 'courses', $courses, ['created_at' => Carbon::now()]);
     }
 
     /**
@@ -91,9 +85,7 @@ class Repository extends \App\Common\BaseComponentRepository
      */
     public function detachCourses(Subscription $subscription, iterable $courses): void
     {
-        foreach ($courses as $course) {
-            $subscription->courses()->detach($course->id);
-        }
+        $this->detachRelations($subscription, 'courses', $courses);
     }
 
     public function updateStatus(Subscription $subscription, SubscriptionStatus $status): void

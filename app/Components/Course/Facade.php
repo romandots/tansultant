@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Components\Course;
 
 use App\Common\BaseComponentFacade;
+use App\Common\DTO\IdsDto;
 use App\Common\DTO\ShowDto;
+use App\Components\Loader;
+use App\Models\Course;
 
 /**
  * @method Service getService()
@@ -47,5 +50,37 @@ class Facade extends BaseComponentFacade
     {
         $course = $this->getRepository()->find($id);
         $this->getService()->disable($course, $user);
+    }
+
+    /**
+     * @param IdsDto $dto
+     * @return Course
+     * @throws \Exception
+     */
+    public function findAndAttachTariffs(IdsDto $dto): Course
+    {
+        $course = $this->getRepository()->find($dto->id);
+        $tariffs = Loader::tariffs()->getMany($dto->relations_ids);
+        $this->getService()->attachTariffs($course, $tariffs, $dto->user);
+
+        return $course
+            ->load($dto->with)
+            ->loadCount($dto->with_count);
+    }
+
+    /**
+     * @param IdsDto $dto
+     * @return Course
+     * @throws \Exception
+     */
+    public function findAndDetachTariffs(IdsDto $dto): Course
+    {
+        $course = $this->getRepository()->find($dto->id);
+        $tariffs = Loader::tariffs()->getMany($dto->relations_ids);
+        $this->getService()->detachTariffs($course, $tariffs, $dto->user);
+
+        return $course
+            ->load($dto->with)
+            ->loadCount($dto->with_count);
     }
 }

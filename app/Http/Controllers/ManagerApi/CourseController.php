@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
+use App\Common\Requests\ManageRelationsRequest;
 use App\Components\Course as Component;
 use App\Http\Requests\ManagerApi\SearchCourseRequest;
 use App\Http\Requests\ManagerApi\StoreCourseRequest;
@@ -75,5 +76,17 @@ class CourseController extends AdminController
     public function enable(Request $request, string $id): void
     {
         $this->getFacade()->enable($id, $request->user());
+    }
+
+    public function attachTariffs(ManageRelationsRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    {
+        $course = $this->getFacade()->findAndAttachTariffs($request->getDto());
+        return new \App\Components\Course\Formatter($course);
+    }
+
+    public function detachTariffs(ManageRelationsRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    {
+        $course = $this->getFacade()->findAndDetachTariffs($request->getDto());
+        return new \App\Components\Course\Formatter($course);
     }
 }

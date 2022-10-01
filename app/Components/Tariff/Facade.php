@@ -41,7 +41,9 @@ class Facade extends BaseComponentFacade
         $courses = Loader::courses()->getMany($dto->relations_ids);
         $this->getService()->attachCourses($tariff, $courses, $dto->user);
 
-        return $tariff->load('courses.instructor');
+        return $tariff
+            ->load($dto->with)
+            ->loadCount($dto->with_count);
     }
 
     /**
@@ -55,6 +57,8 @@ class Facade extends BaseComponentFacade
         $courses = Loader::courses()->getMany($dto->relations_ids);
         $this->getService()->detachCourses($tariff, $courses, $dto->user);
 
-        return $tariff->load('courses.instructor');
+        return $tariff
+            ->load($dto->with)
+            ->loadCount($dto->with_count);
     }
 }

@@ -25,8 +25,8 @@ class Formatter extends BaseFormatter
             'weekday' => $this->weekday?->value,
             'from_date' => $this->from_date,
             'to_date' => $this->to_date,
-            'starts_at' => $this->starts_at,
-            'ends_at' => $this->ends_at,
+            'starts_at' => $this->starts_at->format('H:i'),
+            'ends_at' => $this->ends_at->format('H:i'),
             'duration' => Carbon::parse($this->ends_at)->diffInMinutes(Carbon::parse($this->starts_at)),
             'branch' => $this->whenLoaded(
                 'branch',

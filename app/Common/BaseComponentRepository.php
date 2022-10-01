@@ -222,4 +222,28 @@ abstract class BaseComponentRepository extends BaseRepository
     {
         $record->{$attribute} = \Carbon\Carbon::now();
     }
+
+    protected function attachRelations(Model $model, string $relation, iterable $relatedObjects, array $additional = []): void
+    {
+        $model->load($relation);
+        foreach ($relatedObjects as $relationObject) {
+            if ($model->{$relation}->where('id', $model->id)->count()) {
+                continue;
+            }
+
+            $model->{$relation}()->attach($relationObject->id, $additional);
+        }
+    }
+
+    protected function detachRelations(Model $model, string $relation, iterable $relationObjects): void
+    {
+        $model->load($relation);
+        foreach ($relationObjects as $relationObject) {
+            if ($relationObject->{$relation}->where('id', $relationObject->id)->count() === 0) {
+                continue;
+            }
+
+            $model->{$relation}()->detach($relationObject->id);
+        }
+    }
 }

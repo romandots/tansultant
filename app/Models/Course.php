@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Enum\CourseStatus;
+use App\Models\Enum\TariffStatus;
 use App\Models\Traits\UsesUuid;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Tags\HasTags;
@@ -117,6 +119,15 @@ class Course extends Model
                     ->where('to_date', '>', $date)
                     ->orWhereNull('to_date');
             });
+    }
+
+    /**
+     * @return BelongsToMany|Collection<Tariff>
+     */
+    public function tariffs(): BelongsToMany
+    {
+        return $this->belongsToMany(Tariff::class, 'tariff_has_courses')
+            ->where('status', TariffStatus::ACTIVE);
     }
 
     /**

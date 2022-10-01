@@ -59,14 +59,7 @@ class Repository extends \App\Common\BaseComponentRepository
      */
     public function attachCourses(Tariff $tariff, iterable $courses): void
     {
-        $tariff->load('courses');
-        foreach ($courses as $course) {
-            if ($tariff->courses->where('id', $course->id)->count()) {
-                continue;
-            }
-
-            $tariff->courses()->attach($course->id, ['created_at' => Carbon::now()]);
-        }
+        $this->attachRelations($tariff, 'courses', $courses, ['created_at' => Carbon::now()]);
     }
 
     /**
@@ -76,15 +69,15 @@ class Repository extends \App\Common\BaseComponentRepository
      */
     public function detachCourses(Tariff $tariff, iterable $courses): void
     {
-        foreach ($courses as $course) {
-            if ($tariff->courses->where('id', $course->id)->count() === 0) {
-                continue;
-            }
-
-            $tariff->courses()->detach($course->id);
-        }
+        $this->detachRelations($tariff, 'courses', $courses);
     }
 
+    /**
+     * @param Tariff $record
+     * @param TariffStatus $status
+     * @return void
+     * @todo Implement updateStatus method in base class
+     */
     public function updateStatus(Tariff $record, TariffStatus $status): void
     {
         $record->status = $status;

@@ -41,6 +41,9 @@ class Formatter extends BaseFormatter
             'schedules' => $this->whenLoaded('schedules', function () {
                 return \App\Components\Schedule\Formatter::collection($this->schedules);
             }),
+            'tariffs' => $this->whenLoaded('tariffs', function () {
+                return \App\Components\Tariff\Formatter::collection($this->tariffs);
+            }),
             'starts_at' => $this->starts_at?->toDateString(),
             'ends_at' => $this->ends_at?->toDateString(),
             'created_at' => $this->created_at?->toDateTimeString(),

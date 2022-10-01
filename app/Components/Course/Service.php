@@ -7,6 +7,8 @@ namespace App\Components\Course;
 use App\Common\Contracts;
 use App\Events\Course\CourseEvent;
 use App\Models\Course;
+use App\Models\Enum\CourseStatus;
+use App\Models\Enum\TariffStatus;
 use App\Models\Genre;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -136,5 +138,45 @@ class Service extends \App\Common\BaseComponentService
         // fire event
         CourseEvent::restored($record, $user);
         $this->debug('Fired CourseRestoredEvent for course #' . $record->id);
+    }
+
+    /**
+     * @param Course $course
+     * @param iterable $tariffs
+     * @param User $user
+     * @return void
+     * @throws \Exception
+     */
+    public function attachTariff(Course $course, iterable $tariffs, User $user): void
+    {
+        if ($course->status === CourseStatus::DISABLED) {
+            throw new Exceptions\CannotAttachDisabledCourse($course);
+        }
+
+        foreach ($tariffs as $tariff) {
+            if ($tariff->status === TariffStatus::ARCHIVED) {
+                throw new Exceptions\CannotAttachArchivedTariff($tariff);
+            }
+        }
+
+        $originalRecord = clone $course;
+        $this->getRepository()->attachTariffs($course, $tariffs);
+        $this->debug("Attach tariffs to course {$course->name}", (array)$tariffs);
+        $this->history->logUpdate($user, $course, $originalRecord);
+    }
+
+    /**
+     * @param Course $course
+     * @param iterable<Course> $tariffs
+     * @param User $user
+     * @return void
+     * @throws \Exception
+     */
+    public function detachCourses(Course $course, iterable $tariffs, User $user): void
+    {
+        $originalRecord = clone $course;
+        $this->getRepository()->detachCourses($course, $tariffs);
+        $this->debug("Detach tariffs from course {$course->name}", (array)$tariffs);
+        $this->history->logUpdate($user, $course, $originalRecord);
     }
 }
