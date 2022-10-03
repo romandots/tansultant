@@ -5,8 +5,6 @@ services:
       context: ../manager-app
       dockerfile: DockerfileProduction
     restart: always
-    ports:
-      - "80:80"
     depends_on:
       - api
   api:
@@ -14,8 +12,6 @@ services:
     depends_on:
       - db
       - redis
-    ports:
-      - "8080:80"
   queue:
     restart: always
   scheduler:
