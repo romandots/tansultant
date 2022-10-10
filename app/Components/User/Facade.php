@@ -39,6 +39,11 @@ class Facade extends BaseComponentFacade
         $this->getRepository()->updateSeenAt($user);
     }
 
+    public function createWithoutPerson(Dto $dto): User
+    {
+        return $this->getService()->create($dto);
+    }
+
     public function createFromPerson(Dto $dto, Person $person): User
     {
         return $this->getService()->createFromPerson($dto, $person);

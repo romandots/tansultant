@@ -47,7 +47,9 @@ class Repository extends \App\Common\BaseComponentRepository
     public function fill(Model $record, \App\Common\Contracts\DtoWithUser $dto): void
     {
         $record->status = $dto->status;
-        $record->person_id = $dto->person_id;
+        if(isset($dto->person_id)) {
+            $record->person_id = $dto->person_id;
+        }
         $record->name = $dto->name;
         $record->username = $dto->username;
         if ($dto->password) {

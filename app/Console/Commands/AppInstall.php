@@ -39,15 +39,11 @@ class AppInstall extends Command
             return;
         }
 
-        $personDto = new \App\Components\Person\Dto();
-        $personDto->first_name = $this->ask('Admin first name');
-        $personDto->last_name = $this->ask('Admin last name');
-        $person = Loader::people()->create($personDto);
-
         $userDto = new \App\Components\User\Dto();
+        $userDto->name = self::ADMIN_USERNAME;
         $userDto->username = self::ADMIN_USERNAME;
         $userDto->password = $password ?? '12345678';
-        $user = Loader::users()->createFromPerson($userDto, $person);
+        $user = Loader::users()->createWithoutPerson($userDto);
         Loader::users()->approve($user);
         $this->assignAdminRole($user);
 
