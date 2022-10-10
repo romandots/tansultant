@@ -16,7 +16,7 @@ use App\Models\Branch;
 use App\Models\Enum\AccountOwnerType;
 use App\Models\Enum\AccountType;
 use App\Models\Enum\BonusStatus;
-use App\Models\Enum\PaymentStatus;
+use App\Models\Enum\TransactionStatus;
 use App\Models\Instructor;
 use App\Models\Student;
 use Carbon\Carbon;
@@ -206,21 +206,21 @@ class AccountServiceTest extends TestCase
     {
         $userId = ['user_id' => $user->id];
         $deleted = ['deleted_at' => Carbon::now()];
-        $statusConfirmed = ['status' => PaymentStatus::CONFIRMED];
-        $statusPending = ['status' => PaymentStatus::PENDING];
-        $statusCanceled = ['status' => PaymentStatus::CANCELED];
-        $statusExpired = ['status' => PaymentStatus::EXPIRED];
+        $statusConfirmed = ['status' => TransactionStatus::CONFIRMED];
+        $statusPending = ['status' => TransactionStatus::PENDING];
+        $statusCanceled = ['status' => TransactionStatus::CANCELED];
+        $statusExpired = ['status' => TransactionStatus::EXPIRED];
         $bonusActivated = ['status' => BonusStatus::ACTIVATED];
         $bonusPending = ['status' => BonusStatus::PENDING];
         $bonusCanceled = ['status' => BonusStatus::CANCELED];
         $bonusExpired = ['status' => BonusStatus::EXPIRED];
 
-        $this->createFakePayment(100, $account, $userId + $statusConfirmed);
-        $this->createFakePayment(1, $account, $userId + $statusConfirmed + $deleted);
-        $this->createFakePayment(1, $account, $userId + $statusPending);
-        $this->createFakePayment(1, $account, $userId + $statusCanceled);
-        $this->createFakePayment(1, $account, $userId + $statusExpired);
-        $this->createFakePayment(1, $anotherAccount, $userId + $statusConfirmed);
+        $this->createFakeTransaction(100, $account, $userId + $statusConfirmed);
+        $this->createFakeTransaction(1, $account, $userId + $statusConfirmed + $deleted);
+        $this->createFakeTransaction(1, $account, $userId + $statusPending);
+        $this->createFakeTransaction(1, $account, $userId + $statusCanceled);
+        $this->createFakeTransaction(1, $account, $userId + $statusExpired);
+        $this->createFakeTransaction(1, $anotherAccount, $userId + $statusConfirmed);
 
         $this->createFakeBonus(100, $account, $userId + $bonusPending);
         $this->createFakeBonus(1, $account, $userId + $bonusActivated);

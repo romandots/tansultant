@@ -6,6 +6,9 @@ namespace App\Components\Bonus;
 
 use App\Common\BaseComponentFacade;
 use App\Common\DTO\ShowDto;
+use App\Models\Bonus;
+use App\Models\Student;
+use Illuminate\Support\Collection;
 
 /**
  * @method Service getService()
@@ -25,5 +28,15 @@ class Facade extends BaseComponentFacade
     public function __construct()
     {
         parent::__construct(Service::class);
+    }
+
+    /**
+     * @param Student $student
+     * @return Collection<Bonus>
+     * @todo implement
+     */
+    public function getStudentAvailableBonuses(Student $student): Collection
+    {
+        return new Collection();
     }
 }

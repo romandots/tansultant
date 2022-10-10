@@ -8,7 +8,7 @@ use App\Models\{Account,
     Enum\AccountOwnerType,
     Enum\AccountType,
     Enum\BonusStatus,
-    Enum\PaymentStatus,
+    Enum\TransactionStatus,
     Instructor,
     Student};
 use Illuminate\Database\Eloquent\Model;
@@ -192,7 +192,7 @@ class Service extends \App\Common\BaseComponentService
     public function getAmount(Account $account): int
     {
         return $account->load('payments')->payments
-            ->where('status', PaymentStatus::CONFIRMED)
+            ->where('status', TransactionStatus::CONFIRMED)
             ->sum('amount');
     }
 

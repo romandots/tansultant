@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Components\Payment;
+namespace App\Components\Transaction;
 
 use App\Models\Account;
-use App\Models\Enum\PaymentTransferType;
-use App\Models\Payment;
+use App\Models\Enum\TransactionTransferType;
+use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,28 +14,28 @@ use Illuminate\Database\Eloquent\Model;
  * @method array getSearchableAttributes()
  * @method bool withSoftDeletes()
  * @method \Illuminate\Database\Eloquent\Builder getQuery()
- * @method Payment make()
+ * @method Transaction make()
  * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method \Illuminate\Database\Eloquent\Collection<Payment> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
- * @method Payment find(string $id)
- * @method Payment findTrashed(string $id)
- * @method Payment create(Dto $dto)
+ * @method Transaction find(string $id)
+ * @method Transaction findTrashed(string $id)
+ * @method Transaction create(Dto $dto)
  * @method void update($record, Dto $dto)
- * @method void restore(Payment $record)
- * @method void forceDelete(Payment $record)
+ * @method void restore(Transaction $record)
+ * @method void forceDelete(Transaction $record)
  * @mixin \App\Common\BaseRepository
  */
 class Repository extends \App\Common\BaseComponentRepository
 {
     public function __construct() {
         parent::__construct(
-            Payment::class,
+            Transaction::class,
             ['name']
         );
     }
 
     /**
-     * @param Payment $record
+     * @param Transaction $record
      * @param Dto $dto
      * @return void
      */
@@ -44,8 +44,7 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->status = $dto->status;
         $record->type = $dto->type;
         $record->transfer_type = $dto->transfer_type;
-        $record->object_type = $dto->object_type;
-        $record->object_id = $dto->object_id;
+        $record->customer_id = $dto->customer_id;
         $record->user_id = $dto->user_id;
         $record->account_id = $dto->account_id;
         $record->external_id = $dto->external_id;
@@ -58,11 +57,11 @@ class Repository extends \App\Common\BaseComponentRepository
      * @param Dto $dto
      * @param Account $fromAccount
      * @param Account $toAccount
-     * @return Payment[] [$fromAccountPayment, $toAccountPayment]
+     * @return Transaction[] [$fromAccountPayment, $toAccountPayment]
      */
     public function createInternalTransaction(Dto $dto, Account $fromAccount, Account $toAccount): array
     {
-        $dto->transfer_type = PaymentTransferType::INTERNAL;
+        $dto->transfer_type = TransactionTransferType::INTERNAL;
         //$dto->status = PaymentStatus::CONFIRMED;
         $dto->confirmed_at = Carbon::now();
 
@@ -91,7 +90,7 @@ class Repository extends \App\Common\BaseComponentRepository
     }
 
     /**
-     * @param Payment $record
+     * @param Transaction $record
      * @return void
      */
     public function delete(Model $record): void

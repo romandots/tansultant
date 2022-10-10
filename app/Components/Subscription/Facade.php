@@ -33,12 +33,12 @@ class Facade extends BaseComponentFacade
         parent::__construct(Service::class);
     }
 
-    public function getStudentActiveSubscriptionsForCourse(
+    public function getStudentSubscriptionsForCourse(
         string $studentId,
         string $courseId,
         SubscriptionStatus $subscriptionStatus
     ): Collection {
-        return $this->getRepository()->getStudentActiveSubscriptionsForCourse($studentId, $courseId, $subscriptionStatus);
+        return $this->getRepository()->getStudentSubscriptionsForCourse($studentId, $courseId, $subscriptionStatus);
     }
 
     public function prolongSubscription(Subscription $subscription, User $user): void

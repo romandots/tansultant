@@ -4,6 +4,9 @@ namespace App\Models\Enum;
 
 use App\Common\Contracts\ClassBackedEnum;
 
+/**
+ * @deprecated
+ */
 enum AccountOwnerType: string implements ClassBackedEnum
 {
     case STUDENT = 'student';

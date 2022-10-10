@@ -6,7 +6,6 @@ namespace App\Components\Visit;
 
 use App\Common\BaseComponentFacade;
 use App\Common\DTO\ShowDto;
-use App\Models\Enum\PaymentStatus;
 use App\Models\Visit;
 use Illuminate\Support\Collection;
 
@@ -37,7 +36,7 @@ class Facade extends BaseComponentFacade
     public function visitsArePaid(Collection $visits): bool
     {
         foreach ($visits as $visit) {
-            if ($visit->subscription_id === null && ($visit->payment === null || $visit->payment->status !== PaymentStatus::CONFIRMED)) {
+            if ($visit->subscription_id === null && $visit->payment === null) {
                 return false;
             }
         }

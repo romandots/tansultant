@@ -2,7 +2,7 @@
 
 namespace App\Models\Enum;
 
-enum PaymentType: string
+enum TransactionType: string
 {
     case MANUAL = 'manual';
     case AUTO = 'auto';

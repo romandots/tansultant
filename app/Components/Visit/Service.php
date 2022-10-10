@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Components\Visit;
 
 use App\Components\Loader;
+use App\Components\Visit\Entity\PriceOptions;
 use App\Events\Lesson\LessonVisitsUpdatedEvent;
 use App\Models\Enum\SubscriptionStatus;
 use App\Models\Enum\VisitPaymentType;
@@ -14,6 +15,7 @@ use App\Models\Visit;
 use App\Services\ServiceLoader;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * @method Repository getRepository()
@@ -37,7 +39,7 @@ class Service extends \App\Common\BaseComponentService
     public function visitsArePaid(Collection $visits): bool
     {
         foreach ($visits as $visit) {
-            if ($visit->payment_type !== \App\Models\Payment::class
+            if ($visit->payment_type !== \App\Models\Transaction::class
                 || null === $visit->payment
                 || null === $visit->payment->paid_at) {
                 return false;
@@ -67,42 +69,47 @@ class Service extends \App\Common\BaseComponentService
             $course = $lesson->load('course')->course;
             $isCourseLesson = $course !== null;
             $subscriptions = $isCourseLesson
-                ? Loader::subscriptions()->getStudentActiveSubscriptionsForCourse(
+                ? Loader::subscriptions()->getStudentSubscriptionsForCourse(
                     $student->id,
                     $course->id,
                     SubscriptionStatus::ACTIVE
                 )
                 : new Collection();
-            $price = (int)ServiceLoader::price()->calculateLessonVisitPrice($lesson, $student);
-            $isChosenSubscriptionValid = $dto->subscription_id && $subscriptions->where(
-                    'id',
-                    $dto->subscription_id
-                )->count() === 0;
+            $bonuses = Loader::bonuses()->getStudentAvailableBonuses($student);
+            $price = ServiceLoader::price()->calculateLessonVisitPrice($lesson, $student);
+            $priceOptions = $this->getPriceOptions($price, $bonuses);
+            $isChosenSubscriptionValid = $dto->subscription_id
+                && $subscriptions->where('id', $dto->subscription_id)->count() !== 0;
 
             // Pick subscription
             if ($dto->pay_from_balance) {
                 $dto->payment_type = VisitPaymentType::PAYMENT;
+                if (null !== $dto->bonus_id
+                    && !$priceOptions->bonuses->contains('id', '=', $dto->bonus_id)) {
+                    throw new \LogicException('bonus_id_is_invalid');
+                }
             } else {
                 $dto->payment_type = VisitPaymentType::SUBSCRIPTION;
 
                 // Only course lessons can be paid with subscription
                 if (!$isCourseLesson) {
-                    throw new Exceptions\NoSubscriptionsException($price);
+                    throw new \LogicException('only_course_lessons_can_be_paid_with_subscriptions');
                 }
 
                 if ($dto->subscription_id === null || !$isChosenSubscriptionValid) {
-                    $dto->subscription_id = $this->pickCompatibleSubscription($subscriptions, $price)->id;
+                    $dto->subscription_id = $this->pickCompatibleSubscription($subscriptions, $priceOptions)->id;
                 }
             }
 
-            return \DB::transaction(function () use ($student, $price, $dto) {
+            return \DB::transaction(function () use ($student, $dto) {
                 // Create visit
                 /** @var Visit $visit */
                 $visit = parent::create($dto);
+                $bonus = $dto->bonus_id ? Loader::bonuses()->find($dto->bonus_id) : null;
 
                 // Create payment
                 if ($dto->payment_type === VisitPaymentType::PAYMENT) {
-                    $payment = Loader::payments()->createVisitPayment($price, $visit, $student, $dto->getUser());
+                    $payment = Loader::payments()->createVisitPayment($visit, $student, $bonus, $dto->getUser());
                     $visit->payment_id = $payment->id;
                     $visit->subscription_id = null;
                     $visit->save();
@@ -115,7 +122,7 @@ class Service extends \App\Common\BaseComponentService
         });
     }
 
-    protected function pickCompatibleSubscription(Collection $subscriptions, int $price): Subscription
+    protected function pickCompatibleSubscription(Collection $subscriptions, PriceOptions $priceOptions): Subscription
     {
         //  If there's more than one -- let user choose
         if ($subscriptions->count() > 1) {
@@ -124,10 +131,10 @@ class Service extends \App\Common\BaseComponentService
 
         // If there's none -- let user confirm the payment
         if ($subscriptions->count() === 0) {
-            throw new Exceptions\NoSubscriptionsException($price);
+            throw new Exceptions\NoSubscriptionsException($priceOptions);
         }
 
-        // Otherwise set the only compatible subscription
+        // Otherwise, set the only compatible subscription
         return $subscriptions->first();
     }
 
@@ -167,5 +174,10 @@ class Service extends \App\Common\BaseComponentService
         } catch (\Throwable $exception) {
             $this->error('Failed dispatching LessonVisitsUpdated event', $exception);
         }
+    }
+
+    #[Pure] private function getPriceOptions(float $price, Collection $bonuses): Entity\PriceOptions
+    {
+        return new Entity\PriceOptions($price, $bonuses);
     }
 }

@@ -12,21 +12,21 @@ namespace Tests\Traits;
 
 use App\Models\Account;
 use App\Models\Bonus;
-use App\Models\Payment;
+use App\Models\Transaction;
 
 /**
  * Class CreatesFakePayment
  * @package Tests\Traits
  */
-trait CreatesFakePayment
+trait CreatesFakeTransaction
 {
     /**
      * @param int|null $amount
      * @param Account|null $account
      * @param array|null $attributes
-     * @return Payment
+     * @return Transaction
      */
-    protected function createFakePayment(?int $amount = null, ?Account $account = null, ?array $attributes = []): Payment
+    protected function createFakeTransaction(?int $amount = null, ?Account $account = null, ?array $attributes = []): Transaction
     {
         if (null !== $amount) {
             $attributes['amount'] = $amount;
@@ -44,7 +44,7 @@ trait CreatesFakePayment
             $attributes['user_id'] = $this->createFakeUser()->id;
         }
 
-        return Payment::factory()->create($attributes);
+        return Transaction::factory()->create($attributes);
     }
 
     /**
@@ -55,18 +55,18 @@ trait CreatesFakePayment
      * @return array
      * @throws \Exception
      */
-    protected function createFakeTransaction(
+    protected function createFakeInternalTransaction(
         ?int $amount = null,
         ?Account $fromAccount = null,
         ?Account $toAccount = null,
         ?array $attributes = []
     ):
     array {
-        $payment = $this->createFakePayment(0 - $amount, $fromAccount, $attributes);
+        $payment = $this->createFakeTransaction(0 - $amount, $fromAccount, $attributes);
         $attributes = $payment->toArray();
         $attributes['id'] = \uuid();
         $attributes['related_id'] = $payment->id;
-        $related = $this->createFakePayment($amount, $toAccount, $attributes);
+        $related = $this->createFakeTransaction($amount, $toAccount, $attributes);
         $payment->related_id = $related->id;
 
         return [$payment, $related];

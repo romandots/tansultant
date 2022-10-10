@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Components\Payment;
+namespace App\Components\Transaction;
 
 use App\Common\BaseFormatter;
 use App\Models\Lesson;
 use App\Models\Visit;
 
 /**
- * @mixin \App\Models\Payment
+ * @mixin \App\Models\Transaction
  */
 class Formatter extends BaseFormatter
 {

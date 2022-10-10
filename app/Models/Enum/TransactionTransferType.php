@@ -2,7 +2,7 @@
 
 namespace App\Models\Enum;
 
-enum PaymentTransferType: string
+enum TransactionTransferType: string
 {
     case CASH = 'cash';
     case CARD = 'card';

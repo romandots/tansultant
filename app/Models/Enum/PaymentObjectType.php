@@ -4,6 +4,9 @@ namespace App\Models\Enum;
 
 use App\Common\Contracts\ClassBackedEnum;
 
+/**
+ * @deprecated
+ */
 enum PaymentObjectType: string implements ClassBackedEnum
 {
     case SUBSCRIPTION = 'subscription';

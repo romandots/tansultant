@@ -51,7 +51,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Intent> $intents
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Visit> $visits
  * @property-read int|null $visits_limit
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null $payment
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newQuery()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Lesson onlyTrashed()
@@ -158,14 +157,6 @@ class Lesson extends Model
         return $this
             ->hasMany(Intent::class, 'event_id')
             ->where('event_type', VisitEventType::fromClass(self::class));
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null
-     */
-    public function payment(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Payment::class);
     }
 
     /**

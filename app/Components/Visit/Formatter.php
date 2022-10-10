@@ -5,11 +5,6 @@ declare(strict_types=1);
 namespace App\Components\Visit;
 
 use App\Common\BaseFormatter;
-use App\Http\Resources\PaymentResource;
-use App\Http\Resources\PublicApi\LessonResource;
-use App\Http\Resources\StudentResource;
-use App\Http\Resources\UserResource;
-use App\Models\Enum\PaymentStatus;
 use App\Models\Lesson;
 
 /**
@@ -48,9 +43,7 @@ class Formatter extends BaseFormatter
 //                return Promocode::class === $this->payment_type
 //                    ? new \App\Components\Promocode\Formatter($this->payment) : null;
 //            }),
-            'is_paid' => $this->whenLoaded('payment', function () {
-                return null !== $this->payment && $this->payment->status === PaymentStatus::CONFIRMED;
-            }),
+            'is_paid' => null !== $this->payment_id || null !== $this->subscription_id,
             'created_at' => $this->created_at->toDateTimeString()
         ];
     }

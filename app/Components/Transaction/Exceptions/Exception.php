@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Components\Payment\Exceptions;
+namespace App\Components\Transaction\Exceptions;
 
 use App\Exceptions\BaseException;
 

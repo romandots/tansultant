@@ -95,6 +95,11 @@ class Loader extends Locator
         return self::get(Tariff\Facade::class);
     }
 
+    public static function transactions(): Transaction\Facade
+    {
+        return self::get(Transaction\Facade::class);
+    }
+
     public static function users(): User\Facade
     {
         return self::get(User\Facade::class);

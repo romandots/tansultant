@@ -2,7 +2,7 @@
 
 namespace App\Models\Enum;
 
-enum PaymentStatus: string
+enum TransactionStatus: string
 {
     case PENDING = 'pending';
     case EXPIRED = 'expired';

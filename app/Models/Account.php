@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Enum\AccountOwnerType;
 use App\Models\Enum\AccountType;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,14 +23,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $id
  * @property string $name
  * @property AccountType $type [personal|savings|operational]
- * @property AccountOwnerType $owner_type [App\Models\Student|App\Models\Instructor|App\Models\Branch]
- * @property int $owner_id
+ * @property string $branch_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Bonus[] $bonuses
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Payment[] $payments
- * @property-read \Illuminate\Database\Eloquent\Relations\MorphTo|Instructor|Student|Branch $owner
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Transaction[] $payments
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Branch> $branch
  * @method static bool|null forceDelete()
  * @method static bool|null restore()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Account onlyTrashed()
@@ -62,23 +60,22 @@ class Account extends Model
     protected $table = self::TABLE;
     protected $casts = [
         'type' => AccountType::class,
-        'owner_type' => AccountOwnerType::class,
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo|Instructor|Student|Branch
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function owner(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    public function branch(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->morphTo();
+        return $this->belongsTo(Branch::class);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany|Payment[]
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|Transaction[]
      */
     public function payments(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Payment::class);
+        return $this->hasMany(Transaction::class);
     }
 
     /**

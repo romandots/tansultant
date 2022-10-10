@@ -32,7 +32,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Relations\MorphTo|\App\Models\Lesson $event
  * @property-read \App\Models\User $manager
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null $payment
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Payment>|null $payment
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Subscription>|null $subscription
  * @property-read \App\Models\Student $student
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit newModelQuery()
@@ -87,11 +87,11 @@ class Visit extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Payment|null
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Payment>|null
      */
     public function payment(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Payment::class);
+        return $this->belongsTo(\App\Models\Payment::class);
     }
 
     /**

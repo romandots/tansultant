@@ -53,7 +53,7 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->holds_limit = $dto->holds_limit;
     }
 
-    public function getStudentActiveSubscriptionsForCourse(
+    public function getStudentSubscriptionsForCourse(
         string $studentId,
         string $courseId,
         \App\Models\Enum\SubscriptionStatus $subscriptionStatus

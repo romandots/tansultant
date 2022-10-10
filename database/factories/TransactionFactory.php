@@ -3,19 +3,19 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\Enum\PaymentObjectType;
-use App\Models\Enum\PaymentStatus;
-use App\Models\Enum\PaymentTransferType;
-use App\Models\Enum\PaymentType;
-use App\Models\Payment;
+use App\Models\Branch;
+use App\Models\Enum\TransactionStatus;
+use App\Models\Enum\TransactionTransferType;
+use App\Models\Enum\TransactionType;
+use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Classroom>
  */
-class PaymentFactory extends Factory
+class TransactionFactory extends Factory
 {
-    protected $model = Payment::class;
+    protected $model = Transaction::class;
 
     /**
      * Define the model's default state.
@@ -29,11 +29,10 @@ class PaymentFactory extends Factory
             'id' => \uuid(),
             'name' => $this->faker->name,
             'amount' => $this->faker->randomNumber(),
-            'type' => $this->faker->randomElement(PaymentType::cases()),
-            'transfer_type' => $this->faker->randomElement(PaymentTransferType::cases()),
-            'status' => $this->faker->randomElement(PaymentStatus::cases()),
-            'object_type' => $this->faker->randomElement(PaymentObjectType::cases()),
-            'object_id' => \uuid(),
+            'type' => $this->faker->randomElement(TransactionType::cases()),
+            'transfer_type' => $this->faker->randomElement(TransactionTransferType::cases()),
+            'status' => $this->faker->randomElement(TransactionStatus::cases()),
+            'branch_id' => Branch::factory(),
             'account_id' => \uuid(),
             'related_id' => null,
             'external_id' => null,

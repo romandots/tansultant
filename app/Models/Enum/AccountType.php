@@ -6,5 +6,4 @@ enum AccountType: string
 {
     case OPERATIONAL = 'operational';
     case SAVINGS = 'savings';
-    case PERSONAL = 'personal';
 }

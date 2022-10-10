@@ -16,7 +16,7 @@ class Dto extends \App\Common\DTO\DtoWithUser
 
     public ?string $patronymic_name = null;
 
-    public ?\Carbon\Carbon $birth_date;
+    public ?\Carbon\Carbon $birth_date = null;
 
     public ?Gender $gender = null;
 
