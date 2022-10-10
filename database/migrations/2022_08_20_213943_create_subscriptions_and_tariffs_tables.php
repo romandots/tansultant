@@ -110,25 +110,6 @@ return new class extends Migration
                 'subscription_has_courses_primary');
         });
 
-        Schema::create('subscription_has_payments', static function (Blueprint $table) {
-            $table->uuid('subscription_id')->index();
-            $table->uuid('payment_id')->index();
-            $table->timestamp('created_at');
-
-            $table->foreign('subscription_id')
-                ->references('id')
-                ->on('subscriptions')
-                ->onDelete('cascade');
-
-            $table->foreign('payment_id')
-                ->references('id')
-                ->on('payments')
-                ->onDelete('cascade');
-
-            $table->primary(['subscription_id', 'payment_id'],
-                'subscription_has_payments_primary');
-        });
-
         Schema::table('visits', static function (Blueprint $table) {
             $table->uuid('subscription_id')->nullable();
             $table->foreign('subscription_id')
@@ -152,8 +133,8 @@ return new class extends Migration
         \DB::unprepared('DROP TYPE subscriptions_status CASCADE');
         \DB::unprepared('DROP TYPE tariffs_status CASCADE');
 
-        Schema::dropIfExists('subscription_has_payments');
         Schema::dropIfExists('subscription_has_courses');
+        Schema::dropIfExists('tariff_has_courses');
         Schema::dropIfExists('holds');
         Schema::dropIfExists('subscriptions');
         Schema::dropIfExists('tariffs');

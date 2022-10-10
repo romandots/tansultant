@@ -8,8 +8,6 @@
 
 declare(strict_types=1);
 
-use App\Models\Lesson;
-use App\Models\Payment;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -32,12 +30,9 @@ class CreateVisitsTable extends Migration
             $table->text('event_type');
             $table->uuid('event_id');
             $table->text('payment_type');
-            $table->uuid('payment_id')->nullable()->index();
             $table->timestamps();
 
             $table->index(['event_id', 'event_type'], 'morph_visits_event_id');
-
-            $table->index(['payment_id', 'payment_type'], 'morph_visits_payment_id');
 
             $table->foreign('student_id')
                 ->references('id')

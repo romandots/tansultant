@@ -8,9 +8,9 @@
 
 declare(strict_types=1);
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 /**
  * Class CreateBranchesTable
@@ -42,6 +42,13 @@ class CreateBranchesTable extends Migration
             $table->softDeletes();
         });
 
+        Schema::table('accounts', static function (Blueprint $table) {
+            $table->foreign('branch_id')
+                ->references('id')
+                ->on('branches')
+                ->cascadeOnDelete();
+        });
+
         Schema::table('schedules', static function (Blueprint $table) {
             $table->foreign('branch_id')
                 ->references('id')
@@ -57,6 +64,9 @@ class CreateBranchesTable extends Migration
      */
     public function down(): void
     {
+        Schema::table('accounts', static function (Blueprint $table) {
+            $table->dropForeign('accounts_branch_id_foreign');
+        });
         Schema::table('schedules', static function (Blueprint $table) {
             $table->dropForeign('schedules_branch_id_foreign');
         });
