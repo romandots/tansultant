@@ -7,8 +7,10 @@ namespace App\Components\Subscription;
 use App\Common\BaseComponentService;
 use App\Common\Contracts;
 use App\Common\Contracts\DtoWithUser;
+use App\Components\Bonus\Exceptions\InvalidBonusStatus;
 use App\Components\Loader;
 use App\Models\Course;
+use App\Models\Enum\BonusStatus;
 use App\Models\Enum\CourseStatus;
 use App\Models\Enum\SubscriptionStatus;
 use App\Models\Enum\TariffStatus;
@@ -42,15 +44,24 @@ class Service extends BaseComponentService
     {
         $tariff = Loader::tariffs()->find($dto->tariff_id);
         $student = Loader::students()->find($dto->student_id);
+        $bonus = $dto->bonus_id ? Loader::bonuses()->find($dto->bonus_id) : null;
 
         $this->validateTariff($tariff);
         $this->validateStudent($student);
+        $this->validateBonus($bonus);
 
         $dto->name = $tariff->name;
         $dto->status = SubscriptionStatus::NOT_PAID;
         $this->addTariffValues($dto, $tariff);
 
-        return parent::create($dto);
+        return \DB::transaction(function () use ($bonus, $student, $dto) {
+            /** @var Subscription $subscription */
+            $subscription = parent::create($dto);
+            $payment = Loader::payments()->createSubscriptionPayment($subscription, $student, $bonus, $dto->getUser());
+            $this->getRepository()->attachPayment($subscription, $payment);
+
+            return $subscription;
+        });
     }
 
 
@@ -271,5 +282,14 @@ class Service extends BaseComponentService
         if (!\in_array($record->status, $allowedStatuses, true)) {
             throw new Exceptions\InvalidSubscriptionStatus($record->status->value, $allowedStatuses);
         }
+    }
+
+    private function validateBonus(?\App\Models\Bonus $bonus): void
+    {
+        if (null === $bonus || $bonus->status === BonusStatus::PENDING) {
+            return;
+        }
+
+        throw new InvalidBonusStatus($bonus->status, [BonusStatus::PENDING]);
     }
 }

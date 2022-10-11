@@ -34,10 +34,7 @@ class Service extends BaseComponentService
 
     public function createVisitPayment(Visit $visit, Student $student, ?Bonus $bonus, User $user): Payment
     {
-        $price = $visit->price - ($bonus?->amount ?? 0);
-        if ($price < 0) {
-            throw new Exceptions\BonusIsBiggerThanPrice($bonus, $visit->price);
-        }
+        $price = $visit->price;
         $name =  trans('credit.withdrawals.visit', ['visit' => $visit->name]);
 
         return $this->createPayment($price, $name, $student, $bonus, $user);
@@ -45,17 +42,19 @@ class Service extends BaseComponentService
 
     public function createSubscriptionPayment(Subscription $subscription, Student $student, ?Bonus $bonus, User $user): Payment
     {
-        $price = $subscription->tariff->price - ($bonus?->amount ?? 0);
-        if ($price < 0) {
-            throw new Exceptions\BonusIsBiggerThanPrice($bonus, $subscription->tariff->price);
-        }
+        $price = $subscription->tariff->price;
         $name = trans('credit.withdrawals.subscription', ['subscription' => $subscription->name]);
 
         return $this->createPayment($price, $name, $student, $bonus, $user);
     }
 
-    private function createPayment(int $price, string $comment, Student $student, ?Bonus $bonus, User $user): Payment
+    private function createPayment(int $originalPrice, string $comment, Student $student, ?Bonus $bonus, User $user): Payment
     {
+        $price = $originalPrice - ($bonus?->amount ?? 0);
+        if ($price < 0) {
+            throw new Exceptions\BonusIsBiggerThanPrice($bonus, $originalPrice);
+        }
+
         $this->validateCustomerAndBonus($student, $bonus);
         $this->validateStudentFunds($student, $price);
 
@@ -68,7 +67,9 @@ class Service extends BaseComponentService
     private function buildPaymentDto(int $price, string $name, Customer $customer, ?Bonus $bonus, User $user): Dto
     {
         $credit = Loader::credits()->createWithdrawal($customer, $price, $name, $user);
-        Loader::bonuses()->activateBonus($bonus);
+        if ($bonus) {
+            Loader::bonuses()->activateBonus($bonus);
+        }
 
         $dto = new Dto($user);
         $dto->amount = 0 - $credit->amount + ($bonus?->amount ?? 0);

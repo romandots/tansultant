@@ -95,7 +95,7 @@ class Loader extends Locator
         return self::get(Subscription\Facade::class);
     }
 
-    public static function tariffs(): Tariff\Facade
+    public static function tariffs(): \App\Components\Tariff\Facade
     {
         return self::get(Tariff\Facade::class);
     }

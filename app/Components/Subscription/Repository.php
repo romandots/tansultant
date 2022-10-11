@@ -96,4 +96,14 @@ class Repository extends \App\Common\BaseComponentRepository
         }
         $this->save($subscription);
     }
+
+    public function attachPayment(Subscription $subscription, \App\Models\Payment $payment): void
+    {
+        $subscription->payments()->attach($payment->id);
+        $this->setStatus(
+            $subscription,
+            SubscriptionStatus::NOT_PAID === $subscription->status ? SubscriptionStatus::PENDING : SubscriptionStatus::ACTIVE
+        );
+        $this->save($subscription);
+    }
 }

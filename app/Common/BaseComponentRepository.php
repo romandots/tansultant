@@ -4,7 +4,6 @@ namespace App\Common;
 
 use App\Common\DTO\SearchDto;
 use App\Common\DTO\SearchFilterDto;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -252,7 +251,7 @@ abstract class BaseComponentRepository extends BaseRepository
     {
         $record->status = $status;
         if ($record::UPDATED_AT) {
-            $record->updated_at = Carbon::now();
+            $this->fillDate($record, 'updated_at');
         }
     }
 }
