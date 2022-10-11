@@ -10,7 +10,7 @@ class Loader extends Locator
         return self::get(Account\Facade::class);
     }
 
-    public static function bonuses(): Bonus\Facade
+    public static function bonuses(): \App\Components\Bonus\Facade
     {
         return self::get(Bonus\Facade::class);
     }
@@ -35,7 +35,12 @@ class Loader extends Locator
         return self::get(Course\Facade::class);
     }
 
-    public static function customers(): Customer\Facade
+    public static function credits(): \App\Components\Credit\Facade
+    {
+        return self::get(Credit\Facade);
+    }
+
+    public static function customers(): \App\Components\Customer\Facade
     {
         return self::get(Customer\Facade::class);
     }
@@ -80,7 +85,7 @@ class Loader extends Locator
         return self::get(Schedule\Facade::class);
     }
 
-    public static function students(): Student\Facade
+    public static function students(): \App\Components\Student\Facade
     {
         return self::get(Student\Facade::class);
     }

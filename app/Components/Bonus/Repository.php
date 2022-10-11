@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Components\Bonus;
 
 use App\Models\Bonus;
+use App\Models\Enum\BonusStatus;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -40,5 +42,25 @@ class Repository extends \App\Common\BaseComponentRepository
     public function fill(Model $record, \App\Common\Contracts\DtoWithUser $dto): void
     {
         $record->name = $dto->name;
+    }
+
+    public function setStatusActivated(Bonus $bonus): void
+    {
+        $bonus->activated_at = Carbon::now();
+        $this->setStatus($bonus, BonusStatus::ACTIVATED);
+        $this->save($bonus);
+    }
+
+    public function setStatusCanceled(Bonus $bonus): void
+    {
+        $bonus->canceled_at = Carbon::now();
+        $this->setStatus($bonus, BonusStatus::CANCELED);
+        $this->save($bonus);
+    }
+
+    public function setStatusExpired(Bonus $bonus): void
+    {
+        $this->setStatus($bonus, BonusStatus::EXPIRED);
+        $this->save($bonus);
     }
 }

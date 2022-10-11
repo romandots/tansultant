@@ -20,4 +20,19 @@ class Service extends \App\Common\BaseComponentService
             null
         );
     }
+
+    public function activateBonus(Bonus $bonus): void
+    {
+        $this->getRepository()->setStatusActivated($bonus);
+    }
+
+    public function cancelBonus(Bonus $bonus): void
+    {
+        $this->getRepository()->setStatusCanceled($bonus);
+    }
+
+    public function expireBonus(Bonus $bonus): void
+    {
+        $this->getRepository()->setStatusExpired($bonus);
+    }
 }

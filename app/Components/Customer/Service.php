@@ -7,6 +7,7 @@ namespace App\Components\Customer;
 use App\Common\Contracts;
 use App\Common\Contracts\DtoWithUser;
 use App\Components\Loader;
+use App\Components\Student\Exceptions\StudentHasNoCustomer;
 use App\Models\Customer;
 use App\Models\Person;
 use Illuminate\Database\Eloquent\Model;
@@ -102,5 +103,14 @@ class Service extends \App\Common\BaseComponentService
         if (null !== $person->customer && (!$customer || $customer->id !== $person->customer->id)) {
             throw new Exceptions\CustomerAlreadyExists($person->customer);
         }
+    }
+
+    public function checkStudentCredits(\App\Models\Student $student, int $amount): bool
+    {
+        if (null === $student->customer) {
+            throw new StudentHasNoCustomer($student);
+        }
+
+        return Loader::credits()->getCustomerCredits($student->customer) >= $amount;
     }
 }

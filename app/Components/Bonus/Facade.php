@@ -39,4 +39,19 @@ class Facade extends BaseComponentFacade
     {
         return new Collection();
     }
+
+    public function activateBonus(Bonus $bonus): void
+    {
+        $this->getService()->activateBonus($bonus);
+    }
+
+    public function cancelBonus(Bonus $bonus): void
+    {
+        $this->getService()->activateBonus($bonus);
+    }
+
+    public function expireBonus(Bonus $bonus): void
+    {
+        $this->getService()->activateBonus($bonus);
+    }
 }

@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  * @property string $id
+ * @property string $name
  * @property string $student_id
  * @property string|null $manager_id
  * @property string|null $payment_id
@@ -100,5 +101,10 @@ class Visit extends Model
     public function subscription(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Subscription::class);
+    }
+
+    public function getNameAttribute(): string
+    {
+        return sprintf('%s @ %s', $this->student, $this->event);
     }
 }

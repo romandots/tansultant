@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('credits', static function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('customer_id')->index();
-            $table->uuid('payment_id')->nullable()->index();
+            $table->uuid('transaction_id')->nullable()->index();
             $table->text('name');
             $table->integer('amount');
             $table->timestamp('created_at', 0)->nullable();
@@ -42,9 +42,9 @@ return new class extends Migration
                 ->on('customers')
                 ->cascadeOnDelete();
 
-            $table->foreign('payment_id')
+            $table->foreign('transaction_id')
                 ->references('id')
-                ->on('payments')
+                ->on('transactions')
                 ->cascadeOnDelete();
         });
 
@@ -92,7 +92,7 @@ return new class extends Migration
         });
 
         Schema::table('credits', static function (Blueprint $table) {
-            $table->dropForeign('credits_payment_id_foreign');
+            $table->dropForeign('credits_transactions_id_foreign');
         });
 
         Schema::dropIfExists('payments');

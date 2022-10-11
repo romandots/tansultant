@@ -105,7 +105,7 @@ class Service extends \App\Common\BaseComponentService
                 // Create visit
                 /** @var Visit $visit */
                 $visit = parent::create($dto);
-                $bonus = $dto->bonus_id ? Loader::bonuses()->find($dto->bonus_id) : null;
+                $bonus = $dto->bonus_id ? Loader::bonuses()->findById($dto->bonus_id) : null;
 
                 // Create payment
                 if ($dto->payment_type === VisitPaymentType::PAYMENT) {

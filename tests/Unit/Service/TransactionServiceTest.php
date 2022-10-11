@@ -15,10 +15,10 @@ use App\Components\Loader;
 use App\Models\Enum\AccountOwnerType;
 use App\Models\Enum\AccountType;
 use App\Models\Enum\PaymentObjectType;
-use App\Models\Enum\PaymentStatus;
-use App\Models\Enum\PaymentTransferType;
-use App\Models\Enum\PaymentType;
-use App\Models\Payment;
+use App\Models\Enum\TransactionStatus;
+use App\Models\Enum\TransactionTransferType;
+use App\Models\Enum\TransactionType;
+use App\Models\Transaction;
 use App\Models\Visit;
 use Tests\TestCase;
 use Tests\Traits\CreatesFakes;
@@ -27,11 +27,11 @@ use Tests\Traits\CreatesFakes;
  * Class PaymentServiceTest
  * @package Tests\Unit
  */
-class PaymentServiceTest extends TestCase
+class TransactionServiceTest extends TestCase
 {
     use CreatesFakes;
 
-    protected \App\Components\Payment\Service $service;
+    protected \App\Components\Transaction\Service $service;
 
     protected function setUp(): void
     {
@@ -56,7 +56,6 @@ class PaymentServiceTest extends TestCase
         $user = $this->createFakeUser();
         $studentAccount = $this->createFakeAccount([
             'type' => AccountType::PERSONAL,
-            'owner_type' => AccountOwnerType::STUDENT,
             'owner_id' => $student->id
         ]);
 
@@ -69,8 +68,8 @@ class PaymentServiceTest extends TestCase
         $this->expectException(InsufficientFundsAccountException::class);
         $this->service->createVisitPayment($price, $visit, $student, $user);
 
-        $this->createFakePayment(100, $studentAccount, [
-            'status' => PaymentStatus::CONFIRMED,
+        $this->createFakeTransaction(100, $studentAccount, [
+            'status' => TransactionStatus::CONFIRMED,
             'user_id' => $user->id
         ]);
 
@@ -81,9 +80,9 @@ class PaymentServiceTest extends TestCase
         $this->assertEquals(Visit::class, $visitPayment->object_type);
         $this->assertEquals($visit->id, $visitPayment->object_id);
         $this->assertEquals($savingsAccount->id, $visitPayment->account_id);
-        $this->assertEquals(PaymentType::AUTO, $visitPayment->type);
-        $this->assertEquals(PaymentTransferType::INTERNAL, $visitPayment->transfer_type);
-        $this->assertEquals(PaymentStatus::CONFIRMED, $visitPayment->status);
+        $this->assertEquals(TransactionType::AUTO, $visitPayment->type);
+        $this->assertEquals(TransactionTransferType::INTERNAL, $visitPayment->transfer_type);
+        $this->assertEquals(TransactionStatus::CONFIRMED, $visitPayment->status);
         $this->assertNotNull($visitPayment->confirmed_at);
 
         $relatedPayment = $visitPayment->related_payment;
@@ -92,9 +91,9 @@ class PaymentServiceTest extends TestCase
         $this->assertEquals(Visit::class, $relatedPayment->object_type);
         $this->assertEquals($visit->id, $relatedPayment->object_id);
         $this->assertEquals($studentAccount->id, $relatedPayment->account_id);
-        $this->assertEquals(PaymentType::AUTO, $relatedPayment->type);
-        $this->assertEquals(PaymentTransferType::INTERNAL, $relatedPayment->transfer_type);
-        $this->assertEquals(PaymentStatus::CONFIRMED, $relatedPayment->status);
+        $this->assertEquals(TransactionType::AUTO, $relatedPayment->type);
+        $this->assertEquals(TransactionTransferType::INTERNAL, $relatedPayment->transfer_type);
+        $this->assertEquals(TransactionStatus::CONFIRMED, $relatedPayment->status);
         $this->assertNotNull($relatedPayment->confirmed_at);
         $this->assertEquals($visitPayment->id, $relatedPayment->related_id);
     }
@@ -132,9 +131,9 @@ class PaymentServiceTest extends TestCase
         $this->assertEquals(PaymentObjectType::LESSON, $lessonPayment->object_type);
         $this->assertEquals($lesson->id, $lessonPayment->object_id);
         $this->assertEquals($savingsAccount->id, $lessonPayment->account_id);
-        $this->assertEquals(PaymentType::AUTO, $lessonPayment->type);
-        $this->assertEquals(PaymentTransferType::INTERNAL, $lessonPayment->transfer_type);
-        $this->assertEquals(PaymentStatus::CONFIRMED, $lessonPayment->status);
+        $this->assertEquals(TransactionType::AUTO, $lessonPayment->type);
+        $this->assertEquals(TransactionTransferType::INTERNAL, $lessonPayment->transfer_type);
+        $this->assertEquals(TransactionStatus::CONFIRMED, $lessonPayment->status);
         $this->assertNotNull($lessonPayment->confirmed_at);
 
         $relatedPayment = $lessonPayment->related_payment;
@@ -143,9 +142,9 @@ class PaymentServiceTest extends TestCase
         $this->assertEquals(PaymentObjectType::LESSON, $relatedPayment->object_type);
         $this->assertEquals($lesson->id, $relatedPayment->object_id);
         $this->assertEquals($instructorAccount->id, $relatedPayment->account_id);
-        $this->assertEquals(PaymentType::AUTO, $relatedPayment->type);
-        $this->assertEquals(PaymentTransferType::INTERNAL, $relatedPayment->transfer_type);
-        $this->assertEquals(PaymentStatus::CONFIRMED, $relatedPayment->status);
+        $this->assertEquals(TransactionType::AUTO, $relatedPayment->type);
+        $this->assertEquals(TransactionTransferType::INTERNAL, $relatedPayment->transfer_type);
+        $this->assertEquals(TransactionStatus::CONFIRMED, $relatedPayment->status);
         $this->assertNotNull($relatedPayment->confirmed_at);
         $this->assertEquals($lessonPayment->id, $relatedPayment->related_id);
     }
@@ -173,8 +172,8 @@ class PaymentServiceTest extends TestCase
             'owner_id' => $branchId
         ]);
 
-        $payment = $this->createFakePayment(100);
-        $related = $this->createFakePayment(100);
+        $payment = $this->createFakeTransaction(100);
+        $related = $this->createFakeTransaction(100);
 
         $payment->related_id = $related->id;
         $related->related_id = $payment->id;
@@ -182,22 +181,22 @@ class PaymentServiceTest extends TestCase
         $payment->save();
         $related->save();
 
-        $this->assertDatabaseHas(Payment::TABLE, [
+        $this->assertDatabaseHas(Transaction::TABLE, [
             'id' => $payment->id,
             'deleted_at' => null
         ]);
-        $this->assertDatabaseHas(Payment::TABLE, [
+        $this->assertDatabaseHas(Transaction::TABLE, [
             'id' => $related->id,
             'deleted_at' => null
         ]);
 
         $this->service->delete($payment, $user);
 
-        $this->assertDatabaseMissing(Payment::TABLE, [
+        $this->assertDatabaseMissing(Transaction::TABLE, [
             'id' => $payment->id,
             'deleted_at' => null
         ]);
-        $this->assertDatabaseMissing(Payment::TABLE, [
+        $this->assertDatabaseMissing(Transaction::TABLE, [
             'id' => $related->id,
             'deleted_at' => null
         ]);

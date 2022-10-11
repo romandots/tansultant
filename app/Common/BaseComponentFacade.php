@@ -140,6 +140,15 @@ abstract class BaseComponentFacade extends BaseFacade
         return $this->getRepository()->find($id, $relations, $countRelations);
     }
 
+    public function getById(string $id, array $relations = [], array $countRelations = []): ?Model
+    {
+        try {
+            return $this->findById($id, $relations, $countRelations);
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
     /**
      * Single entry point for deleting record
      *

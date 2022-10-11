@@ -4,6 +4,7 @@ namespace App\Common;
 
 use App\Common\DTO\SearchDto;
 use App\Common\DTO\SearchFilterDto;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -244,6 +245,14 @@ abstract class BaseComponentRepository extends BaseRepository
             }
 
             $model->{$relation}()->detach($relationObject->id);
+        }
+    }
+
+    public function setStatus(Model $record, object $status): void
+    {
+        $record->status = $status;
+        if ($record::UPDATED_AT) {
+            $record->updated_at = Carbon::now();
         }
     }
 }
