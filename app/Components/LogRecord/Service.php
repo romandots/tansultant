@@ -40,6 +40,10 @@ class Service extends \App\Common\BaseService
         $dto->object_type = LogRecordObjectType::getFromClass($className);
         $dto->object_id = is_object($objectOrClassName) ? (string)$objectOrClassName->id : $oldCopy?->id;
 
-        $this->getRepository()->create($dto);
+        try {
+            $this->getRepository()->create($dto);
+        } catch (\Throwable $exception) {
+            $this->error('History log record creation failed', $exception);
+        }
     }
 }
