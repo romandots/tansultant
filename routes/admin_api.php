@@ -28,10 +28,12 @@ use App\Services\Permissions\AccountsPermission;
 use App\Services\Permissions\BranchesPermission;
 use App\Services\Permissions\ClassroomsPermission;
 use App\Services\Permissions\CoursesPermission;
+use App\Services\Permissions\CreditsPermission;
 use App\Services\Permissions\CustomersPermission;
 use App\Services\Permissions\InstructorsPermission;
 use App\Services\Permissions\IntentsPermission;
 use App\Services\Permissions\LessonsPermission;
+use App\Services\Permissions\PaymentsPermission;
 use App\Services\Permissions\PersonsPermission;
 use App\Services\Permissions\SchedulesPermission;
 use App\Services\Permissions\StudentsPermission;
@@ -91,6 +93,14 @@ Route::namedGroup('courses',ManagerApi\CourseController::class, static function 
     Route::namedRoute('detachTariffs', 'delete', '{id:uuid}/tariffs', [TariffsPermission::MANAGE, TariffsPermission::UPDATE]);
 });
 
+// CREDITS
+Route::namedGroup('credits',ManagerApi\CreditController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [CreditsPermission::MANAGE, CreditsPermission::READ]);
+    //Route::namedRoute('store', 'post', '/', [CreditsPermission::MANAGE, CreditsPermission::CREATE]);
+    //Route::namedRoute('show', 'get', '{id:uuid}', [CreditsPermission::MANAGE, CreditsPermission::READ]);
+    //Route::namedRoute('destroy', 'delete', '{id:uuid}', [CreditsPermission::MANAGE, CreditsPermission::DELETE]);
+});
+
 // CUSTOMERS
 Route::namedGroup('customers',ManagerApi\CustomerController::class, static function () {
     Route::namedRoute('search', 'get', '/', [CustomersPermission::MANAGE, CustomersPermission::READ]);
@@ -135,6 +145,14 @@ Route::namedGroup('lessons',ManagerApi\LessonController::class, static function 
     Route::namedRoute('close', 'post', '{id:uuid}/close', [LessonsPermission::MANAGE, LessonsPermission::CLOSE]);
     Route::namedRoute('open', 'post', '{id:uuid}/open', [LessonsPermission::MANAGE, LessonsPermission::OPEN]);
     Route::namedRoute('checkout', 'post', '{id:uuid}/checkout', [LessonsPermission::MANAGE, LessonsPermission::OPEN]);
+});
+
+// PAYMENTS
+Route::namedGroup('payments',ManagerApi\PaymentController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [PaymentsPermission::MANAGE, PaymentsPermission::READ]);
+    //Route::namedRoute('store', 'post', '/', [PaymentsPermission::MANAGE, PaymentsPermission::CREATE]);
+    //Route::namedRoute('show', 'get', '{id:uuid}', [PaymentsPermission::MANAGE, PaymentsPermission::READ]);
+    //Route::namedRoute('destroy', 'delete', '{id:uuid}', [PaymentsPermission::MANAGE, PaymentsPermission::DELETE]);
 });
 
 // PEOPLE

@@ -13,6 +13,8 @@ namespace App\Models;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -26,29 +28,17 @@ use Spatie\Permission\Traits\HasRoles;
  * @property \Carbon\Carbon $seen_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ * @property int|null $students_count
+ * @property int|null $credits_sum
+ * @property int|null $bonuses_sum
+ * @property int|null $pending_bonuses_sum
  * @property-read \App\Models\Contract $contract
+ * @property-read BelongsTo<Person> $person
+ * @property-read HasMany<Student> $students
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
- * @property-read \App\Models\Person $person
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer permission($permissions)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer role($roles, $guard = null)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer wherePersonId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereSeenAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereUpdatedAt($value)
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer onlyTrashed()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Customer whereDeletedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Models\Customer withoutTrashed()
  * @property-read int|null $permissions_count
  * @property-read int|null $roles_count
  */
@@ -83,5 +73,13 @@ class Customer extends Model
     public function contract(): \Illuminate\Database\Eloquent\Relations\hasOne
     {
         return $this->hasOne(Contract::class);
+    }
+
+    /**
+     * @return HasMany<Student>
+     */
+    public function students(): HasMany
+    {
+        return $this->hasMany(Student::class);
     }
 }

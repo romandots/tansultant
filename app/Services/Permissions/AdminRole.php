@@ -55,6 +55,12 @@ class AdminRole extends Permission
         CoursesPermission::DELETE,
         CoursesPermission::RESTORE,
 
+        CreditsPermission::MANAGE,
+        CreditsPermission::CREATE,
+        CreditsPermission::READ,
+        CreditsPermission::UPDATE,
+        CreditsPermission::DELETE,
+
         CustomersPermission::MANAGE,
         CustomersPermission::CREATE,
         CustomersPermission::READ,
@@ -88,6 +94,13 @@ class AdminRole extends Permission
         LessonsPermission::CLOSE,
         LessonsPermission::OPEN,
         LessonsPermission::BOOK,
+
+        PaymentsPermission::MANAGE,
+        PaymentsPermission::CREATE,
+        PaymentsPermission::READ,
+        PaymentsPermission::UPDATE,
+        PaymentsPermission::DELETE,
+        PaymentsPermission::RESTORE,
 
         PersonsPermission::MANAGE,
         PersonsPermission::CREATE,

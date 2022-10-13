@@ -25,7 +25,7 @@ class Credit extends Model
     //use HasFactory;
 
     public const TABLE = 'credits';
-    public const UPDATED_AT = false;
+    public const UPDATED_AT = null;
 
     protected $table = self::TABLE;
 

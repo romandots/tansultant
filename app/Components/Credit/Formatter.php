@@ -20,6 +20,16 @@ class Formatter extends BaseFormatter
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'amount' => $this->amount,
+            'customer' => $this->whenLoaded(
+                'customer',
+                fn () => new \App\Components\Customer\Formatter($this->customer),
+            ),
+            'transaction' => $this->whenLoaded(
+                'transaction',
+                fn () => new \App\Components\Transaction\Formatter($this->transaction),
+            ),
+            'created_at' => $this->created_at,
         ];
     }
 }

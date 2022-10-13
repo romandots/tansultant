@@ -37,7 +37,7 @@ class Loader extends Locator
 
     public static function credits(): \App\Components\Credit\Facade
     {
-        return self::get(Credit\Facade);
+        return self::get(Credit\Facade::class);
     }
 
     public static function customers(): \App\Components\Customer\Facade

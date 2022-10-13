@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Components\Credit;
 
+use App\Common\DTO\SearchFilterDto;
+use App\Http\Requests\ManagerApi\DTO\SearchCreditsFilterDto;
 use App\Models\Credit;
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,6 +32,22 @@ class Repository extends \App\Common\BaseComponentRepository
             Credit::class,
             ['name']
         );
+    }
+
+    protected function getFilterQuery(
+        SearchFilterDto $filter,
+        array $relations = [],
+        array $countRelations = []
+    ): \Illuminate\Database\Eloquent\Builder {
+        $query = parent::getFilterQuery($filter, $relations, $countRelations);
+
+        assert($filter instanceof SearchCreditsFilterDto);
+
+        if ($filter->customer_id) {
+            $query->where('customer_id', $filter->customer_id);
+        }
+
+        return $query;
     }
 
     /**

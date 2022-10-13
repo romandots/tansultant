@@ -25,7 +25,7 @@ class Payment extends Model
     //use HasFactory;
 
     public const TABLE = 'payments';
-    public const UPDATED_AT = false;
+    public const UPDATED_AT = null;
 
     protected $table = self::TABLE;
 

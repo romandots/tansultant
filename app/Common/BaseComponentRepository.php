@@ -30,7 +30,7 @@ abstract class BaseComponentRepository extends BaseRepository
         return isset(class_uses($this->modelClass)[SoftDeletes::class]);
     }
 
-    final public function getQuery(
+    public function getQuery(
         array $relations = [],
         array $countRelations = []
     ): \Illuminate\Database\Eloquent\Builder {
