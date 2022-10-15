@@ -10,6 +10,6 @@ class NoSubscriptionsException extends UserAssistanceRequiredException
     public function __construct(
         public readonly PriceOptions $priceOptions
     ) {
-        parent::__construct($this->priceOptions->toArray(), 'no_subscriptions', 409);
+        parent::__construct($this->priceOptions->toArray(), 'no_subscriptions');
     }
 }

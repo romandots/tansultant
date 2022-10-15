@@ -22,7 +22,6 @@ class PriceOptions implements Arrayable
 
     #[ArrayShape(['price' => "float", 'bonuses' => "array"])] public function toArray(): array
     {
-
         $pricesWithBonuses = [];
         foreach ($this->bonuses as $bonus) {
             if ($bonus->status !== BonusStatus::PENDING) {
@@ -45,8 +44,8 @@ class PriceOptions implements Arrayable
         }
 
         return [
-            'price' => $this->price,
-            'bonuses' => $pricesWithBonuses,
+            ['price' => $this->price],
+            ...$pricesWithBonuses,
         ];
     }
 }

@@ -48,7 +48,6 @@ class Handler extends BaseExceptionHandler
         TextMessageSendingFailed::class,
         UserHasNoPerson::class,
         UserHasNoPersonException::class,
-        InstructorStatusIncompatible::class,
         ScheduleSlotIsOccupied::class,
         NoSubscriptionsException::class,
     ];
@@ -95,9 +94,14 @@ class Handler extends BaseExceptionHandler
     protected function renderAsJson(ReadableExceptionInterface $exception): \Illuminate\Http\JsonResponse
     {
         $payload = $exception->getData();
+        try {
+            $message = \trans('exceptions.' . $exception->getMessage(), $payload);
+        } catch (\Throwable) {
+            $message = \trans('exceptions.' . $exception->getMessage());
+        }
         $output = [
             'error' => $exception->getMessage(),
-            'message' => \trans('exceptions.' . $exception->getMessage(), $payload),
+            'message' => $message,
         ];
         if (null !== $payload) {
             $output['data'] = $payload;

@@ -18,7 +18,7 @@ class VisitPricePolicy implements Contract\PricePolicyInterface
 
     public function getPrice(): float
     {
-        $lessonVisitPrice = $this->lesson?->course?->price->price;
+        $lessonVisitPrice = $this->lesson?->course?->price?->price;
 
         if (null === $lessonVisitPrice) {
             return 0;
