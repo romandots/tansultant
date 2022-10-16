@@ -47,6 +47,7 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->customer_id = $dto->customer_id;
         $record->user_id = $dto->user_id;
         $record->account_id = $dto->account_id;
+        $record->shift_id = $dto->shift_id;
         $record->external_id = $dto->external_id;
         $record->confirmed_at = $dto->confirmed_at;
         $record->amount = $dto->amount;

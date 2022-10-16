@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property TransactionTransferType $transfer_type [cash|card|online|internal|code]
  * @property TransactionStatus $status [pending|expired|confirmed|canceled]
  * @property string $account_id
+ * @property string|null $shift_id
  * @property string|null $customer_id
  * @property string|null $related_id
  * @property string|null $external_id
@@ -119,6 +120,7 @@ class Transaction extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
     /**
      * @return BelongsTo<Shift>
      */

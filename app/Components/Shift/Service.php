@@ -60,7 +60,7 @@ class Service extends BaseComponentService
     public function closeUserActiveShift(\App\Models\User $user): Shift
     {
         if (null === $user->active_shift) {
-            throw new Exceptions\UserHasNoActiveException($user);
+            throw new Exceptions\UserHasNoActiveShift($user);
         }
 
         $shift = $user->active_shift;

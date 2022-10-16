@@ -2,7 +2,7 @@
 
 namespace App\Components\Shift\Exceptions;
 
-class UserHasNoActiveException extends Exception
+class UserHasNoActiveShift extends Exception
 {
     public function __construct(
         public readonly \App\Models\User $user

@@ -20,6 +20,8 @@ class Dto extends \App\Common\DTO\DtoWithUser
 
     public ?string $customer_id;
 
+    public ?string $shift_id;
+
     public TransactionType $type;
 
     public TransactionTransferType $transfer_type;

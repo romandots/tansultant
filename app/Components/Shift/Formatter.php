@@ -33,6 +33,10 @@ class Formatter extends BaseFormatter
                 'user',
                 fn () => new \App\Components\User\Formatter($this->user),
             ),
+            'shift' => $this->whenLoaded(
+                'shift',
+                fn () => new \App\Components\Shift\Formatter($this->shift),
+            ),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->created_at?->toDateTimeString(),
             'closed_at' => $this->created_at?->toDateTimeString(),

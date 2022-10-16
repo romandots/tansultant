@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Models\Enum\ShiftStatus;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @package App\Models
@@ -50,5 +51,13 @@ class Shift extends Model
     public function branch(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    /**
+     * @return HasMany<Transaction>
+     */
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
     }
 }

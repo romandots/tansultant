@@ -36,6 +36,10 @@ class Formatter extends BaseFormatter
             }),
             'roles' => $this->getRoleNames(),
             'permissions' => $this->getPermissionNames(),
+            'active_shift' => $this->whenLoaded(
+                'active_shift',
+                fn () => new \App\Components\Shift\Formatter($this->active_shift),
+            ),
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
             'approved_at' => $this->approved_at?->toDateTimeString(),
