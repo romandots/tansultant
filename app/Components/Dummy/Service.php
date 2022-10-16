@@ -10,7 +10,7 @@ use App\Models\Dummy;
 /**
  * @method Repository getRepository()
  */
-class ComponentService extends BaseComponentService
+class Service extends BaseComponentService
 {
     public function __construct()
     {

@@ -119,6 +119,7 @@ class PermissionsTableSeeder extends Seeder
         $this->_runPermissions(\App\Services\Permissions\BonusesPermission::class);
         $this->_runPermissions(\App\Services\Permissions\PaymentsPermission::class);
         $this->_runPermissions(\App\Services\Permissions\CreditsPermission::class);
+        $this->_runPermissions(\App\Services\Permissions\ShiftsPermission::class);
     }
 
     /**

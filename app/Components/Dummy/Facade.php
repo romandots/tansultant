@@ -24,6 +24,6 @@ class Facade extends BaseComponentFacade
 {
     public function __construct()
     {
-        parent::__construct(ComponentService::class);
+        parent::__construct(Service::class);
     }
 }

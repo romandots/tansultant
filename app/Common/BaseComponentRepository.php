@@ -247,11 +247,15 @@ abstract class BaseComponentRepository extends BaseRepository
         }
     }
 
-    public function setStatus(Model $record, object $status): void
+    public function setStatus(Model $record, object $status, array $datesToUpdate = []): void
     {
         $record->status = $status;
         if ($record::UPDATED_AT) {
-            $this->fillDate($record, 'updated_at');
+            $datesToUpdate[] = $record::UPDATED_AT;
+        }
+
+        foreach ($datesToUpdate as $dateField) {
+            $this->fillDate($record, $dateField);
         }
     }
 }

@@ -15,6 +15,7 @@ use App\Models\Enum\UserType;
 use App\Models\Traits\HasName;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -31,6 +32,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $username
  * @property string $password
  * @property string $person_id
+ * @property string|null $active_shift_id
  * @property UserStatus $status
  * @property UserType $type
  * @property string|null $remember_token
@@ -46,6 +48,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read \App\Models\Instructor $instructor
  * @property-read \App\Models\Customer $customer
  * @property-read \App\Models\Student $student
+ * @property-read BelongsTo<Shift> $active_shift
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User permission($permissions)
@@ -136,5 +139,13 @@ class User extends Authenticatable
     public function tokens()
     {
         return $this->morphMany(Sanctum::$personalAccessTokenModel, 'tokenable', "tokenable_type", "tokenable_uuid");
+    }
+
+    /**
+     * @return BelongsTo<Shift>
+     */
+    public function active_shift(): BelongsTo
+    {
+        return $this->belongsTo(Shift::class, 'active_shift_id');
     }
 }

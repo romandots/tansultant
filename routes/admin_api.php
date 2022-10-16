@@ -36,6 +36,7 @@ use App\Services\Permissions\LessonsPermission;
 use App\Services\Permissions\PaymentsPermission;
 use App\Services\Permissions\PersonsPermission;
 use App\Services\Permissions\SchedulesPermission;
+use App\Services\Permissions\ShiftsPermission;
 use App\Services\Permissions\StudentsPermission;
 use App\Services\Permissions\SubscriptionsPermission;
 use App\Services\Permissions\TariffsPermission;
@@ -181,6 +182,14 @@ Route::namedGroup('schedules',ManagerApi\ScheduleController::class, static funct
     Route::namedRoute('show', 'get', '{id:uuid}', [SchedulesPermission::MANAGE, SchedulesPermission::READ]);
     Route::namedRoute('update', 'put', '{id:uuid}', [SchedulesPermission::MANAGE, SchedulesPermission::UPDATE]);
     Route::namedRoute('destroy', 'delete', '{id:uuid}', [SchedulesPermission::MANAGE, SchedulesPermission::DELETE]);
+});
+
+// SHIFTS
+Route::namedGroup('shifts',ManagerApi\ShiftController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [ShiftsPermission::MANAGE, ShiftsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [ShiftsPermission::MANAGE, ShiftsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id:uuid}', [ShiftsPermission::MANAGE, ShiftsPermission::READ]);
+    Route::namedRoute('close', 'post', '{id:uuid}/close', [ShiftsPermission::MANAGE, ShiftsPermission::UPDATE]);
 });
 
 // STUDENTS

@@ -38,6 +38,11 @@ abstract class StoreRequest extends BaseRequest
         ];
     }
 
+    public function getDto(): DtoWithUser
+    {
+        return new DtoWithUser($this->user());
+    }
+
     public function getShowDto(): ShowDto
     {
         $validated = $this->validated();

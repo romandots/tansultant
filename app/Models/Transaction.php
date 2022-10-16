@@ -16,6 +16,7 @@ use App\Models\Enum\TransactionType;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -38,6 +39,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Account $account
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|User $user
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Shift> $shift
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Transaction|null $related_payment
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Customer> $customer
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Transaction newModelQuery()
@@ -116,5 +118,12 @@ class Transaction extends Model
     public function customer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+    /**
+     * @return BelongsTo<Shift>
+     */
+    public function shift(): BelongsTo
+    {
+        return $this->belongsTo(Shift::class, 'shift_id');
     }
 }

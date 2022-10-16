@@ -85,6 +85,11 @@ class Loader extends Locator
         return self::get(Schedule\Facade::class);
     }
 
+    public static function shifts(): \App\Components\Shift\Facade
+    {
+        return self::get(\App\Components\Shift\Facade::class);
+    }
+
     public static function students(): \App\Components\Student\Facade
     {
         return self::get(Student\Facade::class);

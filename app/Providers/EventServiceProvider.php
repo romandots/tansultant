@@ -25,6 +25,12 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\User\UserCreatedEvent::class => [
             //
         ],
+        \App\Events\User\UserShiftOpenedEvent::class => [
+            //
+        ],
+        \App\Events\User\UserShiftClosedEvent::class => [
+            //
+        ],
         \App\Events\Instructor\InstructorCreatedEvent::class => [
             //
         ],

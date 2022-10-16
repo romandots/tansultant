@@ -35,4 +35,5 @@ return [
     'invalid_relation' => 'Связь не найдена',
     'courses_limit_reached' => 'Достигнут лимит (:limit) количества курсов для подписки',
     'tariff_does_not_include_course' => 'Тариф :tariff не включает курс :course',
+    'user_has_no_active_shift' => 'У пользователя :name нет активной смены',
 ];

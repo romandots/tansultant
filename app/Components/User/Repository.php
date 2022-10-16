@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Components\User;
 
 use App\Models\Enum\UserStatus;
+use App\Models\Shift;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -79,16 +80,25 @@ class Repository extends \App\Common\BaseComponentRepository
 
     public function setApproved(User $user): void
     {
-        $user->status = UserStatus::APPROVED;
-        $user->approved_at = Carbon::now();
-        $user->updated_at = Carbon::now();
-        $user->save();
+        $this->setStatus($user, UserStatus::APPROVED, ['approved_at']);
+        $this->save($user);
     }
 
     public function setDisabled(User $user): void
     {
-        $user->status = UserStatus::DISABLED;
-        $user->updated_at = Carbon::now();
-        $user->save();
+        $this->setStatus($user, UserStatus::DISABLED);
+        $this->save($user);
+    }
+
+    public function attachActiveShift(User $user, Shift $shift): void
+    {
+        $user->active_shift_id = $shift->id;
+        $this->save($user);
+    }
+
+    public function detachActiveShift(User $user): void
+    {
+        $user->active_shift_id = null;
+        $this->save($user);
     }
 }

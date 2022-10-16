@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Events\User;
 
 use App\Events\BaseEvent;
+use App\Models\Shift;
 use App\Models\User;
 use JetBrains\PhpStorm\Pure;
 
@@ -42,5 +43,15 @@ abstract class UserEvent extends BaseEvent
     public static function registered(User $user): void
     {
         UserRegisteredEvent::dispatch($user);
+    }
+
+    public static function shiftOpened(Shift $shift): void
+    {
+        UserShiftOpenedEvent::dispatch($shift);
+    }
+
+    public static function shiftClosed(Shift $shift): void
+    {
+        UserShiftClosedEvent::dispatch($shift);
     }
 }
