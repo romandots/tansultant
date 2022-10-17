@@ -35,4 +35,9 @@ class Service extends \App\Common\BaseComponentService
     {
         $this->getRepository()->setStatusExpired($bonus);
     }
+
+    public function resetBonus(Bonus $bonus): void
+    {
+        $this->getRepository()->setStatusPending($bonus);
+    }
 }

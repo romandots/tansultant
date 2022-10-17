@@ -13,9 +13,7 @@ use App\Models\Customer;
 use App\Models\Enum\BonusStatus;
 use App\Models\Payment;
 use App\Models\Student;
-use App\Models\Subscription;
 use App\Models\User;
-use App\Models\Visit;
 
 /**
  * @method Repository getRepository()
@@ -32,26 +30,10 @@ class Service extends BaseComponentService
         );
     }
 
-    public function createVisitPayment(Visit $visit, Student $student, ?Bonus $bonus, User $user): Payment
-    {
-        $price = (int)$visit->price;
-        $name =  trans('credit.withdrawals.visit', ['visit' => $visit->name]);
-
-        return $this->createPayment($price, $name, $student, $bonus, $user);
-    }
-
-    public function createSubscriptionPayment(Subscription $subscription, Student $student, ?Bonus $bonus, User $user): Payment
-    {
-        $price = $subscription->tariff->price;
-        $name = trans('credit.withdrawals.subscription', ['subscription' => $subscription->name]);
-
-        return $this->createPayment($price, $name, $student, $bonus, $user);
-    }
-
     /**
      * @throws \Throwable
      */
-    private function createPayment(int $originalPrice, string $comment, Student $student, ?Bonus $bonus, User $user): Payment
+    public function createPayment(int $originalPrice, string $comment, Student $student, ?Bonus $bonus, User $user): Payment
     {
         $price = $originalPrice - ($bonus?->amount ?? 0);
         if ($price < 0) {
@@ -62,24 +44,23 @@ class Service extends BaseComponentService
         $this->validateStudentFunds($student, $price);
 
         $paymentDto = $this->buildPaymentDto($price, $comment, $student->customer, $bonus, $user);
+        $payment = parent::create($paymentDto);
 
-        return $this->create($paymentDto);
+        return $payment;
 }
 
     private function buildPaymentDto(int $price, string $name, Customer $customer, ?Bonus $bonus, User $user): Dto
     {
-        \DB::beginTransaction();
         $credit = Loader::credits()->createWithdrawal($customer, $price, $name, $user);
         if ($bonus) {
             Loader::bonuses()->activateBonus($bonus);
         }
-        \DB::commit();
 
         $dto = new Dto($user);
         $dto->amount = (0 - $credit->amount) + ($bonus?->amount ?? 0);
         $dto->name = $name;
         $dto->credit_id = $credit->id;
-
+        $dto->bonus_id = $bonus?->id;
         return $dto;
     }
 
@@ -99,5 +80,15 @@ class Service extends BaseComponentService
         if (!Loader::customers()->checkStudentFunds($student, $price)) {
             throw new Exceptions\StudentHasNotEnoughCredits($student, $price);
         }
+    }
+
+    public function delete(\Illuminate\Database\Eloquent\Model $record, \App\Models\User $user): void
+    {
+        assert($record instanceof Payment);
+        Loader::credits()->delete($record->load('credit')->credit, $user);
+        if ($record->bonus_id) {
+            Loader::bonuses()->resetBonus($record->load('bonus')->bonus, $user);
+        }
+        parent::delete($record, $user);
     }
 }

@@ -7,8 +7,10 @@ namespace App\Components\Visit;
 use App\Components\Loader;
 use App\Components\Visit\Entity\PriceOptions;
 use App\Events\Lesson\LessonVisitsUpdatedEvent;
+use App\Models\Bonus;
 use App\Models\Enum\SubscriptionStatus;
 use App\Models\Enum\VisitPaymentType;
+use App\Models\Student;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Models\Visit;
@@ -100,13 +102,19 @@ class Service extends \App\Common\BaseComponentService
             }
         }
 
+        $bonus = $dto->bonus_id ? Loader::bonuses()->findById($dto->bonus_id) : null;
+
+        //\DB::beginTransaction();
         /** @var Visit $visit */
         $visit = parent::create($dto);
+        if ($dto->payment_type === VisitPaymentType::PAYMENT) {
+            $this->createPayment($visit, $student, $bonus, $dto->getUser());
+        }
+        //\DB::commit();
 
-        $this->createPayment($dto, $visit, $student);
         $this->triggerLessonVisitsUpdatedEvent($visit);
 
-        return $visit->load('payment', 'subscription', 'student.person');
+        return $visit->load('payment.credit', 'payment.bonus', 'subscription', 'student.person');
     }
 
     protected function pickCompatibleSubscription(Collection $subscriptions, PriceOptions $priceOptions): Subscription
@@ -134,7 +142,7 @@ class Service extends \App\Common\BaseComponentService
     public function delete(Model $record, \App\Models\User $user): void
     {
         if (null !== $record->payment_id) {
-            Loader::payments()->findAndDelete($record->payment_id, $user);
+            Loader::payments()->delete($record->load('payment')->payment, $user);
         }
         parent::delete($record, $user);
         $this->triggerLessonVisitsUpdatedEvent($record);
@@ -169,26 +177,15 @@ class Service extends \App\Common\BaseComponentService
     }
 
     /**
-     * @param Dto $dto
      * @param Visit $visit
      * @param \App\Models\Student $student
-     * @param Model|null $bonus
+     * @param Bonus|null $bonus
+     * @param User $user
      * @return void
-     * @throws \Exception
      */
-    public function createPayment(Dto $dto, Visit $visit, \App\Models\Student $student): void
+    protected function createPayment(Visit $visit, Student $student, ?Bonus $bonus, User $user): void
     {
-        try {
-            if ($dto->payment_type === VisitPaymentType::PAYMENT) {
-                $bonus = $dto->bonus_id ? Loader::bonuses()->findById($dto->bonus_id) : null;
-                $payment = Loader::payments()->createVisitPayment($visit, $student, $bonus, $dto->getUser());
-
-                $this->getRepository()->updatePayment($visit, $payment, null);
-            }
-        } catch (\Exception $exception) {
-            $this->getRepository()->delete($visit);
-            $this->error('Failed creating payment for visit. Deleting visit.', $exception);
-            throw $exception;
-        }
+        $payment = Loader::payments()->createVisitPayment($visit, $student, $bonus, $user);
+        $this->getRepository()->updatePayment($visit, $payment, null);
     }
 }

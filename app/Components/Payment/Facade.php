@@ -22,7 +22,6 @@ use App\Models\Visit;
  * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\Payment create(Dto $dto, array $relations = [])
  * @method \App\Models\Payment find(ShowDto $showDto)
- * @method void findAndDelete(string $id)
  * @method \App\Models\Payment findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Payment findAndUpdate(string $id, Dto $dto, array $relations = [])
  */
@@ -35,11 +34,17 @@ class Facade extends BaseComponentFacade
 
     public function createVisitPayment(Visit $visit, Student $student, ?Bonus $bonus, User $user): Payment
     {
-        return $this->getService()->createVisitPayment($visit, $student, $bonus, $user);
+        $price = (int)$visit->price;
+        $name =  trans('credit.withdrawals.visit', ['visit' => $visit->name]);
+
+        return $this->getService()->createPayment($price, $name, $student, $bonus, $user);
     }
 
     public function createSubscriptionPayment(Subscription $subscription, Student $student, ?Bonus $bonus, User $user): Payment
     {
-        return $this->getService()->createVisitPayment($subscription, $student, $bonus, $user);
+        $price = $subscription->tariff->price;
+        $name = trans('credit.withdrawals.subscription', ['subscription' => $subscription->name]);
+
+        return $this->getService()->createPayment($price, $name, $student, $bonus, $user);
     }
 }

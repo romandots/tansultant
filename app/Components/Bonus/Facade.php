@@ -47,11 +47,16 @@ class Facade extends BaseComponentFacade
 
     public function cancelBonus(Bonus $bonus): void
     {
-        $this->getService()->activateBonus($bonus);
+        $this->getService()->cancelBonus($bonus);
     }
 
     public function expireBonus(Bonus $bonus): void
     {
-        $this->getService()->activateBonus($bonus);
+        $this->getService()->expireBonus($bonus);
+    }
+
+    public function resetBonus(Bonus $bonus): void
+    {
+        $this->getService()->resetBonus($bonus);
     }
 }

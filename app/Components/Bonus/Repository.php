@@ -44,6 +44,13 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->name = $dto->name;
     }
 
+    public function setStatusPending(Bonus $bonus): void
+    {
+        $bonus->activated_at = null;
+        $this->setStatus($bonus, BonusStatus::PENDING);
+        $this->save($bonus);
+    }
+
     public function setStatusActivated(Bonus $bonus): void
     {
         $bonus->activated_at = Carbon::now();

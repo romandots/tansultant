@@ -163,6 +163,11 @@ abstract class BaseComponentFacade extends BaseFacade
         $this->getService()->delete($record, $user);
     }
 
+    public function delete(Model $record, \App\Models\User $user): void
+    {
+        $this->getService()->delete($record, $user);
+    }
+
     /**
      * Single entry point for restoring deleted record
      *
