@@ -42,8 +42,11 @@ class Facade extends BaseComponentFacade
 
     public function createSubscriptionPayment(Subscription $subscription, Student $student, ?Bonus $bonus, User $user): Payment
     {
-        $price = $subscription->tariff->price;
-        $name = trans('credit.withdrawals.subscription', ['subscription' => $subscription->name]);
+        $price = (int)$subscription->tariff->price;
+        $name = trans('credit.withdrawals.subscription', [
+            'subscription' => $subscription->name,
+            'student' => $subscription->student->name,
+        ]);
 
         return $this->getService()->createPayment($price, $name, $student, $bonus, $user);
     }
