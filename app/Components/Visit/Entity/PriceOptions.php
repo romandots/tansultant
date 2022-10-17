@@ -6,7 +6,6 @@ use App\Models\Bonus;
 use App\Models\Enum\BonusStatus;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
-use JetBrains\PhpStorm\ArrayShape;
 
 class PriceOptions implements Arrayable
 {
@@ -16,11 +15,11 @@ class PriceOptions implements Arrayable
      * @param Collection<Bonus> $bonuses
      */
     public function __construct(
-        public readonly float $price,
+        public readonly int $price,
         public readonly Collection $bonuses
     ) { }
 
-    #[ArrayShape(['price' => "float", 'bonuses' => "array"])] public function toArray(): array
+    public function toArray(): array
     {
         $pricesWithBonuses = [];
         foreach ($this->bonuses as $bonus) {

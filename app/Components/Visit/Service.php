@@ -12,7 +12,6 @@ use App\Models\Enum\VisitPaymentType;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Models\Visit;
-use App\Services\ServiceLoader;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use JetBrains\PhpStorm\Pure;
@@ -75,7 +74,7 @@ class Service extends \App\Common\BaseComponentService
             )
             : new Collection();
         $bonuses = Loader::bonuses()->getStudentAvailableBonuses($student);
-        $price = ServiceLoader::price()->calculateLessonVisitPrice($lesson, $student);
+        $price = (int)($lesson->price?->price ?? 0);
         $priceOptions = $this->getPriceOptions($price, $bonuses);
         $isChosenSubscriptionValid = $dto->subscription_id
             && $subscriptions->where('id', $dto->subscription_id)->count() !== 0;
@@ -100,16 +99,13 @@ class Service extends \App\Common\BaseComponentService
             }
         }
 
-        // Create visit
         /** @var Visit $visit */
         $visit = parent::create($dto);
 
         $this->createPayment($dto, $visit, $student);
-
         $this->triggerLessonVisitsUpdatedEvent($visit);
 
         return $visit->load('payment', 'subscription', 'student.person');
-        //});
     }
 
     protected function pickCompatibleSubscription(Collection $subscriptions, PriceOptions $priceOptions): Subscription
@@ -166,7 +162,7 @@ class Service extends \App\Common\BaseComponentService
         }
     }
 
-    #[Pure] private function getPriceOptions(float $price, Collection $bonuses): Entity\PriceOptions
+    #[Pure] private function getPriceOptions(int $price, Collection $bonuses): Entity\PriceOptions
     {
         return new Entity\PriceOptions($price, $bonuses);
     }
@@ -177,6 +173,7 @@ class Service extends \App\Common\BaseComponentService
      * @param \App\Models\Student $student
      * @param Model|null $bonus
      * @return void
+     * @throws \Exception
      */
     public function createPayment(Dto $dto, Visit $visit, \App\Models\Student $student): void
     {

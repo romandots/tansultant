@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create(\App\Models\Price::TABLE, static function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name')->unique();
-            $table->float('price');
+            $table->unsignedInteger('price');
             $table->timestamp('created_at', 0);
             $table->timestamp('updated_at', 0)->nullable();
             $table->timestamp('deleted_at', 0)->nullable();
