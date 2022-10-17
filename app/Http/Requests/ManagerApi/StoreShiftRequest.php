@@ -14,9 +14,10 @@ use App\Common\Requests\StoreRequest;
 use App\Components\Shift\Dto;
 use Illuminate\Validation\Rule;
 
-class StoreShiftRequest extends StoreRequest
+class
+StoreShiftRequest extends StoreRequest
 {
-    public function getDto(): \App\Common\DTO\DtoWithUser
+    public function getDto(): \App\Common\Contracts\DtoWithUser
     {
         $validated = $this->validated();
         /** @var Dto $dto */

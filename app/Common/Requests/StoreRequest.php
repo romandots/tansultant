@@ -38,7 +38,7 @@ abstract class StoreRequest extends BaseRequest
         ];
     }
 
-    public function getDto(): DtoWithUser
+    public function getDto(): \App\Common\Contracts\DtoWithUser
     {
         return new DtoWithUser($this->user());
     }

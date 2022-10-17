@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Common\DTO\DtoWithUser;
 use App\Common\Requests\StoreRequest;
 use App\Components\Student\Dto;
 use App\Models\Customer;
@@ -49,7 +48,7 @@ class StoreStudentRequest extends StoreRequest
         ]);
     }
 
-    public function getDto(): DtoWithUser
+    public function getDto(): \App\Common\Contracts\DtoWithUser
     {
         $validated = $this->validated();
         $dto = new Dto($this->user());
