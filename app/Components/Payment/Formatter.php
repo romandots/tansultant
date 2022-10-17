@@ -20,7 +20,7 @@ class Formatter extends BaseFormatter
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'amount' => $this->name,
+            'amount' => $this->amount,
             'credit_id' => $this->credit_id,
             'credit' => $this->whenLoaded('credit', function () {
                 return new \App\Components\Course\Formatter($this->credit);

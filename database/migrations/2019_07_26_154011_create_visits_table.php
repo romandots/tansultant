@@ -30,6 +30,7 @@ class CreateVisitsTable extends Migration
             $table->text('event_type');
             $table->uuid('event_id');
             $table->text('payment_type');
+            $table->unsignedInteger('price')->nullable();
             $table->timestamps();
 
             $table->index(['event_id', 'event_type'], 'morph_visits_event_id');

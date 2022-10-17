@@ -82,6 +82,7 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->payment_type = $dto->payment_type;
         $record->payment_id = $dto->payment_id;
         $record->subscription_id = $dto->subscription_id;
+        $record->price = $dto->price;
     }
 
     /**

@@ -82,6 +82,7 @@ class Service extends \App\Common\BaseComponentService
         // Pick subscription
         if ($dto->pay_from_balance) {
             $dto->payment_type = VisitPaymentType::PAYMENT;
+            $dto->price = $price;
             if (null !== $dto->bonus_id
                 && !$priceOptions->bonuses->contains('id', '=', $dto->bonus_id)) {
                 throw new \LogicException('bonus_id_is_invalid');
