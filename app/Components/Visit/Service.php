@@ -63,63 +63,53 @@ class Service extends \App\Common\BaseComponentService
     {
         $this->checkIfVisitAlreadyExists($dto->student_id, $dto->event_id);
 
-        return \DB::transaction(function () use ($dto) {
-            $lesson = Loader::lessons()->find($dto->event_id);
-            $student = Loader::students()->find($dto->student_id);
-            $course = $lesson->load('course')->course;
-            $isCourseLesson = $course !== null;
-            $subscriptions = $isCourseLesson
-                ? Loader::subscriptions()->getStudentSubscriptionsForCourse(
-                    $student->id,
-                    $course->id,
-                    SubscriptionStatus::ACTIVE
-                )
-                : new Collection();
-            $bonuses = Loader::bonuses()->getStudentAvailableBonuses($student);
-            $price = ServiceLoader::price()->calculateLessonVisitPrice($lesson, $student);
-            $priceOptions = $this->getPriceOptions($price, $bonuses);
-            $isChosenSubscriptionValid = $dto->subscription_id
-                && $subscriptions->where('id', $dto->subscription_id)->count() !== 0;
+        $lesson = Loader::lessons()->find($dto->event_id);
+        $student = Loader::students()->find($dto->student_id);
+        $course = $lesson->load('course')->course;
+        $isCourseLesson = $course !== null;
+        $subscriptions = $isCourseLesson
+            ? Loader::subscriptions()->getStudentSubscriptionsForCourse(
+                $student->id,
+                $course->id,
+                SubscriptionStatus::ACTIVE
+            )
+            : new Collection();
+        $bonuses = Loader::bonuses()->getStudentAvailableBonuses($student);
+        $price = ServiceLoader::price()->calculateLessonVisitPrice($lesson, $student);
+        $priceOptions = $this->getPriceOptions($price, $bonuses);
+        $isChosenSubscriptionValid = $dto->subscription_id
+            && $subscriptions->where('id', $dto->subscription_id)->count() !== 0;
 
-            // Pick subscription
-            if ($dto->pay_from_balance) {
-                $dto->payment_type = VisitPaymentType::PAYMENT;
-                if (null !== $dto->bonus_id
-                    && !$priceOptions->bonuses->contains('id', '=', $dto->bonus_id)) {
-                    throw new \LogicException('bonus_id_is_invalid');
-                }
-            } else {
-                $dto->payment_type = VisitPaymentType::SUBSCRIPTION;
+        // Pick subscription
+        if ($dto->pay_from_balance) {
+            $dto->payment_type = VisitPaymentType::PAYMENT;
+            if (null !== $dto->bonus_id
+                && !$priceOptions->bonuses->contains('id', '=', $dto->bonus_id)) {
+                throw new \LogicException('bonus_id_is_invalid');
+            }
+        } else {
+            $dto->payment_type = VisitPaymentType::SUBSCRIPTION;
 
-                // Only course lessons can be paid with subscription
-                if (!$isCourseLesson) {
-                    throw new \LogicException('only_course_lessons_can_be_paid_with_subscriptions');
-                }
-
-                if ($dto->subscription_id === null || !$isChosenSubscriptionValid) {
-                    $dto->subscription_id = $this->pickCompatibleSubscription($subscriptions, $priceOptions)->id;
-                }
+            // Only course lessons can be paid with subscription
+            if (!$isCourseLesson) {
+                throw new \LogicException('only_course_lessons_can_be_paid_with_subscriptions');
             }
 
-            return \DB::transaction(function () use ($student, $dto) {
-                // Create visit
-                /** @var Visit $visit */
-                $visit = parent::create($dto);
-                $bonus = $dto->bonus_id ? Loader::bonuses()->findById($dto->bonus_id) : null;
+            if ($dto->subscription_id === null || !$isChosenSubscriptionValid) {
+                $dto->subscription_id = $this->pickCompatibleSubscription($subscriptions, $priceOptions)->id;
+            }
+        }
 
-                // Create payment
-                if ($dto->payment_type === VisitPaymentType::PAYMENT) {
-                    $payment = Loader::payments()->createVisitPayment($visit, $student, $bonus, $dto->getUser());
-                    $visit->payment_id = $payment->id;
-                    $visit->subscription_id = null;
-                    $visit->save();
-                }
+        // Create visit
+        /** @var Visit $visit */
+        $visit = parent::create($dto);
 
-                $this->triggerLessonVisitsUpdatedEvent($visit);
+        $this->createPayment($dto, $visit, $student);
 
-                return $visit->load('payment', 'subscription', 'student.person');
-            });
-        });
+        $this->triggerLessonVisitsUpdatedEvent($visit);
+
+        return $visit->load('payment', 'subscription', 'student.person');
+        //});
     }
 
     protected function pickCompatibleSubscription(Collection $subscriptions, PriceOptions $priceOptions): Subscription
@@ -179,5 +169,28 @@ class Service extends \App\Common\BaseComponentService
     #[Pure] private function getPriceOptions(float $price, Collection $bonuses): Entity\PriceOptions
     {
         return new Entity\PriceOptions($price, $bonuses);
+    }
+
+    /**
+     * @param Dto $dto
+     * @param Visit $visit
+     * @param \App\Models\Student $student
+     * @param Model|null $bonus
+     * @return void
+     */
+    public function createPayment(Dto $dto, Visit $visit, \App\Models\Student $student): void
+    {
+        try {
+            if ($dto->payment_type === VisitPaymentType::PAYMENT) {
+                $bonus = $dto->bonus_id ? Loader::bonuses()->findById($dto->bonus_id) : null;
+                $payment = Loader::payments()->createVisitPayment($visit, $student, $bonus, $dto->getUser());
+
+                $this->getRepository()->updatePayment($visit, $payment, null);
+            }
+        } catch (\Exception $exception) {
+            $this->getRepository()->delete($visit);
+            $this->error('Failed creating payment for visit. Deleting visit.', $exception);
+            throw $exception;
+        }
     }
 }

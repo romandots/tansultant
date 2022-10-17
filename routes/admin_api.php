@@ -35,6 +35,7 @@ use App\Services\Permissions\IntentsPermission;
 use App\Services\Permissions\LessonsPermission;
 use App\Services\Permissions\PaymentsPermission;
 use App\Services\Permissions\PersonsPermission;
+use App\Services\Permissions\PricesPermission;
 use App\Services\Permissions\SchedulesPermission;
 use App\Services\Permissions\ShiftsPermission;
 use App\Services\Permissions\StudentsPermission;
@@ -169,10 +170,10 @@ Route::namedGroup('people',ManagerApi\PersonController::class, static function (
 
 // PRICES
 Route::namedGroup('prices',ManagerApi\PriceController::class, static function () {
-    Route::namedRoute('search', 'get', '/', [CoursesPermission::MANAGE, CoursesPermission::READ]);
-    Route::namedRoute('store', 'post', '/', [CoursesPermission::MANAGE, CoursesPermission::CREATE]);
-    Route::namedRoute('show', 'get', '{id:uuid}', [CoursesPermission::MANAGE, CoursesPermission::READ]);
-    Route::namedRoute('destroy', 'delete', '{id:uuid}', [CoursesPermission::MANAGE, CoursesPermission::DELETE]);
+    Route::namedRoute('index', 'get', '/', [PricesPermission::MANAGE, PricesPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [PricesPermission::MANAGE, PricesPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id:uuid}', [PricesPermission::MANAGE, PricesPermission::READ]);
+    Route::namedRoute('destroy', 'delete', '{id:uuid}', [PricesPermission::MANAGE, PricesPermission::DELETE]);
 });
 
 // SCHEDULES

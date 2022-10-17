@@ -30,6 +30,11 @@ return new class extends Migration
             $table->uuid('bonus_id')->nullable()->index();
             $table->timestamp('created_at', 0)->nullable();
 
+            $table->foreign('credit_id')
+                ->references('id')
+                ->on('credits')
+                ->cascadeOnDelete();
+
             $table->foreign('bonus_id')
                 ->references('id')
                 ->on('bonuses')
@@ -93,6 +98,11 @@ return new class extends Migration
 
         Schema::table('credits', static function (Blueprint $table) {
             $table->dropForeign('credits_transactions_id_foreign');
+        });
+
+        Schema::table('payments', static function (Blueprint $table) {
+            $table->dropForeign('payments_credit_id_foreign');
+            $table->dropForeign('payments_bonus_id_foreign');
         });
 
         Schema::dropIfExists('payments');

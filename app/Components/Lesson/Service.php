@@ -61,6 +61,7 @@ class Service extends \App\Common\BaseComponentService
         $dto->course_id = $schedule->course_id;
         $dto->classroom_id = $schedule->classroom_id;
         $dto->branch_id = $schedule->branch_id;
+        $dto->price_id = $schedule->price_id;
         $dto->starts_at = $startTime;
         $dto->ends_at = $endTime;
         $dto->type = LessonType::LESSON;

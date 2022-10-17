@@ -44,6 +44,7 @@ class Formatter extends BaseFormatter
 //                    ? new \App\Components\Promocode\Formatter($this->payment) : null;
 //            }),
             'is_paid' => null !== $this->payment_id || null !== $this->subscription_id,
+            'price' => $this->price,
             'created_at' => $this->created_at->toDateTimeString()
         ];
     }

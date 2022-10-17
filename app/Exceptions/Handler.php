@@ -132,6 +132,7 @@ class Handler extends BaseExceptionHandler
             'message' => \trans('exceptions.invalid_relation'),
             'data' => [
                 'relation' => $exception->getTrace()[0]['args'][0] ?? null,
+                'trace' => $exception->getTrace(),
             ],
         ];
 

@@ -49,6 +49,13 @@ class Formatter extends BaseFormatter
                     return new \App\Components\Course\Formatter($this->course);
                 }
             ),
+            'price_id' => $this->price_id,
+            'price' => $this->whenLoaded(
+                'price',
+                function () {
+                    return new \App\Components\Price\Formatter($this->price);
+                }
+            ),
         ];
     }
 }

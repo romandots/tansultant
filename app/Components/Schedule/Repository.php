@@ -51,6 +51,7 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->branch_id = $dto->branch_id;
         $record->classroom_id = $dto->classroom_id;
         $record->course_id = $dto->course_id;
+        $record->price_id = $dto->price_id;
         $record->cycle = $dto->cycle;
         $record->weekday = $dto->weekday;
         $record->from_date = $dto->from_date;

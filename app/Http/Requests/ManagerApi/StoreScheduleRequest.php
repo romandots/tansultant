@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Common\Contracts\DtoWithUser;
+use App\Common\DTO\DtoWithUser;
 use App\Common\Requests\StoreRequest;
 use App\Components\Loader;
 use App\Components\Schedule\Dto;
@@ -18,6 +18,7 @@ use App\Models\Classroom;
 use App\Models\Course;
 use App\Models\Enum\ScheduleCycle;
 use App\Models\Enum\Weekday;
+use App\Models\Price;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -46,6 +47,12 @@ class StoreScheduleRequest extends StoreRequest
                 'string',
                 'uuid',
                 Rule::exists(Classroom::TABLE, 'id'),
+            ],
+            'price_id' => [
+                'nullable',
+                'string',
+                'uuid',
+                Rule::exists(Price::TABLE, 'id'),
             ],
             'from_date' => [
                 'required_unless:cycle,' . ScheduleCycle::EVERY_WEEK->value,
@@ -98,6 +105,7 @@ class StoreScheduleRequest extends StoreRequest
         $dto->branch_id = $classroom->branch_id;
         $dto->classroom_id = $classroom->id;
         $dto->course_id = $validated['course_id'];
+        $dto->price_id = $validated['price_id'] ?? null;
         $dto->cycle = ScheduleCycle::from($validated['cycle']);
         $dto->weekday = isset($validated['weekday']) ? Weekday::from((int)$validated['weekday']) : null;
         $dto->from_date = isset($validated['from_date']) ? Carbon::parse($validated['from_date']) : null;

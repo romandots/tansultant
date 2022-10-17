@@ -105,6 +105,6 @@ class Visit extends Model
 
     public function getNameAttribute(): string
     {
-        return sprintf('%s @ %s', $this->student, $this->event);
+        return sprintf('%s @ %s', $this->student->name, $this->event->name);
     }
 }

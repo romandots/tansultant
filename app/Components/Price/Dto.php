@@ -8,5 +8,5 @@ class Dto extends \App\Common\DTO\DtoWithUser
 {
     public ?string $id;
     public string $name;
-    public string $price;
+    public int $price;
 }

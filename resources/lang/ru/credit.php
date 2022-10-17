@@ -2,7 +2,7 @@
 
 return [
     'withdrawals' => [
-        'visit' => 'Оплата посещения :event',
+        'visit' => 'Оплата посещения :visit',
         'subscription' => 'Оплата подписки :subscription',
     ],
 ];

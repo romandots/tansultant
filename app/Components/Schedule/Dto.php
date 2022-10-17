@@ -17,6 +17,8 @@ class Dto extends \App\Common\DTO\DtoWithUser
 
     public ?string $course_id;
 
+    public ?string $price_id;
+
     public ScheduleCycle $cycle;
 
     public ?Weekday $weekday;

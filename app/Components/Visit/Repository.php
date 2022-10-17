@@ -7,6 +7,7 @@ namespace App\Components\Visit;
 use App\Common\DTO\SearchFilterDto;
 use App\Http\Requests\ManagerApi\DTO\SearchVisitsFilterDto;
 use App\Models\Enum\VisitEventType;
+use App\Models\Subscription;
 use App\Models\Visit;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,6 +34,13 @@ class Repository extends \App\Common\BaseComponentRepository
             modelClass: Visit::class,
             searchableAttributes: ['name'],
         );
+    }
+
+    public function updatePayment(Visit $visit, ?\App\Models\Payment $payment = null, ?Subscription $subscription = null): void
+    {
+        $visit->payment_id = $payment?->id;
+        $visit->subscription_id = $subscription?->id;
+        $this->save($visit);
     }
 
     protected function getFilterQuery(

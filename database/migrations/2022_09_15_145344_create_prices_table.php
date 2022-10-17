@@ -34,7 +34,7 @@ return new class extends Migration
                 ->onDelete('cascade');
         });
 
-        Schema::table(\App\Models\Course::TABLE, static function (Blueprint $table) {
+        Schema::table(\App\Models\Schedule::TABLE, static function (Blueprint $table) {
             $table->uuid('price_id')->nullable();
             $table->foreign('price_id')
                 ->references('id')
@@ -50,8 +50,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table(\App\Models\Course::TABLE, static function (Blueprint $table) {
-            $table->dropForeign('courses_price_id_foreign');
+        Schema::table(\App\Models\Schedule::TABLE, static function (Blueprint $table) {
+            $table->dropForeign('schedules_price_id_foreign');
             $table->dropColumn('price_id');
         });
 

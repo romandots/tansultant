@@ -109,6 +109,13 @@ class AdminRole extends Permission
         PersonsPermission::DELETE,
         PersonsPermission::RESTORE,
 
+        PricesPermission::MANAGE,
+        PricesPermission::CREATE,
+        PricesPermission::READ,
+        PricesPermission::UPDATE,
+        PricesPermission::DELETE,
+        PricesPermission::RESTORE,
+
         ShiftsPermission::MANAGE,
         ShiftsPermission::CREATE,
         ShiftsPermission::READ,

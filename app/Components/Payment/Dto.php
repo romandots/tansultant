@@ -10,5 +10,5 @@ class Dto extends \App\Common\DTO\DtoWithUser
     public string $name;
     public int $amount;
     public string $credit_id;
-    public ?string $bonus_id;
+    public ?string $bonus_id = null;
 }

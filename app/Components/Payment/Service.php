@@ -34,7 +34,7 @@ class Service extends BaseComponentService
 
     public function createVisitPayment(Visit $visit, Student $student, ?Bonus $bonus, User $user): Payment
     {
-        $price = $visit->price;
+        $price = (int)$visit->price;
         $name =  trans('credit.withdrawals.visit', ['visit' => $visit->name]);
 
         return $this->createPayment($price, $name, $student, $bonus, $user);
@@ -48,6 +48,9 @@ class Service extends BaseComponentService
         return $this->createPayment($price, $name, $student, $bonus, $user);
     }
 
+    /**
+     * @throws \Throwable
+     */
     private function createPayment(int $originalPrice, string $comment, Student $student, ?Bonus $bonus, User $user): Payment
     {
         $price = $originalPrice - ($bonus?->amount ?? 0);
@@ -58,29 +61,31 @@ class Service extends BaseComponentService
         $this->validateCustomerAndBonus($student, $bonus);
         $this->validateStudentFunds($student, $price);
 
-        return \DB::transaction(function () use ($price, $comment, $student, $bonus, $user) {
-            $paymentDto = $this->buildPaymentDto($price, $comment, $student->customer, $bonus, $user);
-            return $this->create($paymentDto);
-        });
-    }
+        $paymentDto = $this->buildPaymentDto($price, $comment, $student->customer, $bonus, $user);
+
+        return $this->create($paymentDto);
+}
 
     private function buildPaymentDto(int $price, string $name, Customer $customer, ?Bonus $bonus, User $user): Dto
     {
+        \DB::beginTransaction();
         $credit = Loader::credits()->createWithdrawal($customer, $price, $name, $user);
         if ($bonus) {
             Loader::bonuses()->activateBonus($bonus);
         }
+        \DB::commit();
 
         $dto = new Dto($user);
-        $dto->amount = 0 - $credit->amount + ($bonus?->amount ?? 0);
+        $dto->amount = (0 - $credit->amount) + ($bonus?->amount ?? 0);
         $dto->name = $name;
+        $dto->credit_id = $credit->id;
 
         return $dto;
     }
 
     private function validateCustomerAndBonus(Student $student, ?Bonus $bonus): void
     {
-        if (null !== $student->customer) {
+        if (null === $student->load('customer')->customer) {
             throw new StudentHasNoCustomer($student);
         }
 

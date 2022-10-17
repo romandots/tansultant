@@ -12,6 +12,7 @@ namespace App\Http\Requests\ManagerApi;
 
 use App\Common\Requests\StoreRequest;
 use App\Components\Visit\Dto;
+use App\Models\Bonus;
 use App\Models\Enum\VisitEventType;
 use App\Models\Lesson;
 use App\Models\Student;
@@ -37,6 +38,12 @@ class StoreVisitRequest extends StoreRequest
                 'uuid',
                 Rule::exists(Lesson::TABLE, 'id')
             ],
+            'bonus_id' => [
+                'nullable',
+                'string',
+                'uuid',
+                Rule::exists(Bonus::TABLE, 'id')
+            ],
             'pay_from_balance' => [
                 'nullable',
                 'bool',
@@ -51,6 +58,7 @@ class StoreVisitRequest extends StoreRequest
 
         $dto->student_id = $validated['student_id'];
         $dto->event_id = $validated['lesson_id'];
+        $dto->bonus_id = $validated['bonus_id'] ?? null;
         $dto->event_type = VisitEventType::LESSON;
         $dto->pay_from_balance = (bool)($validated['pay_from_balance'] ?? false);
 

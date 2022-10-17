@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $schedule_id
  * @property string|null $instructor_id
  * @property string|null $controller_id
+ * @property string|null $price_id
  * @property string|null $payment_id
  * @property string $branch_id
  * @property string $classroom_id
@@ -51,6 +52,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Intent> $intents
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Visit> $visits
  * @property-read int|null $visits_limit
+ * @property-read int|null $visits_count
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newQuery()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Lesson onlyTrashed()
@@ -165,5 +167,13 @@ class Lesson extends Model
     public function branch(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Price>|null
+     */
+    public function price(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Price::class);
     }
 }

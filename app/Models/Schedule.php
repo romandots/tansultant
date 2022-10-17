@@ -30,12 +30,14 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $branch_id
  * @property string $classroom_id
  * @property string|null $course_id
+ * @property string|null $price_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Course|null $course
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Branch|null $branch
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Classroom|null $classroom
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Course>|null $course
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Branch>|null $branch
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Classroom>|null $classroom
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Price>|null $price
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Schedule newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Schedule newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Schedule query()
@@ -65,6 +67,8 @@ class Schedule extends Model
     public const TABLE = 'schedules';
 
     protected $table = self::TABLE;
+
+    protected $with = ['price'];
 
     protected $casts = [
         'cycle' => ScheduleCycle::class,
@@ -98,6 +102,11 @@ class Schedule extends Model
     public function classroom(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Classroom::class);
+    }
+
+    public function price(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Price::class);
     }
 
     public function lessons(): \Illuminate\Database\Eloquent\Relations\HasMany
