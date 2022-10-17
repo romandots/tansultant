@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Exceptions;
 
 use App\Components\Account\Exceptions\InsufficientFundsAccountException;
-use App\Components\Lesson\Exceptions\Exception as LessonException;
 use App\Components\Schedule\Exceptions\ScheduleSlotIsOccupied;
 use App\Components\Subscription\Exceptions\Exception as SubscriptionException;
 use App\Components\Subscription\Exceptions\ProlongationPeriodExpired;
@@ -80,7 +79,7 @@ class Handler extends BaseExceptionHandler
             UserHasNoPerson::class => [$this, 'renderAsJson'],
             ScheduleSlotIsOccupied::class => [$this, 'renderAsJson'],
             UserHasNoPersonException::class => [$this, 'renderAsJson'],
-            LessonException::class => [$this, 'renderAsJson'],
+            BaseException::class => [$this, 'renderAsJson'],
             \BadMethodCallException::class => [$this, 'renderBadMethodCallAsJson'],
             RelationNotFoundException::class => [$this, 'renderRelationNotFoundAsJson'],
             SubscriptionException::class => [$this, 'renderAsJson'],
