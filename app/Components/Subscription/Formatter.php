@@ -26,6 +26,9 @@ class Formatter extends BaseFormatter
                 ->whenLoaded('tariff', fn () => new \App\Components\Tariff\Formatter($this->tariff)),
             'courses' => $this
                 ->whenLoaded('courses', fn () => \App\Components\Course\Formatter::collection($this->courses)),
+            'payments' => $this
+                ->whenLoaded('payments', fn () => \App\Components\Payment\Formatter::collection($this->payments)),
+            'payments_count' => (int)$this->payments_count,
             'days_limit' => $this->days_limit,
             'courses_limit' => $this->courses_limit,
             'visits_limit' => $this->visits_limit,

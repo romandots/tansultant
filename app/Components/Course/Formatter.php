@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Components\Course;
 
 use App\Common\BaseFormatter;
-use App\Http\Resources\InstructorResource;
-use App\Http\Resources\ScheduleResource;
+use App\Models\Course;
 use App\Models\Genre;
 
 /**
@@ -20,6 +19,7 @@ class Formatter extends BaseFormatter
      */
     public function toArray($request): array
     {
+        assert($this->resource instanceof Course);
         return [
             'id' => $this->id,
             'name' => $this->name,

@@ -22,6 +22,7 @@ use Illuminate\Support\Collection;
  * @property int|null $visits_count
  * @property int|null $days_count
  * @property int|null $holds_count
+ * @property int|null $payments_count
  * @property-read BelongsTo<Tariff>|Tariff|null $tariff
  * @property-read BelongsTo<Student>|Student|null $student
  * @property-read BelongsToMany|Collection<Course>|null $courses

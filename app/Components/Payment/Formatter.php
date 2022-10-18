@@ -23,11 +23,11 @@ class Formatter extends BaseFormatter
             'amount' => $this->amount,
             'credit_id' => $this->credit_id,
             'credit' => $this->whenLoaded('credit', function () {
-                return new \App\Components\Course\Formatter($this->credit);
+                return new \App\Components\Credit\Formatter($this->credit);
             }),
             'bonus_id' => $this->bonus_id,
             'bonus' => $this->whenLoaded('bonus', function () {
-                return new \App\Components\Course\Formatter($this->bonus);
+                return new \App\Components\Bonus\Formatter($this->bonus);
             }),
             'created_at' => $this->created_at?->toDateTimeString(),
         ];

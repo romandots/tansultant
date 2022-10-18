@@ -22,6 +22,10 @@ class Formatter extends BaseFormatter
             'name' => $this->name,
             'courses' => $this
                 ->whenLoaded('courses', fn () => \App\Components\Course\Formatter::collection($this->courses)),
+            'courses_count' => $this->courses_count,
+            'subscriptions' => $this
+                ->whenLoaded('subscriptions', fn () => \App\Components\Subscription\Formatter::collection($this->subscriptions)),
+            'subscriptions_count' => $this->subscriptions_count,
             'price' => $this->price,
             'prolongation_price' => $this->prolongation_price,
             'courses_limit' => $this->courses_limit,

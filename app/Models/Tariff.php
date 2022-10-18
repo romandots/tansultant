@@ -17,6 +17,8 @@ use Illuminate\Support\Collection;
  * @property int|null $visits_limit
  * @property int|null $days_limit
  * @property int|null $holds_limit
+ * @property int|null $subscriptions_count
+ * @property int|null $courses_count
  * @property-read HasMany<Subscription>|Collection<Subscription>|null $subscriptions
  * @property-read BelongsToMany<Course>|Collection<Course>|null $courses
  * @property Enum\TariffStatus $status
@@ -45,7 +47,7 @@ class Tariff extends Model
 
     public function subscriptions(): HasMany
     {
-        return $this->hasMany('subscriptions')->orderBy('created_at', 'desc');
+        return $this->hasMany(Subscription::class)->orderBy('created_at', 'desc');
     }
 
     public function courses(): BelongsToMany
