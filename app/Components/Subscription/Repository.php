@@ -7,6 +7,7 @@ namespace App\Components\Subscription;
 use App\Models\Course;
 use App\Models\Enum\SubscriptionStatus;
 use App\Models\Subscription;
+use App\Models\Visit;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -106,4 +107,26 @@ class Repository extends \App\Common\BaseComponentRepository
         );
         $this->save($subscription);
     }
-}
+
+    public function updateActiveSubscriptionsStatus(): Collection
+    {
+        $visits = Visit::TABLE;
+        $subscriptions = Subscription::TABLE;
+        $query = $this->getQuery()
+            ->leftJoin($visits, "{$visits}.subscription_id", '=', "{$subscriptions}.id")
+            ->where("{$subscriptions}.status", '=', SubscriptionStatus::PENDING)
+            ->where("COUNT({$visits}.id)", '>', 0);
+        $collection = $query->get();
+        $query->update(["{$subscriptions}.status" => SubscriptionStatus::ACTIVE]);
+        return $collection;
+    }
+
+    public function updateExpiredSubscriptionsStatus(): Collection
+    {
+        $query = $this->getQuery()
+            ->where('expired_at', '<=', Carbon::now())
+            ->where('status', SubscriptionStatus::ACTIVE);
+        $collection = $query->get();
+        $query->update(['status' => SubscriptionStatus::EXPIRED]);
+        return $collection;
+    }}

@@ -9,6 +9,7 @@ use App\Common\Contracts;
 use App\Common\Contracts\DtoWithUser;
 use App\Components\Bonus\Exceptions\InvalidBonusStatus;
 use App\Components\Loader;
+use App\Events\Subscription\SubscriptionUpdatedEvent;
 use App\Models\Course;
 use App\Models\Enum\BonusStatus;
 use App\Models\Enum\CourseStatus;
@@ -291,5 +292,36 @@ class Service extends BaseComponentService
         }
 
         throw new InvalidBonusStatus($bonus->status, [BonusStatus::PENDING]);
+    }
+
+    public function updateSubscriptionsStatuses(): int
+    {
+        $this->debug('Updating subscriptions statuses');
+
+        $active = $this->getRepository()->updateActiveSubscriptionsStatus();
+        $this->debug("{$active->count()} subscriptions set to ACTIVE status");
+
+        $expired = $this->getRepository()->updateExpiredSubscriptionsStatus();
+        $this->debug("{$expired->count()} subscriptions set to EXPIRED status");
+
+        $subscriptions = $active->merge($expired);
+        $this->dispatchEvents($subscriptions);
+
+        return $subscriptions->count();
+    }
+
+    protected function dispatchEvents(iterable $subscriptions): void
+    {
+        foreach ($subscriptions as $subscription) {
+            assert($subscription instanceof Subscription);
+            try {
+                $this->debug(
+                    "Dispatching SubscriptionUpdatedEvent for subscription #{$subscription->id}"
+                );
+                SubscriptionUpdatedEvent::dispatch($subscription);
+            } catch (\Exception $exception) {
+                $this->error('Failed dispatching SubscriptionUpdatedEvent', $exception);
+            }
+        }
     }
 }

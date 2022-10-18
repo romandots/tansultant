@@ -79,4 +79,9 @@ class Facade extends BaseComponentFacade
             ->load($dto->with)
             ->loadCount($dto->with_count);
     }
+
+    public function updateSubscriptionsStatuses(): int
+    {
+        return $this->getService()->updateSubscriptionsStatuses();
+    }
 }
