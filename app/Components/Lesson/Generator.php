@@ -31,6 +31,7 @@ class Generator
     public function updateLessonsStatuses(): int
     {
         return \clock()->event('Updating lessons status')->run(function () {
+            $this->debug('Updating lessons statuses');
 
             $ongoing = $this->service->getRepository()->updateOngoingLessonsStatus();
             $this->debug("{$ongoing->count()} lessons set to ONGOING status");

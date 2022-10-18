@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-         $schedule->command('update:lesson')
+         $schedule->command(LessonUpdateCommand::class)
                   ->everyMinute();
     }
 

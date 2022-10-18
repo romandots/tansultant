@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @method array getSearchableAttributes()
  * @method bool withSoftDeletes()
- * @method \Illuminate\Database\Eloquent\Builder getQuery()
  * @method Lesson make()
  * @method int countFiltered(\App\Common\Contracts\SearchFilterDto $search)
  * @method \Illuminate\Database\Eloquent\Collection<Lesson> findFilteredPaginated(PaginatedInterface $search, array $withRelations = [])
