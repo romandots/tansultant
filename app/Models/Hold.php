@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -31,5 +32,11 @@ class Hold extends Model
     public function subscription(): BelongsTo
     {
         return $this->belongsTo(Subscription::class);
+    }
+
+    public function getDuration(): int
+    {
+        $endDate = $this->ends_at ?? Carbon::now();
+        return $endDate->diffInDays($this->starts_at) ?? 0;
     }
 }

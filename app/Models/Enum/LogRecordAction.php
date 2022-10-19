@@ -16,4 +16,6 @@ enum LogRecordAction: string
     case BOOK = 'book';
     case CANCEL = 'cancel';
     case CHECKOUT = 'checkout';
+    case START = 'start';
+    case END = 'end';
 }

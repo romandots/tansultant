@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
  * @property string $name
  * @property string $tariff_id
  * @property string $student_id
+ * @property string|null $hold_id
  * @property int|null $courses_limit
  * @property int|null $visits_limit
  * @property int|null $days_limit
@@ -27,8 +28,9 @@ use Illuminate\Support\Collection;
  * @property-read BelongsTo<Student>|Student|null $student
  * @property-read BelongsToMany|Collection<Course>|null $courses
  * @property-read BelongsToMany|Collection<Payment>|null $payments
- * @property-read HasMany<Hold>|null $holds
- * @property-read HasMany<Visit>|null $visits
+ * @property-read HasMany<Hold>|Hold|null $holds
+ * @property-read BelongsTo<Hold>|Hold|null $active_hold
+ * @property-read HasMany<Visit>|Visit|null $visits
  * @property Enum\SubscriptionStatus $status
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon|null $updated_at
@@ -82,6 +84,11 @@ class Subscription extends Model
     public function holds(): HasMany
     {
         return $this->hasMany(Hold::class);
+    }
+
+    public function active_hold(): BelongsTo
+    {
+        return $this->belongsTo(Hold::class);
     }
 
     public function visits(): HasMany

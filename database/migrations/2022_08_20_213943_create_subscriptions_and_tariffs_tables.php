@@ -72,6 +72,14 @@ return new class extends Migration
                 ->onDelete('cascade');
         });
 
+        Schema::table('subscriptions', static function (Blueprint $table) {
+            $table->uuid('hold_id')->nullable();
+            $table->foreign('hold_id')
+                ->references('id')
+                ->on('holds')
+                ->onDelete('cascade');
+        });
+
         Schema::create('tariff_has_courses', static function (Blueprint $table) {
             $table->uuid('tariff_id')->index();
             $table->uuid('course_id')->index();
@@ -135,6 +143,12 @@ return new class extends Migration
 
         Schema::dropIfExists('subscription_has_courses');
         Schema::dropIfExists('tariff_has_courses');
+
+        Schema::table('subscriptions', static function (Blueprint $table) {
+            $table->dropForeign('subscriptions_hold_id_foreign');
+            $table->dropColumn(['hold_id']);
+        });
+
         Schema::dropIfExists('holds');
         Schema::dropIfExists('subscriptions');
         Schema::dropIfExists('tariffs');
