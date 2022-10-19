@@ -166,11 +166,12 @@ abstract class BaseComponentRepository extends BaseRepository
         $this->save($record);
     }
 
-    public function save(Model $record): void
+    public function save(Model $record, array $dates = []): void
     {
         if ($record::UPDATED_AT !== null) {
-            $this->fillDate($record, 'updated_at');
+            $dates = [$record::UPDATED_AT];
         }
+        $this->fillDates($record, $dates);
         $record->save();
     }
 
@@ -218,6 +219,13 @@ abstract class BaseComponentRepository extends BaseRepository
             ->get();
     }
 
+    protected function fillDates(Model $record, array $datesToUpdate): void
+    {
+        foreach ($datesToUpdate as $dateField) {
+            $this->fillDate($record, $dateField);
+        }
+    }
+
     protected function fillDate(Model $record, string $attribute): void
     {
         $record->{$attribute} = \Carbon\Carbon::now();
@@ -254,8 +262,12 @@ abstract class BaseComponentRepository extends BaseRepository
             $datesToUpdate[] = $record::UPDATED_AT;
         }
 
-        foreach ($datesToUpdate as $dateField) {
-            $this->fillDate($record, $dateField);
-        }
+        $this->fillDates($record, $datesToUpdate);
+    }
+
+    public function updateStatus(Model $record, object $status, array $datesToUpdate = []): void
+    {
+        $this->setStatus($record, $status, $datesToUpdate);
+        $this->save($record);
     }
 }
