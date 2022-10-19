@@ -24,6 +24,8 @@ RUN apt-get update -y \
     openssh-client \
     telnet \
     unzip \
+    supervisor \
+    htop \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pecl install xdebug redis \
@@ -35,6 +37,7 @@ RUN pecl install xdebug redis \
 ADD docker/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 ADD docker/nginx.conf /etc/nginx/sites-enabled/default
 ADD docker/entrypoint.sh /tmp/entrypoint.sh
+ADD docker/supervisor.conf /etc/supervisor/conf.d
 RUN chmod 777 /tmp/entrypoint.sh
 
 RUN mv /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
@@ -48,6 +51,6 @@ ADD ./ /app
 
 WORKDIR /app
 
-RUN composer install
+#RUN composer install
 
 ENTRYPOINT /tmp/entrypoint.sh
