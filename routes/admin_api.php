@@ -213,6 +213,7 @@ Route::namedGroup('subscriptions',ManagerApi\SubscriptionController::class, stat
     Route::namedRoute('restore', 'post', '{id:uuid}/restore', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::RESTORE]);
     Route::namedRoute('attachCourses', 'post', '{id:uuid}/courses', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
     Route::namedRoute('detachCourses', 'delete', '{id:uuid}/courses', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
+    Route::namedRoute('setStatus', 'post', '{id:uuid}/status/{status}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
 });
 
 // TARIFFS

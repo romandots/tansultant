@@ -89,15 +89,6 @@ class Repository extends \App\Common\BaseComponentRepository
         $this->detachRelations($subscription, 'courses', $courses);
     }
 
-    public function updateStatus(Subscription $subscription, SubscriptionStatus $status): void
-    {
-        $subscription->status = $status;
-        if (SubscriptionStatus::ACTIVE === $status) {
-            $this->fillDate($subscription, 'activated_at');
-        }
-        $this->save($subscription);
-    }
-
     public function attachPayment(Subscription $subscription, \App\Models\Payment $payment): void
     {
         $subscription->payments()->attach($payment->id, ['created_at' => Carbon::now()]);
@@ -121,6 +112,16 @@ class Repository extends \App\Common\BaseComponentRepository
         return $collection;
     }
 
+    public function updateOhHoldSubscriptionsStatus(): Collection
+    {
+        $query = $this->getQuery()
+            ->whereNotNull('hold_id')
+            ->where('status', SubscriptionStatus::ACTIVE);
+        $collection = $query->get();
+        $query->update(['status' => SubscriptionStatus::ON_HOLD]);
+        return $collection;
+    }
+
     public function updateExpiredSubscriptionsStatus(): Collection
     {
         $query = $this->getQuery()
@@ -129,4 +130,19 @@ class Repository extends \App\Common\BaseComponentRepository
         $collection = $query->get();
         $query->update(['status' => SubscriptionStatus::EXPIRED]);
         return $collection;
-    }}
+    }
+
+    public function setHold(Subscription $subscription, \App\Models\Hold $hold): void
+    {
+        $subscription->hold_id = $hold->id;
+        $this->setStatus($subscription, SubscriptionStatus::ON_HOLD);
+        $this->save($subscription);
+    }
+
+    public function unsetHold(Subscription $subscription, ?Carbon $expiredAt = null): void
+    {
+        $subscription->hold_id = null;
+        $this->setStatus($subscription, SubscriptionStatus::ACTIVE, ['expired_at' => $expiredAt]);
+        $this->save($subscription);
+    }
+}

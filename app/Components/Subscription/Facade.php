@@ -43,7 +43,7 @@ class Facade extends BaseComponentFacade
 
     public function prolongSubscription(Subscription $subscription, User $user): void
     {
-        $this->getService()->prolong($subscription, $user);
+        $this->getManager()->prolong($subscription, $user);
     }
 
     /**
@@ -56,7 +56,7 @@ class Facade extends BaseComponentFacade
         /** @var Subscription $subscription */
         $subscription = $this->getRepository()->find($dto->id);
         $courses = Loader::courses()->getMany($dto->relations_ids);
-        $this->getService()->attachCourses($subscription, $courses, $dto->user);
+        $this->getManager()->attachCourses($subscription, $courses, $dto->user);
 
         return $subscription
             ->load($dto->with)
@@ -73,7 +73,7 @@ class Facade extends BaseComponentFacade
         /** @var Subscription $subscription */
         $subscription = $this->getRepository()->find($dto->id);
         $courses = Loader::courses()->getMany($dto->relations_ids);
-        $this->getService()->detachCourses($subscription, $courses, $dto->user);
+        $this->getManager()->detachCourses($subscription, $courses, $dto->user);
 
         return $subscription
             ->load($dto->with)
@@ -82,6 +82,20 @@ class Facade extends BaseComponentFacade
 
     public function updateSubscriptionsStatuses(): int
     {
-        return $this->getService()->updateSubscriptionsStatuses();
+        return $this->getManager()->updateSubscriptionsStatuses();
+    }
+
+    public function updateStatus(StatusDto $statusDto): Subscription
+    {
+        $subscription = $this->getService()->find($statusDto->id);
+        assert($subscription instanceof Subscription);
+        $this->getManager()->updateStatus($subscription, $statusDto->status, $statusDto->user);
+
+        return $subscription;
+    }
+
+    protected function getManager(): Manager
+    {
+        return app(Manager::class);
     }
 }

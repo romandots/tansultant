@@ -7,18 +7,10 @@ namespace App\Components\Subscription;
 use App\Common\BaseComponentService;
 use App\Common\Contracts;
 use App\Common\Contracts\DtoWithUser;
-use App\Components\Bonus\Exceptions\InvalidBonusStatus;
 use App\Components\Loader;
 use App\Events\Subscription\SubscriptionUpdatedEvent;
-use App\Models\Course;
-use App\Models\Enum\BonusStatus;
-use App\Models\Enum\CourseStatus;
 use App\Models\Enum\SubscriptionStatus;
-use App\Models\Enum\TariffStatus;
 use App\Models\Subscription;
-use App\Models\Tariff;
-use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -47,9 +39,9 @@ class Service extends BaseComponentService
         $student = Loader::students()->find($dto->student_id);
         $bonus = $dto->bonus_id ? Loader::bonuses()->find($dto->bonus_id) : null;
 
-        $this->validateTariff($tariff);
-        $this->validateStudent($student);
-        $this->validateBonus($bonus);
+        $this->getValidator()->validateTariff($tariff);
+        $this->getValidator()->validateStudent($student);
+        $this->getValidator()->validateBonus($bonus);
 
         $dto->name = $tariff->name;
         $dto->status = SubscriptionStatus::NOT_PAID;
@@ -64,7 +56,6 @@ class Service extends BaseComponentService
             return $subscription;
         });
     }
-
 
     /**
      * @param Subscription $record
@@ -116,39 +107,7 @@ class Service extends BaseComponentService
         parent::delete($record, $user);
     }
 
-    public function prolong(Subscription $subscription, User $user): void
-    {
-        $this->validateSubscriptionStatusForProlong($subscription);
-
-        $tariff = $subscription->tariff;
-        $this->validateTariff($tariff);
-
-        $originalRecord = clone $subscription;
-
-        $this->addTariffValues($subscription, $tariff);
-        $this->setExpirationDate($subscription);
-
-        \DB::transaction(function () use ($subscription, $originalRecord, $user) {
-            $this->getRepository()->save($subscription);
-            $this->history->logUpdate($user, $subscription, $originalRecord);
-
-            $this->debug("Prolong subscription #{$subscription->id}");
-        });
-    }
-
-    public function activate(Subscription $subscription): void
-    {
-        $this->validateSubscriptionStatusForActivate($subscription);
-        $this->getRepository()->updateStatus($subscription, SubscriptionStatus::ACTIVE);
-        $this->debug("Activated subscription #{$subscription->id}");
-    }
-
-    private function getExtraDays(): int
-    {
-        return (int)\config('subscriptions.prolongation_extra_period', 0);
-    }
-
-    private function addTariffValues(Subscription|Dto $subscription, \App\Models\Tariff $tariff): void
+    public function addTariffValues(Subscription|Dto $subscription, \App\Models\Tariff $tariff): void
     {
         $subscription->courses_limit = $tariff->courses_limit;
         $subscription->days_limit = $tariff->days_limit === null ? null : $subscription->days_limit + $tariff->days_limit;
@@ -156,161 +115,7 @@ class Service extends BaseComponentService
         $subscription->holds_limit = $tariff->holds_limit === null ? null : $subscription->holds_limit + $tariff->holds_limit;
     }
 
-    private function setExpirationDate(Subscription $subscription, bool $save = false): void
-    {
-        if (!$subscription->activated_at) {
-            return;
-        }
-
-        $days = $subscription->tariff->days_limit ?? 3650;
-        $subscription->expired_at = $subscription->activated_at->clone()
-            ->addDays($days)
-            ->setHour(23)
-            ->setMinute(59)
-            ->setSecond(59);
-
-        // @todo add holds periods
-
-        if ($save) {
-            $this->getRepository()->save($subscription);
-        }
-    }
-
-    /**
-     * @param Subscription $subscription
-     * @param iterable<Course> $courses
-     * @param User $user
-     * @return void
-     * @throws \Exception
-     * @throws Exceptions\CoursesLimitReached
-     * @throws Exceptions\CannotAttachDisabledCourse
-     */
-    public function attachCourses(Subscription $subscription, iterable $courses, User $user): void
-    {
-        if ($subscription->courses_limit !== null
-            && $subscription->loadCount('courses')->courses_count >= $subscription->courses_limit) {
-            throw new Exceptions\CoursesLimitReached($subscription->courses_limit);
-        }
-
-        $allowedCoursesIds = $subscription->tariff->load('courses')->courses->pluck('id')->toArray();
-        foreach ($courses as $course) {
-            if ($course->status === CourseStatus::DISABLED) {
-                throw new Exceptions\CannotAttachDisabledCourse($course);
-            }
-
-            if (!\in_array($course->id, $allowedCoursesIds, true)) {
-                throw new Exceptions\TariffDoesNotIncludeCourse($subscription->tariff, $course);
-            }
-        }
-
-        $originalRecord = clone $subscription;
-        $this->getRepository()->attachCourses($subscription, $courses);
-        $this->debug("Attach courses to subscription {$subscription->name}", (array)$courses);
-        $this->history->logUpdate($user, $subscription, $originalRecord);
-    }
-
-    /**
-     * @param Subscription $subscription
-     * @param iterable<Course> $courses
-     * @param User $user
-     * @return void
-     * @throws \Exception
-     */
-    public function detachCourses(Subscription $subscription, iterable $courses, User $user): void
-    {
-        $originalRecord = clone $subscription;
-        $this->getRepository()->detachCourses($subscription, $courses);
-        $this->debug("Detach courses subscription tariff {$subscription->name}", (array)$courses);
-        $this->history->logUpdate($user, $subscription, $originalRecord);
-    }
-
-    private function validateTariff(?Tariff $tariff): void
-    {
-        if (null === $tariff || $tariff->deleted_at || TariffStatus::ACTIVE !== $tariff->status) {
-            throw new Exceptions\TariffIsNoLongerActive($tariff);
-        }
-    }
-
-    private function validateStudent(\App\Models\Student $student): void
-    {
-    }
-
-    /**
-     * @param Subscription $record
-     * @return void
-     */
-    public function validateSubscriptionStatusForUpdate(Subscription $record): void
-    {
-        $allowedStatuses = [SubscriptionStatus::NOT_PAID];
-        if (!in_array($record->status, $allowedStatuses, true)) {
-            throw new Exceptions\InvalidSubscriptionStatus($record->status->value, $allowedStatuses);
-        }
-    }
-
-    /**
-     * @param Subscription $subscription
-     * @return void
-     */
-    public function validateSubscriptionStatusForProlong(Subscription $subscription): void
-    {
-        $allowedStatuses = [SubscriptionStatus::ACTIVE, SubscriptionStatus::EXPIRED, SubscriptionStatus::ON_HOLD];
-        if (!\in_array($subscription->status, $allowedStatuses, true)) {
-            throw new Exceptions\InvalidSubscriptionStatus($subscription->status->value, $allowedStatuses);
-        }
-
-        $prolongationPeriod = $this->getExtraDays();
-        if (SubscriptionStatus::EXPIRED === $subscription->status
-            && Carbon::now()->diffInDays($subscription->expired_at) > $prolongationPeriod) {
-            throw new Exceptions\ProlongationPeriodExpired($subscription->expired_at, $prolongationPeriod);
-        }
-    }
-
-    /**
-     * @param Subscription $record
-     * @return void
-     */
-    public function validateSubscriptionStatusForDelete(Subscription $record): void
-    {
-        $allowedStatuses = [SubscriptionStatus::EXPIRED, SubscriptionStatus::CANCELED, SubscriptionStatus::NOT_PAID];
-        if (!\in_array($record->status, $allowedStatuses, true)) {
-            throw new Exceptions\InvalidSubscriptionStatus($record->status->value, $allowedStatuses);
-        }
-    }
-
-    private function validateSubscriptionStatusForActivate(Subscription $record): void
-    {
-        $allowedStatuses = [SubscriptionStatus::PENDING];
-        if (!\in_array($record->status, $allowedStatuses, true)) {
-            throw new Exceptions\InvalidSubscriptionStatus($record->status->value, $allowedStatuses);
-        }
-    }
-
-    private function validateBonus(?\App\Models\Bonus $bonus): void
-    {
-        if (null === $bonus || $bonus->status === BonusStatus::PENDING) {
-            return;
-        }
-
-        throw new InvalidBonusStatus($bonus->status, [BonusStatus::PENDING]);
-    }
-
-    public function updateSubscriptionsStatuses(): int
-    {
-        $this->debug('Updating subscriptions statuses');
-
-        $active = $this->getRepository()->updateActiveSubscriptionsStatus();
-        $this->debug("{$active->count()} subscriptions set to ACTIVE status");
-
-        $expired = $this->getRepository()->updateExpiredSubscriptionsStatus();
-        $this->debug("{$expired->count()} subscriptions set to EXPIRED status");
-
-        $subscriptions = $active->merge($expired);
-        $this->dispatchEvents($subscriptions);
-
-        return $subscriptions->count();
-    }
-
-    protected function dispatchEvents(iterable $subscriptions): void
+    public function dispatchEvents(iterable $subscriptions): void
     {
         foreach ($subscriptions as $subscription) {
             assert($subscription instanceof Subscription);
@@ -323,5 +128,10 @@ class Service extends BaseComponentService
                 $this->error('Failed dispatching SubscriptionUpdatedEvent', $exception);
             }
         }
+    }
+
+    protected function getValidator(): Validator
+    {
+        return app(Validator::class);
     }
 }

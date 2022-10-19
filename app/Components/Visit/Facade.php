@@ -35,16 +35,11 @@ class Facade extends BaseComponentFacade
      */
     public function visitsArePaid(Collection $visits): bool
     {
-        foreach ($visits as $visit) {
-            if ($visit->subscription_id === null && $visit->payment === null) {
-                return false;
-            }
-        }
-        return true;
+        return $this->getManager()->visitsArePaid($visits);
     }
 
-    public function createLessonVisit(Dto $dto)
+    protected function getManager(): Manager
     {
-        
+        return \app(Manager::class);
     }
 }

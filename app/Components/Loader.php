@@ -50,6 +50,11 @@ class Loader extends Locator
         return self::get(Genre\Facade::class);
     }
 
+    public static function holds(): \App\Components\Hold\Facade
+    {
+        return self::get(\App\Components\Hold\Facade::class);
+    }
+
     public static function instructors(): Instructor\Facade
     {
         return self::get(Instructor\Facade::class);
@@ -60,9 +65,9 @@ class Loader extends Locator
         return self::get(Intent\Facade::class);
     }
 
-    public static function lessons(): Lesson\Facade
+    public static function lessons(): \App\Components\Lesson\Facade
     {
-        return self::get(Lesson\Facade::class);
+        return self::get(\App\Components\Lesson\Facade::class);
     }
 
     public static function logRecords(): LogRecord\Facade

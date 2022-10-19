@@ -6,9 +6,11 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
 use App\Common\Requests\ManageRelationsRequest;
+use App\Components\Loader;
 use App\Components\Subscription as Component;
 use App\Http\Requests\ManagerApi\SearchSubscriptionRequest;
 use App\Http\Requests\ManagerApi\StoreSubscriptionRequest;
+use App\Http\Requests\ManagerApi\UpdateSubscriptionStatusRequest;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
@@ -57,6 +59,14 @@ class SubscriptionController extends AdminController
     public function detachCourses(ManageRelationsRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         $subscription = $this->getFacade()->findAndDetachCourses($request->getDto());
+        return new \App\Components\Subscription\Formatter($subscription);
+    }
+
+    public function setStatus(UpdateSubscriptionStatusRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    {
+        $statusDto = $request->getDto();
+        assert($statusDto instanceof Component\StatusDto);
+        $subscription = Loader::subscriptions()->updateStatus($statusDto);
         return new \App\Components\Subscription\Formatter($subscription);
     }
 }
