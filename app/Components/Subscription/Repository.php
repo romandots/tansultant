@@ -69,6 +69,20 @@ class Repository extends \App\Common\BaseComponentRepository
             ->get();
     }
 
+    public function getStudentSubscriptionsWithCoursesLeft(
+        string $studentId,
+        \App\Models\Enum\SubscriptionStatus $subscriptionStatus
+    ): Collection {
+        $subscriptions = Subscription::TABLE;
+        $pivot = 'subscription_has_courses';
+        return $this->getQuery()
+            ->join($pivot, "{$pivot}.subscription_id", '=', "{$subscriptions}.id")
+            ->where("{$subscriptions}.status", $subscriptionStatus->value)
+            ->where("{$subscriptions}.student_id", $studentId)
+            ->where("COUNT({$pivot}.course_id)", '<', "{$subscriptions}.courses_limit")
+            ->get();
+    }
+
     /**
      * @param Subscription $subscription
      * @param iterable<Course> $courses

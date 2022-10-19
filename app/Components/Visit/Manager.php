@@ -7,10 +7,9 @@ namespace App\Components\Visit;
 use App\Components\Loader;
 use App\Components\Visit\Entity\PriceOptions;
 use App\Models\Bonus;
-use App\Models\Enum\SubscriptionStatus;
+use App\Models\Course;
 use App\Models\Enum\VisitPaymentType;
 use App\Models\Student;
-use App\Models\Subscription;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Support\Collection;
@@ -64,10 +63,44 @@ class Manager extends \App\Common\BaseComponentService
 
         match ($dto->pay_from_balance) {
             true => $this->appendVisitPayment($dto, $priceOptions),
-            false => $this->appendVisitSubscription($dto, $priceOptions),
+            false => $this->appendVisitSubscription($dto, $course, $priceOptions),
         };
 
         return $dto;
+    }
+
+    protected function appendVisitSubscription(Dto $dto, Course $course, PriceOptions $priceOptions): void
+    {
+        $dto->payment_type = VisitPaymentType::SUBSCRIPTION;
+
+        // If valid subscription is already picked
+        $subscriptions = Loader::subscriptions()->getStudentSubscriptionsForCourse($dto->student_id, $course->id);
+
+        // If there's none -- let user confirm the payment
+        if ($subscriptions->count() === 0) {
+            $unsubscribedSubscriptions = Loader::subscriptions()
+                ->getStudentPotentialSubscriptionsForCourse($dto->student_id, $course->id);
+
+            throw new Exceptions\NoSubscriptionsException($priceOptions, $unsubscribedSubscriptions);
+        }
+
+        if (null !== $dto->subscription_id) {
+            if ($subscriptions->where('id', $dto->subscription_id)->count() > 0) {
+                return;
+            }
+
+            // Subscribe to course automatically
+            $this->subscribeToCourseAutomatically($dto, $course);
+            return;
+        }
+
+        //  If there's more than one -- let user choose
+        if ($subscriptions->count() > 1) {
+            throw new Exceptions\ChooseSubscriptionException($subscriptions);
+        }
+
+        // Otherwise, pick it automatically
+        $dto->subscription_id = $subscriptions->first()->id;
     }
 
     protected function appendVisitPayment(Dto $dto, PriceOptions $priceOptions): void
@@ -78,23 +111,6 @@ class Manager extends \App\Common\BaseComponentService
             && !$priceOptions->bonuses->contains('id', '=', $dto->bonus_id)) {
             throw new \LogicException('bonus_id_is_invalid');
         }
-    }
-
-    protected function appendVisitSubscription(Dto $dto, PriceOptions $priceOptions): void
-    {
-        $subscriptions = Loader::subscriptions()->getStudentSubscriptionsForCourse(
-            $dto->student_id,
-            $dto->event_id,
-            SubscriptionStatus::ACTIVE
-        );
-
-        $isChosenSubscriptionValid = $dto->subscription_id
-            && $subscriptions->where('id', $dto->subscription_id)->count() > 0;
-        if (!$isChosenSubscriptionValid || $dto->subscription_id === null) {
-            $dto->subscription_id = $this->pickCompatibleSubscription($subscriptions, $priceOptions)->id;
-        }
-
-        $dto->payment_type = VisitPaymentType::SUBSCRIPTION;
     }
 
     /**
@@ -109,7 +125,8 @@ class Manager extends \App\Common\BaseComponentService
         if ($dto->payment_type !== VisitPaymentType::PAYMENT) {
             return;
         }
-        $bonus = $dto->bonus_id ? Loader::bonuses()->findById($dto->bonus_id) : null;
+
+        $bonus = $dto->bonus_id ? Loader::bonuses()->find($dto->bonus_id) : null;
 
         \DB::beginTransaction();
         $payment = Loader::payments()->createVisitPayment($visit, $student, $bonus, $dto->user);
@@ -117,25 +134,33 @@ class Manager extends \App\Common\BaseComponentService
         \DB::commit();
     }
 
-    protected function pickCompatibleSubscription(Collection $subscriptions, PriceOptions $priceOptions): Subscription
-    {
-        //  If there's more than one -- let user choose
-        if ($subscriptions->count() > 1) {
-            throw new Exceptions\ChooseSubscriptionException($subscriptions);
-        }
-
-        // If there's none -- let user confirm the payment
-        if ($subscriptions->count() === 0) {
-            throw new Exceptions\NoSubscriptionsException($priceOptions);
-        }
-
-        // Otherwise, set the only compatible subscription
-        return $subscriptions->first();
-    }
-
-
     protected function getService(): Service
     {
         return \app(Service::class);
+    }
+
+    /**
+     * @param Dto $dto
+     * @param Course $course
+     * @return void
+     */
+    protected function subscribeToCourseAutomatically(Dto $dto, Course $course): void
+    {
+        $subscription = Loader::subscriptions()->find($dto->subscription_id);
+        if ($dto->student_id !== $subscription->student_id) {
+            $this->critical(
+                'Something bad happening: attempt to subscribe another student',
+                [
+                    'student_id' => $dto->student_id,
+                    'subscription_student_id' => $subscription->student_id,
+                ]
+            );
+            throw new \LogicException('subscription_belongs_to_another_student');
+        }
+        $this->debug('Attaching course to subscription automatically', [
+            'subscription_id' => $subscription->id,
+            'course_id' => $course->id,
+        ]);
+        Loader::subscriptions()->attachCourse($subscription, $course, $dto->user);
     }
 }

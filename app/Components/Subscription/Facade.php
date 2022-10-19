@@ -8,6 +8,7 @@ use App\Common\BaseComponentFacade;
 use App\Common\DTO\IdsDto;
 use App\Common\DTO\ShowDto;
 use App\Components\Loader;
+use App\Models\Course;
 use App\Models\Enum\SubscriptionStatus;
 use App\Models\Subscription;
 use App\Models\User;
@@ -21,7 +22,7 @@ use Illuminate\Support\Collection;
  * @method \Illuminate\Support\Collection<\App\Models\Subscription> search(PaginatedInterface $searchParams, array $relations = []):
  * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\Subscription create(Dto $dto, array $relations = [])
- * @method \App\Models\Subscription find(ShowDto $showDto)
+ * @method \App\Models\Subscription find(ShowDto|string $showDto)
  * @method void findAndDelete(string $id)
  * @method \App\Models\Subscription findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Subscription findAndUpdate(string $id, Dto $dto, array $relations = [])
@@ -36,9 +37,16 @@ class Facade extends BaseComponentFacade
     public function getStudentSubscriptionsForCourse(
         string $studentId,
         string $courseId,
-        SubscriptionStatus $subscriptionStatus
+        SubscriptionStatus $subscriptionStatus = SubscriptionStatus::ACTIVE
     ): Collection {
         return $this->getRepository()->getStudentSubscriptionsForCourse($studentId, $courseId, $subscriptionStatus);
+    }
+
+    public function getStudentPotentialSubscriptionsForCourse(
+        string $studentId,
+        string $courseId
+    ): Collection {
+        return $this->getService()->getStudentPotentialSubscriptionsForCourse($studentId, $courseId);
     }
 
     public function prolongSubscription(Subscription $subscription, User $user): void
@@ -61,6 +69,11 @@ class Facade extends BaseComponentFacade
         return $subscription
             ->load($dto->with)
             ->loadCount($dto->with_count);
+    }
+
+    public function attachCourse(Subscription $subscription, Course $course, User $user): void
+    {
+        $this->getManager()->attachCourses($subscription, [$course], $user);
     }
 
     /**

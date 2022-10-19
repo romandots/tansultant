@@ -18,7 +18,7 @@ use Illuminate\Support\Collection;
  * @method \Illuminate\Support\Collection<\App\Models\Bonus> search(PaginatedInterface $searchParams, array $relations = []):
  * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\Bonus create(Dto $dto, array $relations = [])
- * @method \App\Models\Bonus find(ShowDto $showDto)
+ * @method \App\Models\Bonus find(ShowDto|string $showDto)
  * @method void findAndDelete(string $id)
  * @method \App\Models\Bonus findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Bonus findAndUpdate(string $id, Dto $dto, array $relations = [])

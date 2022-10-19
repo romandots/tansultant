@@ -134,4 +134,18 @@ class Service extends BaseComponentService
     {
         return app(Validator::class);
     }
+
+    /**
+     * @param string $studentId
+     * @param string $courseId
+     * @return \Illuminate\Support\Collection<Subscription>
+     */
+    public function getStudentPotentialSubscriptionsForCourse(string $studentId, string $courseId): \Illuminate\Support\Collection
+    {
+        return $this->getRepository()
+            ->getStudentSubscriptionsWithCoursesLeft($studentId, SubscriptionStatus::ACTIVE)
+            ->filter(fn (Subscription $subscription) =>
+                (bool)$subscription?->tariff->courses->where('id', $courseId)->exists()
+            );
+    }
 }
