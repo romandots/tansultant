@@ -49,9 +49,17 @@ class Facade extends BaseComponentFacade
         return $this->getService()->getStudentPotentialSubscriptionsForCourse($studentId, $courseId);
     }
 
+    public function findAndProlong(ProlongDto $dto): Subscription
+    {
+        $subscription = $this->find($dto->id);
+        $bonus = $dto->bonus_id ? Loader::bonuses()->getById($dto->bonus_id) : null;
+        $this->getManager()->prolong($subscription, $dto->user, $bonus);
+
+        return $subscription;
+    }
+
     public function prolongSubscription(Subscription $subscription, User $user): void
     {
-        $this->getManager()->prolong($subscription, $user);
     }
 
     /**

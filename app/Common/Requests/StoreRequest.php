@@ -7,12 +7,6 @@ use App\Common\DTO\ShowDto;
 
 abstract class StoreRequest extends BaseRequest
 {
-    public function buildDto(DtoWithUser $dto)
-    {
-        $dto->user = $this->user();
-        return $dto;
-    }
-
     public function rules(): array
     {
         return $this->showRules();

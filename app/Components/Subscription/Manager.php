@@ -7,6 +7,7 @@ namespace App\Components\Subscription;
 use App\Common\BaseComponentService;
 use App\Components\Loader;
 use App\Components\Subscription\Exceptions\InvalidSubscriptionStatus;
+use App\Models\Bonus;
 use App\Models\Course;
 use App\Models\Enum\CourseStatus;
 use App\Models\Enum\SubscriptionStatus;
@@ -111,8 +112,9 @@ class Manager extends BaseComponentService
         };
     }
 
-    public function prolong(Subscription $subscription, User $user): void
+    public function prolong(Subscription $subscription, User $user, ?Bonus $bonus): void
     {
+        $this->debug("Prolonging subscription {$subscription->id}: {$subscription->name}");
         $this->getValidator()->validateSubscriptionStatusForProlong($subscription);
 
         $tariff = $subscription->tariff;
@@ -121,21 +123,28 @@ class Manager extends BaseComponentService
         $originalRecord = clone $subscription;
 
         $this->getService()->addTariffValues($subscription, $tariff);
-        $this->setExpirationDate($subscription);
+        $this->getRepository()->increaseExpiredAt($subscription, $subscription->tariff->days_limit);
 
-        \DB::transaction(function () use ($subscription, $originalRecord, $user) {
+        \DB::transaction(function () use ($user, $bonus, $subscription) {
+            $payment = Loader::payments()->createSubscriptionProlongationPayment($subscription, $bonus, $user);
+            $this->getRepository()->attachPayment($subscription, $payment);
             $this->getRepository()->save($subscription);
-            $this->history->logUpdate($user, $subscription, $originalRecord);
-
-            $this->debug("Prolong subscription #{$subscription->id}");
         });
+
+        $this->history->logUpdate($user, $subscription, $originalRecord);
+        $this->debug("Prolong subscription #{$subscription->id}");
     }
 
     protected function activate(Subscription $subscription, User $user): void
     {
         if ($subscription->status === SubscriptionStatus::PENDING) {
+            $today = Carbon::today()->setTime(0, 0);
+            $expirationDate = Carbon::today()->addDays(($subscription->tariff->days_limit))->setTime(23, 59);
             $this->getRepository()->setStatus(
-                $subscription, SubscriptionStatus::ACTIVE, ['activated_at' => Carbon::now()]
+                $subscription, SubscriptionStatus::ACTIVE, [
+                    'activated_at' => $today,
+                    'expired_at' => $expirationDate
+                ]
             );
             $this->debug("Activated pended subscription #{$subscription->id}");
             $this->history->logActivate($user, $subscription);
@@ -192,7 +201,7 @@ class Manager extends BaseComponentService
 
         $hold = $subscription->load('active_hold')->active_hold;
         $duration = $hold->getDuration();
-        $expirationDate = $subscription->expired_at->addDays($duration);
+        $expirationDate = $subscription->expired_at->clone()->addDays($duration);
 
         \DB::beginTransaction();
         $this->getRepository()->unsetHold($subscription, $expirationDate);
@@ -206,26 +215,6 @@ class Manager extends BaseComponentService
         \DB::commit();
 
         $this->history->logActivate($user, $subscription);
-    }
-
-    private function setExpirationDate(Subscription $subscription, bool $save = false): void
-    {
-        if (!$subscription->activated_at) {
-            return;
-        }
-
-        $days = $subscription->tariff->days_limit ?? 3650;
-        $subscription->expired_at = $subscription->activated_at->clone()
-            ->addDays($days)
-            ->setHour(23)
-            ->setMinute(59)
-            ->setSecond(59);
-
-        // @todo add holds periods
-
-        if ($save) {
-            $this->getRepository()->save($subscription);
-        }
     }
 
     protected function getService(): Service

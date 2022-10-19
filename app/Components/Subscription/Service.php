@@ -69,14 +69,14 @@ class Service extends BaseComponentService
         $changingTariff = $record->tariff_id !== $dto->tariff_id;
 
         if ($changingTariff) {
-            $this->validateSubscriptionStatusForUpdate($record);
+            $this->getValidator()->validateSubscriptionStatusForUpdate($record);
         }
 
         $tariff = Loader::tariffs()->find($dto->tariff_id);
         $student = Loader::students()->find($dto->student_id);
 
-        $this->validateTariff($tariff);
-        $this->validateStudent($student);
+        $this->getValidator()->validateTariff($tariff);
+        $this->getValidator()->validateStudent($student);
 
         $dto->name = $tariff->name;
         $dto->status = $record->status;
@@ -102,7 +102,7 @@ class Service extends BaseComponentService
      */
     public function delete(Model $record, \App\Models\User $user): void
     {
-        $this->validateSubscriptionStatusForDelete($record);
+        $this->getValidator()->validateSubscriptionStatusForDelete($record);
 
         parent::delete($record, $user);
     }

@@ -20,6 +20,8 @@ class Formatter extends BaseFormatter
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'holds' => $this
+                ->whenLoaded('holds', fn () => \App\Components\Hold\Formatter::collection($this->holds)),
             'active_hold' => $this
                 ->whenLoaded('active_hold', fn () => new \App\Components\Hold\Formatter($this->active_hold)),
             'student' => $this

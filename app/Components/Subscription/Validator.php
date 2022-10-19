@@ -86,7 +86,7 @@ class Validator extends BaseComponentService
             throw new Exceptions\InvalidSubscriptionStatus($subscription->status->value, $allowedStatuses);
         }
 
-        $prolongationPeriod = $this->getExtraDays();
+        $prolongationPeriod = \config('subscriptions.prolongation_extra_period', 0);
         if (SubscriptionStatus::EXPIRED === $subscription->status
             && Carbon::now()->diffInDays($subscription->expired_at) > $prolongationPeriod) {
             throw new Exceptions\ProlongationPeriodExpired($subscription->expired_at, $prolongationPeriod);

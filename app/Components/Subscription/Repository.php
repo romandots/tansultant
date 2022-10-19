@@ -159,4 +159,9 @@ class Repository extends \App\Common\BaseComponentRepository
         $this->setStatus($subscription, SubscriptionStatus::ACTIVE, ['expired_at' => $expiredAt]);
         $this->save($subscription);
     }
+
+    public function increaseExpiredAt(Subscription $subscription, int $days): void
+    {
+        $subscription->expired_at->addDays($days);
+    }
 }

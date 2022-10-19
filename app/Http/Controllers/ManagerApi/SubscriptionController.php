@@ -8,6 +8,7 @@ use App\Common\Controllers\AdminController;
 use App\Common\Requests\ManageRelationsRequest;
 use App\Components\Loader;
 use App\Components\Subscription as Component;
+use App\Http\Requests\ManagerApi\ProlongSubscriptionStatusRequest;
 use App\Http\Requests\ManagerApi\SearchSubscriptionRequest;
 use App\Http\Requests\ManagerApi\StoreSubscriptionRequest;
 use App\Http\Requests\ManagerApi\UpdateSubscriptionStatusRequest;
@@ -67,6 +68,12 @@ class SubscriptionController extends AdminController
         $statusDto = $request->getDto();
         assert($statusDto instanceof Component\StatusDto);
         $subscription = Loader::subscriptions()->updateStatus($statusDto);
+        return new \App\Components\Subscription\Formatter($subscription);
+    }
+
+    public function prolong(ProlongSubscriptionStatusRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    {
+        $subscription = $this->getFacade()->findAndProlong($request->getDto());
         return new \App\Components\Subscription\Formatter($subscription);
     }
 }

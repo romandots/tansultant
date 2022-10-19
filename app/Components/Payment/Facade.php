@@ -35,13 +35,17 @@ class Facade extends BaseComponentFacade
     public function createVisitPayment(Visit $visit, Student $student, ?Bonus $bonus, User $user): Payment
     {
         $price = (int)$visit->price;
-        $name =  trans('credit.withdrawals.visit', ['visit' => $visit->name]);
+        $name = trans('credit.withdrawals.visit', ['visit' => $visit->name]);
 
         return $this->getService()->createPayment($price, $name, $student, $bonus, $user);
     }
 
-    public function createSubscriptionPayment(Subscription $subscription, Student $student, ?Bonus $bonus, User $user): Payment
-    {
+    public function createSubscriptionPayment(
+        Subscription $subscription,
+        Student $student,
+        ?Bonus $bonus,
+        User $user
+    ): Payment {
         $price = (int)$subscription->tariff->price;
         $name = trans('credit.withdrawals.subscription', [
             'subscription' => $subscription->name,
@@ -49,5 +53,19 @@ class Facade extends BaseComponentFacade
         ]);
 
         return $this->getService()->createPayment($price, $name, $student, $bonus, $user);
+    }
+
+    public function createSubscriptionProlongationPayment(
+        Subscription $subscription,
+        ?Bonus $bonus,
+        User $user
+    ): Payment {
+        $price = (int)($subscription->tariff->prolongation_price ?? $subscription->tariff->price);
+        $name = trans('credit.withdrawals.subscription_prolongation', [
+            'subscription' => $subscription->name,
+            'student' => $subscription->student->name,
+        ]);
+
+        return $this->getService()->createPayment($price, $name, $subscription->student, $bonus, $user);
     }
 }
