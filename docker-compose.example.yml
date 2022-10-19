@@ -44,15 +44,6 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: null
       REDIS_PORT: 6379
-  queue:
-    image: api
-    volumes:
-      - ./:/app
-      - /app/vendor
-      - ./docker/logs/laravel:/app/storage/logs
-    entrypoint: php artisan queue:work --verbose --tries=3 --timeout=60
-    depends_on:
-      - api
   scheduler:
     image: api
     volumes:
