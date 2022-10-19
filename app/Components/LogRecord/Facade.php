@@ -7,6 +7,7 @@ namespace App\Components\LogRecord;
 use App\Common\BaseFacade;
 use App\Common\Locator;
 use App\Models\Enum\LogRecordAction;
+use App\Models\Hold;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
@@ -115,8 +116,26 @@ class Facade extends BaseFacade
         $this->getService()->log($user, LogRecordAction::CHECKOUT, $object);
     }
 
+    public function logStart(User $user, object $object): void
+    {
+        $this->getService()->log($user, LogRecordAction::START, $object);
+    }
+
+    public function logEnd(User $user, object $object): void
+    {
+        $this->getService()->log($user, LogRecordAction::END, $object);
+    }
+
     public function getHistory(\App\Models\Enum\LogRecordObjectType $objectType, string $id): Collection
     {
         return $this->getService()->getRepository()->getAllByObjectTypeAndObjectId($objectType, $id);
+    }
+
+    public function logHold(User $user, \App\Models\Subscription $subscription, Hold $hold): void
+    {
+    }
+
+    public function logActivate(User $user, \App\Models\Subscription $subscription): void
+    {
     }
 }

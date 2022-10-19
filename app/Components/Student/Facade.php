@@ -17,7 +17,7 @@ use App\Models\Student;
  * @method \Illuminate\Support\Collection<\App\Models\Student> search(PaginatedInterface $searchParams, array $relations = []):
  * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\Student create(Dto $dto, array $relations = [])
- * @method \App\Models\Student find(ShowDto $showDto)
+ * @method \App\Models\Student find(ShowDto|string $showDto)
  * @method void findAndDelete(string $id)
  * @method \App\Models\Student findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Student findAndUpdate(string $id, Dto $dto, array $relations = [])

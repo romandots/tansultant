@@ -19,7 +19,7 @@ use Carbon\Carbon;
  * @method \Illuminate\Support\Collection<\App\Models\Lesson> search(PaginatedInterface $searchParams, array $relations = []):
  * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\Lesson create(Dto $dto, array $relations = [])
- * @method \App\Models\Lesson find(ShowDto $showDto)
+ * @method \App\Models\Lesson find(ShowDto|string $showDto)
  * @method void findAndDelete(string $id)
  * @method \App\Models\Lesson findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Lesson findAndUpdate(string $id, Dto $dto, array $relations = [])

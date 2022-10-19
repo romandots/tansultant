@@ -1,0 +1,81 @@
+version: '3'
+services:
+  app:
+    environment:
+      VUE_APP_NAME: "ШТБП"
+      VUE_APP_URL: http://localhost
+      VUE_APP_MEMBER_API_URL: http://localhost:8080/admin
+      VUE_APP_PUBLIC_API_URL: http://localhost:8080
+    build:
+      context: ../manager-app/
+      dockerfile: Dockerfile
+    volumes:
+      - ../manager-app/:/manager-app
+      - /manager-app/node_modules
+    ports:
+      - "80:8080"
+      - "600:600"
+    tty: true
+    stdin_open: true
+  api:
+    build:
+      context: ./
+    image: api
+    ports:
+      - "8080:80"
+      - "6001:6001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./:/app
+      - /app/vendor
+      - ./docker/logs/laravel:/app/storage/logs
+    env_file:
+      - ./docker/.env
+    environment:
+      PHP_IDE_CONFIG: "serverName=docker-server"
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: tansultant
+      DB_USERNAME: tansultant
+      DB_PASSWORD: tansultant
+      DB_HOST_TEST: db_test
+      DB_DATABASE_TEST: test
+      DB_USERNAME_TEST: test
+      DB_PASSWORD_TEST: test
+      REDIS_HOST: redis
+      REDIS_PASSWORD: null
+      REDIS_PORT: 6379
+  scheduler:
+    image: api
+    volumes:
+      - ./:/app
+      - /app/vendor
+      - ./docker/logs/laravel:/app/storage/logs
+    entrypoint: sh -c "while true; do php artisan schedule:run --verbose & sleep 60; done"
+    depends_on:
+      - api
+  db_test:
+    image: postgres:14.2
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    volumes:
+      - ../data/test:/var/lib/postgresql/data
+  db:
+    image: postgres:14.2
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: tansultant
+      POSTGRES_USER: tansultant
+      POSTGRES_PASSWORD: tansultant
+    volumes:
+      - ../data/real:/var/lib/postgresql/data
+  redis:
+    image: "redis:alpine"
+    expose:
+      - 6379
