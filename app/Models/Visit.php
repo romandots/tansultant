@@ -33,8 +33,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Relations\MorphTo|\App\Models\Lesson $event
  * @property-read \App\Models\User $manager
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Payment>|null $payment
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Subscription>|null $subscription
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Payment>|Payment|null $payment
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Subscription>|Subscription|null $subscription
  * @property-read \App\Models\Student $student
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Visit newQuery()

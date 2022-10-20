@@ -120,9 +120,16 @@ class Manager extends \App\Common\BaseComponentService
      * @param User $user
      * @return void
      */
-    public function createPayment(Visit $visit, Student $student, Dto $dto): void
+    public function finalizeVisitPayment(Visit $visit, Student $student, Dto $dto): void
     {
         if ($dto->payment_type !== VisitPaymentType::PAYMENT) {
+            $subscription = $visit->load('subscription')->subscription;
+
+            if (null === $subscription) {
+                throw new \LogicException('no_subscription_set');
+            }
+
+            Loader::subscriptions()->activatePendingSubscription($subscription, $dto->user);
             return;
         }
 

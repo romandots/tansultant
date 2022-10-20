@@ -135,6 +135,14 @@ class Manager extends BaseComponentService
         $this->debug("Prolong subscription #{$subscription->id}");
     }
 
+    public function activatePendingSubscription(Subscription $subscription, User $user): void
+    {
+        if ($subscription->status === SubscriptionStatus::PENDING) {
+            $this->debug("Activating subscription {$subscription->name}");
+            $this->activate($subscription, $user);
+        }
+    }
+
     protected function activate(Subscription $subscription, User $user): void
     {
         if ($subscription->status === SubscriptionStatus::PENDING) {

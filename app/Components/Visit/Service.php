@@ -45,7 +45,7 @@ class Service extends \App\Common\BaseComponentService
         $visit = parent::create($dto);
         assert($visit instanceof Visit);
 
-        $this->getManager()->createPayment($visit, $student, $dto);
+        $this->getManager()->finalizeVisitPayment($visit, $student, $dto);
 
         $this->dispatchEvent($visit);
 

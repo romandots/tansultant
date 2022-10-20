@@ -162,6 +162,6 @@ class Repository extends \App\Common\BaseComponentRepository
 
     public function increaseExpiredAt(Subscription $subscription, int $days): void
     {
-        $subscription->expired_at->addDays($days);
+        $subscription->expired_at?->addDays($days);
     }
 }

@@ -11,13 +11,17 @@ use App\Models\Enum\SubscriptionStatus;
 use App\Models\Enum\TariffStatus;
 use App\Models\Subscription;
 use App\Models\Tariff;
-use Carbon\Carbon;
 
 /**
  * @method Repository getRepository()
  */
 class Validator extends BaseComponentService
 {
+    protected const ACTION_UPDATE = 'update';
+    protected const ACTION_PROLONG = 'prolong';
+    protected const ACTION_UNHOLD = 'unhold';
+    protected const ACTION_DELETE = 'delete';
+
     public function __construct()
     {
         parent::__construct(
@@ -26,6 +30,99 @@ class Validator extends BaseComponentService
             Dto::class,
             null
         );
+    }
+
+    public function getAllowedTransitionsForStatus(SubscriptionStatus $status): array
+    {
+        return match ($status) {
+            SubscriptionStatus::NOT_PAID => [
+                SubscriptionStatus::PENDING,
+                SubscriptionStatus::CANCELED,
+            ],
+            SubscriptionStatus::PENDING => [
+                SubscriptionStatus::ACTIVE,
+                SubscriptionStatus::CANCELED,
+            ],
+            SubscriptionStatus::ACTIVE => [
+                SubscriptionStatus::ON_HOLD,
+                SubscriptionStatus::EXPIRED,
+                SubscriptionStatus::CANCELED,
+            ],
+            SubscriptionStatus::ON_HOLD => [
+                SubscriptionStatus::ACTIVE,
+                SubscriptionStatus::CANCELED,
+            ],
+            SubscriptionStatus::EXPIRED => [
+                SubscriptionStatus::ACTIVE,
+                SubscriptionStatus::CANCELED,
+            ],
+            SubscriptionStatus::CANCELED => [],
+        };
+    }
+
+    public function getAllowedStatusesForAction(string $action): array
+    {
+        return match ($action) {
+            self::ACTION_UPDATE => [
+                SubscriptionStatus::NOT_PAID,
+            ],
+            self::ACTION_PROLONG => [
+                SubscriptionStatus::PENDING,
+                SubscriptionStatus::ACTIVE,
+                SubscriptionStatus::EXPIRED,
+            ],
+            self::ACTION_UNHOLD => [
+                SubscriptionStatus::ON_HOLD,
+            ],
+            self::ACTION_DELETE => [
+                SubscriptionStatus::CANCELED,
+            ],
+        };
+    }
+
+    public function canTransit(SubscriptionStatus $fromStatus, SubscriptionStatus $toStatus): bool
+    {
+        $allowedStatuses = $this->getAllowedTransitionsForStatus($fromStatus);
+        return \in_array($toStatus, $allowedStatuses, true);
+    }
+
+    public function canDo(SubscriptionStatus $fromStatus, string $action): bool
+    {
+        $allowedStatuses = $this->getAllowedStatusesForAction($action);
+        return \in_array($fromStatus, $allowedStatuses, true);
+    }
+
+    public function canBeUpdated(Subscription $subscription): bool
+    {
+        return $this->canDo($subscription->status, self::ACTION_UPDATE);
+    }
+
+    public function canBePaused(Subscription $subscription): bool
+    {
+        $subscription->load('holds');
+        return $this->canTransit($subscription->status, SubscriptionStatus::ON_HOLD)
+            && ($subscription->holds_left === null || $subscription->holds_left > 0);
+    }
+
+    public function canBeUnpaused(Subscription $subscription): bool
+    {
+        return $this->canDo($subscription->status, self::ACTION_UNHOLD);
+    }
+
+    public function canBeProlonged(Subscription $subscription): bool
+    {
+        return $this->canDo($subscription->status, self::ACTION_PROLONG)
+            || (SubscriptionStatus::EXPIRED === $subscription->status && $subscription->canBeProlongated());
+    }
+
+    public function canBeDeleted(Subscription $subscription): bool
+    {
+        return $this->canDo($subscription->status, self::ACTION_DELETE);
+    }
+
+    public function canBeCanceled(Subscription $subscription): bool
+    {
+        return $this->canTransit($subscription->status, SubscriptionStatus::CANCELED);
     }
 
     public function validateTariff(?Tariff $tariff): void
@@ -39,72 +136,6 @@ class Validator extends BaseComponentService
     {
     }
 
-    /**
-     * @param Subscription $record
-     * @return void
-     */
-    public function validateSubscriptionStatusForUpdate(Subscription $record): void
-    {
-        $allowedStatuses = [SubscriptionStatus::NOT_PAID];
-        if (!in_array($record->status, $allowedStatuses, true)) {
-            throw new Exceptions\InvalidSubscriptionStatus($record->status->value, $allowedStatuses);
-        }
-    }
-
-    /**
-     * @param Subscription $subscription
-     * @return void
-     */
-    public function validateSubscriptionStatusForHold(Subscription $subscription): void
-    {
-        $allowedStatuses = [SubscriptionStatus::ACTIVE];
-        if (!\in_array($subscription->status, $allowedStatuses, true)) {
-            throw new Exceptions\InvalidSubscriptionStatus($subscription->status->value, $allowedStatuses);
-        }
-    }
-
-    /**
-     * @param Subscription $subscription
-     * @return void
-     */
-    public function validateSubscriptionStatusForUnhold(Subscription $subscription): void
-    {
-        $allowedStatuses = [SubscriptionStatus::ON_HOLD];
-        if (!\in_array($subscription->status, $allowedStatuses, true)) {
-            throw new Exceptions\InvalidSubscriptionStatus($subscription->status->value, $allowedStatuses);
-        }
-    }
-
-    /**
-     * @param Subscription $subscription
-     * @return void
-     */
-    public function validateSubscriptionStatusForProlong(Subscription $subscription): void
-    {
-        $allowedStatuses = [SubscriptionStatus::ACTIVE, SubscriptionStatus::EXPIRED, SubscriptionStatus::ON_HOLD];
-        if (!\in_array($subscription->status, $allowedStatuses, true)) {
-            throw new Exceptions\InvalidSubscriptionStatus($subscription->status->value, $allowedStatuses);
-        }
-
-        $prolongationPeriod = \config('subscriptions.prolongation_extra_period', 0);
-        if (SubscriptionStatus::EXPIRED === $subscription->status
-            && Carbon::now()->diffInDays($subscription->expired_at) > $prolongationPeriod) {
-            throw new Exceptions\ProlongationPeriodExpired($subscription->expired_at, $prolongationPeriod);
-        }
-    }
-
-    /**
-     * @param Subscription $record
-     * @return void
-     */
-    public function validateSubscriptionStatusForDelete(Subscription $record): void
-    {
-        $allowedStatuses = [SubscriptionStatus::EXPIRED, SubscriptionStatus::CANCELED, SubscriptionStatus::NOT_PAID];
-        if (!\in_array($record->status, $allowedStatuses, true)) {
-            throw new Exceptions\InvalidSubscriptionStatus($record->status->value, $allowedStatuses);
-        }
-    }
-
     public function validateBonus(?\App\Models\Bonus $bonus): void
     {
         if (null === $bonus || $bonus->status === BonusStatus::PENDING) {
@@ -112,5 +143,55 @@ class Validator extends BaseComponentService
         }
 
         throw new InvalidBonusStatus($bonus->status, [BonusStatus::PENDING]);
+    }
+
+    public function validateSubscriptionStatusForUpdate(Subscription $subscription): void
+    {
+        if (!$this->canBeUpdated($subscription)) {
+            throw new Exceptions\InvalidSubscriptionStatus(
+                $subscription->status->value, $this->getAllowedStatusesForAction(self::ACTION_UPDATE)
+            );
+        }
+    }
+
+    public function validateSubscriptionStatusForHold(Subscription $subscription): void
+    {
+        if (!$this->canBePaused($subscription)) {
+
+            if ($this->canTransit($subscription->status, SubscriptionStatus::ON_HOLD)) {
+                throw new Exceptions\NoHoldsAvailable($subscription);
+            }
+
+            $this->throwInvalidSubscriptionStatusException($subscription);
+        }
+    }
+
+    public function validateSubscriptionStatusForUnhold(Subscription $subscription): void
+    {
+        if (!$this->canBeUnpaused($subscription)) {
+            $this->throwInvalidSubscriptionStatusException($subscription);
+        }
+    }
+
+    public function validateSubscriptionStatusForProlong(Subscription $subscription): void
+    {
+        if (!$this->canBeProlonged($subscription)) {
+            $this->throwInvalidSubscriptionStatusException($subscription);
+        }
+    }
+
+    public function validateSubscriptionStatusForDelete(Subscription $subscription): void
+    {
+        if (!$this->canBeDeleted($subscription)) {
+            $this->throwInvalidSubscriptionStatusException($subscription);
+        }
+    }
+
+    protected function throwInvalidSubscriptionStatusException(Subscription $subscription): void
+    {
+        throw new Exceptions\InvalidSubscriptionStatus(
+            $subscription->status->value,
+            $this->getAllowedTransitionsForStatus($subscription->status)
+        );
     }
 }

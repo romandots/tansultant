@@ -37,4 +37,5 @@ return [
     'tariff_does_not_include_course' => 'Тариф :tariff не включает курс :course',
     'user_has_no_active_shift' => 'У пользователя :name нет активной смены',
     'student_has_not_enough_credits' => 'На счёте клиента :customer не хватает :deficient_credits₽',
+    'no_holds_available' => 'В подписке нет доступных приостановок',
 ];

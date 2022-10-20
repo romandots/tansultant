@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Components\Subscription;
 
 use App\Common\BaseFormatter;
+use App\Components\Loader;
 
 /**
  * @mixin \App\Models\Subscription
@@ -17,6 +18,7 @@ class Formatter extends BaseFormatter
      */
     public function toArray($request): array
     {
+        $component = Loader::subscriptions();
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -41,10 +43,10 @@ class Formatter extends BaseFormatter
             'courses_count' => $this->courses_count,
             'visits_count' => $this->visits_count,
             'holds_count' => $this->holds_count,
-            'days_left' => null !== $this->days_limit ? $this->days_limit - $this->days_count : null,
-            'courses_left' => null !== $this->courses_limit ? $this->courses_limit - $this->courses_count : null,
-            'visits_left' => null !== $this->visits_limit ? $this->visits_limit - $this->visits_count : null,
-            'holds_left' => null !== $this->holds_limit ? $this->holds_limit - $this->holds_count : null,
+            'days_left' => null !== $this->days_left,
+            'courses_left' => null !== $this->courses_left,
+            'visits_left' => null !== $this->visits_left,
+            'holds_left' => null !== $this->holds_left,
             'status' => $this->status->value,
             'status_label' => \translate('subscription.status', $this->status->value),
             'created_at' => $this->created_at->toDateTimeString(),
@@ -52,6 +54,12 @@ class Formatter extends BaseFormatter
             'activated_at' => $this->activated_at?->toDateTimeString(),
             'expired_at' => $this->expired_at?->toDateTimeString(),
             'deleted_at' => $this->deleted_at?->toDateTimeString(),
+            'can_delete' => $component->canBeDeleted($this->resource),
+            'can_cancel' => $component->canBeCanceled($this->resource),
+            'can_prolong' => $component->canBeProlonged($this->resource),
+            'can_update' => $component->canBeUpdated($this->resource),
+            'can_hold' => $component->canBePaused($this->resource),
+            'can_unhold' => $component->canBePaused($this->resource),
         ];
     }
 }

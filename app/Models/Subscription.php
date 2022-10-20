@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\UsesUuid;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -19,6 +20,10 @@ use Illuminate\Support\Collection;
  * @property int|null $visits_limit
  * @property int|null $days_limit
  * @property int|null $holds_limit
+ * @property int|null $courses_left
+ * @property int|null $visits_left
+ * @property int|null $days_left
+ * @property int|null $holds_left
  * @property int|null $courses_count
  * @property int|null $visits_count
  * @property int|null $days_count
@@ -99,5 +104,54 @@ class Subscription extends Model
     public function getDaysCountAttribute(): ?int
     {
         return $this->activated_at?->diffInDays();
+    }
+
+    public function getCoursesLeftAttribute(): ?int
+    {
+        if (null === $this->courses_limit || null === $this->courses_count) {
+            return null;
+        }
+
+        return $this->courses_limit - $this->courses_count;
+    }
+
+
+    public function getVisitsLeftAttribute(): ?int
+    {
+        if (null === $this->visits_limit || null === $this->visits_count) {
+            return null;
+        }
+
+        return $this->visits_limit - $this->visits_count;
+    }
+
+
+    public function getHoldsLeftAttribute(): ?int
+    {
+        if (null === $this->holds_limit || null === $this->holds_count) {
+            return null;
+        }
+
+        return $this->holds_limit - $this->holds_count;
+    }
+
+
+    public function getDaysLeftAttribute(): ?int
+    {
+        if (null === $this->days_limit || null === $this->days_count) {
+            return null;
+        }
+
+        return $this->days_limit - $this->days_count;
+    }
+
+    public function canBeProlongated(): bool
+    {
+        if (null === $this->expired_at) {
+            return false;
+        }
+
+        $prolongationPeriod = \config('subscriptions.prolongation_extra_period', 0);
+        return $this->expired_at->clone()->addDays($prolongationPeriod)->greaterThanOrEqualTo(Carbon::now());
     }
 }

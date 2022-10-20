@@ -34,6 +34,16 @@ class Facade extends BaseComponentFacade
         parent::__construct(Service::class);
     }
 
+    protected function getManager(): Manager
+    {
+        return app(Manager::class);
+    }
+
+    protected function getValidator(): Validator
+    {
+        return app(Validator::class);
+    }
+
     public function getStudentSubscriptionsForCourse(
         string $studentId,
         string $courseId,
@@ -56,10 +66,6 @@ class Facade extends BaseComponentFacade
         $this->getManager()->prolong($subscription, $dto->user, $bonus);
 
         return $subscription;
-    }
-
-    public function prolongSubscription(Subscription $subscription, User $user): void
-    {
     }
 
     /**
@@ -115,8 +121,48 @@ class Facade extends BaseComponentFacade
         return $subscription;
     }
 
-    protected function getManager(): Manager
+    public function getAllowedStatusesFor(SubscriptionStatus $status): array
     {
-        return app(Manager::class);
+        return $this->getValidator()->getAllowedTransitionsForStatus($status);
+    }
+
+    public function canTransit(SubscriptionStatus $from, SubscriptionStatus $to): bool
+    {
+        return $this->getValidator()->canTransit($from, $to);
+    }
+
+    public function canBeCanceled(Subscription $subscription): bool
+    {
+        return $this->getValidator()->canBeCanceled($subscription);
+    }
+
+    public function canBeDeleted(Subscription $subscription): bool
+    {
+        return $this->getValidator()->canBeDeleted($subscription);
+    }
+
+    public function canBeUpdated(Subscription $subscription): bool
+    {
+        return $this->getValidator()->canBeUpdated($subscription);
+    }
+
+    public function canBeProlonged(Subscription $subscription): bool
+    {
+        return $this->getValidator()->canBeProlonged($subscription);
+    }
+
+    public function canBePaused(Subscription $subscription): bool
+    {
+        return $this->getValidator()->canBePaused($subscription);
+    }
+
+    public function canBeUnpaused(Subscription $subscription): bool
+    {
+        return $this->getValidator()->canBeUnpaused($subscription);
+    }
+
+    public function activatePendingSubscription(Subscription $subscription, User $user): void
+    {
+        $this->getManager()->activatePendingSubscription($subscription, $user);
     }
 }
