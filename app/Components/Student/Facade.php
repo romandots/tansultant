@@ -8,6 +8,7 @@ use App\Common\BaseComponentFacade;
 use App\Common\DTO\ShowDto;
 use App\Models\Person;
 use App\Models\Student;
+use App\Models\User;
 
 /**
  * @method Service getService()
@@ -37,5 +38,10 @@ class Facade extends BaseComponentFacade
     public function createFromPerson(Dto $dto, Person $person): Student
     {
         return $this->getService()->createFromPerson($dto, $person);
+    }
+
+    public function activatePotentialStudent(Student $student, User $user): void
+    {
+        $this->getService()->activatePotentialStudent($student, $user);
     }
 }

@@ -6,11 +6,9 @@ namespace App\Components\Visit;
 
 use App\Components\Loader;
 use App\Components\Visit\Entity\PriceOptions;
-use App\Models\Bonus;
 use App\Models\Course;
 use App\Models\Enum\VisitPaymentType;
 use App\Models\Student;
-use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Support\Collection;
 
@@ -113,13 +111,6 @@ class Manager extends \App\Common\BaseComponentService
         }
     }
 
-    /**
-     * @param Visit $visit
-     * @param \App\Models\Student $student
-     * @param Bonus|null $bonus
-     * @param User $user
-     * @return void
-     */
     public function finalizeVisitPayment(Visit $visit, Student $student, Dto $dto): void
     {
         if ($dto->payment_type !== VisitPaymentType::PAYMENT) {

@@ -120,4 +120,13 @@ class Service extends \App\Common\BaseComponentService
             throw new Exceptions\StudentAlreadyExists($person->student);
         }
     }
+
+    public function activatePotentialStudent(Student $student, User $user): void
+    {
+        if ($student->status === StudentStatus::POTENTIAL) {
+            $this->debug("Activating student {$student->name}");
+            $this->getRepository()->updateStatus($student, StudentStatus::ACTIVE);
+            $this->history->logActivate($user, $student);
+        }
+    }
 }

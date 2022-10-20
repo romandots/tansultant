@@ -8,6 +8,7 @@ use App\Common\BaseFacade;
 use App\Common\Locator;
 use App\Models\Enum\LogRecordAction;
 use App\Models\Hold;
+use App\Models\Model;
 use App\Models\User;
 use Illuminate\Support\Collection;
 
@@ -135,7 +136,7 @@ class Facade extends BaseFacade
     {
     }
 
-    public function logActivate(User $user, \App\Models\Subscription $subscription): void
+    public function logActivate(User $user, Model $record): void
     {
     }
 }

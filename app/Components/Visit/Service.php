@@ -46,6 +46,7 @@ class Service extends \App\Common\BaseComponentService
         assert($visit instanceof Visit);
 
         $this->getManager()->finalizeVisitPayment($visit, $student, $dto);
+        Loader::students()->activatePotentialStudent($student, $dto->user);
 
         $this->dispatchEvent($visit);
 
