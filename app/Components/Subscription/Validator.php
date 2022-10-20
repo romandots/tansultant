@@ -21,6 +21,8 @@ class Validator extends BaseComponentService
     protected const ACTION_PROLONG = 'prolong';
     protected const ACTION_UNHOLD = 'unhold';
     protected const ACTION_DELETE = 'delete';
+    protected const ACTION_ATTACH_COURSES = 'attach_courses';
+    protected const ACTION_DETACH_COURSES = 'detach_courses';
 
     public function __construct()
     {
@@ -63,6 +65,11 @@ class Validator extends BaseComponentService
     public function getAllowedStatusesForAction(string $action): array
     {
         return match ($action) {
+            self::ACTION_ATTACH_COURSES, self::ACTION_DETACH_COURSES => [
+                SubscriptionStatus::PENDING,
+                SubscriptionStatus::ACTIVE,
+                SubscriptionStatus::ON_HOLD,
+            ],
             self::ACTION_UPDATE => [
                 SubscriptionStatus::NOT_PAID,
             ],
@@ -107,6 +114,16 @@ class Validator extends BaseComponentService
     public function canBeUnpaused(Subscription $subscription): bool
     {
         return $this->canDo($subscription->status, self::ACTION_UNHOLD);
+    }
+
+    public function canAttachCourses(Subscription $subscription): bool
+    {
+        return $this->canDo($subscription->status, self::ACTION_ATTACH_COURSES);
+    }
+
+    public function canDetachCourses(Subscription $subscription): bool
+    {
+        return $this->canDo($subscription->status, self::ACTION_DETACH_COURSES);
     }
 
     public function canBeProlonged(Subscription $subscription): bool
@@ -183,6 +200,27 @@ class Validator extends BaseComponentService
     public function validateSubscriptionStatusForDelete(Subscription $subscription): void
     {
         if (!$this->canBeDeleted($subscription)) {
+            $this->throwInvalidSubscriptionStatusException($subscription);
+        }
+    }
+
+    public function validateSubscriptionStatusForCancel(Subscription $subscription): void
+    {
+        if (!$this->canBeCanceled($subscription)) {
+            $this->throwInvalidSubscriptionStatusException($subscription);
+        }
+    }
+
+    public function validateSubscriptionStatusForAttachCourses(Subscription $subscription)
+    {
+        if (!$this->canAttachCourses($subscription)) {
+            $this->throwInvalidSubscriptionStatusException($subscription);
+        }
+    }
+
+    public function validateSubscriptionStatusForDetachCourses(Subscription $subscription)
+    {
+        if (!$this->canDetachCourses($subscription)) {
             $this->throwInvalidSubscriptionStatusException($subscription);
         }
     }

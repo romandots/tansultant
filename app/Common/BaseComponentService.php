@@ -107,6 +107,8 @@ abstract class BaseComponentService extends BaseService
 
         $result = $this->getRepository()->find($id, $relations, $countRelations);
         $this->storeInCache($cacheKey, $result);
+
+        return $result;
     }
 
     /**

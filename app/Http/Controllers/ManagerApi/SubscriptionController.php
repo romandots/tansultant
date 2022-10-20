@@ -73,7 +73,8 @@ class SubscriptionController extends AdminController
 
     public function prolong(ProlongSubscriptionStatusRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        $subscription = $this->getFacade()->findAndProlong($request->getDto());
+        $prolongDto = $request->getDto();
+        $subscription = $this->getFacade()->findAndProlong($prolongDto);
         return new \App\Components\Subscription\Formatter($subscription);
     }
 }

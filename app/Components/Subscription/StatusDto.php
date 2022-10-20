@@ -8,5 +8,5 @@ use App\Models\Enum\SubscriptionStatus;
 
 class StatusDto extends \App\Common\DTO\StatusDto
 {
-    public readonly SubscriptionStatus $status;
+    public SubscriptionStatus $status;
 }

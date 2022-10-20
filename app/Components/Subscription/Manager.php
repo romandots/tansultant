@@ -61,6 +61,8 @@ class Manager extends BaseComponentService
      */
     public function attachCourses(Subscription $subscription, iterable $courses, User $user): void
     {
+        $this->getValidator()->validateSubscriptionStatusForAttachCourses($subscription);
+
         if ($subscription->courses_limit !== null
             && $subscription->loadCount('courses')->courses_count >= $subscription->courses_limit) {
             throw new Exceptions\CoursesLimitReached($subscription->courses_limit);
@@ -172,6 +174,7 @@ class Manager extends BaseComponentService
 
     protected function cancel(Subscription $subscription, User $user): void
     {
+        $this->getValidator()->validateSubscriptionStatusForCancel($subscription);
         $this->getRepository()->updateStatus($subscription, SubscriptionStatus::CANCELED);
         $this->history->logCancel($user, $subscription);
     }

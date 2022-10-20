@@ -118,7 +118,7 @@ class Facade extends BaseComponentFacade
         assert($subscription instanceof Subscription);
         $this->getManager()->updateStatus($subscription, $statusDto->status, $statusDto->user);
 
-        return $subscription;
+        return $subscription->load($statusDto->with)->loadCount($statusDto->with_count);
     }
 
     public function getAllowedStatusesFor(SubscriptionStatus $status): array

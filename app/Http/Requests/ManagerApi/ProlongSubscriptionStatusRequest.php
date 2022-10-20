@@ -34,6 +34,10 @@ class ProlongSubscriptionStatusRequest extends StoreRequest
             ],
         ];
     }
+
+    /**
+     * @return ProlongDto
+     */
     public function getDto(): \App\Common\Contracts\DtoWithUser
     {
         $validated = $this->validated();
