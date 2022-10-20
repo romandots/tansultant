@@ -17,7 +17,7 @@ class ProlongSubscriptionStatusRequest extends StoreRequest
 {
     public function getDto(): \App\Common\Contracts\DtoWithUser
     {
-        $dto = new ProlongDto($this->getUser());
+        $dto = new ProlongDto($this->user());
         $dto->id = $this->getId();
         $dto->bonus_id = $this->getBonusId();
 
@@ -29,9 +29,9 @@ class ProlongSubscriptionStatusRequest extends StoreRequest
         return $this->route()->parameter('id');
     }
 
-    private function getBonusId(): string
+    private function getBonusId(): ?string
     {
-        return $this->route()->parameter('bonus_id');
+        return $this->route()?->parameter('bonus_id');
     }
 
 }

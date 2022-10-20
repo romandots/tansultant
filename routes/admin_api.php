@@ -207,7 +207,6 @@ Route::namedGroup('students',ManagerApi\StudentController::class, static functio
 Route::namedGroup('subscriptions',ManagerApi\SubscriptionController::class, static function () {
     Route::namedRoute('search', 'get', '/', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::READ]);
     Route::namedRoute('store', 'post', '/', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::CREATE]);
-    Route::namedRoute('prolong', 'post', '{id:uuid}/prolong/{?bonus_id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::CREATE]);
     Route::namedRoute('show', 'get', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::READ]);
     Route::namedRoute('update', 'put', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
     Route::namedRoute('destroy', 'delete', '{id:uuid}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::DELETE]);
@@ -215,6 +214,7 @@ Route::namedGroup('subscriptions',ManagerApi\SubscriptionController::class, stat
     Route::namedRoute('attachCourses', 'post', '{id:uuid}/courses', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
     Route::namedRoute('detachCourses', 'delete', '{id:uuid}/courses', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
     Route::namedRoute('setStatus', 'post', '{id:uuid}/status/{status}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
+    Route::namedRoute('prolong', 'post', '{id:uuid}/prolong/{bonus_id:uuid?}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
 });
 
 // TARIFFS
