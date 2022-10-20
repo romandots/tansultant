@@ -33,8 +33,7 @@ class ShowRequest extends BaseRequest
     {
         $validated = $this->validated();
 
-        $dto = new ShowDto();
-        $dto->user = $this->getUser();
+        $dto = new ShowDto($this->user());
         $dto->id = $this->getId();
         $dto->with = $validated['with'] ?? [];
         $dto->with_count = $validated['with_count'] ?? [];
