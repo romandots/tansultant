@@ -22,7 +22,7 @@ class Service extends BaseComponentService
         );
     }
 
-    public function endHold(Hold $hold, \App\Models\User $user): Hold
+    public function endHold(Hold $hold, \App\Models\User $user): void
     {
         $this->getRepository()->endHold($hold);
         try {

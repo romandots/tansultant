@@ -222,6 +222,9 @@ abstract class BaseComponentRepository extends BaseRepository
     protected function fillDates(Model $record, array $datesToUpdate): void
     {
         foreach ($datesToUpdate as $dateField) {
+            if (!$dateField) {
+                continue;
+            }
             $this->fillDate($record, $dateField);
         }
     }

@@ -19,7 +19,8 @@ class Formatter extends BaseFormatter
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'starts_at' => $this->starts_at?->toDateTimeString(),
+            'ends_at' => $this->ends_at?->toDateTimeString(),
         ];
     }
 }

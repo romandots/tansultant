@@ -40,6 +40,7 @@ class Repository extends \App\Common\BaseComponentRepository
     public function fill(Model $record, \App\Common\Contracts\DtoWithUser $dto): void
     {
         $record->subscription_id = $dto->subscription_id;
+        $record->starts_at = $dto->starts_at;
     }
 
     public function endHold(Hold $hold): void

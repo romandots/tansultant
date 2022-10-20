@@ -14,8 +14,8 @@ class Facade extends BaseComponentFacade
         parent::__construct(Service::class);
     }
 
-    public function endHold(Hold $hold, \App\Models\User $user): Hold
+    public function endHold(Hold $hold, \App\Models\User $user): void
     {
-        return $this->getService()->endHold($hold, $user);
+        $this->getService()->endHold($hold, $user);
     }
 }

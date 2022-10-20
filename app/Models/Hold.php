@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\UsesUuid;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,13 +17,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Hold extends Model
 {
+    use UsesUuid;
     use HasFactory;
 
     public const TABLE = 'holds';
+    public const UPDATED_AT = null;
+
     protected $table = self::TABLE;
-
     protected $guarded = [];
-
     protected $casts = [
         'created_at' => 'datetime',
         'starts_at' => 'datetime',

@@ -59,7 +59,7 @@ class Formatter extends BaseFormatter
             'can_prolong' => $component->canBeProlonged($this->resource),
             'can_update' => $component->canBeUpdated($this->resource),
             'can_hold' => $component->canBePaused($this->resource),
-            'can_unhold' => $component->canBePaused($this->resource),
+            'can_unhold' => $component->canBeUnpaused($this->resource),
         ];
     }
 }

@@ -27,20 +27,20 @@ class Service extends \App\Common\BaseService
      */
     public function log(User $user, LogRecordAction $action, object|string $objectOrClassName, ?object $oldCopy = null): void
     {
-        $className = \is_object($objectOrClassName) ? \get_class($objectOrClassName) : $objectOrClassName;
-        $objectType = LogRecordObjectType::getFromClass($className);
-        $messageKey = "log_record.{$objectType->value}.{$action->value}";
-
-        $dto = new Dto($user);
-        $dto->action = $action;
-        $dto->message = \trans($messageKey, [
-            'user' => $user->name,
-            'object' => \is_object($objectOrClassName) ? $objectOrClassName->name : null,
-        ]);
-        $dto->object_type = LogRecordObjectType::getFromClass($className);
-        $dto->object_id = is_object($objectOrClassName) ? (string)$objectOrClassName->id : $oldCopy?->id;
-
         try {
+            $className = \is_object($objectOrClassName) ? \get_class($objectOrClassName) : $objectOrClassName;
+            $objectType = LogRecordObjectType::getFromClass($className);
+            $messageKey = "log_record.{$objectType->value}.{$action->value}";
+
+            $dto = new Dto($user);
+            $dto->action = $action;
+            $dto->message = \trans($messageKey, [
+                'user' => $user->name,
+                'object' => \is_object($objectOrClassName) ? $objectOrClassName->name : null,
+            ]);
+            $dto->object_type = LogRecordObjectType::getFromClass($className);
+            $dto->object_id = is_object($objectOrClassName) ? (string)$objectOrClassName->id : $oldCopy?->id;
+
             $this->getRepository()->create($dto);
         } catch (\Throwable $exception) {
             $this->error('History log record creation failed', $exception);

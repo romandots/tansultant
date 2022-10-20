@@ -191,6 +191,7 @@ class Manager extends BaseComponentService
 
         $holdDto = new \App\Components\Hold\Dto($user);
         $holdDto->subscription_id = $subscription->id;
+        $holdDto->starts_at = Carbon::now();
 
         \DB::beginTransaction();
         $hold = Loader::holds()->create($holdDto);
@@ -206,13 +207,13 @@ class Manager extends BaseComponentService
         $this->debug("Unholding subscription {$subscription->name}");
         $this->getValidator()->validateSubscriptionStatusForUnhold($subscription);
 
-        if ($subscription->hold_id === null) {
+        $hold = $subscription->load('active_hold')->active_hold;
+        if (null === $hold) {
             throw new \LogicException('subscription_has_no_hold');
         }
 
-        $hold = $subscription->load('active_hold')->active_hold;
         $duration = $hold->getDuration();
-        $expirationDate = $subscription->expired_at->clone()->addDays($duration);
+        $expirationDate = $subscription->expired_at?->clone()->addDays($duration);
 
         \DB::beginTransaction();
         $this->getRepository()->unsetHold($subscription, $expirationDate);

@@ -93,12 +93,12 @@ class Subscription extends Model
 
     public function active_hold(): BelongsTo
     {
-        return $this->belongsTo(Hold::class);
+        return $this->belongsTo(Hold::class, 'hold_id');
     }
 
     public function visits(): HasMany
     {
-        return $this->hasMany(Hold::class);
+        return $this->hasMany(Visit::class);
     }
 
     public function getDaysCountAttribute(): ?int
