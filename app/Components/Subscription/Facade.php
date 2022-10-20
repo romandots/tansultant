@@ -65,7 +65,7 @@ class Facade extends BaseComponentFacade
         $bonus = $dto->bonus_id ? Loader::bonuses()->getById($dto->bonus_id) : null;
         $this->getManager()->prolong($subscription, $dto->user, $bonus);
 
-        return $subscription;
+        return $subscription->load($dto->with)->loadCount($dto->with_count);
     }
 
     /**

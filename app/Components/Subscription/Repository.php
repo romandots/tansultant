@@ -106,10 +106,13 @@ class Repository extends \App\Common\BaseComponentRepository
     public function attachPayment(Subscription $subscription, \App\Models\Payment $payment): void
     {
         $subscription->payments()->attach($payment->id, ['created_at' => Carbon::now()]);
-        $this->setStatus(
-            $subscription,
-            SubscriptionStatus::NOT_PAID === $subscription->status ? SubscriptionStatus::PENDING : SubscriptionStatus::ACTIVE
-        );
+        $currentStatus = $subscription->status;
+        $newStatus = match ($currentStatus) {
+            SubscriptionStatus::NOT_PAID, SubscriptionStatus::PENDING => SubscriptionStatus::PENDING,
+            SubscriptionStatus::ACTIVE, SubscriptionStatus::EXPIRED => SubscriptionStatus::ACTIVE,
+            SubscriptionStatus::ON_HOLD, SubscriptionStatus::CANCELED => throw new \Exception('not_supported'),
+        };
+        $this->setStatus($subscription, $newStatus);
         $this->save($subscription);
     }
 

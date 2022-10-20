@@ -15,11 +15,33 @@ use App\Components\Subscription\ProlongDto;
 
 class ProlongSubscriptionStatusRequest extends StoreRequest
 {
+    public function rules(): array
+    {
+        return [
+            'with' => [
+                'nullable',
+                'array',
+            ],
+            'with.*' => [
+                'string',
+            ],
+            'with_count' => [
+                'nullable',
+                'array',
+            ],
+            'with_count.*' => [
+                'string',
+            ],
+        ];
+    }
     public function getDto(): \App\Common\Contracts\DtoWithUser
     {
+        $validated = $this->validated();
         $dto = new ProlongDto($this->user());
         $dto->id = $this->getId();
         $dto->bonus_id = $this->getBonusId();
+        $dto->with = $validated['with'] ?? [];
+        $dto->with_count = $validated['with_count'] ?? [];
 
         return $dto;
     }

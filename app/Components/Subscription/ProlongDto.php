@@ -8,4 +8,6 @@ class ProlongDto extends \App\Common\DTO\DtoWithUser
 {
     public string $id;
     public ?string $bonus_id = null;
+    public array $with = [];
+    public array $with_count = [];
 }
