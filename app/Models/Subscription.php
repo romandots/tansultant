@@ -108,8 +108,12 @@ class Subscription extends Model
 
     public function getCoursesLeftAttribute(): ?int
     {
-        if (null === $this->courses_limit || null === $this->courses_count) {
+        if (null === $this->courses_limit) {
             return null;
+        }
+
+        if (null === $this->courses_count) {
+            return $this->courses_limit;
         }
 
         return $this->courses_limit - $this->courses_count;
@@ -118,8 +122,12 @@ class Subscription extends Model
 
     public function getVisitsLeftAttribute(): ?int
     {
-        if (null === $this->visits_limit || null === $this->visits_count) {
+        if (null === $this->visits_limit) {
             return null;
+        }
+
+        if (null === $this->visits_count) {
+            return $this->visits_limit;
         }
 
         return $this->visits_limit - $this->visits_count;
@@ -128,8 +136,12 @@ class Subscription extends Model
 
     public function getHoldsLeftAttribute(): ?int
     {
-        if (null === $this->holds_limit || null === $this->holds_count) {
+        if (null === $this->holds_limit) {
             return null;
+        }
+
+        if (null === $this->holds_count) {
+            return $this->holds_limit;
         }
 
         return $this->holds_limit - $this->holds_count;
@@ -138,8 +150,12 @@ class Subscription extends Model
 
     public function getDaysLeftAttribute(): ?int
     {
-        if (null === $this->days_limit || null === $this->days_count) {
+        if (null === $this->days_limit) {
             return null;
+        }
+
+        if (null === $this->days_count) {
+            return $this->days_limit;
         }
 
         return $this->days_limit - $this->days_count;
