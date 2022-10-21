@@ -58,15 +58,17 @@ class Repository extends \App\Common\BaseComponentRepository
     public function getStudentSubscriptionsForCourse(
         string $studentId,
         string $courseId,
-        \App\Models\Enum\SubscriptionStatus $subscriptionStatus
+        array $subscriptionStatuses = []
     ): Collection {
+        $subscriptionStatuses = [] === $subscriptionStatuses
+            ? $subscriptionStatuses : [SubscriptionStatus::ACTIVE->value, SubscriptionStatus::PENDING->value];
         $subscriptions = Subscription::TABLE;
         $pivot = 'subscription_has_courses';
         return $this->getQuery()
             ->join($pivot, "{$pivot}.subscription_id", '=', "{$subscriptions}.id")
-            ->where("{$subscriptions}.status", $subscriptionStatus->value)
-            ->where("{$subscriptions}.student_id", $studentId)
-            ->where("{$pivot}.course_id", $courseId)
+            ->whereIn("{$subscriptions}.status", $subscriptionStatuses)
+            ->where("{$subscriptions}.student_id", '=', $studentId)
+            ->where("{$pivot}.course_id", '=', $courseId)
             ->get();
     }
 

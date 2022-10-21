@@ -12,6 +12,7 @@ use App\Events\Subscription\SubscriptionUpdatedEvent;
 use App\Models\Enum\SubscriptionStatus;
 use App\Models\Subscription;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
  * @method Repository getRepository()
@@ -135,17 +136,41 @@ class Service extends BaseComponentService
         return app(Validator::class);
     }
 
-    /**
-     * @param string $studentId
-     * @param string $courseId
-     * @return \Illuminate\Support\Collection<Subscription>
-     */
     public function getStudentPotentialSubscriptionsForCourse(string $studentId, string $courseId): \Illuminate\Support\Collection
     {
-        return $this->getRepository()
-            ->getStudentSubscriptionsWithCoursesLeft($studentId, [SubscriptionStatus::ACTIVE->value, SubscriptionStatus::PENDING->value])
-            ->filter(fn (Subscription $subscription) =>
-                (bool)$subscription->tariff->courses->where('id', $courseId)->count()
+        $subscriptions = $this->getRepository()
+            ->getStudentSubscriptionsWithCoursesLeft(
+                $studentId,
+                [SubscriptionStatus::ACTIVE->value, SubscriptionStatus::PENDING->value]
             );
+        return $this->filterSubscriptionsForCourseLesson($subscriptions, $courseId);
+    }
+
+    public function getStudentSubscriptionsForCourse(
+        string $studentId,
+        string $courseId
+    ): Collection {
+        $subscriptions = $this->getRepository()->getStudentSubscriptionsForCourse(
+            $studentId,
+            $courseId,
+            [SubscriptionStatus::ACTIVE->value, SubscriptionStatus::PENDING->value]
+        );
+        return $this->filterSubscriptionsForCourseLesson($subscriptions, $courseId);
+    }
+
+    public function filterSubscriptionsForCourseLesson(Collection $subscriptions, string $courseId): Collection
+    {
+        return $subscriptions->filter(fn (Subscription $subscription) =>
+            $this->subscriptionTariffsIncludesCourse($subscription, $courseId) &&
+            $this->subscriptionHasVisits($subscription)
+        );
+    }
+
+    private function subscriptionTariffsIncludesCourse(Subscription $subscription, string $courseId) {
+        return (bool)$subscription->tariff->courses->where('id', $courseId)->count();
+    }
+
+    private function subscriptionHasVisits(Subscription $subscription) {
+        return $subscription->visits_left > 0;
     }
 }

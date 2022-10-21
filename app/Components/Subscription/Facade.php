@@ -44,18 +44,13 @@ class Facade extends BaseComponentFacade
         return app(Validator::class);
     }
 
-    public function getStudentSubscriptionsForCourse(
-        string $studentId,
-        string $courseId,
-        SubscriptionStatus $subscriptionStatus = SubscriptionStatus::ACTIVE
-    ): Collection {
-        return $this->getRepository()->getStudentSubscriptionsForCourse($studentId, $courseId, $subscriptionStatus);
+    public function getStudentSubscriptionsForCourse(string $studentId, string $courseId): Collection
+    {
+        return $this->getService()->getStudentSubscriptionsForCourse($studentId, $courseId);
     }
 
-    public function getStudentPotentialSubscriptionsForCourse(
-        string $studentId,
-        string $courseId
-    ): Collection {
+    public function getStudentPotentialSubscriptionsForCourse(string $studentId, string $courseId): Collection
+    {
         return $this->getService()->getStudentPotentialSubscriptionsForCourse($studentId, $courseId);
     }
 

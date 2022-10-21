@@ -9,6 +9,7 @@ use App\Components\Visit\Entity\PriceOptions;
 use App\Models\Course;
 use App\Models\Enum\VisitPaymentType;
 use App\Models\Student;
+use App\Models\Subscription;
 use App\Models\Visit;
 use Illuminate\Support\Collection;
 
@@ -77,7 +78,8 @@ class Manager extends \App\Common\BaseComponentService
         // If there's none -- let user confirm the payment
         if ($subscriptions->count() === 0) {
             $priceOptions->subscriptionsWithoutCourse = Loader::subscriptions()
-                ->getStudentPotentialSubscriptionsForCourse($dto->student_id, $course->id);
+                ->getStudentPotentialSubscriptionsForCourse($dto->student_id, $course->id)
+                ->filter(fn (Subscription $subscription) => $subscription->visits_left > 0);
 
             throw new Exceptions\NoSubscriptionsException($priceOptions);
         }
