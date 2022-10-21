@@ -66,6 +66,8 @@ class Service extends \App\Common\BaseComponentService
      */
     public function delete(Model $record, \App\Models\User $user): void
     {
+        $this->validateLessonStatus($record->event);
+
         if (null !== $record->payment_id) {
             Loader::payments()->delete($record->load('payment')->payment, $user);
         }
