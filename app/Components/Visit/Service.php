@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Components\Visit;
 
+use App\Components\Lesson\Exceptions\InvalidLessonStatusException;
 use App\Components\Loader;
 use App\Events\Lesson\LessonVisitsUpdatedEvent;
+use App\Models\Enum\LessonStatus;
 use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Database\Eloquent\Model;
@@ -38,6 +40,10 @@ class Service extends \App\Common\BaseComponentService
     protected function createLessonVisit(Dto $dto): Visit
     {
         $this->checkIfVisitAlreadyExists($dto->student_id, $dto->event_id);
+
+        $lesson = Loader::lessons()->find($dto->event_id);
+
+        $this->validateLessonStatus($lesson);
 
         $student = Loader::students()->find($dto->student_id);
 
@@ -94,5 +100,13 @@ class Service extends \App\Common\BaseComponentService
     protected function getManager(): Manager
     {
         return \app(Manager::class);
+    }
+
+    protected function validateLessonStatus(\App\Models\Lesson $lesson): void
+    {
+        $validStates = [LessonStatus::BOOKED, LessonStatus::ONGOING, LessonStatus::PASSED];
+        if (!\in_array($lesson->status, $validStates, true)) {
+            throw new InvalidLessonStatusException($lesson->status, $validStates);
+        }
     }
 }
