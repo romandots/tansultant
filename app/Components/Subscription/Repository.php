@@ -10,6 +10,7 @@ use App\Models\Subscription;
 use App\Models\Visit;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -71,15 +72,26 @@ class Repository extends \App\Common\BaseComponentRepository
 
     public function getStudentSubscriptionsWithCoursesLeft(
         string $studentId,
-        \App\Models\Enum\SubscriptionStatus $subscriptionStatus
+        array $subscriptionStatuses
     ): Collection {
         $subscriptions = Subscription::TABLE;
         $pivot = 'subscription_has_courses';
         return $this->getQuery()
-            ->join($pivot, "{$pivot}.subscription_id", '=', "{$subscriptions}.id")
-            ->where("{$subscriptions}.status", $subscriptionStatus->value)
+            ->with('tariff')
+            ->whereIn("{$subscriptions}.status", $subscriptionStatuses)
             ->where("{$subscriptions}.student_id", $studentId)
-            ->where("COUNT({$pivot}.course_id)", '<', "{$subscriptions}.courses_limit")
+            ->where(function (\Illuminate\Database\Eloquent\Builder $query) use ($pivot, $subscriptions) {
+                $query
+                    ->whereNull("{$subscriptions}.courses_limit")
+                    ->orWhereIn("{$subscriptions}.id", function (Builder $query) use ($subscriptions, $pivot) {
+                        $query
+                            ->select("{$subscriptions}.id")
+                            ->from($subscriptions)
+                            ->leftJoin($pivot, "{$pivot}.subscription_id", '=', "{$subscriptions}.id")
+                            ->groupBy("{$subscriptions}.id", "{$subscriptions}.courses_limit")
+                            ->havingRaw("COUNT({$pivot}.course_id) < {$subscriptions}.courses_limit");
+                    });
+            })
             ->get();
     }
 

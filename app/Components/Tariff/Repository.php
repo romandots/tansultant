@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Components\Tariff;
 
 use App\Models\Course;
-use App\Models\Enum\TariffStatus;
 use App\Models\Tariff;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -70,17 +69,5 @@ class Repository extends \App\Common\BaseComponentRepository
     public function detachCourses(Tariff $tariff, iterable $courses): void
     {
         $this->detachRelations($tariff, 'courses', $courses);
-    }
-
-    /**
-     * @param Tariff $record
-     * @param TariffStatus $status
-     * @return void
-     * @todo Implement updateStatus method in base class
-     */
-    public function updateStatus(Tariff $record, TariffStatus $status): void
-    {
-        $record->status = $status;
-        $this->save($record);
     }
 }

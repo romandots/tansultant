@@ -143,9 +143,9 @@ class Service extends BaseComponentService
     public function getStudentPotentialSubscriptionsForCourse(string $studentId, string $courseId): \Illuminate\Support\Collection
     {
         return $this->getRepository()
-            ->getStudentSubscriptionsWithCoursesLeft($studentId, SubscriptionStatus::ACTIVE)
+            ->getStudentSubscriptionsWithCoursesLeft($studentId, [SubscriptionStatus::ACTIVE->value, SubscriptionStatus::PENDING->value])
             ->filter(fn (Subscription $subscription) =>
-                (bool)$subscription?->tariff->courses->where('id', $courseId)->exists()
+                (bool)$subscription->tariff->courses->where('id', $courseId)->count()
             );
     }
 }

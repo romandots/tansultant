@@ -19,5 +19,5 @@ class Dto extends \App\Common\DTO\DtoWithUser
     public VisitEventType $event_type;
     public VisitPaymentType $payment_type;
     public bool $pay_from_balance;
-    public int $price;
+    public ?int $price = null;
 }

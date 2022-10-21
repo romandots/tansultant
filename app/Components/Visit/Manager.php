@@ -76,10 +76,10 @@ class Manager extends \App\Common\BaseComponentService
 
         // If there's none -- let user confirm the payment
         if ($subscriptions->count() === 0) {
-            $unsubscribedSubscriptions = Loader::subscriptions()
+            $priceOptions->subscriptionsWithoutCourse = Loader::subscriptions()
                 ->getStudentPotentialSubscriptionsForCourse($dto->student_id, $course->id);
 
-            throw new Exceptions\NoSubscriptionsException($priceOptions, $unsubscribedSubscriptions);
+            throw new Exceptions\NoSubscriptionsException($priceOptions);
         }
 
         if (null !== $dto->subscription_id) {
@@ -94,7 +94,8 @@ class Manager extends \App\Common\BaseComponentService
 
         //  If there's more than one -- let user choose
         if ($subscriptions->count() > 1) {
-            throw new Exceptions\ChooseSubscriptionException($subscriptions);
+            $priceOptions->subscriptionsWithCourse = $subscriptions;
+            throw new Exceptions\ChooseSubscriptionException($priceOptions);
         }
 
         // Otherwise, pick it automatically

@@ -8,8 +8,8 @@ use App\Common\BaseFacade;
 use App\Common\Locator;
 use App\Models\Enum\LogRecordAction;
 use App\Models\Hold;
-use App\Models\Model;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class Facade extends BaseFacade
