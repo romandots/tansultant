@@ -44,4 +44,9 @@ class Facade extends BaseComponentFacade
     {
         $this->getService()->activatePotentialStudent($student, $user);
     }
+
+    public function updateLastSeen(Student $student): void
+    {
+        $this->getService()->updateLastSeen($student);
+    }
 }

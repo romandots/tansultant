@@ -8,14 +8,12 @@ enum VisitPaymentType: string implements ClassBackedEnum
 {
     case SUBSCRIPTION = 'subscription';
     case PAYMENT = 'payment';
-    case PROMOCODE = 'promocode';
 
     public function getClass(): string
     {
         return match ($this) {
             self::SUBSCRIPTION => \App\Models\Subscription::class,
             self::PAYMENT => \App\Models\Payment::class,
-            self::PROMOCODE => throw new \Exception('To be implemented'),
         };
     }
 

@@ -16,6 +16,7 @@ use App\Models\Bonus;
 use App\Models\Enum\VisitEventType;
 use App\Models\Lesson;
 use App\Models\Student;
+use App\Models\Subscription;
 use Illuminate\Validation\Rule;
 
 class StoreVisitRequest extends StoreRequest
@@ -44,6 +45,12 @@ class StoreVisitRequest extends StoreRequest
                 'uuid',
                 Rule::exists(Bonus::TABLE, 'id')
             ],
+            'subscription_id' => [
+                'nullable',
+                'string',
+                'uuid',
+                Rule::exists(Subscription::TABLE, 'id')
+            ],
             'pay_from_balance' => [
                 'nullable',
                 'bool',
@@ -59,6 +66,7 @@ class StoreVisitRequest extends StoreRequest
         $dto->student_id = $validated['student_id'];
         $dto->event_id = $validated['lesson_id'];
         $dto->bonus_id = $validated['bonus_id'] ?? null;
+        $dto->subscription_id = $validated['subscription_id'] ?? null;
         $dto->event_type = VisitEventType::LESSON;
         $dto->pay_from_balance = (bool)($validated['pay_from_balance'] ?? false);
 

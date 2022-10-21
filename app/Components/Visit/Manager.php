@@ -8,6 +8,7 @@ use App\Components\Loader;
 use App\Components\Visit\Entity\PriceOptions;
 use App\Models\Course;
 use App\Models\Enum\VisitPaymentType;
+use App\Models\Lesson;
 use App\Models\Student;
 use App\Models\Subscription;
 use App\Models\Visit;
@@ -46,9 +47,8 @@ class Manager extends \App\Common\BaseComponentService
         return true;
     }
 
-    public function buildCourseLessonVisitDto(Dto $dto, Student $student): Dto
+    public function buildCourseLessonVisitDto(Dto $dto, Student $student, Lesson $lesson): Dto
     {
-        $lesson = Loader::lessons()->find($dto->event_id);
         $course = $lesson->load('course')->course;
 
         if ($course === null) {
@@ -73,20 +73,18 @@ class Manager extends \App\Common\BaseComponentService
         $dto->payment_type = VisitPaymentType::SUBSCRIPTION;
 
         // If valid subscription is already picked
-        $subscriptions = Loader::subscriptions()->getStudentSubscriptionsForCourse($dto->student_id, $course->id);
+        $priceOptions->subscriptionsWithCourse = Loader::subscriptions()->getStudentSubscriptionsForCourse($dto->student_id, $course->id);
+        $priceOptions->subscriptionsWithoutCourse = Loader::subscriptions()
+            ->getStudentPotentialSubscriptionsForCourse($dto->student_id, $course->id)
+            ->filter(fn (Subscription $subscription) => $subscription->visits_left > 0);
 
-        // If there's none -- let user confirm the payment
-        if ($subscriptions->count() === 0) {
-            $priceOptions->subscriptionsWithoutCourse = Loader::subscriptions()
-                ->getStudentPotentialSubscriptionsForCourse($dto->student_id, $course->id)
-                ->filter(fn (Subscription $subscription) => $subscription->visits_left > 0);
-
-            throw new Exceptions\NoSubscriptionsException($priceOptions);
-        }
-
-        if (null !== $dto->subscription_id) {
-            if ($subscriptions->where('id', $dto->subscription_id)->count() > 0) {
+        if ($dto->subscription_id) {
+            if ($priceOptions->subscriptionsWithCourse->where('id', $dto->subscription_id)->count() > 0) {
                 return;
+            }
+
+            if ($priceOptions->subscriptionsWithoutCourse->where('id', $dto->subscription_id)->count() === 0) {
+                throw new \LogicException('subscription_belongs_to_another_student');
             }
 
             // Subscribe to course automatically
@@ -94,14 +92,18 @@ class Manager extends \App\Common\BaseComponentService
             return;
         }
 
+        // If there's none -- let user confirm the payment
+        if ($priceOptions->subscriptionsWithCourse->count() === 0) {;
+            throw new Exceptions\NoSubscriptionsException($priceOptions);
+        }
+
         //  If there's more than one -- let user choose
-        if ($subscriptions->count() > 1) {
-            $priceOptions->subscriptionsWithCourse = $subscriptions;
+        if ($priceOptions->subscriptionsWithCourse->count() > 1) {
             throw new Exceptions\ChooseSubscriptionException($priceOptions);
         }
 
         // Otherwise, pick it automatically
-        $dto->subscription_id = $subscriptions->first()->id;
+        $dto->subscription_id = $priceOptions->subscriptionsWithCourse->first()->id;
     }
 
     protected function appendVisitPayment(Dto $dto, PriceOptions $priceOptions): void
@@ -116,7 +118,10 @@ class Manager extends \App\Common\BaseComponentService
 
     public function finalizeVisitPayment(Visit $visit, Student $student, Dto $dto): void
     {
-        if ($dto->payment_type !== VisitPaymentType::PAYMENT) {
+        Loader::students()->activatePotentialStudent($student, $dto->user);
+        Loader::students()->updateLastSeen($student);
+
+        if ($dto->payment_type === VisitPaymentType::SUBSCRIPTION) {
             $subscription = $visit->load('subscription')->subscription;
 
             if (null === $subscription) {
@@ -129,10 +134,8 @@ class Manager extends \App\Common\BaseComponentService
 
         $bonus = $dto->bonus_id ? Loader::bonuses()->find($dto->bonus_id) : null;
 
-        \DB::beginTransaction();
         $payment = Loader::payments()->createVisitPayment($visit, $student, $bonus, $dto->user);
         $this->getRepository()->updatePayment($visit, $payment, null);
-        \DB::commit();
     }
 
     protected function getService(): Service

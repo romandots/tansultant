@@ -47,12 +47,12 @@ class Service extends \App\Common\BaseComponentService
 
         $student = Loader::students()->find($dto->student_id);
 
-        $dto = $this->getManager()->buildCourseLessonVisitDto($dto, $student);
+        \DB::beginTransaction();
+        $dto = $this->getManager()->buildCourseLessonVisitDto($dto, $student, $lesson);
         $visit = parent::create($dto);
         assert($visit instanceof Visit);
-
         $this->getManager()->finalizeVisitPayment($visit, $student, $dto);
-        Loader::students()->activatePotentialStudent($student, $dto->user);
+        \DB::commit();
 
         $this->dispatchEvent($visit);
 

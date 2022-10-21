@@ -150,12 +150,7 @@ class Manager extends BaseComponentService
         if ($subscription->status === SubscriptionStatus::PENDING) {
             $today = Carbon::today()->setTime(0, 0);
             $expirationDate = Carbon::today()->addDays(($subscription->tariff->days_limit))->setTime(23, 59);
-            $this->getRepository()->setStatus(
-                $subscription, SubscriptionStatus::ACTIVE, [
-                    'activated_at' => $today,
-                    'expired_at' => $expirationDate
-                ]
-            );
+            $this->getRepository()->activate($subscription, $today, $expirationDate);
             $this->debug("Activated pended subscription #{$subscription->id}");
             $this->history->logActivate($user, $subscription);
             return;

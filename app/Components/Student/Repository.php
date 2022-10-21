@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Components\Student;
 
 use App\Models\Student;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -44,5 +45,12 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->card_number = $dto->card_number;
         $record->person_id = $dto->person_id;
         $record->customer_id = $dto->customer_id;
+    }
+
+    public function updateLastSeenTimestamp(string $id): void
+    {
+        $this->getQuery()
+            ->where('id', $id)
+            ->update(['seen_at' => Carbon::now()]);
     }
 }

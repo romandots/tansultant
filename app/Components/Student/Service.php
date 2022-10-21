@@ -129,4 +129,9 @@ class Service extends \App\Common\BaseComponentService
             $this->history->logActivate($user, $student);
         }
     }
+
+    public function updateLastSeen(Student $student): void
+    {
+        $this->getRepository()->updateLastSeenTimestamp($student->id);
+    }
 }

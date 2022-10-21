@@ -181,4 +181,11 @@ class Repository extends \App\Common\BaseComponentRepository
     {
         $subscription->expired_at?->addDays($days);
     }
+
+    public function activate(Subscription $subscription, Carbon $activationDate, Carbon $expirationDate): void
+    {
+        $subscription->activated_at = $activationDate;
+        $subscription->expired_at = $expirationDate;
+        $this->updateStatus($subscription, SubscriptionStatus::ACTIVE);
+    }
 }
