@@ -87,6 +87,8 @@ class PriceOptions implements Arrayable
             'price' => 0,
             'subscription_id' => $subscription->id,
             'subscription_name' => $subscription->name,
+            'subscription_status' => $subscription->status,
+            'subscription_status_label' => \translate('subscription.status', $subscription->status),
             'subscription_visits_left' => $subscription->visits_left,
             'subscription_expired_at' => $subscription->expired_at?->toDateTimeString(),
             'subscription_has_course' => $hasCourse,
