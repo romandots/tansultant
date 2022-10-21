@@ -39,11 +39,10 @@ class Service extends \App\Common\BaseComponentService
      */
     protected function createLessonVisit(Dto $dto): Visit
     {
-        $this->checkIfVisitAlreadyExists($dto->student_id, $dto->event_id);
-
         $lesson = Loader::lessons()->find($dto->event_id);
 
         $this->validateLessonStatus($lesson);
+        $this->checkIfVisitAlreadyExists($dto->student_id, $dto->event_id);
 
         $student = Loader::students()->find($dto->student_id);
 
