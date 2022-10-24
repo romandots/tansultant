@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Components\Subscription;
 
+use App\Common\DTO\SearchFilterDto;
+use App\Http\Requests\ManagerApi\DTO\SearchSubscriptionsFilterDto;
 use App\Models\Course;
 use App\Models\Enum\SubscriptionStatus;
 use App\Models\Subscription;
@@ -55,6 +57,37 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->holds_limit = $dto->holds_limit;
     }
 
+    public function getFilterQuery(
+        SearchFilterDto $filter,
+        array $relations = [],
+        array $countRelations = []
+    ): \Illuminate\Database\Eloquent\Builder {
+        $query = parent::getFilterQuery($filter, $relations, $countRelations);
+        $table = Subscription::TABLE;
+
+        assert($filter instanceof SearchSubscriptionsFilterDto);
+
+        if ($filter->student_id) {
+            $query->where("{$table}.student_id", $filter->student_id);
+        }
+
+        if ($filter->tariff_id) {
+            $query->where("{$table}.tariff_id", $filter->tariff_id);
+        }
+
+        if ([] !== $filter->courses_ids) {
+            $pivot = Subscription::COURSES_PIVOT_TABLE;
+            $query
+                ->leftJoin($pivot, "{$pivot}.subscription_id", '=', "{$table}.id")
+                ->whereIn("{$pivot}.course_id", $filter->courses_ids);
+        }
+
+        return $query
+            ->orderBy("{$table}.expired_at", 'asc')
+            ->orderBy("{$table}.created_at", 'asc');
+    }
+
+
     public function getStudentSubscriptionsForCourse(
         string $studentId,
         string $courseId,
@@ -63,7 +96,7 @@ class Repository extends \App\Common\BaseComponentRepository
         $subscriptionStatuses = [] === $subscriptionStatuses
             ? $subscriptionStatuses : [SubscriptionStatus::ACTIVE->value, SubscriptionStatus::PENDING->value];
         $subscriptions = Subscription::TABLE;
-        $pivot = 'subscription_has_courses';
+        $pivot = Subscription::COURSES_PIVOT_TABLE;
         return $this->getQuery()
             ->join($pivot, "{$pivot}.subscription_id", '=', "{$subscriptions}.id")
             ->whereIn("{$subscriptions}.status", $subscriptionStatuses)
@@ -77,7 +110,7 @@ class Repository extends \App\Common\BaseComponentRepository
         array $subscriptionStatuses
     ): Collection {
         $subscriptions = Subscription::TABLE;
-        $pivot = 'subscription_has_courses';
+        $pivot = Subscription::COURSES_PIVOT_TABLE;
         return $this->getQuery()
             ->with('tariff')
             ->whereIn("{$subscriptions}.status", $subscriptionStatuses)

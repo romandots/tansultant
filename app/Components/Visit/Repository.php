@@ -43,7 +43,7 @@ class Repository extends \App\Common\BaseComponentRepository
         $this->save($visit);
     }
 
-    protected function getFilterQuery(
+    public function getFilterQuery(
         SearchFilterDto $filter,
         array $relations = [],
         array $countRelations = []

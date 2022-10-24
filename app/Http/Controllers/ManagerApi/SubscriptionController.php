@@ -9,7 +9,7 @@ use App\Common\Requests\ManageRelationsRequest;
 use App\Components\Loader;
 use App\Components\Subscription as Component;
 use App\Http\Requests\ManagerApi\ProlongSubscriptionStatusRequest;
-use App\Http\Requests\ManagerApi\SearchSubscriptionRequest;
+use App\Http\Requests\ManagerApi\SearchSubscriptionsRequest;
 use App\Http\Requests\ManagerApi\StoreSubscriptionRequest;
 use App\Http\Requests\ManagerApi\UpdateSubscriptionStatusRequest;
 
@@ -36,7 +36,7 @@ class SubscriptionController extends AdminController
         );
     }
 
-    public function search(SearchSubscriptionRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function search(SearchSubscriptionsRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         return $this->_search($request);
     }

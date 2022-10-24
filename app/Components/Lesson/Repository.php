@@ -95,7 +95,7 @@ class Repository extends \App\Common\BaseComponentRepository
             ->count(['id']);
     }
 
-    protected function getFilterQuery(
+    public function getFilterQuery(
         SearchFilterDto $filter,
         array $relations = [],
         array $countRelations = []

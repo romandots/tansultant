@@ -45,7 +45,7 @@ abstract class BaseComponentService extends BaseService
         $dto->with_deleted = false;
 
         $result = $this->getRepository()
-            ->getSuggestQuery($dto)
+            ->getFilterQuery($dto)
             ->limit(10)
             ->get()
             ->map(function (Model $record) use ($additionalFields, $labelField, $valueField) {

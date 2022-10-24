@@ -49,10 +49,11 @@ class Subscription extends Model
     use UsesUuid;
 
     public const TABLE = 'subscriptions';
+    public const COURSES_PIVOT_TABLE = 'subscription_has_courses';
+    public const PAYMENTS_PIVOT_TABLE = 'subscription_has_payments';
+
     protected $table = self::TABLE;
-
     protected $guarded = [];
-
     protected $casts = [
         'status' => Enum\SubscriptionStatus::class,
         'created_at' => 'datetime',
@@ -78,12 +79,12 @@ class Subscription extends Model
 
     public function courses(): BelongsToMany
     {
-        return $this->belongsToMany(Course::class, 'subscription_has_courses');
+        return $this->belongsToMany(Course::class, self::COURSES_PIVOT_TABLE);
     }
 
     public function payments(): BelongsToMany
     {
-        return $this->belongsToMany(Payment::class, 'subscription_has_payments');
+        return $this->belongsToMany(Payment::class, self::PAYMENTS_PIVOT_TABLE);
     }
 
     public function holds(): HasMany

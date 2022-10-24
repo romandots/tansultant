@@ -34,16 +34,7 @@ class Repository extends \App\Common\BaseComponentRepository
         );
     }
 
-    public function getSuggestQuery(
-        SearchFilterDto $filter,
-        array $relations = [],
-        array $countRelations = []
-    ): \Illuminate\Database\Eloquent\Builder {
-        return parent::getSuggestQuery($filter, $relations, $countRelations)
-            ->orderBy('number', 'asc');
-    }
-
-    protected function getFilterQuery(
+    public function getFilterQuery(
         SearchFilterDto $filter,
         array $relations = [],
         array $countRelations = []
@@ -56,7 +47,8 @@ class Repository extends \App\Common\BaseComponentRepository
             $query->where('branch_id', $filter->branch_id);
         }
 
-        return $query;
+        return $query
+            ->orderBy('number', 'asc');
     }
 
 

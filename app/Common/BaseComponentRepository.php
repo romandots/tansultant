@@ -50,7 +50,7 @@ abstract class BaseComponentRepository extends BaseRepository
         return new $this->modelClass();
     }
 
-    public function getSuggestQuery(
+    public function getFilterQuery(
         SearchFilterDto $filter,
         array $relations = [],
         array $countRelations = []
@@ -76,25 +76,9 @@ abstract class BaseComponentRepository extends BaseRepository
         return $query;
     }
 
-    protected function getFilterQuery(
-        SearchFilterDto $filter,
-        array $relations = [],
-        array $countRelations = []
-    ): \Illuminate\Database\Eloquent\Builder {
-        return $this->getSuggestQuery($filter, $relations, $countRelations);
-    }
-
     public function countFiltered(SearchFilterDto $search): int
     {
         return $this->getFilterQuery($search)->count();
-    }
-
-    protected function getFilteredQuery(
-        SearchFilterDto $filter,
-        array $withRelations = [],
-        array $withCountRelations = []
-    ): \Illuminate\Database\Eloquent\Builder {
-        return $this->getFilterQuery($filter, $withRelations, $withCountRelations);
     }
 
     public function findFilteredPaginated(
@@ -102,7 +86,7 @@ abstract class BaseComponentRepository extends BaseRepository
         array $withRelations = [],
         array $withCountRelations = []
     ): \Illuminate\Database\Eloquent\Collection {
-        return $this->getFilteredQuery($search->getFilter(), $withRelations, $withCountRelations)
+        return $this->getFilterQuery($search->getFilter(), $withRelations, $withCountRelations)
             ->orderBy($search->getSort(), $search->getOrder())
             ->offset($search->getOffset())
             ->limit($search->getLimit())
