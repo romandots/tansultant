@@ -172,6 +172,7 @@ Route::namedGroup('people',ManagerApi\PersonController::class, static function (
 Route::namedGroup('prices',ManagerApi\PriceController::class, static function () {
     Route::namedRoute('index', 'get', '/', [PricesPermission::MANAGE, PricesPermission::READ]);
     Route::namedRoute('store', 'post', '/', [PricesPermission::MANAGE, PricesPermission::CREATE]);
+    Route::namedRoute('update', 'put', '{id:uuid}', [PricesPermission::MANAGE, PricesPermission::UPDATE]);
     Route::namedRoute('show', 'get', '{id:uuid}', [PricesPermission::MANAGE, PricesPermission::READ]);
     Route::namedRoute('destroy', 'delete', '{id:uuid}', [PricesPermission::MANAGE, PricesPermission::DELETE]);
 });
