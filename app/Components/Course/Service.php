@@ -147,7 +147,7 @@ class Service extends \App\Common\BaseComponentService
      * @return void
      * @throws \Exception
      */
-    public function attachTariff(Course $course, iterable $tariffs, User $user): void
+    public function attachTariffs(Course $course, iterable $tariffs, User $user): void
     {
         if ($course->status === CourseStatus::DISABLED) {
             throw new Exceptions\CannotAttachDisabledCourse($course);
@@ -172,10 +172,10 @@ class Service extends \App\Common\BaseComponentService
      * @return void
      * @throws \Exception
      */
-    public function detachCourses(Course $course, iterable $tariffs, User $user): void
+    public function detachTariffs(Course $course, iterable $tariffs, User $user): void
     {
         $originalRecord = clone $course;
-        $this->getRepository()->detachCourses($course, $tariffs);
+        $this->getRepository()->detachTariffs($course, $tariffs);
         $this->debug("Detach tariffs from course {$course->name}", (array)$tariffs);
         $this->history->logUpdate($user, $course, $originalRecord);
     }

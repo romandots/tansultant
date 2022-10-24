@@ -110,7 +110,7 @@ class Repository extends \App\Common\BaseComponentRepository
         $this->attachRelations($course, 'tariffs', $tariffs, ['created_at' => Carbon::now()]);
     }
 
-    public function detachTariff(Course $course, iterable $tariffs): void
+    public function detachTariffs(Course $course, iterable $tariffs): void
     {
         $this->detachRelations($course, 'tariffs', $tariffs);
     }
