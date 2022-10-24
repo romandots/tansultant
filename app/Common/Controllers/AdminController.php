@@ -62,8 +62,8 @@ abstract class AdminController extends Controller
     ): array {
         return \clock()->event('Serving SUGGEST action')
             ->run(function () use ($extraFields, $valueField, $labelField, $request) {
-
-                $data = $this->getFacade()->suggest($request->getDto(), $labelField, $valueField, $extraFields);
+                $suggestDto = $request->getDto();
+                $data = $this->getFacade()->suggest($suggestDto, $labelField, $valueField, $extraFields);
                 return  $this->formatList($data);
 
             });

@@ -41,10 +41,10 @@ class Repository extends \App\Common\BaseComponentRepository
     ): \Illuminate\Database\Eloquent\Builder {
         $query = parent::getFilterQuery($filter, $relations, $countRelations);
 
-        assert($filter instanceof SearchClassroomsFilterDto);
-
-        if ($filter->branch_id) {
-            $query->where('branch_id', $filter->branch_id);
+        if ($filter instanceof SearchClassroomsFilterDto) {
+            if ($filter->branch_id) {
+                $query->where('branch_id', $filter->branch_id);
+            }
         }
 
         return $query
