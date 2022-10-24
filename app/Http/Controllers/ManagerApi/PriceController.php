@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
+use App\Common\Requests\SearchRequest;
 use App\Components\Price as Component;
-use App\Http\Requests\ManagerApi\SearchPriceRequest;
 use App\Http\Requests\ManagerApi\StorePriceRequest;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
- * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection search(\App\Common\Requests\SearchRequest $request)
  * @method array suggest(\App\Common\Requests\SuggestRequest $request)
  * @method Component\Formatter show(string $id)
  * @method Component\Formatter _store(\App\Common\Requests\StoreRequest $request)
@@ -31,6 +30,11 @@ class PriceController extends AdminController
             searchRelations: [],
             singleRecordRelations: [],
         );
+    }
+
+    public function search(SearchRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return $this->_search($request);
     }
 
     public function store(StorePriceRequest $request): \Illuminate\Http\Resources\Json\JsonResource
