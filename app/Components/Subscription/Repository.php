@@ -82,6 +82,10 @@ class Repository extends \App\Common\BaseComponentRepository
                 ->whereIn("{$pivot}.course_id", $filter->courses_ids);
         }
 
+        if ([] !== $filter->statuses) {
+            $query->whereIn("{$table}.status", $filter->statuses);
+        }
+
         return $query
             ->orderBy("{$table}.expired_at", 'asc')
             ->orderBy("{$table}.created_at", 'asc');

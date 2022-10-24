@@ -7,6 +7,7 @@ use App\Common\DTO\SearchFilterDto;
 use App\Common\Requests\SearchRequest;
 use App\Http\Requests\ManagerApi\DTO\SearchSubscriptionsFilterDto;
 use App\Models\Course;
+use App\Models\Enum\SubscriptionStatus;
 use App\Models\Student;
 use App\Models\Tariff;
 use Illuminate\Validation\Rule;
@@ -38,11 +39,21 @@ class SearchSubscriptionsRequest extends SearchRequest
         $dto->student_id = $datum['student_id'] ?? null;
         $dto->tariff_id = $datum['tariff_id'] ?? null;
         $dto->courses_ids = $datum['courses_ids'] ?? [];
+        $dto->statuses = $datum['statuses'] ?? [];
     }
 
     public function rules(): array
     {
         return \array_merge(parent::rules(), [
+            'statuses' => [
+                'nullable',
+                'array',
+            ],
+            'statuses.*' => [
+                'required_with:statuses',
+                'string',
+                Rule::in(\enum_strings(SubscriptionStatus::class)),
+            ],
             'student_id' => [
                 'nullable',
                 'string',
