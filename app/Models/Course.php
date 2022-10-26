@@ -45,6 +45,7 @@ use Spatie\Tags\HasTags;
  * @property \Carbon\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Instructor|null $instructor
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Collection<Schedule>|null $schedules
+ * @property-read  BelongsToMany|Collection|Tariff[] $tariffs
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Price|null $price
  * @package App\Models
  * @method static bool|null forceDelete()
@@ -122,7 +123,7 @@ class Course extends Model
     }
 
     /**
-     * @return BelongsToMany|Collection<Tariff>
+     * @return BelongsToMany|Collection|Tariff[]
      */
     public function tariffs(): BelongsToMany
     {

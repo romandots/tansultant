@@ -222,7 +222,7 @@ abstract class BaseComponentRepository extends BaseRepository
     {
         $model->load($relation);
         foreach ($relatedObjects as $relationObject) {
-            if ($model->{$relation}->where('id', $model->id)->count()) {
+            if ($model->{$relation}->where('id', $relationObject->id)->count()) {
                 continue;
             }
 

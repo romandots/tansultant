@@ -153,14 +153,18 @@ class Service extends \App\Common\BaseComponentService
             throw new Exceptions\CannotAttachDisabledCourse($course);
         }
 
+        $course->load('tariffs');
+        $tariffsToAttach = [];
         foreach ($tariffs as $tariff) {
             if ($tariff->status === TariffStatus::ARCHIVED) {
                 throw new Exceptions\CannotAttachArchivedTariff($tariff);
             }
+
+            $tariffsToAttach[] = $tariff;
         }
 
         $originalRecord = clone $course;
-        $this->getRepository()->attachTariffs($course, $tariffs);
+        $this->getRepository()->attachTariffs($course, $tariffsToAttach);
         $this->debug("Attach tariffs to course {$course->name}", (array)$tariffs);
         $this->history->logUpdate($user, $course, $originalRecord);
     }
