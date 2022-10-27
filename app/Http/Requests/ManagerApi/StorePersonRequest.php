@@ -14,6 +14,7 @@ use App\Common\Requests\StoreRequest;
 use App\Components\Person\Dto;
 use App\Models\Enum\Gender;
 use App\Models\Person;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 /**
@@ -97,9 +98,9 @@ class StorePersonRequest extends StoreRequest
         $validated = $this->validated();
         $dto = new Dto($this->user());
 
-        $dto->last_name = $validated['last_name'] ?? null;
-        $dto->first_name = $validated['first_name'] ?? null;
-        $dto->patronymic_name = $validated['patronymic_name'] ?? null;
+        $dto->last_name = $this->normalizeCase($validated['last_name'] ?? null);
+        $dto->first_name = $this->normalizeCase($validated['first_name'] ?? null);
+        $dto->patronymic_name = $this->normalizeCase($validated['patronymic_name'] ?? null);
         $dto->birth_date = $validated['birth_date'] ? \Carbon\Carbon::parse($validated['birth_date']) : null;
         $dto->gender = isset($validated['gender']) ? Gender::from($validated['gender']) : null;
         $dto->phone = $validated['phone'] ? \phone_format($validated['phone']) : null;
@@ -117,5 +118,10 @@ class StorePersonRequest extends StoreRequest
     protected function getId(): ?string
     {
         return $this->route()->parameter('id');
+    }
+
+    private function normalizeCase(?string $string = null): string
+    {
+        return $string ? Str::ucfirst(Str::lower($string)) : null;
     }
 }
