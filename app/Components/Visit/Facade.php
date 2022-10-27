@@ -42,4 +42,9 @@ class Facade extends BaseComponentFacade
     {
         return \app(Manager::class);
     }
+
+    public function getStudentLastVisit(\App\Models\Student $student): ?Visit
+    {
+        return $this->getRepository()->getLastVisitByStudentId($student->id);
+    }
 }

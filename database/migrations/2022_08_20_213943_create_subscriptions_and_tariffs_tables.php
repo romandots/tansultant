@@ -77,7 +77,7 @@ return new class extends Migration
             $table->foreign('hold_id')
                 ->references('id')
                 ->on('holds')
-                ->onDelete('cascade');
+                ->onDelete('set null');
         });
 
         Schema::create('tariff_has_courses', static function (Blueprint $table) {

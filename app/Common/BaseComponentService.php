@@ -95,10 +95,10 @@ abstract class BaseComponentService extends BaseService
         return $searchParams->getMeta($totalRecords);
     }
 
-    public function find(string $id, array $relations = [], array $countRelations = []): Model
+    public function find(string $id, array $relations = [], array $countRelations = [], bool $forceNoCache = false): Model
     {
         $cacheKey = 'record_' . $id;
-        $cached = $this->getFromCache($cacheKey);
+        $cached = $forceNoCache ? null : $this->getFromCache($cacheKey);
 
         if (null !== $cached) {
             $this->debug('Model loaded from cache');

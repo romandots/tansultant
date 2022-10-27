@@ -225,4 +225,11 @@ class Repository extends \App\Common\BaseComponentRepository
         $subscription->expired_at = $expirationDate;
         $this->updateStatus($subscription, SubscriptionStatus::ACTIVE);
     }
+
+    public function deactivate(Subscription $subscription): void
+    {
+        $subscription->activated_at = null;
+        $subscription->expired_at = null;
+        $this->updateStatus($subscription, SubscriptionStatus::PENDING);
+    }
 }

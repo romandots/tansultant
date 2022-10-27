@@ -98,4 +98,12 @@ class Repository extends \App\Common\BaseComponentRepository
             ->where('event_id', $eventId)
             ->firstOrFail();
     }
+
+    public function getLastVisitByStudentId(string $studentId): ?Visit
+    {
+        return $this->getQuery()
+            ->where('student_id', $studentId)
+            ->orderBy('created_at', 'desc')
+            ->first();
+    }
 }

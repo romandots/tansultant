@@ -6,6 +6,7 @@ namespace App\Components\Student;
 
 use App\Common\BaseComponentFacade;
 use App\Common\DTO\ShowDto;
+use App\Components\Loader;
 use App\Models\Person;
 use App\Models\Student;
 use App\Models\User;
@@ -45,8 +46,14 @@ class Facade extends BaseComponentFacade
         $this->getService()->activatePotentialStudent($student, $user);
     }
 
+    public function dectivateStudent(Student $student, User $user): void
+    {
+        $this->getService()->dectivateStudent($student, $user);
+    }
+
     public function updateLastSeen(Student $student): void
     {
-        $this->getService()->updateLastSeen($student);
+        $lastVisit = Loader::visits()->getStudentLastVisit($student);
+        $this->getService()->updateLastSeen($student, $lastVisit?->created_at);
     }
 }

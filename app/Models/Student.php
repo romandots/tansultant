@@ -28,7 +28,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property StudentStatus $status [potential|active|recent|former]
  * @property string $person_id
  * @property string $customer_id
- * @property int|null $personal_discount
+ * @property int|null $visits_count
+ * @property int|null $subscriptions_count
  * @property \Carbon\Carbon $seen_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -93,6 +94,11 @@ class Student extends Model
 
     public function subscriptions(): HasMany
     {
-        return $this->hasMany('subscriptions')->orderBy('created_at', 'desc');
+        return $this->hasMany(Subscription::class)->orderBy('created_at', 'desc');
+    }
+
+    public function visits(): HasMany
+    {
+        return $this->hasMany(Visit::class)->orderBy('created_at', 'desc');
     }
 }

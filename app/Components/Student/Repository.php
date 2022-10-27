@@ -47,10 +47,10 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->customer_id = $dto->customer_id;
     }
 
-    public function updateLastSeenTimestamp(string $id): void
+    public function updateLastSeenTimestamp(string $id, ?Carbon $date = null): void
     {
         $this->getQuery()
             ->where('id', $id)
-            ->update(['seen_at' => Carbon::now()]);
+            ->update(['seen_at' => $date]);
     }
 }

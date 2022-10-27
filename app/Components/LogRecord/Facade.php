@@ -139,4 +139,8 @@ class Facade extends BaseFacade
     public function logActivate(User $user, Model $record): void
     {
     }
+
+    public function logDeactivate(User $user, Model $record): void
+    {
+    }
 }

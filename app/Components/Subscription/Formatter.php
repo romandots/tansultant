@@ -24,10 +24,13 @@ class Formatter extends BaseFormatter
             'name' => $this->name,
             'holds' => $this
                 ->whenLoaded('holds', fn () => \App\Components\Hold\Formatter::collection($this->holds)),
+            'active_hold_id' => $this->hold_id,
             'active_hold' => $this
                 ->whenLoaded('active_hold', fn () => new \App\Components\Hold\Formatter($this->active_hold)),
+            'student_id' => $this->student_id,
             'student' => $this
                 ->whenLoaded('student', fn () => new \App\Components\Student\Formatter($this->student)),
+            'tariff_id' => $this->tariff_id,
             'tariff' => $this
                 ->whenLoaded('tariff', fn () => new \App\Components\Tariff\Formatter($this->tariff)),
             'courses' => $this
@@ -43,10 +46,10 @@ class Formatter extends BaseFormatter
             'courses_count' => $this->courses_count,
             'visits_count' => $this->visits_count,
             'holds_count' => $this->holds_count,
-            'days_left' => $this->days_left,
-            'courses_left' => $this->courses_left,
-            'visits_left' => $this->visits_left,
-            'holds_left' => $this->holds_left,
+            'days_left' => $this->days_count !== null ? $this->days_left : null,
+            'courses_left' => $this->courses_count !== null ? $this->courses_left : null,
+            'visits_left' => $this->visits_count !== null ? $this->visits_left : null,
+            'holds_left' => $this->holds_count !== null ? $this->holds_left : null,
             'status' => $this->status->value,
             'status_label' => \translate('subscription.status', $this->status->value),
             'created_at' => $this->created_at->toDateTimeString(),

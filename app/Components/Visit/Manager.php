@@ -118,17 +118,12 @@ class Manager extends \App\Common\BaseComponentService
 
     public function finalizeVisitPayment(Visit $visit, Student $student, Dto $dto): void
     {
-        Loader::students()->activatePotentialStudent($student, $dto->user);
-        Loader::students()->updateLastSeen($student);
-
         if ($dto->payment_type === VisitPaymentType::SUBSCRIPTION) {
             $subscription = $visit->load('subscription')->subscription;
 
             if (null === $subscription) {
                 throw new \LogicException('no_subscription_set');
             }
-
-            Loader::subscriptions()->activatePendingSubscription($subscription, $dto->user);
             return;
         }
 

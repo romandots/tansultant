@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Listeners\UpdateStudentLastSeen;
+use App\Listeners\UpdateStudentPendingStatus;
+use App\Listeners\UpdateSubscriptionHoldStatus;
+use App\Listeners\UpdateSubscriptionPendingStatus;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 /**
@@ -45,6 +49,30 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\Course\CourseRestoredEvent::class => [],
         \App\Events\Course\CourseEnabledEvent::class => [],
         \App\Events\Course\CourseDisabledEvent::class => [],
+
+        // Holds
+        \App\Events\Hold\HoldCreatedEvent::class => [
+            UpdateSubscriptionHoldStatus::class,
+        ],
+        \App\Events\Hold\HoldEndedEvent::class => [
+            UpdateSubscriptionHoldStatus::class,
+        ],
+        \App\Events\Hold\HoldDeletedEvent::class => [
+            UpdateSubscriptionHoldStatus::class,
+        ],
+
+        // Visits
+        \App\Events\Visit\VisitCreatedEvent::class => [
+            UpdateStudentPendingStatus::class,
+            UpdateStudentLastSeen::class,
+            UpdateSubscriptionPendingStatus::class,
+        ],
+        \App\Events\Visit\VisitDeletedEvent::class => [
+            UpdateStudentPendingStatus::class,
+            UpdateStudentLastSeen::class,
+            UpdateSubscriptionPendingStatus::class,
+        ],
+
     ];
 
     /**

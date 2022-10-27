@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property string $id
  * @property string $subscription_id
- * @property-read BelongsTo<Subscription>|null $subscription
+ * @property-read BelongsTo|Subscription|null $subscription
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $starts_at
  * @property \Carbon\Carbon|null $ends_at

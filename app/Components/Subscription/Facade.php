@@ -10,6 +10,7 @@ use App\Common\DTO\ShowDto;
 use App\Components\Loader;
 use App\Models\Course;
 use App\Models\Enum\SubscriptionStatus;
+use App\Models\Hold;
 use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -109,16 +110,36 @@ class Facade extends BaseComponentFacade
 
     public function updateStatus(StatusDto $statusDto): Subscription
     {
-        $subscription = $this->getService()->find($statusDto->id);
+        $subscription = $this->getService()->find($statusDto->id, $statusDto->with, $statusDto->with_count, true);
         assert($subscription instanceof Subscription);
         $this->getManager()->updateStatus($subscription, $statusDto->status, $statusDto->user);
 
         return $subscription->load($statusDto->with)->loadCount($statusDto->with_count);
     }
 
+    public function activatePendingSubscription(Subscription $subscription, User $user): void
+    {
+        $this->getManager()->activate($subscription, $user);
+    }
+
+    public function deactivateActiveSubscription(Subscription $subscription, User $user): void
+    {
+        $this->getManager()->deactivate($subscription, $user);
+    }
+
+    public function hold(Subscription $subscription, Hold $hold, User $user): void
+    {
+        $this->getManager()->hold($subscription, $hold, $user);
+    }
+
+    public function unhold(Subscription $subscription, int $duration, User $user): void
+    {
+        $this->getManager()->unhold($subscription, $duration, $user);
+    }
+
     public function getAllowedStatusesFor(SubscriptionStatus $status): array
     {
-        return $this->getValidator()->getAllowedTransitionsForStatus($status);
+        return $this->getValidator()->getAllowedDestinations($status);
     }
 
     public function canTransit(SubscriptionStatus $from, SubscriptionStatus $to): bool
@@ -154,10 +175,5 @@ class Facade extends BaseComponentFacade
     public function canBeUnpaused(Subscription $subscription): bool
     {
         return $this->getValidator()->canBeUnpaused($subscription);
-    }
-
-    public function activatePendingSubscription(Subscription $subscription, User $user): void
-    {
-        $this->getManager()->activatePendingSubscription($subscription, $user);
     }
 }

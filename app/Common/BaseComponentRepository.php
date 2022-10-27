@@ -4,10 +4,12 @@ namespace App\Common;
 
 use App\Common\DTO\SearchDto;
 use App\Common\DTO\SearchFilterDto;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 use Ramsey\Uuid\Uuid;
 
 abstract class BaseComponentRepository extends BaseRepository
@@ -152,9 +154,14 @@ abstract class BaseComponentRepository extends BaseRepository
 
     public function save(Model $record, array $dates = []): void
     {
-        if ($record::UPDATED_AT !== null) {
-            $dates = [$record::UPDATED_AT];
+        if ($record::UPDATED_AT) {
+            if (Arr::isAssoc($dates)) {
+                $dates[$record::UPDATED_AT] = Carbon::now();
+            } else {
+                $dates[] = $record::UPDATED_AT;
+            }
         }
+
         $this->fillDates($record, $dates);
         $record->save();
     }
@@ -205,17 +212,20 @@ abstract class BaseComponentRepository extends BaseRepository
 
     protected function fillDates(Model $record, array $datesToUpdate): void
     {
-        foreach ($datesToUpdate as $dateField) {
+        $isAssoc = Arr::isAssoc($datesToUpdate);
+        foreach ($datesToUpdate as $key => $value) {
+            $dateField = $isAssoc ? $key : $value;
+            $date = $isAssoc ? $value : \Carbon\Carbon::now();
             if (!$dateField) {
                 continue;
             }
-            $this->fillDate($record, $dateField);
+            $this->fillDate($record, $dateField, $date);
         }
     }
 
-    protected function fillDate(Model $record, string $attribute): void
+    protected function fillDate(Model $record, string $attribute, ?\Carbon\Carbon $date = null): void
     {
-        $record->{$attribute} = \Carbon\Carbon::now();
+        $record->{$attribute} = $date ?? \Carbon\Carbon::now();
     }
 
     protected function attachRelations(Model $model, string $relation, iterable $relatedObjects, array $additional = []): void
@@ -246,7 +256,11 @@ abstract class BaseComponentRepository extends BaseRepository
     {
         $record->status = $status;
         if ($record::UPDATED_AT) {
-            $datesToUpdate[] = $record::UPDATED_AT;
+            if (Arr::isAssoc($datesToUpdate)) {
+                $datesToUpdate[$record::UPDATED_AT] = Carbon::now();
+            } else {
+                $datesToUpdate[] = $record::UPDATED_AT;
+            }
         }
 
         $this->fillDates($record, $datesToUpdate);

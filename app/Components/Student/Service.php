@@ -12,6 +12,7 @@ use App\Models\Enum\StudentStatus;
 use App\Models\Person;
 use App\Models\Student;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -123,15 +124,24 @@ class Service extends \App\Common\BaseComponentService
 
     public function activatePotentialStudent(Student $student, User $user): void
     {
-        if ($student->status === StudentStatus::POTENTIAL) {
+        if ($student->status === StudentStatus::POTENTIAL && $student->loadCount('visits')->visits_count > 0) {
             $this->debug("Activating student {$student->name}");
             $this->getRepository()->updateStatus($student, StudentStatus::ACTIVE);
             $this->history->logActivate($user, $student);
         }
     }
 
-    public function updateLastSeen(Student $student): void
+    public function dectivateStudent(Student $student, User $user): void
     {
-        $this->getRepository()->updateLastSeenTimestamp($student->id);
+        if ($student->status !== StudentStatus::POTENTIAL && $student->loadCount('visits')->visits_count === 0) {
+            $this->debug("Deactivating student {$student->name}");
+            $this->getRepository()->updateStatus($student, StudentStatus::POTENTIAL);
+            $this->history->logDeactivate($user, $student);
+        }
+    }
+
+    public function updateLastSeen(Student $student, ?Carbon $date = null): void
+    {
+        $this->getRepository()->updateLastSeenTimestamp($student->id, $date);
     }
 }

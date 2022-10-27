@@ -7,6 +7,7 @@ namespace App\Components\Visit;
 use App\Components\Lesson\Exceptions\InvalidLessonStatusException;
 use App\Components\Loader;
 use App\Events\Lesson\LessonVisitsUpdatedEvent;
+use App\Events\Visit\VisitEvent;
 use App\Models\Enum\LessonStatus;
 use App\Models\User;
 use App\Models\Visit;
@@ -53,7 +54,8 @@ class Service extends \App\Common\BaseComponentService
         $this->getManager()->finalizeVisitPayment($visit, $student, $dto);
         \DB::commit();
 
-        $this->dispatchEvent($visit);
+        $this->dispatchLessonVisitsUpdatedEvent($visit);
+        $this->dispatchVisitCreatedEvent($visit, $dto->user);
 
         return $visit->load('payment.credit', 'payment.bonus', 'subscription', 'student.person');
     }
@@ -72,20 +74,37 @@ class Service extends \App\Common\BaseComponentService
             Loader::payments()->delete($record->load('payment')->payment, $user);
         }
         parent::delete($record, $user);
-        $this->dispatchEvent($record);
+        $this->dispatchLessonVisitsUpdatedEvent($record);
+        $this->dispatchVisitDeletedEvent($record, $user);
     }
 
-    /**
-     * @param Visit $visit
-     * @return void
-     */
-    protected function dispatchEvent(Visit $visit): void
+    protected function dispatchLessonVisitsUpdatedEvent(Visit $visit): void
     {
         try {
             LessonVisitsUpdatedEvent::dispatch($visit->event_id);
             $this->debug('Dispatched LessonVisitsUpdated event');
         } catch (\Throwable $exception) {
             $this->error('Failed dispatching LessonVisitsUpdated event', $exception);
+        }
+    }
+
+    protected function dispatchVisitCreatedEvent(Visit $visit, User $user): void
+    {
+        try {
+            VisitEvent::created($visit, $user);
+            $this->debug('Dispatched VisitCreatedEvent event');
+        } catch (\Throwable $exception) {
+            $this->error('Failed dispatching VisitCreatedEvent event', $exception);
+        }
+    }
+
+    protected function dispatchVisitDeletedEvent(Visit $visit, User $user): void
+    {
+        try {
+            VisitEvent::deleted($visit, $user);
+            $this->debug('Dispatched VisitDeletedEvent event');
+        } catch (\Throwable $exception) {
+            $this->error('Failed dispatching VisitDeletedEvent event', $exception);
         }
     }
 

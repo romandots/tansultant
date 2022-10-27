@@ -34,9 +34,21 @@ class Validator extends BaseComponentService
         );
     }
 
-    public function getAllowedTransitionsForStatus(SubscriptionStatus $status): array
+    public function getAllowedSources(SubscriptionStatus $toStatus): array
     {
-        return match ($status) {
+        $allowedStatuses = [];
+        foreach (SubscriptionStatus::cases() as $subscriptionStatus) {
+            $allowedDestinations = $this->getAllowedDestinations($subscriptionStatus);
+            if (\in_array($toStatus, $allowedDestinations, true)) {
+                $allowedStatuses = [$subscriptionStatus];
+            }
+        }
+        return $allowedStatuses;
+    }
+
+    public function getAllowedDestinations(SubscriptionStatus $fromStatus): array
+    {
+        return match ($fromStatus) {
             SubscriptionStatus::NOT_PAID => [
                 SubscriptionStatus::PENDING,
                 SubscriptionStatus::CANCELED,
@@ -89,8 +101,8 @@ class Validator extends BaseComponentService
 
     public function canTransit(SubscriptionStatus $fromStatus, SubscriptionStatus $toStatus): bool
     {
-        $allowedStatuses = $this->getAllowedTransitionsForStatus($fromStatus);
-        return \in_array($toStatus, $allowedStatuses, true);
+        $allowedSources = $this->getAllowedDestinations($fromStatus);
+        return \in_array($toStatus, $allowedSources, true);
     }
 
     public function canDo(SubscriptionStatus $fromStatus, string $action): bool
@@ -211,16 +223,23 @@ class Validator extends BaseComponentService
         }
     }
 
-    public function validateSubscriptionStatusForAttachCourses(Subscription $subscription)
+    public function validateSubscriptionStatusForAttachCourses(Subscription $subscription): void
     {
         if (!$this->canAttachCourses($subscription)) {
             $this->throwInvalidSubscriptionStatusException($subscription);
         }
     }
 
-    public function validateSubscriptionStatusForDetachCourses(Subscription $subscription)
+    public function validateSubscriptionStatusForDetachCourses(Subscription $subscription): void
     {
         if (!$this->canDetachCourses($subscription)) {
+            $this->throwInvalidSubscriptionStatusException($subscription);
+        }
+    }
+
+    public function validateSubscriptionStatusForTransition(Subscription $subscription, SubscriptionStatus $toStatus): void
+    {
+        if (!$this->canTransit($subscription->status, $toStatus)) {
             $this->throwInvalidSubscriptionStatusException($subscription);
         }
     }
@@ -229,7 +248,7 @@ class Validator extends BaseComponentService
     {
         throw new Exceptions\InvalidSubscriptionStatus(
             $subscription->status->value,
-            $this->getAllowedTransitionsForStatus($subscription->status)
+            $this->getAllowedDestinations($subscription->status)
         );
     }
 }
