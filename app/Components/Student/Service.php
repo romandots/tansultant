@@ -53,11 +53,11 @@ class Service extends \App\Common\BaseComponentService
         $this->updateFromPerson($record, $dto, $person);
     }
 
-
     /**
      * @param Dto $dto
      * @param Person $person
      * @return Student
+     * @throws \Throwable
      */
     public function createFromPerson(Dto $dto, Person $person): Student
     {
@@ -79,6 +79,7 @@ class Service extends \App\Common\BaseComponentService
      * @param Student $record
      * @param Dto $dto
      * @param Person $person
+     * @throws \Throwable
      */
     public function updateFromPerson(Student $record, Dto $dto, Person $person): void
     {
@@ -117,7 +118,7 @@ class Service extends \App\Common\BaseComponentService
     private function validatePerson(Person $person, ?Student $student): void
     {
         $person->load('students');
-        if ($person->student && $person->student->id === $student?->id) {
+        if ($person->student && (null === $student || $person->student->id === $student->id)) {
             throw new Exceptions\StudentAlreadyExists($person->student);
         }
     }
