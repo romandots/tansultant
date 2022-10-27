@@ -49,19 +49,20 @@ class Repository extends \App\Common\BaseComponentRepository
         array $relations = [],
         array $countRelations = []
     ): \Illuminate\Database\Eloquent\Builder {
-        assert($filter instanceof SearchPeopleFilterDto);
         $query = parent::getFilterQuery($filter, $relations, $countRelations);
 
-        if ($filter->gender) {
-            $query->where('gender', '=', $filter->gender);
-        }
+        if ($filter instanceof SearchPeopleFilterDto) {
+            if ($filter->gender) {
+                $query->where('gender', '=', $filter->gender);
+            }
 
-        if ($filter->birth_date_from) {
-            $query->where('birth_date', '>=', $filter->birth_date_from);
-        }
+            if ($filter->birth_date_from) {
+                $query->where('birth_date', '>=', $filter->birth_date_from);
+            }
 
-        if ($filter->birth_date_to) {
-            $query->where('birth_date', '<=', $filter->birth_date_to);
+            if ($filter->birth_date_to) {
+                $query->where('birth_date', '<=', $filter->birth_date_to);
+            }
         }
 
         return $query;
