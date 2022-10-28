@@ -78,8 +78,10 @@ class PriceOptions implements Arrayable
         'price' => "int",
         'subscription_id' => "string",
         'subscription_name' => "string",
+        'subscription_status' => "\App\Models\Enum\SubscriptionStatus",
+        'subscription_status_label' => "string",
         'subscription_visits_left' => "int|null",
-        'subscription_expired_at' => "string",
+        'subscription_expired_at' => "null|string",
         'subscription_has_course' => "bool"
     ])] protected function formatSubscription(Subscription $subscription, bool $hasCourse): array
     {

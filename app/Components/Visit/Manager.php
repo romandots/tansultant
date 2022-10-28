@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Components\Visit;
 
 use App\Components\Loader;
+use App\Components\Subscription\Exceptions\InvalidSubscriptionStatus;
+use App\Components\Subscription\Exceptions\VisitsLimitReached;
 use App\Components\Visit\Entity\PriceOptions;
 use App\Models\Course;
+use App\Models\Enum\SubscriptionStatus;
 use App\Models\Enum\VisitPaymentType;
 use App\Models\Lesson;
 use App\Models\Student;
 use App\Models\Subscription;
+use App\Models\User;
 use App\Models\Visit;
 use Illuminate\Support\Collection;
 
@@ -60,15 +64,18 @@ class Manager extends \App\Common\BaseComponentService
         $price = (int)($lesson->price?->price ?? 0);
         $priceOptions = new Entity\PriceOptions($price, $bonuses);
 
-        match ($dto->pay_from_balance) {
-            true => $this->appendVisitPayment($dto, $priceOptions),
-            false => $this->appendVisitSubscription($dto, $course, $priceOptions),
-        };
+        if ($dto->pay_from_balance) {
+            $this->appendVisitPayment($dto, $priceOptions);
+            return $dto;
+        }
+
+        $subscription = $this->appendVisitSubscription($dto, $course, $priceOptions);
+        $this->validateSubscription($subscription);
 
         return $dto;
     }
 
-    protected function appendVisitSubscription(Dto $dto, Course $course, PriceOptions $priceOptions): void
+    protected function appendVisitSubscription(Dto $dto, Course $course, PriceOptions $priceOptions): Subscription
     {
         $dto->payment_type = VisitPaymentType::SUBSCRIPTION;
 
@@ -79,17 +86,21 @@ class Manager extends \App\Common\BaseComponentService
             ->filter(fn (Subscription $subscription) => $subscription->visits_left > 0);
 
         if ($dto->subscription_id) {
-            if ($priceOptions->subscriptionsWithCourse->where('id', $dto->subscription_id)->count() > 0) {
-                return;
+            $subscription = $priceOptions->subscriptionsWithCourse->where('id', $dto->subscription_id)->first();
+            if (null !== $subscription) {
+                return $subscription;
             }
 
-            if ($priceOptions->subscriptionsWithoutCourse->where('id', $dto->subscription_id)->count() === 0) {
+            $subscription = $priceOptions->subscriptionsWithoutCourse->where('id', $dto->subscription_id)->first();
+            if (null === $subscription) {
                 throw new \LogicException('subscription_belongs_to_another_student');
             }
 
             // Subscribe to course automatically
-            $this->subscribeToCourseAutomatically($dto, $course);
-            return;
+             if ($dto->student_id === $subscription->student_id) {
+                 $this->subscribeToCourseAutomatically($subscription, $course);
+            }
+            return $subscription;
         }
 
         // If there's none -- let user confirm the payment
@@ -104,6 +115,8 @@ class Manager extends \App\Common\BaseComponentService
 
         // Otherwise, pick it automatically
         $dto->subscription_id = $priceOptions->subscriptionsWithCourse->first()->id;
+
+        return $priceOptions->subscriptionsWithCourse->first();
     }
 
     protected function appendVisitPayment(Dto $dto, PriceOptions $priceOptions): void
@@ -138,28 +151,28 @@ class Manager extends \App\Common\BaseComponentService
         return \app(Service::class);
     }
 
-    /**
-     * @param Dto $dto
-     * @param Course $course
-     * @return void
-     */
-    protected function subscribeToCourseAutomatically(Dto $dto, Course $course): void
+    protected function subscribeToCourseAutomatically(Subscription $subscription, Course $course, User $user): void
     {
-        $subscription = Loader::subscriptions()->find($dto->subscription_id);
-        if ($dto->student_id !== $subscription->student_id) {
-            $this->critical(
-                'Something bad happening: attempt to subscribe another student',
-                [
-                    'student_id' => $dto->student_id,
-                    'subscription_student_id' => $subscription->student_id,
-                ]
-            );
-            throw new \LogicException('subscription_belongs_to_another_student');
-        }
         $this->debug('Attaching course to subscription automatically', [
             'subscription_id' => $subscription->id,
             'course_id' => $course->id,
         ]);
-        Loader::subscriptions()->attachCourse($subscription, $course, $dto->user);
+        Loader::subscriptions()->attachCourse($subscription, $course, $user);
+    }
+
+    protected function validateSubscription(?\App\Models\Subscription $subscription): void
+    {
+        if (null === $subscription) {
+            return;
+        }
+
+        if (SubscriptionStatus::ACTIVE !== $subscription->status) {
+            throw new InvalidSubscriptionStatus($subscription->status->value, [SubscriptionStatus::ACTIVE->value]);
+        }
+
+        $subscription->loadCount('visits');
+        if (null !== $subscription->visits_left && $subscription->visits_left <= 0) {
+            throw new VisitsLimitReached($subscription->visits_limit);
+        }
     }
 }
