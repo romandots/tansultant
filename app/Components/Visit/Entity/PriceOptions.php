@@ -85,6 +85,7 @@ class PriceOptions implements Arrayable
         'subscription_has_course' => "bool"
     ])] protected function formatSubscription(Subscription $subscription, bool $hasCourse): array
     {
+        $subscription->loadCount('visits');
         return [
             'price' => 0,
             'subscription_id' => $subscription->id,
