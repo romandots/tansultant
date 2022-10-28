@@ -98,7 +98,7 @@ class Manager extends \App\Common\BaseComponentService
 
             // Subscribe to course automatically
              if ($dto->student_id === $subscription->student_id) {
-                 $this->subscribeToCourseAutomatically($subscription, $course);
+                 $this->subscribeToCourseAutomatically($subscription, $course, $dto->user);
             }
             return $subscription;
         }
