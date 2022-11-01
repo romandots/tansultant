@@ -166,8 +166,9 @@ class Manager extends \App\Common\BaseComponentService
             return;
         }
 
-        if (SubscriptionStatus::ACTIVE !== $subscription->status) {
-            throw new InvalidSubscriptionStatus($subscription->status->value, [SubscriptionStatus::ACTIVE->value]);
+        $allowedStatuses = [SubscriptionStatus::ACTIVE, SubscriptionStatus::PENDING];
+        if (!\in_array($subscription->status, $allowedStatuses, true)) {
+            throw new InvalidSubscriptionStatus($subscription->status->value, $allowedStatuses);
         }
 
         $subscription->loadCount('visits');

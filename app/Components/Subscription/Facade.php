@@ -47,12 +47,12 @@ class Facade extends BaseComponentFacade
 
     public function getStudentSubscriptionsForCourse(string $studentId, string $courseId): Collection
     {
-        return $this->getService()->getStudentSubscriptionsForCourse($studentId, $courseId);
+        return $this->getService()->getStudentSubscriptionsSubscribedOnCourse($studentId, $courseId);
     }
 
     public function getStudentPotentialSubscriptionsForCourse(string $studentId, string $courseId): Collection
     {
-        return $this->getService()->getStudentPotentialSubscriptionsForCourse($studentId, $courseId);
+        return $this->getService()->getStudentSubscriptionsNotYetSubscribedOnCourse($studentId, $courseId);
     }
 
     public function findAndProlong(ProlongDto $dto): Subscription

@@ -136,17 +136,17 @@ class Service extends BaseComponentService
         return app(Validator::class);
     }
 
-    public function getStudentPotentialSubscriptionsForCourse(string $studentId, string $courseId): \Illuminate\Support\Collection
+    public function getStudentSubscriptionsNotYetSubscribedOnCourse(string $studentId, string $courseId): \Illuminate\Support\Collection
     {
         $subscriptions = $this->getRepository()
             ->getStudentSubscriptionsWithCoursesLeft(
                 $studentId,
                 [SubscriptionStatus::ACTIVE->value, SubscriptionStatus::PENDING->value]
             );
-        return $this->filterSubscriptionsForCourseLesson($subscriptions, $courseId);
+        return $this->filterSubscriptionsNotYetSubscribedOnCourse($subscriptions, $courseId);
     }
 
-    public function getStudentSubscriptionsForCourse(
+    public function getStudentSubscriptionsSubscribedOnCourse(
         string $studentId,
         string $courseId
     ): Collection {
@@ -155,22 +155,38 @@ class Service extends BaseComponentService
             $courseId,
             [SubscriptionStatus::ACTIVE->value, SubscriptionStatus::PENDING->value]
         );
-        return $this->filterSubscriptionsForCourseLesson($subscriptions, $courseId);
+        return $this->filterSubscriptionsSubscribedOnCourse($subscriptions, $courseId);
     }
 
-    public function filterSubscriptionsForCourseLesson(Collection $subscriptions, string $courseId): Collection
+    public function filterSubscriptionsNotYetSubscribedOnCourse(Collection $subscriptions, string $courseId): Collection
     {
         return $subscriptions->filter(fn (Subscription $subscription) =>
-            $this->subscriptionTariffsIncludesCourse($subscription, $courseId) &&
+            $this->subscriptionTariffIncludesCourse($subscription, $courseId) &&
+            !$this->subscriptionCoursesIncludesCourse($subscription, $courseId) &&
             $this->subscriptionHasVisits($subscription)
         );
     }
 
-    private function subscriptionTariffsIncludesCourse(Subscription $subscription, string $courseId) {
-        return (bool)$subscription->tariff->courses->where('id', $courseId)->count();
+    public function filterSubscriptionsSubscribedOnCourse(Collection $subscriptions, string $courseId): Collection
+    {
+        return $subscriptions->filter(fn (Subscription $subscription) =>
+            $this->subscriptionCoursesIncludesCourse($subscription, $courseId) &&
+            $this->subscriptionHasVisits($subscription)
+        );
     }
 
-    private function subscriptionHasVisits(Subscription $subscription) {
+    private function subscriptionTariffIncludesCourse(Subscription $subscription, string $courseId): bool
+    {
+        return (bool)$subscription->load('tariff')->tariff->courses->where('id', $courseId)->count();
+    }
+
+    private function subscriptionCoursesIncludesCourse(Subscription $subscription, string $courseId): bool
+    {
+        return (bool)$subscription->load('courses')->courses->where('id', $courseId)->count();
+    }
+
+    private function subscriptionHasVisits(Subscription $subscription): bool
+    {
         return $subscription->visits_left > 0;
     }
 }
