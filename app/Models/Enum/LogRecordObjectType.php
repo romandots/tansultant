@@ -13,6 +13,7 @@ enum LogRecordObjectType: string implements ClassBackedEnum
     case COURSE = 'course';
     case CUSTOMER = 'customer';
     case CREDIT = 'credit';
+    case FORMULA = 'formula';
     case GENRE = 'genre';
     case HOLD = 'hold';
     case INSTRUCTOR = 'instructor';
@@ -39,6 +40,7 @@ enum LogRecordObjectType: string implements ClassBackedEnum
             self::COURSE => \App\Models\Course::class,
             self::CUSTOMER => \App\Models\Customer::class,
             self::CREDIT => \App\Models\Credit::class,
+            self::FORMULA => \App\Models\Formula::class,
             self::GENRE => \App\Models\Genre::class,
             self::HOLD => \App\Models\Hold::class,
             self::INSTRUCTOR => \App\Models\Instructor::class,

@@ -84,6 +84,13 @@ class AdminRole extends Permission
         IntentsPermission::DELETE,
         IntentsPermission::RESTORE,
 
+        FormulasPermission::MANAGE,
+        FormulasPermission::CREATE,
+        FormulasPermission::READ,
+        FormulasPermission::UPDATE,
+        FormulasPermission::DELETE,
+        FormulasPermission::RESTORE,
+
         LessonsPermission::MANAGE,
         LessonsPermission::CREATE,
         LessonsPermission::READ,

@@ -30,6 +30,7 @@ use App\Services\Permissions\ClassroomsPermission;
 use App\Services\Permissions\CoursesPermission;
 use App\Services\Permissions\CreditsPermission;
 use App\Services\Permissions\CustomersPermission;
+use App\Services\Permissions\FormulasPermission;
 use App\Services\Permissions\InstructorsPermission;
 use App\Services\Permissions\IntentsPermission;
 use App\Services\Permissions\LessonsPermission;
@@ -246,4 +247,13 @@ Route::namedGroup('visits',ManagerApi\VisitController::class, static function ()
     Route::namedRoute('store', 'post', '/', [VisitsPermission::MANAGE, VisitsPermission::CREATE]);
     Route::namedRoute('show', 'get', '{id:uuid}', [VisitsPermission::MANAGE, VisitsPermission::READ]);
     Route::namedRoute('destroy', 'delete', '{id:uuid}', [VisitsPermission::MANAGE, VisitsPermission::DELETE]);
+});
+
+// FORMULAS
+Route::namedGroup('formulas',ManagerApi\FormulaController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [FormulasPermission::MANAGE, FormulasPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [FormulasPermission::MANAGE, FormulasPermission::CREATE]);
+    Route::namedRoute('update', 'put', '{id:uuid}', [FormulasPermission::MANAGE, FormulasPermission::UPDATE]);
+    Route::namedRoute('show', 'get', '{id:uuid}', [FormulasPermission::MANAGE, FormulasPermission::READ]);
+    Route::namedRoute('destroy', 'delete', '{id:uuid}', [FormulasPermission::MANAGE, FormulasPermission::DELETE]);
 });

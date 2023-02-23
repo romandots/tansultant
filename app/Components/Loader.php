@@ -45,6 +45,11 @@ class Loader extends Locator
         return self::get(Customer\Facade::class);
     }
 
+    public static function formulas(): \App\Components\Formula\Facade
+    {
+        return self::get(Formula\Facade::class);
+    }
+
     public static function genres(): Genre\Facade
     {
         return self::get(Genre\Facade::class);
