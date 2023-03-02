@@ -35,6 +35,7 @@ use App\Services\Permissions\InstructorsPermission;
 use App\Services\Permissions\IntentsPermission;
 use App\Services\Permissions\LessonsPermission;
 use App\Services\Permissions\PaymentsPermission;
+use App\Services\Permissions\PayoutsPermission;
 use App\Services\Permissions\PersonsPermission;
 use App\Services\Permissions\PricesPermission;
 use App\Services\Permissions\SchedulesPermission;
@@ -256,4 +257,13 @@ Route::namedGroup('formulas',ManagerApi\FormulaController::class, static functio
     Route::namedRoute('update', 'put', '{id:uuid}', [FormulasPermission::MANAGE, FormulasPermission::UPDATE]);
     Route::namedRoute('show', 'get', '{id:uuid}', [FormulasPermission::MANAGE, FormulasPermission::READ]);
     Route::namedRoute('destroy', 'delete', '{id:uuid}', [FormulasPermission::MANAGE, FormulasPermission::DELETE]);
+});
+
+// PAYOUTS
+Route::namedGroup('payouts',ManagerApi\PayoutController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [PayoutsPermission::MANAGE, PayoutsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [PayoutsPermission::MANAGE, PayoutsPermission::CREATE]);
+    Route::namedRoute('update', 'put', '{id:uuid}', [PayoutsPermission::MANAGE, PayoutsPermission::UPDATE]);
+    Route::namedRoute('show', 'get', '{id:uuid}', [PayoutsPermission::MANAGE, PayoutsPermission::READ]);
+    Route::namedRoute('destroy', 'delete', '{id:uuid}', [PayoutsPermission::MANAGE, PayoutsPermission::DELETE]);
 });

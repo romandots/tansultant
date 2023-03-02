@@ -41,11 +41,15 @@ abstract class StoreRequest extends BaseRequest
     {
         $validated = $this->validated();
 
-        $dto = new ShowDto();
-        $dto->user = $this->getUser();
+        $dto = new ShowDto($this->getUser());
         $dto->with = $validated['with'] ?? [];
         $dto->with_count = $validated['with_count'] ?? [];
 
         return $dto;
+    }
+
+    protected function getId(): ?string
+    {
+        return $this->route()->parameter('id', null);
     }
 }

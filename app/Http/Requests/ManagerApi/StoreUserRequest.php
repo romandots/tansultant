@@ -55,8 +55,4 @@ class StoreUserRequest extends StoreRequest
         return $dto;
     }
 
-    protected function getId(): ?string
-    {
-        return $this->route()?->parameter('id');
-    }
 }

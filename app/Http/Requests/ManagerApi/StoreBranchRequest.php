@@ -134,8 +134,4 @@ class StoreBranchRequest extends StoreRequest
         return Loader::branches()->getNextNumberValue();
     }
 
-    protected function getId(): ?string
-    {
-        return $this->route()?->parameter('id');
-    }
 }

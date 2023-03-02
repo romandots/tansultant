@@ -115,11 +115,6 @@ class StorePersonRequest extends StoreRequest
         return $dto;
     }
 
-    protected function getId(): ?string
-    {
-        return $this->route()->parameter('id');
-    }
-
     private function normalizeCase(?string $string = null): ?string
     {
         return $string ? Str::ucfirst(Str::lower($string)) : null;

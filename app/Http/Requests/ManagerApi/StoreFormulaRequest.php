@@ -46,8 +46,4 @@ class StoreFormulaRequest extends StoreRequest
         return $dto;
     }
 
-    private function getId(): ?string
-    {
-        return $this->route()->parameter('id', null);
-    }
 }

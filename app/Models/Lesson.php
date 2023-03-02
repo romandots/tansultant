@@ -16,6 +16,7 @@ use App\Models\Enum\VisitEventType;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -51,6 +52,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Models\Price|null $price
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Intent> $intents
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Collection<Visit> $visits
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsToMany|\Illuminate\Database\Eloquent\Collection<Payout> $payouts
  * @property-read int|null $visits_limit
  * @property-read int|null $visits_count
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Lesson newModelQuery()
@@ -175,5 +177,10 @@ class Lesson extends Model
     public function price(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Price::class);
+    }
+
+    public function payouts(): BelongsToMany
+    {
+        return $this->belongsToMany(Payout::class, 'lesson_payout');
     }
 }
