@@ -14,6 +14,7 @@ use App\Common\Requests\StoreRequest;
 use App\Components\Course\Dto;
 use App\Models\Enum\CourseStatus;
 use App\Models\Enum\InstructorStatus;
+use App\Models\Formula;
 use App\Models\Instructor;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
@@ -70,6 +71,13 @@ class StoreCourseRequest extends StoreRequest
                 Rule::exists(Instructor::TABLE, 'id')
                     ->whereNot('status', InstructorStatus::FIRED->value)
             ],
+            'formula_id' => [
+                'nullable',
+                'string',
+                'uuid',
+                Rule::exists(Formula::TABLE, 'id')
+                    ->whereNull('deleted_at'),
+            ],
             'starts_at' => [
                 'nullable',
                 'date'
@@ -107,6 +115,7 @@ class StoreCourseRequest extends StoreRequest
         ];
         $dto->picture = $this->file('picture');
         $dto->instructor_id = $validated['instructor_id'] ?? null;
+        $dto->formula_id = $validated['formula_id'] ?? null;
         $dto->starts_at = isset($validated['starts_at']) ? Carbon::parse($validated['starts_at']) : null;
         $dto->ends_at = isset($validated['ends_at']) ? Carbon::parse($validated['ends_at']) : null;
         $dto->genres = $validated['genres'] ?? [];

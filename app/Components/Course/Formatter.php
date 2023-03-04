@@ -37,6 +37,10 @@ class Formatter extends BaseFormatter
             'instructor' => $this->whenLoaded('instructor', function () {
                 return new \App\Components\Instructor\Formatter($this->instructor);
             }),
+            'formula_id' => $this->formula_id,
+            'formula' => $this->whenLoaded('formula', function () {
+                return new \App\Components\Formula\Formatter($this->formula);
+            }),
             'genres' => $this->tagsWithType(Genre::class)->pluck('name')->all(),
             'schedules' => $this->whenLoaded('schedules', function () {
                 return \App\Components\Schedule\Formatter::collection($this->schedules);

@@ -57,6 +57,7 @@ class Repository extends \App\Common\BaseComponentRepository
             'to' => $dto->age_restrictions['to'] ?? null,
         ];
         $record->instructor_id = $dto->instructor_id;
+        $record->formula_id = $dto->formula_id;
         $record->starts_at = $dto->starts_at;
         $record->ends_at = $dto->ends_at;
     }

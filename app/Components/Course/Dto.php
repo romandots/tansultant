@@ -18,6 +18,7 @@ class Dto extends \App\Common\DTO\DtoWithUser
     public ?\Illuminate\Http\UploadedFile $picture = null;
     public CourseStatus $status;
     public ?string $instructor_id;
+    public ?string $formula_id;
     public ?\Carbon\Carbon $starts_at = null;
     public ?\Carbon\Carbon $ends_at = null;
     public array $genres = [];

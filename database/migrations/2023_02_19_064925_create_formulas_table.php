@@ -21,6 +21,14 @@ return new class extends Migration
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();
         });
+
+        Schema::table('courses', static function (Blueprint $table){
+            $table->uuid('formula_id')->nullable()->index();
+            $table->foreign('formula_id')
+                ->references('id')
+                ->on(\App\Models\Formula::TABLE)
+                ->onDelete('restrict');
+        });
     }
 
     /**
@@ -30,6 +38,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('courses', static function (Blueprint $table){
+            $table->dropForeign('lessons_formula_id_foreign');
+            $table->dropColumn('formula_id');
+        });
         Schema::dropIfExists('formulas');
     }
 };

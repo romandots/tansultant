@@ -5,7 +5,6 @@ namespace App\Http\Requests\ManagerApi;
 use App\Common\DTO\SearchDto;
 use App\Common\DTO\SearchFilterDto;
 use App\Common\Requests\SearchRequest;
-use App\Http\Requests\ManagerApi\DTO\SearchFormulasFilterDto;
 use App\Http\Requests\ManagerApi\DTO\SearchPayoutsFilterDto;
 
 class SearchPayoutsRequest extends SearchRequest
@@ -25,7 +24,7 @@ class SearchPayoutsRequest extends SearchRequest
 
     protected function mapSearchFilterDto(SearchFilterDto $dto, array $datum): void
     {
-        assert($dto instanceof SearchFormulasFilterDto);
+        assert($dto instanceof SearchPayoutsFilterDto);
 
         parent::mapSearchFilterDto($dto, $datum);
     }

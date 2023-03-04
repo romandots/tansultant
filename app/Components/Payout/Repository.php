@@ -55,6 +55,6 @@ class Repository extends \App\Common\BaseComponentRepository
 
     public function setPaid(Payout $payout): void
     {
-        $this->updateStatus($payout, PayoutStatus::PAID);
+        $this->updateStatus($payout, PayoutStatus::PAID, ['paid_at']);
     }
 }

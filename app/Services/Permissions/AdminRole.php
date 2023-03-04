@@ -91,6 +91,13 @@ class AdminRole extends Permission
         FormulasPermission::DELETE,
         FormulasPermission::RESTORE,
 
+        PayoutsPermission::MANAGE,
+        PayoutsPermission::CREATE,
+        PayoutsPermission::READ,
+        PayoutsPermission::UPDATE,
+        PayoutsPermission::DELETE,
+        PayoutsPermission::RESTORE,
+
         LessonsPermission::MANAGE,
         LessonsPermission::CREATE,
         LessonsPermission::READ,

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->text('status');
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
+            $table->timestamp('paid_at')->nullable();
 
             $table->foreign('instructor_id')
                 ->references('id')

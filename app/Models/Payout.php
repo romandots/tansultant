@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property \Carbon\Carbon $period_to
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $paid_at
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Branch> $branch
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Instructor> $instructor
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsToMany<Lesson> $lessons
@@ -41,6 +42,7 @@ class Payout extends Model
         'period_to' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'paid_at' => 'datetime',
         'status' => PayoutStatus::class,
     ];
 

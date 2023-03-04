@@ -38,6 +38,7 @@ use Spatie\Tags\HasTags;
  * @property CourseStatus $status [pending|active|disabled]
  * @property bool $is_working
  * @property string|null $instructor_id
+ * @property string|null $formula_id
  * @property \Carbon\Carbon|null $starts_at
  * @property \Carbon\Carbon|null $ends_at
  * @property \Carbon\Carbon $created_at
@@ -47,6 +48,7 @@ use Spatie\Tags\HasTags;
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Collection<Schedule>|null $schedules
  * @property-read  BelongsToMany|Collection|Tariff[] $tariffs
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Price|null $price
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Formula|null $formula
  * @package App\Models
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Course newModelQuery()
@@ -167,5 +169,10 @@ class Course extends Model
     public function instructor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Instructor::class)->with('person');
+    }
+
+    public function formula(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Formula::class);
     }
 }
