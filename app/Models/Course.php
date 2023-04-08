@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Enum\CourseStatus;
+use App\Models\Enum\SubscriptionStatus;
 use App\Models\Enum\TariffStatus;
 use App\Models\Traits\UsesUuid;
 use Carbon\Carbon;
@@ -35,6 +36,8 @@ use Spatie\Tags\HasTags;
  * @property int[] $age_restrictions ['from' => (int|null), 'to' => (int|null)]
  * @property string|null $picture
  * @property string|null $picture_thumb
+ * @property int|null $subscriptions_count
+ * @property int|null $active_subscriptions_count
  * @property CourseStatus $status [pending|active|disabled]
  * @property bool $is_working
  * @property string|null $instructor_id
@@ -45,6 +48,8 @@ use Spatie\Tags\HasTags;
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Instructor|null $instructor
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsToMany|Subscription[]|null $subscriptions
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsToMany|Subscription[]|null $active_subscriptions
  * @property-read \Illuminate\Database\Eloquent\Relations\HasMany|Collection<Schedule>|null $schedules
  * @property-read  BelongsToMany|Collection|Tariff[] $tariffs
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Price|null $price
@@ -175,4 +180,18 @@ class Course extends Model
     {
         return $this->belongsTo(Formula::class);
     }
+
+    public function subscriptions(): BelongsToMany
+    {
+        return $this->belongsToMany(Subscription::class, Subscription::COURSES_PIVOT_TABLE);
+    }
+
+
+    public function active_subscriptions(): BelongsToMany
+    {
+        return $this->belongsToMany(Subscription::class, Subscription::COURSES_PIVOT_TABLE)
+            ->where('status', SubscriptionStatus::ACTIVE);
+    }
+
+
 }

@@ -5,7 +5,7 @@ touch /var/log/nginx_error.log
 chmod 777 /var/log/nginx_access.log
 chmod 777 /var/log/nginx_error.log
 
-composer install
+#composer install
 
 service nginx start
 

@@ -143,4 +143,16 @@ class Facade extends BaseFacade
     public function logDeactivate(User $user, Model $record): void
     {
     }
+
+    public function logAttach(User $user, Model $record, Model $object, array $attributes = []): void
+    {
+    }
+
+    public function logDetach(User $user, Model $record, ?Model $object, array $attributes = []): void
+    {
+    }
+
+    public function logStatus(User $user, \App\Models\Payout $payout, string $status): void
+    {
+    }
 }

@@ -84,6 +84,10 @@ class Loader extends Locator
     {
         return self::get(Payment\Facade::class);
     }
+    public static function payouts(): Payout\Facade
+    {
+        return self::get(Payout\Facade::class);
+    }
 
     public static function people(): Person\Facade
     {

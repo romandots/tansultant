@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int|null $amount
  * @property string $branch_id
  * @property string $instructor_id
+ * @property int $lessons_count
  * @property \Carbon\Carbon $period_from
  * @property \Carbon\Carbon $period_to
  * @property \Carbon\Carbon $created_at
@@ -64,6 +65,10 @@ class Payout extends Model
 
     public function lessons(): BelongsToMany
     {
-        return $this->belongsToMany(Lesson::class, 'lesson_payout');
+        return $this
+            ->belongsToMany(Lesson::class, 'payout_has_lessons')
+            ->withPivot([
+                'amount', 'equation', 'formula_id',
+            ]);
     }
 }

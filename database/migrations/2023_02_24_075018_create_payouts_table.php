@@ -39,13 +39,16 @@ return new class extends Migration
 
         \convertPostgresColumnTextToEnum('payouts', 'status', \App\Models\Enum\PayoutStatus::cases());
 
-        Schema::create('lesson_payout', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+        Schema::create('payout_has_lessons', function (Blueprint $table) {
             $table->integer('amount');
+            $table->text('equation');
             $table->uuid('lesson_id')->index();
             $table->uuid('payout_id')->index();
             $table->uuid('formula_id')->index();
             $table->timestamp('created_at')->nullable();
+
+            $table->primary(['lesson_id', 'payout_id'],
+                'payout_has_lessons_primary');
 
             $table->foreign('lesson_id')
                 ->references('id')
@@ -71,7 +74,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lesson_payout');
+        Schema::dropIfExists('payout_has_lessons');
         \DB::unprepared('DROP TYPE payouts_status CASCADE');
         Schema::dropIfExists('payouts');
     }

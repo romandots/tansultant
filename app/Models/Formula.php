@@ -25,6 +25,8 @@ class Formula extends Model
 
     protected $table = self::TABLE;
 
+    protected $fillable = ['equation'];
+
     protected $casts = [
         'created_at' => 'datetime',
         'update_at' => 'datetime',

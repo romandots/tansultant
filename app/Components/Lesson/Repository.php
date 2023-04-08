@@ -213,4 +213,28 @@ class Repository extends \App\Common\BaseComponentRepository
         $query->update(['status' => LessonStatus::PASSED]);
         return $collection;
     }
+
+    /**
+     * Returns all lessons
+     * in CLOSED status
+     * of the selected instructor
+     * in the selected branch
+     * in the selected period
+     *
+     * @param string $branchId
+     * @param string $instructorId
+     * @param Carbon $periodFrom
+     * @param Carbon $periodTo
+     * @return Collection
+     */
+    public function getLessonsForPayout(string $branchId, string $instructorId, Carbon $periodFrom, Carbon $periodTo): Collection
+    {
+        return $this->getQuery()
+            ->where('branch_id', $branchId)
+            ->where('instructor_id', $instructorId)
+            ->where('starts_at', '>=', $periodFrom)
+            ->where('starts_at', '<=', $periodTo)
+            ->where('status', LessonStatus::CLOSED->value)
+            ->get();
+    }
 }

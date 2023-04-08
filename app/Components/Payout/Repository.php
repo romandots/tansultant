@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Components\Payout;
 
+use App\Components\Loader;
 use App\Models\Enum\PayoutStatus;
+use App\Models\Formula;
+use App\Models\Lesson;
 use App\Models\Payout;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -56,5 +60,23 @@ class Repository extends \App\Common\BaseComponentRepository
     public function setPaid(Payout $payout): void
     {
         $this->updateStatus($payout, PayoutStatus::PAID, ['paid_at']);
+    }
+
+    public function attachLessonWithFormula(Payout $payout, Lesson $lesson, Formula $formula): void
+    {
+        $payload = [
+            'created_at' => Carbon::now(),
+            'formula_id' => $formula->id,
+            'equation' => $formula->equation,
+            'amount' => Loader::formulas()->calculateLessonPayoutAmount($lesson, $formula),
+        ];
+        try {
+            $payout->lessons()->attach($lesson->id, $payload);
+        } catch (\Exception) {}
+    }
+
+    public function detachLesson(Payout $payout, Lesson $lesson): void
+    {
+        $payout->lessons()->detach($lesson->id);
     }
 }

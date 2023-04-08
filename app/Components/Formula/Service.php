@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Components\Formula;
 
 use App\Common\BaseComponentService;
-use App\Events\Formula\FormulaEvent;
 use App\Models\Formula;
+use App\Models\Lesson;
 
 /**
  * @method Repository getRepository()
@@ -17,11 +17,16 @@ class Service extends BaseComponentService
         'П' => 'V',
         'А' => 'S',
         'Б' => 'F',
+        'Ч' => 'H',
+        'М' => 'M',
     ];
+
     protected const DESCRIPTIONS = [
         'V' => 'посещения урока',
         'S' => 'активные подписки на курс',
         'F' => 'бесплатные посещения урока',
+        'H' => 'часы',
+        'M' => 'минуты',
     ];
 
     public function __construct()
@@ -54,5 +59,33 @@ class Service extends BaseComponentService
             array('×', ...array_values(self::DESCRIPTIONS)),
             $equation
         );
+    }
+
+    public function calculateLessonPayoutAmount(Lesson $lesson, Formula $formula): float
+    {
+        $substitutions = $this->getSubstitutionsForLesson($lesson);
+        $equation = str_replace(
+            \array_keys($substitutions),
+            \array_values($substitutions),
+            $this->prepareEquation($formula->equation)
+        );
+
+        return round($this->calculate($equation), 2);
+    }
+
+    protected function calculate(string $equation): float
+    {
+        return (float)eval("return {$equation};");
+    }
+
+    protected function getSubstitutionsForLesson(Lesson $lesson): array
+    {
+        return [
+            'V' => (int)$lesson->visits_count,
+            'S' => (int)$lesson->course->subscriptions_count,
+            'F' => (int)0,
+            'H' => (int)$lesson->getPeriodInHours(),
+            'M' => (int)$lesson->getPeriodInMinutes(),
+        ];
     }
 }

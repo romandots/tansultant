@@ -51,6 +51,6 @@ ADD ./ /app
 
 WORKDIR /app
 
-#RUN composer install
+RUN composer install
 
 ENTRYPOINT /tmp/entrypoint.sh

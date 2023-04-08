@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Components\Lesson;
 
 use App\Common\BaseFormatter;
+use App\Components\Loader;
 
 /**
  * @mixin \App\Models\Lesson
@@ -59,6 +60,14 @@ class Formatter extends BaseFormatter
             'canceled_at' => $this->canceled_at?->toDateTimeString(),
             'checked_out_at' => $this->checked_out_at?->toDateTimeString(),
             'created_at' => $this->created_at?->toDateTimeString(),
+            'pivot' => isset($this->pivot) ?
+                [
+                    'formula_id' => $this->pivot?->formula_id,
+                    'amount' => $this->pivot?->amount,
+                    'equation' => $this->pivot?->equation,
+                    'equation_description' => Loader::formulas()->describeEquation($this->pivot?->equation),
+                ]
+                : [],
         ];
     }
 }

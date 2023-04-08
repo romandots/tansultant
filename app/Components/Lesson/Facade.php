@@ -10,6 +10,7 @@ use App\Models\Lesson;
 use App\Models\Schedule;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * @method Service getService()
@@ -99,5 +100,24 @@ class Facade extends BaseComponentFacade
     public function updateLessonsStatuses(): int
     {
         return $this->generator->updateLessonsStatuses();
+    }
+
+    /**
+     * Returns all lessons in CLOSED status of the selected instructor
+     * in the selected branch in the selected period
+     *
+     * @param string $branchId
+     * @param string $instructorId
+     * @param Carbon $periodFrom
+     * @param Carbon $periodTo
+     * @return Collection
+     */
+    public function getLessonsForPayout(
+        string $branchId,
+        string $instructorId,
+        Carbon $periodFrom,
+        Carbon $periodTo
+    ): Collection {
+        return $this->getRepository()->getLessonsForPayout($branchId, $instructorId, $periodFrom, $periodTo);
     }
 }

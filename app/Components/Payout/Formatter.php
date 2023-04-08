@@ -33,6 +33,10 @@ class Formatter extends BaseFormatter
             'branch' => $this->whenLoaded('branch', function () {
                 return new \App\Components\Branch\Formatter($this->branch);
             }),
+            'lessons' => $this->whenLoaded('lessons', function () {
+                return \App\Components\Lesson\Formatter::collection($this->lessons);
+            }),
+            'lessons_count' => $this->lessons_count,
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
         ];

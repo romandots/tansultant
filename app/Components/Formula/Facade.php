@@ -17,4 +17,9 @@ class Facade extends BaseComponentFacade
     {
         return $this->getService()->describeEquation($equation);
     }
+
+    public function calculateLessonPayoutAmount(\App\Models\Lesson $lesson, \App\Models\Formula $formula): int
+    {
+        return (int)$this->getService()->calculateLessonPayoutAmount($lesson, $formula);
+    }
 }

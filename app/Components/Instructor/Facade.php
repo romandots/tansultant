@@ -33,4 +33,12 @@ class Facade extends BaseComponentFacade
     {
         return $this->getService()->createFromPerson($dto, $person);
     }
+
+    public function getInvolvedInstructorsIdsForBranchAndPeriod(
+        string $branchId,
+        \Carbon\Carbon $from,
+        \Carbon\Carbon $to
+    ): array {
+        return $this->getRepository()->getInvolvedInstructorsIdsForBranchAndPeriod($branchId, $from, $to);
+    }
 }

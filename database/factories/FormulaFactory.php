@@ -24,7 +24,7 @@ class FormulaFactory extends Factory
         return [
             'id' => uuid(),
             'name' => $this->faker->name,
-            'equation' => '1+1+2',
+            'equation' => '100 * (П - Б)',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
             'deleted_at' => Carbon::now(),

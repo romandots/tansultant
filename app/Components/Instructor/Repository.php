@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Components\Instructor;
 
+use App\Models\Enum\LessonStatus;
 use App\Models\Instructor;
+use App\Models\Lesson;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -44,5 +46,34 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->description = $dto->description;
         $record->display = $dto->display;
         $record->status = $dto->status ?? InstructorStatus::HIRED;
+    }
+
+    public function getInvolvedInstructorsIdsForBranchAndPeriod(
+        string $branchId,
+        \Carbon\Carbon $from,
+        \Carbon\Carbon $to
+    ): array {
+        $table = Lesson::TABLE;
+        $sql = <<<SQL
+SELECT DISTINCT instructor_id AS id
+FROM {$table}
+WHERE {$table}.branch_id = ? 
+    AND {$table}.starts_at >= ?
+    AND {$table}.starts_at <= ?
+    AND {$table}.status = ?
+    AND {$table}.id NOT IN (
+        SELECT lesson_id FROM payout_has_lessons
+    )
+    AND {$table}.instructor_id IS NOT NULL
+SQL;
+
+        $results = \DB::select($sql, [
+            $branchId,
+            $from,
+            $to->setTime(23, 59, 59),
+            LessonStatus::CLOSED->value,
+        ]);
+
+        return \array_map(fn ($item) => $item->id, $results);
     }
 }

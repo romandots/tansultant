@@ -6,8 +6,13 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
 use App\Components\Payout as Component;
+use App\Http\Requests\ManagerApi\DeletePayoutLessonsRequest;
+use App\Http\Requests\ManagerApi\DeletePayoutsRequest;
 use App\Http\Requests\ManagerApi\SearchPayoutsRequest;
+use App\Http\Requests\ManagerApi\StoreBatchPayoutRequest;
 use App\Http\Requests\ManagerApi\StorePayoutRequest;
+use App\Http\Requests\ManagerApi\TransitionPayoutsRequest;
+use App\Http\Requests\ManagerApi\UpdatePayoutLessonsRequest;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
@@ -43,8 +48,35 @@ class PayoutController extends AdminController
         return $this->_store($request);
     }
 
+    public function storeBatch(StoreBatchPayoutRequest $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        return $this->makeResourceCollection(
+            $this->getFacade()->createBatch($request->getDto())
+        );
+    }
+
     public function update(string $id, StorePayoutRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         return $this->_update($id, $request);
+    }
+
+    public function attachLessons(UpdatePayoutLessonsRequest $request): void
+    {
+        $this->getFacade()->attachLessons($request->getDto());
+    }
+
+    public function detachLessons(DeletePayoutLessonsRequest $request): void
+    {
+        $this->getFacade()->detachLessons($request->getDto());
+    }
+
+    public function transitionBatch(TransitionPayoutsRequest $request): void
+    {
+        $this->getFacade()->transitionBatch($request->getDto());
+    }
+
+    public function deleteBatch(DeletePayoutsRequest $request): void
+    {
+        $this->getFacade()->deleteBatch($request->getDto());
     }
 }

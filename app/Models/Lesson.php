@@ -181,6 +181,16 @@ class Lesson extends Model
 
     public function payouts(): BelongsToMany
     {
-        return $this->belongsToMany(Payout::class, 'lesson_payout');
+        return $this->belongsToMany(Payout::class, 'payout_has_lessons');
+    }
+
+    public function getPeriodInHours(): int
+    {
+        return $this->ends_at->diffInHours($this->starts_at);
+    }
+
+    public function getPeriodInMinutes(): int
+    {
+        return $this->ends_at->diffInMinutes($this->starts_at);
     }
 }

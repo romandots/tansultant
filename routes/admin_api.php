@@ -263,7 +263,13 @@ Route::namedGroup('formulas',ManagerApi\FormulaController::class, static functio
 Route::namedGroup('payouts',ManagerApi\PayoutController::class, static function () {
     Route::namedRoute('search', 'get', '/', [PayoutsPermission::MANAGE, PayoutsPermission::READ]);
     Route::namedRoute('store', 'post', '/', [PayoutsPermission::MANAGE, PayoutsPermission::CREATE]);
+    Route::namedRoute('storeBatch', 'post', 'batch', [PayoutsPermission::MANAGE, PayoutsPermission::CREATE]);
+    Route::namedRoute('transitionBatch', 'post', 'transition', [PayoutsPermission::MANAGE, PayoutsPermission::UPDATE]);
+    Route::namedRoute('deleteBatch', 'post', 'delete', [PayoutsPermission::MANAGE, PayoutsPermission::DELETE]);
     Route::namedRoute('update', 'put', '{id:uuid}', [PayoutsPermission::MANAGE, PayoutsPermission::UPDATE]);
     Route::namedRoute('show', 'get', '{id:uuid}', [PayoutsPermission::MANAGE, PayoutsPermission::READ]);
     Route::namedRoute('destroy', 'delete', '{id:uuid}', [PayoutsPermission::MANAGE, PayoutsPermission::DELETE]);
+    Route::namedRoute('attachLessons', 'put', '{id:uuid}/lessons', [PayoutsPermission::MANAGE, PayoutsPermission::UPDATE]);
+    Route::namedRoute('detachLessons', 'post', '{id:uuid}/lessons/delete', [PayoutsPermission::MANAGE, PayoutsPermission::UPDATE]);
+
 });
