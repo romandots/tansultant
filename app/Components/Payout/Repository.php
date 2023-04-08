@@ -79,4 +79,10 @@ class Repository extends \App\Common\BaseComponentRepository
     {
         $payout->lessons()->detach($lesson->id);
     }
+
+    public function updateTotalAmount(Payout $payout): void
+    {
+        $payout->amount = $payout->lessons()->sum('amount');
+        $this->save($payout);
+    }
 }

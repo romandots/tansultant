@@ -187,6 +187,7 @@ class Service extends BaseComponentService
     public function attachLesson(Payout $payout, Lesson $lesson, Formula $formula, User $user): void
     {
         $this->getRepository()->attachLessonWithFormula($payout, $lesson, $formula);
+        $this->getRepository()->updateTotalAmount($payout);
         $payload = ['formula_id' => $formula->id];
         $this->history->logAttach($user, $payout, $lesson, $payload);
         $this->debug('Lesson ' . (string)$lesson . ' is attached to payment #' . $payout->id, $payload);
@@ -195,6 +196,7 @@ class Service extends BaseComponentService
     public function detachLesson(Payout $payout, Lesson $lesson, User $user): void
     {
         $this->getRepository()->detachLesson($payout, $lesson);
+        $this->getRepository()->updateTotalAmount($payout);
         $this->history->logDetach($user, $payout, $lesson);
         $this->debug('Lesson ' . (string)$lesson . ' is detached from payment #' . $payout->id);
     }
