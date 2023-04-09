@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Account;
 
-use App\Models\{Account, Enum\AccountOwnerType, Enum\AccountType};
+use App\Models\{Account, Enum\AccountType};
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -40,58 +40,38 @@ class Repository extends \App\Common\BaseComponentRepository
     public function fill(Model $record, \App\Common\Contracts\DtoWithUser $dto): void
     {
         $record->name = $dto->name;
-        $record->type = $dto->type->value;
-        $record->owner_type = $dto->owner_type->value;
-        $record->owner_id = $dto->owner_id;
+        $record->type = $dto->type;
+        $record->branch_id = $dto->branch_id;
     }
 
     /**
-     * @param string $ownerId
-     * @return Account
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function findInstructorPersonalAccountByOwnerId(string $ownerId): Account
-    {
-        return $this->getQuery()
-            ->where('type', AccountType::PERSONAL)
-            ->where('owner_type', AccountOwnerType::INSTRUCTOR)
-            ->where('owner_id', $ownerId)
-            ->firstOrFail();
-    }
-
-    /**
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     */
-    public function findStudentPersonalAccountByOwnerId(string $ownerId): Account
-    {
-        return $this->getQuery()
-            ->where('type', AccountType::PERSONAL)
-            ->where('owner_type', AccountOwnerType::STUDENT)
-            ->where('owner_id', $ownerId)
-            ->firstOrFail();
-    }
-
-    /**
+     * @return Model|Account
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function findBranchSavingsAccountByOwnerId(string $ownerId): Account
     {
         return $this->getQuery()
             ->where('type', AccountType::SAVINGS)
-            ->where('owner_type', AccountOwnerType::BRANCH)
             ->where('owner_id', $ownerId)
             ->firstOrFail();
     }
 
     /**
+     * @return Model|Account
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     public function findBranchOperationalAccountByOwnerId(string $ownerId): Account
     {
         return $this->getQuery()
             ->where('type', AccountType::OPERATIONAL)
-            ->where('owner_type', AccountOwnerType::BRANCH)
             ->where('owner_id', $ownerId)
             ->firstOrFail();
+    }
+
+    public function findByName(string $name): ?Account
+    {
+        return $this->getQuery()
+            ->where('name', $name)
+            ->first();
     }
 }

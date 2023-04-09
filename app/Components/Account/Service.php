@@ -3,14 +3,9 @@
 namespace App\Components\Account;
 
 use App\Common\Contracts;
-use App\Models\{Account,
-    Branch,
-    Enum\AccountOwnerType,
-    Enum\AccountType,
-    Enum\BonusStatus,
-    Enum\TransactionStatus,
-    Instructor,
-    Student};
+use App\Components\Account\Exceptions\AccountAlreadyExists;
+use App\Components\Loader;
+use App\Models\{Account, Branch, Enum\AccountType, Enum\TransactionStatus};
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -35,9 +30,15 @@ class Service extends \App\Common\BaseComponentService
      */
     public function create(Contracts\DtoWithUser $dto): Model
     {
-        if (!isset($dto->name)) {
-            $dto->name = $this->generateAccountName($dto->type, $dto->owner_type);
+        if (!$dto->name) {
+            $branch = Loader::branches()->findById($dto->branch_id);
+            $dto->name = $this->generateAccountName($dto->type, $branch);
         }
+
+        if ($existingAccount = $this->getRepository()->findByName($dto->name)) {
+            throw new AccountAlreadyExists($existingAccount);
+        }
+
         return parent::create($dto);
     }
 
@@ -55,37 +56,6 @@ class Service extends \App\Common\BaseComponentService
         parent::update($record, $dto);
     }
 
-
-    /**
-     * @param Student $student
-     * @return Account
-     * @throws \Exception
-     */
-    public function createStudentPersonalAccount(Student $student): Account
-    {
-        $name = \trans('account.name_presets.student', ['student' => $student->name]);
-        $type = AccountType::PERSONAL;
-        $ownerType = AccountOwnerType::STUDENT;
-        $ownerId = $student->id;
-
-        return $this->create($this->buildDto($name, $type, $ownerType, $ownerId));
-    }
-
-    /**
-     * @param Instructor $instructor
-     * @return Account
-     * @throws \Exception
-     */
-    public function createInstructorPersonalAccount(Instructor $instructor): Account
-    {
-        $name = \trans('account.name_presets.instructor', ['instructor' => $instructor->name]);
-        $type = AccountType::PERSONAL;
-        $ownerType = AccountOwnerType::INSTRUCTOR;
-        $ownerId = $instructor->id;
-
-        return $this->create($this->buildDto($name, $type, $ownerType, $ownerId));
-    }
-
     /**
      * @param object $branch
      * @return Account
@@ -95,10 +65,9 @@ class Service extends \App\Common\BaseComponentService
     {
         $name = \trans('account.name_presets.branch_savings', ['branch' => $branch->name]);
         $type = AccountType::SAVINGS;
-        $ownerType = AccountOwnerType::BRANCH;
         $ownerId = $branch->id;
 
-        return $this->create($this->buildDto($name, $type, $ownerType, $ownerId));
+        return $this->create($this->buildDto($name, $type, $ownerId));
     }
 
     /**
@@ -110,38 +79,9 @@ class Service extends \App\Common\BaseComponentService
     {
         $name = \trans('account.name_presets.branch_operational', ['branch' => $branch->name]);
         $type = AccountType::OPERATIONAL;
-        $ownerType = AccountOwnerType::BRANCH;
         $ownerId = $branch->id;
 
-        return $this->create($this->buildDto($name, $type, $ownerType, $ownerId));
-    }
-
-    /**
-     * @param Student $student
-     * @return Account
-     * @throws \Exception
-     */
-    public function getStudentAccount(Student $student): Account
-    {
-        try {
-            return $this->getRepository()->findStudentPersonalAccountByOwnerId($student->id);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
-            return $this->createStudentPersonalAccount($student);
-        }
-    }
-
-    /**
-     * @param Instructor $instructor
-     * @return Account
-     * @throws \Exception
-     */
-    public function getInstructorAccount(Instructor $instructor): Account
-    {
-        try {
-            return $this->getRepository()->findInstructorPersonalAccountByOwnerId($instructor->id);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $exception) {
-            return $this->createInstructorPersonalAccount($instructor);
-        }
+        return $this->create($this->buildDto($name, $type, $ownerId));
     }
 
     /**
@@ -179,7 +119,7 @@ class Service extends \App\Common\BaseComponentService
      */
     public function checkFunds(Account $account, int $amount): void
     {
-        $availableAmount = $this->getTotalAmount($account);
+        $availableAmount = $this->getAmount($account);
         if ($availableAmount < $amount) {
             throw new Exceptions\InsufficientFundsAccountException($account, $availableAmount, $amount);
         }
@@ -196,41 +136,18 @@ class Service extends \App\Common\BaseComponentService
             ->sum('amount');
     }
 
-    /**
-     * @param Account $account
-     * @return int
-     */
-    public function getBonusAmount(Account $account): int
+    private function generateAccountName(AccountType $type, Branch $branch): string
     {
-        return $account->load('bonuses')->bonuses
-            ->where('status', BonusStatus::PENDING)
-            ->sum('amount');
+        $type = \trans('account.type.' . $type->value);
+        return sprintf('%s - %s', $type, $branch->name);
     }
 
-    /**
-     * @param Account $account
-     * @return int
-     */
-    public function getTotalAmount(Account $account): int
-    {
-        return $this->getAmount($account) + $this->getBonusAmount($account);
-    }
-
-    private function generateAccountName(AccountType $type, AccountOwnerType $ownerType): string
-    {
-        $typeString = \trans('account.type.' . $type->value);
-        $ownerTypeString = \trans('account.owner_type.' . $ownerType->value);
-
-        return sprintf('%s %s', $typeString, $ownerTypeString);
-    }
-
-    private function buildDto(?string $name, AccountType $type, AccountOwnerType $ownerType, string $ownerId): Dto
+    private function buildDto(?string $name, AccountType $type, string $branchId): Dto
     {
         $dto = new Dto();
         $dto->name = $name;
         $dto->type = $type;
-        $dto->owner_type = $ownerType;
-        $dto->owner_id = $ownerId;
+        $dto->branch_id = $branchId;
 
         return $dto;
     }

@@ -4,7 +4,9 @@ namespace App\Http\Requests\ManagerApi;
 
 use App\Common\Requests\StoreRequest;
 use App\Components\Account\Dto;
-use App\Models\Enum\{AccountOwnerType, AccountType};
+use App\Models\Account;
+use App\Models\Branch;
+use App\Models\Enum\{AccountType};
 use Illuminate\Validation\Rule;
 
 class StoreAccountRequest extends StoreRequest
@@ -18,15 +20,16 @@ class StoreAccountRequest extends StoreRequest
                 'string',
                 Rule::in(enum_strings(AccountType::class)),
             ],
-            'owner_type' => [
-                'required',
+            'name' => [
+                'nullable',
                 'string',
-                Rule::in(enum_strings(AccountOwnerType::class)),
+                Rule::unique(Account::TABLE, 'name'),
             ],
-            'owner_id' => [
+            'branch_id' => [
                 'required',
                 'string',
                 'uuid',
+                Rule::exists(Branch::TABLE, 'id'),
             ],
         ]);
     }
@@ -37,8 +40,8 @@ class StoreAccountRequest extends StoreRequest
         $dto = new Dto($this->user());
 
         $dto->type = AccountType::from($validated['type']);
-        $dto->owner_type = AccountOwnerType::from($validated['owner_type']);
-        $dto->owner_id = $validated['owner_id'];
+        $dto->name = $validated['name'] ?? null;
+        $dto->branch_id = $validated['branch_id'];
 
         return $dto;
     }

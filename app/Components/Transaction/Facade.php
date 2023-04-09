@@ -6,6 +6,7 @@ namespace App\Components\Transaction;
 
 use App\Common\BaseComponentFacade;
 use App\Common\DTO\ShowDto;
+use App\Models\Transaction;
 
 /**
  * @method Service getService()
@@ -25,5 +26,13 @@ class Facade extends BaseComponentFacade
     public function __construct()
     {
         parent::__construct(Service::class);
+    }
+
+    public function createCreditTransaction(): Transaction
+    {
+    }
+
+    public function createPayoutTransaction(): Transaction
+    {
     }
 }
