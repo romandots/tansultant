@@ -8,6 +8,8 @@ use App\Common\BaseComponentService;
 use App\Common\Contracts;
 use App\Components\Loader;
 use App\Exceptions\InvalidStatusException;
+use App\Models\Account;
+use App\Models\Enum\LessonStatus;
 use App\Models\Enum\PayoutStatus;
 use App\Models\Formula;
 use App\Models\Lesson;
@@ -15,6 +17,7 @@ use App\Models\Payout;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @method Repository getRepository()
@@ -133,11 +136,52 @@ class Service extends BaseComponentService
         }
     }
 
+    public function checkoutBatch(\App\Components\Payout\CheckoutBatchDto $batchDto): void
+    {
+        $payouts = $this->getRepository()->getMany($batchDto->ids);
+        $account = Loader::accounts()->findById($batchDto->account_id);
+        foreach ($payouts as $payout) {
+            $this->checkout($payout, $account, $batchDto->user);
+        }
+    }
+
+    /**
+     * Creates transaction, sets payout status to PAID, sets lessons status to CHECKED_OUT
+     * and attaches transaction to payout
+     * @param Payout $payout
+     * @param Account $account
+     * @param User $user
+     * @return void
+     * @throws \Exception
+     */
+    protected function checkout(Payout $payout, Account $account, User $user): void
+    {
+        DB::beginTransaction();
+        try {
+            $transaction = Loader::transactions()->createPayoutTransaction($payout, $account, $user);
+            $this->setPaid($payout, $user);
+            $lessons = $payout->load('lessons')->lessons;
+            Loader::lessons()->setStatusBatch($lessons, LessonStatus::CHECKED_OUT, $user);
+            $this->getRepository()->setTransaction($payout, $transaction);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
     public function setPrepared(Payout $payout, User $user): void
     {
         $this->getRepository()->setPrepared($payout);
         $this->history->logStatus($user, $payout, PayoutStatus::PREPARED->value);
         $this->debug('Payout ' . (string)$payout . ' status is set to PREPARED');
+    }
+
+    public function setPaid(Payout $payout, User $user): void
+    {
+        $this->getRepository()->setPaid($payout);
+        $this->history->logStatus($user, $payout, PayoutStatus::PAID->value);
+        $this->debug('Payout ' . (string)$payout . ' status is set to PAID');
     }
 
     /**

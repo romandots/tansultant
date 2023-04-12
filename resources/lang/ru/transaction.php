@@ -18,6 +18,10 @@ return [
         'confirmed' => 'Подтвержден',
         'canceled' => 'Отменён',
     ],
+    'type' => [
+        'manual' => 'Ручная',
+        'auto' => 'Автоматическая',
+    ],
     'transfer_type' => [
         'cash' => 'Наличный',
         'card' => 'По карте',

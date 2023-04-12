@@ -9,6 +9,7 @@ use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Collection;
 
 /**
  * @package App\Models
@@ -18,15 +19,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int|null $amount
  * @property string $branch_id
  * @property string $instructor_id
+ * @property string|null $transaction_id
  * @property int $lessons_count
  * @property \Carbon\Carbon $period_from
  * @property \Carbon\Carbon $period_to
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property \Carbon\Carbon|null $paid_at
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Branch> $branch
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Instructor> $instructor
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsToMany<Lesson> $lessons
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Branch|null $branch
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Instructor|null $instructor
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsToMany|Collection|Lesson[]|null $lessons
  * @mixin \Eloquent
  */
 class Payout extends Model

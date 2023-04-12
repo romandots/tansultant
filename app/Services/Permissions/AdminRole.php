@@ -91,13 +91,6 @@ class AdminRole extends Permission
         FormulasPermission::DELETE,
         FormulasPermission::RESTORE,
 
-        PayoutsPermission::MANAGE,
-        PayoutsPermission::CREATE,
-        PayoutsPermission::READ,
-        PayoutsPermission::UPDATE,
-        PayoutsPermission::DELETE,
-        PayoutsPermission::RESTORE,
-
         LessonsPermission::MANAGE,
         LessonsPermission::CREATE,
         LessonsPermission::READ,
@@ -115,6 +108,14 @@ class AdminRole extends Permission
         PaymentsPermission::UPDATE,
         PaymentsPermission::DELETE,
         PaymentsPermission::RESTORE,
+
+        PayoutsPermission::MANAGE,
+        PayoutsPermission::CREATE,
+        PayoutsPermission::READ,
+        PayoutsPermission::UPDATE,
+        PayoutsPermission::CHECKOUT,
+        PayoutsPermission::DELETE,
+        PayoutsPermission::RESTORE,
 
         PersonsPermission::MANAGE,
         PersonsPermission::CREATE,
@@ -163,6 +164,14 @@ class AdminRole extends Permission
         TariffsPermission::UPDATE,
         TariffsPermission::DELETE,
         TariffsPermission::RESTORE,
+
+        TransactionsPermission::MANAGE,
+        TransactionsPermission::CREATE,
+        TransactionsPermission::READ,
+        TransactionsPermission::UPDATE,
+        TransactionsPermission::DELETE,
+        TransactionsPermission::RESTORE,
+        TransactionsPermission::CREATE_WITHOUT_SHIFT,
 
         UsersPermission::MANAGE,
         UsersPermission::CREATE,

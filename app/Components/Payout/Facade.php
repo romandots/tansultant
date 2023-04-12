@@ -38,4 +38,9 @@ class Facade extends BaseComponentFacade
     {
         $this->getService()->deleteBatch($batch);
     }
+
+    public function checkoutBatch(CheckoutBatchDto $getDto): void
+    {
+        $this->getService()->checkoutBatch($getDto);
+    }
 }

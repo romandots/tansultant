@@ -6,6 +6,7 @@ namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
 use App\Components\Payout as Component;
+use App\Http\Requests\ManagerApi\CheckoutPayoutsRequest;
 use App\Http\Requests\ManagerApi\DeletePayoutLessonsRequest;
 use App\Http\Requests\ManagerApi\DeletePayoutsRequest;
 use App\Http\Requests\ManagerApi\SearchPayoutsRequest;
@@ -78,5 +79,10 @@ class PayoutController extends AdminController
     public function deleteBatch(DeletePayoutsRequest $request): void
     {
         $this->getFacade()->deleteBatch($request->getDto());
+    }
+
+    public function checkoutBatch(CheckoutPayoutsRequest $request): void
+    {
+        $this->getFacade()->checkoutBatch($request->getDto());
     }
 }

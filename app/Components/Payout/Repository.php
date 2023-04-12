@@ -85,4 +85,10 @@ class Repository extends \App\Common\BaseComponentRepository
         $payout->amount = $payout->lessons()->sum('amount');
         $this->save($payout);
     }
+
+    public function setTransaction(Payout $payout, \App\Models\Transaction $transaction): void
+    {
+        $payout->transaction_id = $transaction->id;
+        $this->save($payout);
+    }
 }

@@ -13,6 +13,7 @@ use App\Models\Enum\LessonStatus;
 use App\Models\Enum\LessonType;
 use App\Models\Lesson;
 use App\Models\Schedule;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -148,5 +149,19 @@ class Service extends \App\Common\BaseComponentService
         return $date->clone()
             ->setHour($time->hour)
             ->setMinute($time->minute);
+    }
+
+    public function setStatusBatch(iterable $lessons, LessonStatus $status, \App\Models\User $user): void
+    {
+        foreach ($lessons as $lesson) {
+            $this->setStatus($lesson, $status, $user);
+        }
+    }
+
+    public function setStatus(Lesson $lesson, LessonStatus $status, User $user): void
+    {
+        $this->getRepository()->updateStatus($lesson, $status);
+        $this->history->logStatus($user, $lesson, $status->value);
+        $this->debug('Changed status of lesson #' . $lesson->id . ' to CHECKED_OUT');
     }
 }

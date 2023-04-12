@@ -116,6 +116,7 @@ class PermissionsTableSeeder extends Seeder
     private function runFinance(): void
     {
         $this->_runPermissions(\App\Services\Permissions\AccountsPermission::class);
+        $this->_runPermissions(\App\Services\Permissions\TransactionsPermission::class);
         $this->_runPermissions(\App\Services\Permissions\BonusesPermission::class);
         $this->_runPermissions(\App\Services\Permissions\PaymentsPermission::class);
         $this->_runPermissions(\App\Services\Permissions\CreditsPermission::class);

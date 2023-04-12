@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('amount')->nullable();
             $table->uuid('branch_id')->index();
             $table->uuid('instructor_id')->index();
+            $table->uuid('transaction_id')->index()->nullable();
             $table->date('period_from');
             $table->date('period_to');
             $table->text('status');
@@ -29,6 +30,11 @@ return new class extends Migration
             $table->foreign('instructor_id')
                 ->references('id')
                 ->on(\App\Models\Instructor::TABLE)
+                ->onDelete('restrict');
+
+            $table->foreign('transaction_id')
+                ->references('id')
+                ->on(\App\Models\Transaction::TABLE)
                 ->onDelete('restrict');
 
             $table->foreign('branch_id')

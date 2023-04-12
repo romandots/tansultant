@@ -20,6 +20,7 @@ class PayoutsPermission extends Permission
     public const CREATE = 'create_payouts';
     public const READ = 'read_payouts';
     public const UPDATE = 'update_payouts';
+    public const CHECKOUT = 'checkout_payouts';
     public const DELETE = 'delete_payouts';
     public const RESTORE = 'restore_payouts';
 
@@ -48,6 +49,7 @@ class PayoutsPermission extends Permission
             self::CREATE => 'Создавать выплаты',
             self::READ => 'Просматривать выплаты',
             self::UPDATE => 'Редактировать выплаты',
+            self::CHECKOUT => 'Проводить оплату выплат',
             self::DELETE => 'Удалять выплаты',
             self::RESTORE => 'Восстанавливать удаленные выплаты',
         ];

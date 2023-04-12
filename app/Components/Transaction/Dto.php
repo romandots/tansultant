@@ -14,23 +14,23 @@ class Dto extends \App\Common\DTO\DtoWithUser
 
     public int $amount;
 
-    public string $name;
+    public ?string $name = null;
 
     public ?string $account_id;
 
-    public ?string $customer_id;
+    public ?string $customer_id = null;
 
-    public ?string $shift_id;
+    public ?string $shift_id = null;
 
-    public TransactionType $type;
+    public ?TransactionType $type;
 
-    public TransactionTransferType $transfer_type;
+    public ?TransactionTransferType $transfer_type;
 
-    public TransactionStatus $status;
+    public ?TransactionStatus $status;
 
     public ?string $external_id = null;
 
-    public string $user_id;
+    public ?string $user_id;
 
     public ?\Carbon\Carbon $confirmed_at;
 }

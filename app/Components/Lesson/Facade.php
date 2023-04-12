@@ -6,6 +6,7 @@ namespace App\Components\Lesson;
 
 use App\Common\BaseComponentFacade;
 use App\Common\DTO\ShowDto;
+use App\Models\Enum\LessonStatus;
 use App\Models\Lesson;
 use App\Models\Schedule;
 use App\Models\User;
@@ -119,5 +120,10 @@ class Facade extends BaseComponentFacade
         Carbon $periodTo
     ): Collection {
         return $this->getRepository()->getLessonsForPayout($branchId, $instructorId, $periodFrom, $periodTo);
+    }
+
+    public function setStatusBatch(iterable $lessons, LessonStatus $status, User $user): void
+    {
+        $this->getService()->setStatusBatch($lessons, $status, $user);
     }
 }

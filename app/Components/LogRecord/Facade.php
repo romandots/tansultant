@@ -152,7 +152,7 @@ class Facade extends BaseFacade
     {
     }
 
-    public function logStatus(User $user, \App\Models\Payout $payout, string $status): void
+    public function logStatus(User $user, Model $record, string $status): void
     {
     }
 }

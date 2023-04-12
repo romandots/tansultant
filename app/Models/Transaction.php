@@ -42,7 +42,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|User $user
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Shift> $shift
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Transaction|null $related_payment
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Customer> $customer
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Customer|null $customer
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Transaction newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Transaction newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Transaction query()
@@ -108,7 +108,7 @@ class Transaction extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|self|null
      */
-    public function related_payment(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function related(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(self::class, 'related_id');
     }

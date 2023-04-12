@@ -19,6 +19,7 @@ use App\Models\Student;
  * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\Customer create(Dto $dto, array $relations = [])
  * @method \App\Models\Customer find(ShowDto $showDto)
+ * @method \App\Models\Customer  findById(string $id)
  * @method void findAndDelete(string $id)
  * @method \App\Models\Customer findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Customer findAndUpdate(string $id, Dto $dto, array $relations = [])

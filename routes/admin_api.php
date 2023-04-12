@@ -43,6 +43,7 @@ use App\Services\Permissions\ShiftsPermission;
 use App\Services\Permissions\StudentsPermission;
 use App\Services\Permissions\SubscriptionsPermission;
 use App\Services\Permissions\TariffsPermission;
+use App\Services\Permissions\TransactionsPermission;
 use App\Services\Permissions\UsersPermission;
 use App\Services\Permissions\VisitsPermission;
 
@@ -233,6 +234,16 @@ Route::namedGroup('tariffs',ManagerApi\TariffController::class, static function 
     Route::namedRoute('detachCourses', 'delete', '{id:uuid}/courses', [TariffsPermission::MANAGE, TariffsPermission::UPDATE]);
 });
 
+// TRANSACTIONS
+Route::namedGroup('transactions',ManagerApi\TransactionController::class, static function () {
+    Route::namedRoute('search', 'get', '/', [TransactionsPermission::MANAGE, TransactionsPermission::READ]);
+    Route::namedRoute('store', 'post', '/', [TransactionsPermission::MANAGE, TransactionsPermission::CREATE]);
+    Route::namedRoute('show', 'get', '{id:uuid}', [TransactionsPermission::MANAGE, TransactionsPermission::READ]);
+    Route::namedRoute('update', 'put', '{id:uuid}', [TransactionsPermission::MANAGE, TransactionsPermission::UPDATE]);
+    Route::namedRoute('destroy', 'delete', '{id:uuid}', [TransactionsPermission::MANAGE, TransactionsPermission::DELETE]);
+    Route::namedRoute('restore', 'post', '{id:uuid}/restore', [TransactionsPermission::MANAGE, TransactionsPermission::RESTORE]);
+});
+
 // USERS
 Route::namedGroup('users',ManagerApi\UserController::class, static function () {
     Route::namedRoute('index', 'get', '/', [UsersPermission::MANAGE, UsersPermission::READ]);
@@ -266,10 +277,10 @@ Route::namedGroup('payouts',ManagerApi\PayoutController::class, static function 
     Route::namedRoute('storeBatch', 'post', 'batch', [PayoutsPermission::MANAGE, PayoutsPermission::CREATE]);
     Route::namedRoute('transitionBatch', 'post', 'transition', [PayoutsPermission::MANAGE, PayoutsPermission::UPDATE]);
     Route::namedRoute('deleteBatch', 'post', 'delete', [PayoutsPermission::MANAGE, PayoutsPermission::DELETE]);
+    Route::namedRoute('checkoutBatch', 'post', 'checkout', [PayoutsPermission::MANAGE, PayoutsPermission::CHECKOUT]);
     Route::namedRoute('update', 'put', '{id:uuid}', [PayoutsPermission::MANAGE, PayoutsPermission::UPDATE]);
     Route::namedRoute('show', 'get', '{id:uuid}', [PayoutsPermission::MANAGE, PayoutsPermission::READ]);
     Route::namedRoute('destroy', 'delete', '{id:uuid}', [PayoutsPermission::MANAGE, PayoutsPermission::DELETE]);
     Route::namedRoute('attachLessons', 'put', '{id:uuid}/lessons', [PayoutsPermission::MANAGE, PayoutsPermission::UPDATE]);
     Route::namedRoute('detachLessons', 'post', '{id:uuid}/lessons/delete', [PayoutsPermission::MANAGE, PayoutsPermission::UPDATE]);
-
 });
