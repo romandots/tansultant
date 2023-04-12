@@ -39,6 +39,10 @@ class Service extends BaseComponentService
             throw new \LogicException('user_is_not_defined');
         }
 
+        if (null !== $user->active_shift) {
+            throw new Exceptions\UserAlreadyHasActiveShift($user);
+        }
+
         $dto->name = trans('shift.name', [
             'user' => (string)$dto->getUser(),
             'date' => Carbon::now()->format('l, j F Y'),
@@ -57,6 +61,15 @@ class Service extends BaseComponentService
         return $shift;
     }
 
+    public function getUserActiveShift(\App\Models\User $user): Shift
+    {
+        if (null === $user->active_shift) {
+            throw new Exceptions\UserHasNoActiveShift($user);
+        }
+
+        return $user->active_shift()->with('branch')->first();
+    }
+
     public function closeUserActiveShift(\App\Models\User $user): Shift
     {
         if (null === $user->active_shift) {
@@ -64,10 +77,13 @@ class Service extends BaseComponentService
         }
 
         $shift = $user->active_shift;
+
+        // @todo Sum up all transactions and divide them to categories and types
+
         $totalBalance = 0;
 
         try {
-            \DB::transactions(function () use ($totalBalance, $user, $shift) {
+            \DB::transaction(function () use ($totalBalance, $user, $shift) {
                 $this->getRepository()->close($shift, $totalBalance);
                 Loader::users()->getRepository()->detachActiveShift($user);
                 $this->debug('Shift ' . $shift . ' closed');

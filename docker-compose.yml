@@ -1,22 +1,23 @@
 version: '3'
 services:
-  app:
-    environment:
-      VUE_APP_NAME: "ШТБП"
-      VUE_APP_URL: http://localhost
-      VUE_APP_MEMBER_API_URL: http://localhost:8080/admin
-      VUE_APP_PUBLIC_API_URL: http://localhost:8080
-    build:
-      context: ../manager-app/
-      dockerfile: Dockerfile
-    volumes:
-      - ../manager-app/:/manager-app
-      - /manager-app/node_modules
-    ports:
-      - "80:8080"
-      - "600:600"
-    tty: true
-    stdin_open: true
+# VUE_APP_URL=http://localhost VUE_APP_MEMBER_API_URL=http://localhost:8080/admin VUE_APP_PUBLIC_API_URL=http://localhost:8080
+#  app:
+#    environment:
+#      VUE_APP_NAME: "ШТБП"
+#      VUE_APP_URL: http://localhost
+#      VUE_APP_MEMBER_API_URL: http://localhost:8080/admin
+#      VUE_APP_PUBLIC_API_URL: http://localhost:8080
+#    build:
+#      context: ../manager-app/
+#      dockerfile: Dockerfile
+#    volumes:
+#      - ../manager-app/:/manager-app
+#      - /manager-app/node_modules
+#    ports:
+#      - "80:8080"
+#      - "600:600"
+#    tty: true
+#    stdin_open: true
   api:
     build:
       context: ./

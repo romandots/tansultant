@@ -28,9 +28,15 @@ class Facade extends BaseComponentFacade
         parent::__construct(Service::class);
     }
 
-    public function closeActiveShift(User $user): Formatter
+    public function getActiveShift(User $user, array $relations = []): Formatter
+    {
+        $shift = $this->getService()->getUserActiveShift($user);
+        return new Formatter($shift->load($relations));
+    }
+
+    public function closeActiveShift(User $user, array $relations = []): Formatter
     {
         $shift = $this->getService()->closeUserActiveShift($user);
-        return new Formatter($shift);
+        return new Formatter($shift->load($relations));
     }
 }

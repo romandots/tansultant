@@ -16,7 +16,7 @@ class ShiftController extends AdminController
             facadeClass: Component\Facade::class,
             resourceClass: Component\Formatter::class,
             searchRelations: [],
-            singleRecordRelations: [],
+            singleRecordRelations: ['branch'],
         );
     }
 
@@ -25,12 +25,17 @@ class ShiftController extends AdminController
         return $this->_store($request);
     }
 
+    public function getActiveShift(Request $request): \Illuminate\Http\Resources\Json\JsonResource
+    {
+        return $this->getFacade()->getActiveShift($request->user(), $this->getSingleRecordRelations());
+    }
+
     public function closeActiveShift(Request $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         if (null === $request->user()) {
             throw new \LogicException('user_is_not_defined');
         }
 
-        return $this->getFacade()->closeActiveShift($request->user());
+        return $this->getFacade()->closeActiveShift($request->user(), $this->getSingleRecordRelations());
     }
 }

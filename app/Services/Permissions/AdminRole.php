@@ -134,6 +134,7 @@ class AdminRole extends Permission
         ShiftsPermission::MANAGE,
         ShiftsPermission::CREATE,
         ShiftsPermission::READ,
+        ShiftsPermission::READ_OWN,
         ShiftsPermission::UPDATE,
         ShiftsPermission::DELETE,
 

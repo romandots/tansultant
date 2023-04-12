@@ -193,6 +193,8 @@ Route::namedGroup('schedules',ManagerApi\ScheduleController::class, static funct
 Route::namedGroup('shifts',ManagerApi\ShiftController::class, static function () {
     Route::namedRoute('search', 'get', '/', [ShiftsPermission::MANAGE, ShiftsPermission::READ]);
     Route::namedRoute('store', 'post', '/', [ShiftsPermission::MANAGE, ShiftsPermission::CREATE]);
+    Route::namedRoute('getActiveShift', 'get', 'my', [ShiftsPermission::MANAGE, ShiftsPermission::READ_OWN]);
+    Route::namedRoute('closeActiveShift', 'post', 'my', [ShiftsPermission::MANAGE, ShiftsPermission::READ_OWN]);
     Route::namedRoute('show', 'get', '{id:uuid}', [ShiftsPermission::MANAGE, ShiftsPermission::READ]);
     Route::namedRoute('close', 'post', '{id:uuid}/close', [ShiftsPermission::MANAGE, ShiftsPermission::UPDATE]);
 });

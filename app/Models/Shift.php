@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Carbon\Carbon|null $closed_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Models\User $user
+ * @property-read \App\Models\Branch $branch
  * @mixin \Eloquent
  */
 class Shift extends Model

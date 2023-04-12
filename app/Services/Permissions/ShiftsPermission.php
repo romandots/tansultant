@@ -13,6 +13,7 @@ class ShiftsPermission extends Permission
     public const MANAGE = 'manage_shifts';
     public const CREATE = 'create_shifts';
     public const READ = 'read_shifts';
+    public const READ_OWN = 'read_own_shifts';
     public const UPDATE = 'update_shifts';
     public const DELETE = 'delete_shifts';
     public const RESTORE = 'restore_shifts';
@@ -41,6 +42,7 @@ class ShiftsPermission extends Permission
             self::MANAGE => 'Управлять сменами',
             self::CREATE => 'Создавать смены',
             self::READ => 'Просматривать смены',
+            self::READ_OWN => 'Просматривать cобственные смены',
             self::UPDATE => 'Обновлять смены',
             self::DELETE => 'Удалять смены',
             self::RESTORE => 'Восстанавливать удаленные смены',

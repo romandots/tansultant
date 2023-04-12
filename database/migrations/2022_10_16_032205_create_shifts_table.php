@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('name');
             $table->uuid('user_id')->index();
             $table->uuid('branch_id')->nullable()->index();
-            $table->double('total_income');
+            $table->double('total_income')->nullable();
             $table->text('status')->index();
             $table->timestamp('created_at', 0)->nullable();
             $table->timestamp('closed_at', 0)->nullable();

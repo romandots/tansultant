@@ -21,8 +21,9 @@ StoreShiftRequest extends StoreRequest
     {
         $validated = $this->validated();
         /** @var Dto $dto */
-        $dto = parent::getDto();
+        $dto = new Dto($this->user());
         $dto->branch_id = $validated['branch_id'] ?? null;
+        $dto->user_id = $this->user()->id;
 
         return $dto;
     }
