@@ -40,7 +40,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Account $account
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|User $user
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Shift> $shift
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Shift|null $shift
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Transaction|null $related_payment
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Customer|null $customer
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Transaction newModelQuery()

@@ -7,9 +7,12 @@ namespace App\Components\Transaction;
 use App\Common\Contracts;
 use App\Components\Loader;
 use App\Components\Shift\Exceptions\UserHasNoActiveShift;
+use App\Events\Account\AccountEvent;
+use App\Events\Shift\ShiftEvent;
 use App\Models\Credit;
 use App\Models\Customer;
 use App\Models\Enum\TransactionStatus;
+use App\Models\Shift;
 use App\Models\Transaction;
 use App\Services\Permissions\TransactionsPermission;
 use Illuminate\Database\Eloquent\Model;
@@ -46,13 +49,9 @@ class Service extends \App\Common\BaseComponentService
             throw new \LogicException('user_is_not_defined');
         }
 
-        $shift = $user?->load('active_shift')->active_shift;
-        if (null === $shift && !$user->can(TransactionsPermission::CREATE_WITHOUT_SHIFT)) {
-            throw new UserHasNoActiveShift($user);
-        }
-
         $customer = $dto->customer_id ? Loader::customers()->findById($dto->customer_id) : null;
 
+        $shift = $this->getUserShift($user);
         $dto->shift_id = $shift?->id;
         $dto->name = $customer ? $this->generateDepositName($customer) : $dto->name;
 
@@ -65,11 +64,17 @@ class Service extends \App\Common\BaseComponentService
                 $this->createCredit($transaction);
             }
 
+            if ($shift) {
+                Loader::shifts()->updateTotalIncome($shift);
+            }
+
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
         }
+
+        $this->dispatchEventsUponCreatingNewTransaction($transaction);
 
         return $transaction;
     }
@@ -100,8 +105,33 @@ class Service extends \App\Common\BaseComponentService
         $dto->type = \App\Models\Enum\TransactionType::AUTO;
         $dto->transfer_type = \App\Models\Enum\TransactionTransferType::CASH;
         $dto->confirmed_at = now();
+        $dto->shift_id = null;
 
         return parent::create($dto);
+    }
+
+    protected function dispatchEventsUponCreatingNewTransaction(Transaction $transaction): void
+    {
+        AccountEvent::transactionsUpdated($transaction->account);
+        if ($transaction->shift) {
+            ShiftEvent::transactionsUpdated($transaction->shift);
+        }
+    }
+
+    protected function getUserShift(\App\Models\User $user): ?Shift
+    {
+        /** @var Shift $shift */
+        $shift = $user->load('active_shift')->active_shift;
+
+        if ($shift && $shift->isClosed()) {
+            $shift = null;
+        }
+
+        if (null === $shift && !$user->can(TransactionsPermission::CREATE_WITHOUT_SHIFT)) {
+            throw new UserHasNoActiveShift($user);
+        }
+
+        return $shift;
     }
 
 }

@@ -34,6 +34,14 @@ class Formatter extends BaseFormatter
                 return new \App\Components\User\Formatter($this->user);
             }),
             'external_id' => $this->external_id,
+            'shift_id' => $this->shift_id,
+            'shift' => $this->whenLoaded('shift', function () {
+                return new \App\Components\Shift\Formatter($this->shift);
+            }),
+            'customer_id' => $this->customer_id,
+            'customer' => $this->whenLoaded('customer', function () {
+                return new \App\Components\Customer\Formatter($this->customer);
+            }),
             'created_at' => $this->created_at->toDateTimeString(),
             'confirmed_at' => $this->confirmed_at?->toDateTimeString(),
             'canceled_at' => $this->canceled_at?->toDateTimeString(),

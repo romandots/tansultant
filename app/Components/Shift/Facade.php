@@ -39,4 +39,17 @@ class Facade extends BaseComponentFacade
         $shift = $this->getService()->closeUserActiveShift($user);
         return new Formatter($shift->load($relations));
     }
+
+    public function getShiftTransactions(string $shiftId, User $user): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        $shift = $this->getRepository()->find($shiftId);
+        $transactions = $this->getService()->getShiftTransactions($shift, $user);
+        return \App\Components\Transaction\Formatter::collection($transactions)
+            ->additional(['details' => $shift->details]);
+    }
+
+    public function updateTotalIncome(\App\Models\Shift $shift): void
+    {
+        $this->getService()->updateTotalIncome($shift);
+    }
 }

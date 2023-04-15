@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Components\Shift;
 
 use App\Models\Enum\ShiftStatus;
+use App\Models\Enum\TransactionStatus;
 use App\Models\Shift;
 use Illuminate\Database\Eloquent\Model;
 
@@ -48,8 +49,31 @@ class Repository extends \App\Common\BaseComponentRepository
 
     public function close(Shift $shift, float $totalIncome): void
     {
-        $shift->total_income = $totalIncome;
         $this->setStatus($shift, ShiftStatus::CLOSED, ['closed_at']);
         $this->save($shift);
+    }
+
+    public function updateTotalIncome(Shift $shift): void
+    {
+        $this->setTotalIncome($shift);
+        $this->save($shift);
+    }
+
+    public function updateTotalIncomeAndClose(Shift $shift): void
+    {
+        $this->setTotalIncome($shift);
+        $this->setStatus($shift, ShiftStatus::CLOSED, ['closed_at']);
+        $this->save($shift);
+    }
+
+    /**
+     * @param Shift $shift
+     * @return void
+     */
+    protected function setTotalIncome(Shift $shift): void
+    {
+        $shift->total_income = $shift->transactions()
+            ->where('status', TransactionStatus::CONFIRMED)
+            ->sum('amount');
     }
 }

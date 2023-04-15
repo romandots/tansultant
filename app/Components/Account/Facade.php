@@ -20,6 +20,7 @@ use App\Models\Student;
  * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\Account create(Dto $dto, array $relations = [])
  * @method \App\Models\Account find(ShowDto $showDto)
+ * @method \App\Models\Account findById(string $id)
  * @method void findAndDelete(string $id)
  * @method \App\Models\Account findAndRestore(string $id, array $relations = [])
  * @method \App\Models\Account findAndUpdate(string $id, Dto $dto, array $relations = [])

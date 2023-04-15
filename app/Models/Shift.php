@@ -4,16 +4,24 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Components\Loader;
 use App\Models\Enum\ShiftStatus;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * @package App\Models
  * @property string $id
  * @property string $name
- * @property float|null $total_income
+ * @property int|null $total_income
+ * @property HasMany|Collection|Transaction[] $transactions
+ * @property array $transactions_by_transfer_type
+ * @property int|null $transactions_count
+ * @property array $transactions_grouped_by_transfer_type
+ * @property array $transactions_grouped_by_type
+ * @property array $transactions_grouped_by_account
  * @property ShiftStatus $status
  * @property string $user_id
  * @property string|null $branch_id
@@ -27,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Shift extends Model
 {
     use UsesUuid;
+
     //use HasFactory;
 
     public const TABLE = 'shifts';
@@ -60,5 +69,74 @@ class Shift extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function getTransactionsByTransferTypes(): Collection
+    {
+        return $this->transactions->groupBy(fn ($item) => $item->transfer_type->value);
+    }
+
+    public function getTransactionsByTypes(): Collection
+    {
+        return $this->transactions->groupBy(fn ($item) => $item->type->value);
+    }
+
+    public function getTransactionsByAccounts(): Collection
+    {
+        return $this->transactions->groupBy(fn ($item) => $item->account_id);
+    }
+
+    public function getTransactionsGroupedByTransferTypeAttribute(): array
+    {
+        $transactions = $this->getTransactionsByTransferTypes();
+        $details = [];
+        foreach ($transactions as $transferType => $group) {
+            $details[] = [
+                'transfer_type' => $transferType,
+                'transfer_type_label' => translate('transaction.transfer_type', $transferType),
+                'sum' => $group->sum('amount'),
+                'count' => $group->count(),
+            ];
+        }
+
+        return $details;
+    }
+
+    public function getTransactionsGroupedByTypeAttribute(): array
+    {
+        $transactions = $this->getTransactionsByTypes();
+        $details = [];
+        foreach ($transactions as $type => $group) {
+            $details[] = [
+                'type' => $type,
+                'type_label' => translate('transaction.type', $type),
+                'sum' => $group->sum('amount'),
+                'count' => $group->count(),
+            ];
+        }
+
+        return $details;
+    }
+
+    public function getTransactionsGroupedByAccountAttribute(): array
+    {
+        $transactions = $this->getTransactionsByAccounts();
+        $details = [];
+        foreach ($transactions as $accountId => $group) {
+            $account = Loader::accounts()->findById($accountId);
+            $details[] = [
+                'account_id' => $account->id,
+                'account_name' => $account->name,
+                'sum' => $group->sum('amount'),
+                'count' => $group->count(),
+            ];
+        }
+
+        return $details;
+    }
+
+    public function isClosed(): bool
+    {
+        return $this->status === ShiftStatus::CLOSED;
     }
 }

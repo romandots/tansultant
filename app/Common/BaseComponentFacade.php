@@ -211,4 +211,10 @@ abstract class BaseComponentFacade extends BaseFacade
     {
         return (new $formatterClass($record))->toArray(\request());
     }
+
+    public function formatCollection(iterable $collection, string $formatterClass): iterable
+    {
+        return ($collection instanceof \Illuminate\Support\Collection ? $collection : collect($collection))
+            ->map(fn(Model $record) => $this->format($record, $formatterClass));
+    }
 }
