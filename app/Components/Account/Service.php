@@ -32,7 +32,7 @@ class Service extends \App\Common\BaseComponentService
     {
         if (!$dto->name) {
             $branch = Loader::branches()->findById($dto->branch_id);
-            $dto->name = $this->generateAccountName($dto->type, $branch);
+            $dto->name = $this->generateAccountName($branch);
         }
 
         if ($existingAccount = $this->getRepository()->findByName($dto->name)) {
@@ -136,10 +136,9 @@ class Service extends \App\Common\BaseComponentService
             ->sum('amount');
     }
 
-    private function generateAccountName(AccountType $type, Branch $branch): string
+    private function generateAccountName(Branch $branch): string
     {
-        $type = \trans('account.type.' . $type->value);
-        return sprintf('%s - %s', $type, $branch->name);
+        return \trans('account.default_name_preset', ['branch' => $branch->name]);
     }
 
     private function buildDto(?string $name, AccountType $type, string $branchId): Dto

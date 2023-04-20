@@ -9,12 +9,5 @@
 declare(strict_types=1);
 
 return [
-    'name_presets' => [
-        'branch_savings' => 'Депозитный счёт :branch',
-        'branch_operational' => 'Операционный счет :branch'
-    ],
-    'type' => [
-        'operational' => 'Операционный счёт',
-        'savings' => 'Дебетовый счёт',
-    ],
+    'default_name_preset' => 'Счёт филиала :branch',
 ];

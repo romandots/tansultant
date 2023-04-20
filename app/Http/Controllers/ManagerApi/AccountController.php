@@ -8,6 +8,7 @@ use App\Common\Controllers\AdminController;
 use App\Components\Account as Component;
 use App\Http\Requests\ManagerApi\SearchAccountRequest;
 use App\Http\Requests\ManagerApi\StoreAccountRequest;
+use App\Models\Enum\TransactionTransferType;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
@@ -45,5 +46,13 @@ class AccountController extends AdminController
     public function update(string $id, StoreAccountRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         return $this->_update($id, $request);
+    }
+
+    public function setDefaultFor(string $id, string $transferType): void
+    {
+        $account = $this->getFacade()->findById($id);
+        $transactionTransferType = TransactionTransferType::from($transferType);
+
+        $this->getFacade()->setDefaultForTransactionTransferType($account, $transactionTransferType);
     }
 }

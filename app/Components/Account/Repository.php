@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Components\Account;
 
-use App\Models\{Account, Enum\AccountType};
+use App\Models\{Account};
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @method array getSearchableAttributes()
@@ -25,6 +26,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Repository extends \App\Common\BaseComponentRepository
 {
+    public const DEFAULT_ACCOUNT_TABLE = 'default_accounts';
+
     public function __construct() {
         parent::__construct(
             Account::class,
@@ -40,7 +43,6 @@ class Repository extends \App\Common\BaseComponentRepository
     public function fill(Model $record, \App\Common\Contracts\DtoWithUser $dto): void
     {
         $record->name = $dto->name;
-        $record->type = $dto->type;
         $record->branch_id = $dto->branch_id;
     }
 
@@ -51,7 +53,6 @@ class Repository extends \App\Common\BaseComponentRepository
     public function findBranchSavingsAccountByOwnerId(string $ownerId): Account
     {
         return $this->getQuery()
-            ->where('type', AccountType::SAVINGS)
             ->where('owner_id', $ownerId)
             ->firstOrFail();
     }
@@ -63,7 +64,6 @@ class Repository extends \App\Common\BaseComponentRepository
     public function findBranchOperationalAccountByOwnerId(string $ownerId): Account
     {
         return $this->getQuery()
-            ->where('type', AccountType::OPERATIONAL)
             ->where('owner_id', $ownerId)
             ->firstOrFail();
     }
@@ -73,5 +73,31 @@ class Repository extends \App\Common\BaseComponentRepository
         return $this->getQuery()
             ->where('name', $name)
             ->first();
+    }
+
+    public function getDefaultAccountByBranchAndType(string $branchId, string $transactionType): ?Account
+    {
+        return \DB::table(self::DEFAULT_ACCOUNT_TABLE)
+            ->where('branch_id', $branchId)
+            ->where('type', $transactionType)
+            ->first();
+    }
+
+    public function getDefaultTransferTypesForBranchAndAccount(string $branchId, string $accountId): array
+    {
+        return DB::table(self::DEFAULT_ACCOUNT_TABLE)
+            ->where('branch_id', $branchId)
+            ->where('account_id', $accountId)
+            ->pluck('transfer_type')
+            ->toArray();
+    }
+
+    public function setDefaultAccount(string $branchId, string $transactionType, string $accountId): void
+    {
+        DB::table(self::DEFAULT_ACCOUNT_TABLE)
+            ->updateOrInsert(
+                ['branch_id' => $branchId, 'transfer_type' => $transactionType],
+                ['account_id' => $accountId]
+            );
     }
 }

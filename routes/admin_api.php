@@ -59,6 +59,7 @@ Route::namedGroup('accounts',ManagerApi\AccountController::class, static functio
     Route::namedRoute('update', 'put', '{id:uuid}', [AccountsPermission::MANAGE, AccountsPermission::UPDATE]);
     Route::namedRoute('destroy', 'delete', '{id:uuid}', [AccountsPermission::MANAGE, AccountsPermission::DELETE]);
     Route::namedRoute('restore', 'post', '{id:uuid}/restore', [AccountsPermission::MANAGE, AccountsPermission::RESTORE]);
+    Route::namedRoute('setDefaultFor', 'post', '{id:uuid}/default_for/{transferType}', [AccountsPermission::MANAGE, AccountsPermission::UPDATE]);
 });
 
 // BRANCHES

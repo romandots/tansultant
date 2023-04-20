@@ -10,7 +10,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Enum\AccountType;
+use App\Components\Loader;
+use App\Models\Enum\TransactionTransferType;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,14 +23,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @package App\Models
  * @property string $id
  * @property string $name
- * @property AccountType $type [personal|savings|operational]
  * @property string $branch_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Bonus[] $bonuses
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Transaction[] $payments
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Branch> $branch
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo|Branch $branch
+ * @property-read TransactionTransferType[] $is_default_for
  * @method static bool|null forceDelete()
  * @method static bool|null restore()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Account onlyTrashed()
@@ -59,7 +60,6 @@ class Account extends Model
 
     protected $table = self::TABLE;
     protected $casts = [
-        'type' => AccountType::class,
     ];
 
     /**
@@ -84,5 +84,13 @@ class Account extends Model
     public function bonuses(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Bonus::class);
+    }
+
+    /**
+     * @return TransactionTransferType[]
+     */
+    public function getIsDefaultForAttribute(): array
+    {
+        return Loader::accounts()->getTransferTypesAccountIsDefaultFor($this);
     }
 }

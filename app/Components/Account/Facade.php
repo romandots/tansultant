@@ -8,8 +8,7 @@ use App\Common\BaseComponentFacade;
 use App\Common\DTO\ShowDto;
 use App\Models\Account;
 use App\Models\Branch;
-use App\Models\Instructor;
-use App\Models\Student;
+use App\Models\Enum\TransactionTransferType;
 
 /**
  * @method Service getService()
@@ -33,38 +32,6 @@ class Facade extends BaseComponentFacade
     }
 
     /**
-     * @throws \Exception
-     */
-    public function getStudentAccount(Student $student): Account
-    {
-        return $this->getService()->getStudentAccount($student);
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function getInstructorAccount(Instructor $instructor): Account
-    {
-        return $this->getService()->getInstructorAccount($instructor);
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function getOperationalAccount(Branch $branch): Account
-    {
-        return $this->getService()->getOperationalAccount($branch);
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function getSavingsAccount(Branch $branch): Account
-    {
-        return $this->getService()->getSavingsAccount($branch);
-    }
-
-    /**
      * @param Account $account
      * @param int $amount
      * @throws Exceptions\InsufficientFundsAccountException
@@ -79,13 +46,34 @@ class Facade extends BaseComponentFacade
         return $this->getService()->getAmount($account);
     }
 
-    public function getBonusAmount(Account $account): int
+    public function getDefaultBranchAccount(Branch $branch, TransactionTransferType $transactionTransferType): ?Account
     {
-        return $this->getService()->getBonusAmount($account);
+        return $this->getRepository()->getDefaultAccountByBranchAndType($branch->id, $transactionTransferType->value);
     }
 
-    public function getTotalAmount(Account $account): int
+    /**
+     * @param Account $account
+     * @return TransactionTransferType[]
+     */
+    public function getTransferTypesAccountIsDefaultFor(Account $account): array
     {
-        return $this->getService()->getTotalAmount($account);
+        $transferTypes = $this->getRepository()->getDefaultTransferTypesForBranchAndAccount($account->branch_id, $account->id);
+        return array_filter(array_map(
+            static fn (string $transferType) => TransactionTransferType::tryFrom($transferType),
+            $transferTypes ?? []
+        ));
+    }
+
+    public function setDefaultBranchAccount(
+        Branch $branch,
+        TransactionTransferType $transactionTransferType,
+        Account $account
+    ): void {
+        $this->getRepository()->setDefaultAccount($branch->id, $transactionTransferType->value, $account->id);
+    }
+
+    public function setDefaultForTransactionTransferType(Account $account, TransactionTransferType $transactionTransferType): void
+    {
+        $this->setDefaultBranchAccount($account->branch, $transactionTransferType, $account);
     }
 }

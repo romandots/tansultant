@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Components\Loader;
+use App\Models\Enum\TransactionTransferType;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -84,5 +86,10 @@ class Branch extends Model
     public function classrooms(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Classroom::class);
+    }
+
+    public function getDefaultAccount(TransactionTransferType $transactionTransferType): ?Account
+    {
+        return Loader::accounts()->getDefaultBranchAccount($this, $transactionTransferType);
     }
 }
