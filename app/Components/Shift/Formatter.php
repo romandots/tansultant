@@ -39,7 +39,7 @@ class Formatter extends BaseFormatter
             'branch_id' => $this->branch_id,
             'branch' => $this->whenLoaded(
                 'branch',
-                fn () => new \App\Components\Branch\Formatter($this->branch),
+                fn () => new \App\Components\Branch\FormatterInShift($this->branch),
             ),
             'user_id' => $this->user_id,
             'user' => $this->whenLoaded(

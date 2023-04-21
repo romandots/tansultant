@@ -77,10 +77,11 @@ class Repository extends \App\Common\BaseComponentRepository
 
     public function getDefaultAccountByBranchAndType(string $branchId, string $transactionType): ?Account
     {
-        return \DB::table(self::DEFAULT_ACCOUNT_TABLE)
+        $accountId = \DB::table(self::DEFAULT_ACCOUNT_TABLE)
             ->where('branch_id', $branchId)
-            ->where('type', $transactionType)
-            ->first();
+            ->where('transfer_type', $transactionType)
+            ->value('account_id');
+        return $accountId ? $this->find($accountId) : null;
     }
 
     public function getDefaultTransferTypesForBranchAndAccount(string $branchId, string $accountId): array
