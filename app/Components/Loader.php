@@ -3,6 +3,7 @@
 namespace App\Components;
 
 use App\Common\Locator;
+use App\Services\SearchService;
 
 class Loader extends Locator
 {
@@ -94,9 +95,18 @@ class Loader extends Locator
         return self::get(Person\Facade::class);
     }
 
+    public static function price(): Price\Facade {
+        return self::get(Price\Facade::class);
+    }
+
     public static function schedules(): Schedule\Facade
     {
         return self::get(Schedule\Facade::class);
+    }
+
+    public static function search(): SearchService
+    {
+        return self::get(SearchService::class);
     }
 
     public static function shifts(): \App\Components\Shift\Facade

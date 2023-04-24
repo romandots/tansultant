@@ -50,6 +50,9 @@ use App\Services\Permissions\VisitsPermission;
 Route::get('/history/{type}/{id:uuid}', '\App\Http\Controllers\ManagerApi\HistoryController@index')
     ->name('history');
 
+Route::get('/search', '\App\Http\Controllers\ManagerApi\SearchController@index')
+    ->name('search');
+
 // ACCOUNTS
 Route::namedGroup('accounts',ManagerApi\AccountController::class, static function () {
     Route::namedRoute('search', 'get', '/', [AccountsPermission::MANAGE, AccountsPermission::READ]);

@@ -45,4 +45,9 @@ class Facade extends BaseComponentFacade
     {
         return $this->getRepository()->getByNameGenderAndBirthDate($lastName, $firstName, $patronymicName, $gender, $birthDate);
     }
+
+    public function quickSearch(string $query, int $limit = 10): array
+    {
+        return $this->getRepository()->quickSearch($query, $limit);
+    }
 }

@@ -6,10 +6,14 @@ namespace App\Components\Person;
 
 use App\Common\DTO\SearchFilterDto;
 use App\Http\Requests\ManagerApi\DTO\SearchPeopleFilterDto;
+use App\Models\Customer;
 use App\Models\Enum\Gender;
+use App\Models\Instructor;
 use App\Models\Person;
+use App\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
 
 /**
@@ -30,7 +34,8 @@ use Ramsey\Uuid\Uuid;
  */
 class Repository extends \App\Common\BaseComponentRepository
 {
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(
             modelClass: Person::class,
             searchableAttributes: [
@@ -41,6 +46,49 @@ class Repository extends \App\Common\BaseComponentRepository
                 'email',
                 'note',
             ]
+        );
+    }
+
+    public function quickSearch(string $searchString, int $limit = 10): array
+    {
+        $people = Person::TABLE;
+        $students = Student::TABLE;
+        $instructors = Instructor::TABLE;
+        $customers = Customer::TABLE;
+
+        $sql = <<<SQL
+WITH search_results AS (
+    SELECT DISTINCT ON (p.id)
+        p.id AS person_id,
+        p.last_name,
+        p.first_name,
+        p.patronymic_name,
+        p.email,
+        p.phone,
+        p.note,
+        c.id AS customer_id,
+        s.id AS student_id,
+        i.id AS instructor_id
+    FROM
+        {$people} p
+            LEFT JOIN {$customers} c ON p.id = c.person_id AND c.deleted_at IS NULL
+            LEFT JOIN {$students} s ON p.id = s.person_id AND s.deleted_at IS NULL
+            LEFT JOIN {$instructors} i ON p.id = i.person_id AND i.deleted_at IS NULL
+    WHERE
+          p.deleted_at IS NULL AND
+       (p.last_name ILIKE '%' || ? || '%'
+       OR p.first_name ILIKE '%' || ? || '%'
+       OR p.patronymic_name ILIKE '%' || ? || '%'
+       OR p.email ILIKE '%' || ? || '%'
+       OR p.phone LIKE '%' || ?
+       OR p.note ILIKE '%' || ? || '%')
+)
+SELECT * FROM search_results LIMIT ?;
+SQL;
+
+        return DB::select(
+            $sql,
+            [$searchString, $searchString, $searchString, $searchString, $searchString, $searchString, $limit]
         );
     }
 
