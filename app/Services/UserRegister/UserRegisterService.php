@@ -18,6 +18,7 @@ use App\Events\Student\StudentEvent;
 use App\Events\User\UserEvent;
 use App\Http\Requests\Auth\DTO\RegisterUser;
 use App\Models\Enum\InstructorStatus;
+use App\Models\Enum\UserStatus;
 use App\Models\Enum\UserType;
 use App\Models\Person;
 use App\Models\User;
@@ -232,8 +233,9 @@ class UserRegisterService extends BaseService
         $dto = new Components\User\Dto();
         $dto->username = $registerUser->phone;
         $dto->password = $registerUser->password;
+        $dto->status = UserStatus::PENDING;
 
-        $newUser = $this->users->createFromPerson($dto, $person);
+        $newUser = $this->users->create($dto);
 
         // Fire event
         //\event(new UserCreatedEvent($newUser));

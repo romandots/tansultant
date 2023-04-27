@@ -41,7 +41,10 @@ class UserController extends AdminController
 
     public function store(StoreUserRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        return $this->_store($request);
+        return \clock()->event('Serving STORE action')->run(function () use ($request) {
+            $record = $this->getFacade()->createFromPerson($request->getDto());
+            return $this->makeResource($record);
+        });
     }
 
     public function update(string $id, UpdateUserRequest $request): \Illuminate\Http\Resources\Json\JsonResource

@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Components\User;
 
 use App\Common\Contracts\DtoWithUser;
+use App\Components\Customer\Exceptions\PersonHasNoPhoneException;
 use App\Components\User\Exceptions\OldPasswordInvalidException;
 use App\Events\User\UserCreatedEvent;
 use App\Models\Enum\UserStatus;
 use App\Models\Person;
 use App\Models\User;
+use App\Notifications\TextMessages\PasswordResetSmsNotification;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @method Repository getRepository()
@@ -36,14 +39,24 @@ class Service extends \App\Common\BaseComponentService
      */
     public function create(DtoWithUser $dto): Model
     {
+        DB::beginTransaction();
+
         // create
-        $dto->status = UserStatus::PENDING;
         $record = parent::create($dto);
         assert($record instanceof User);
+
+        // assign role
+        $this->debug('Assigning roles to user #' . $record->id);
+        $record->assignRole($dto->roles);
+
+        DB::commit();
 
         // fire event
         \event(new UserCreatedEvent($record));
         $this->debug('Fired UserCreatedEvent for user #' . $record->id);
+
+        // Send password
+        $this->sendUserHisPassword($record, $dto->password);
 
         return $record;
     }
@@ -57,8 +70,14 @@ class Service extends \App\Common\BaseComponentService
     public function createFromPerson(Dto $dto, Person $person): User
     {
         $dto->name = $dto->name ?? \trans('person.user_name', $person->compactName());
+        $dto->username = $dto->username ?? $person->email ?? $person->phone;
+        if (null === $dto->username) {
+            throw new PersonHasNoPhoneException();
+        }
+
         $dto->person_id = $person->id;
-        $dto->status = UserStatus::PENDING;
+        $dto->status = UserStatus::APPROVED;
+        $dto->password = \Str::random(8);
 
         return $this->create($dto);
     }
@@ -82,5 +101,19 @@ class Service extends \App\Common\BaseComponentService
     {
         $this->debug('Disabling user #' . $user->id . ': setting status to `disabled`');
         $this->getRepository()->setDisabled($user);
+    }
+
+    protected function sendUserHisPassword(User $user, string $password): void
+    {
+        $this->debug('Sending password to user #' . $user->id);
+        try {
+            $user->notify(new PasswordResetSmsNotification($password));
+        } catch (\Throwable $exception) {
+            $this->error('Failed to send password to user #' . $user->id . ': ' . $exception->getMessage(), [
+                'user' => $user->toArray(),
+                'password' => $password,
+            ]);
+            throw $exception;
+        }
     }
 }

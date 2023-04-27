@@ -6,7 +6,7 @@ namespace App\Components\User;
 
 use App\Common\BaseComponentFacade;
 use App\Common\DTO\ShowDto;
-use App\Models\Person;
+use App\Components\Loader;
 use App\Models\User;
 
 /**
@@ -29,6 +29,7 @@ class Facade extends BaseComponentFacade
         parent::__construct(Service::class);
     }
 
+
     public function updatePassword(User $user, UpdateUserPasswordDto $updateUserPasswordDto): void
     {
         $this->getService()->updatePassword($user, $updateUserPasswordDto);
@@ -44,8 +45,9 @@ class Facade extends BaseComponentFacade
         return $this->getService()->create($dto);
     }
 
-    public function createFromPerson(Dto $dto, Person $person): User
+    public function createFromPerson(Dto $dto): User
     {
+        $person = Loader::people()->findById($dto->person_id);
         return $this->getService()->createFromPerson($dto, $person);
     }
 
