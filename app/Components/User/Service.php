@@ -62,6 +62,23 @@ class Service extends \App\Common\BaseComponentService
     }
 
     /**
+     * @param User $record
+     * @param Dto $dto
+     * @return void
+     * @throws \Throwable
+     */
+    public function update(Model $record, DtoWithUser $dto): void
+    {
+        DB::beginTransaction();
+        parent::update($record, $dto);
+
+        // assign role
+        $this->debug('Assigning roles to user #' . $record->id);
+        $record->syncRoles($dto->roles);
+        DB::commit();
+    }
+
+    /**
      * @param Dto $dto
      * @param Person $person
      * @return User
@@ -80,6 +97,27 @@ class Service extends \App\Common\BaseComponentService
         $dto->password = \Str::random(8);
 
         return $this->create($dto);
+    }
+
+    /**
+     * @param User $record
+     * @param Dto $dto
+     * @param Person $person
+     * @return void
+     * @throws \Throwable
+     */
+    public function updateFromPerson(User $record, Dto $dto, Person $person): void
+    {
+        $dto->name = $dto->name ?? \trans('person.user_name', $person->compactName());
+        $dto->username = $dto->username ?? $person->email ?? $person->phone;
+        if (null === $dto->username) {
+            throw new PersonHasNoPhoneException();
+        }
+
+        $dto->person_id = $person->id;
+        $dto->status = UserStatus::APPROVED;
+
+        $this->update($record, $dto);
     }
 
     public function updatePassword(User $user, \App\Components\User\UpdateUserPasswordDto $dto): void

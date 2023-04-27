@@ -253,7 +253,7 @@ Route::namedGroup('transactions',ManagerApi\TransactionController::class, static
 
 // USERS
 Route::namedGroup('users',ManagerApi\UserController::class, static function () {
-    Route::namedRoute('index', 'get', '/', [UsersPermission::MANAGE, UsersPermission::READ]);
+    Route::namedRoute('search', 'get', '/', [UsersPermission::MANAGE, UsersPermission::READ]);
     Route::namedRoute('store', 'post', '/', [UsersPermission::MANAGE, UsersPermission::CREATE]);
     Route::namedRoute('show', 'get', '{id:uuid}', [UsersPermission::MANAGE, UsersPermission::READ]);
     Route::namedRoute('update', 'put', '{id:uuid}', [UsersPermission::MANAGE, UsersPermission::UPDATE]);

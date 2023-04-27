@@ -29,7 +29,6 @@ class Facade extends BaseComponentFacade
         parent::__construct(Service::class);
     }
 
-
     public function updatePassword(User $user, UpdateUserPasswordDto $updateUserPasswordDto): void
     {
         $this->getService()->updatePassword($user, $updateUserPasswordDto);
@@ -49,6 +48,13 @@ class Facade extends BaseComponentFacade
     {
         $person = Loader::people()->findById($dto->person_id);
         return $this->getService()->createFromPerson($dto, $person);
+    }
+
+    public function updateFromPerson(User $record, Dto $dto): User
+    {
+        $person = Loader::people()->findById($dto->person_id);
+        $this->getService()->updateFromPerson($record, $dto, $person);
+        return $record->refresh();
     }
 
     public function findByUsername(string $username): User

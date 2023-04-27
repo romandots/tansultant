@@ -22,6 +22,7 @@ class Formatter extends BaseFormatter
             'id' => $this->id,
             'name' => $this->name,
             'username' => $this->username,
+            'person_id' => $this->person_id,
             'person' => $this->whenLoaded('person', function () {
                 return new \App\Components\Person\Formatter($this->person);
             }),
@@ -35,6 +36,7 @@ class Formatter extends BaseFormatter
                 return null !== $this->customer;
             }),
             'roles' => $this->getRoleNames(),
+            'roles_labels' => collect($this->getRoleNames())->map(fn ($role) => \translate('user.role', $role)),
             'permissions' => $this->getPermissionNames(),
             'active_shift' => $this->whenLoaded(
                 'active_shift',

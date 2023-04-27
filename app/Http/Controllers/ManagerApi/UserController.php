@@ -49,6 +49,12 @@ class UserController extends AdminController
 
     public function update(string $id, UpdateUserRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
-        return $this->_update($id, $request);
+        return \clock()->event('Serving UPDATE action')->run(function () use ($id, $request) {
+
+            $record = $this->getFacade()->findById($id);
+            $this->getFacade()->updateFromPerson($record, $request->getDto());
+            $record->load($this->getSingleRecordRelations());
+            return $this->makeResource($record);
+        });
     }
 }

@@ -12,6 +12,8 @@ namespace App\Http\Requests\ManagerApi;
 
 use App\Common\Requests\StoreRequest;
 use App\Components\User\Dto;
+use App\Models\Person;
+use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends StoreRequest
 {
@@ -21,17 +23,24 @@ class UpdateUserRequest extends StoreRequest
     public function rules(): array
     {
         return \array_merge($this->showRules(), [
-            'name' => [
+            'username' => [
                 'nullable',
                 'string'
             ],
-            'username' => [
+            'person_id' => [
                 'required',
-                'string'
+                'string',
+                'uuid',
+                Rule::exists(Person::TABLE, 'id'),
             ],
-            'password' => [
-                'required',
-                'string'
+            'roles' => [
+                'nullable',
+                'array',
+            ],
+            'roles.*' => [
+                'required_with:roles',
+                'string',
+                Rule::exists('roles', 'name'),
             ],
         ]);
     }
@@ -42,8 +51,8 @@ class UpdateUserRequest extends StoreRequest
 
         $dto = new Dto($this->user());
         $dto->username = $validated['username'];
-        $dto->password = $validated['password'];
-        $dto->name = $validated['name'] ?? null;
+        $dto->person_id = $validated['person_id'];
+        $dto->roles = $validated['roles'] ?? [];
 
         return $dto;
     }
