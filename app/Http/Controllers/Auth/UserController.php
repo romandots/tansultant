@@ -21,7 +21,7 @@ class UserController extends Controller
     public function me(Request $request): Formatter
     {
         $user = $request->user();
-        $user->load('person');
+        $user->load('person', 'roles', 'permissions');
 
         return new Formatter($user);
     }

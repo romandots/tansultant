@@ -37,7 +37,7 @@ class Formatter extends BaseFormatter
             }),
             'roles' => $this->getRoleNames(),
             'roles_labels' => collect($this->getRoleNames())->map(fn ($role) => \translate('user.role', $role)),
-            'permissions' => $this->getPermissionNames(),
+            'permissions' => collect($this->getPermissionNames())->union($this->getPermissionsViaRoles())->pluck('name'),
             'active_shift' => $this->whenLoaded(
                 'active_shift',
                 fn () => new \App\Components\Shift\Formatter($this->active_shift),
