@@ -143,7 +143,7 @@ class Service extends \App\Common\BaseComponentService
 
     protected function sendUserHisPassword(User $user, string $password): void
     {
-        $this->debug('Sending password to user #' . $user->id);
+        $this->debug('Sending password "' . (!in_production() ? $password : '***') . '" to user #' . $user->id);
         try {
             $user->notify(new PasswordResetSmsNotification($password));
         } catch (\Throwable $exception) {

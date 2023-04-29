@@ -245,3 +245,10 @@ if (!function_exists('is_enum')) {
         return $object instanceof \UnitEnum;
     }
 }
+
+if (!function_exists('in_production')) {
+    function in_production(): bool
+    {
+        return env('APP_ENV') === 'production';
+    }
+}
