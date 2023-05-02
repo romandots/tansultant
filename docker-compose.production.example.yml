@@ -16,8 +16,6 @@ services:
       - redis
     ports:
       - "${API_PORT}:80"
-  queue:
-    restart: always
   scheduler:
     restart: always
   db:
