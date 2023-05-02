@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Components\Loader;
+use App\Models\Enum\UserStatus;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -43,6 +44,7 @@ class AppInstall extends Command
         $userDto->name = self::ADMIN_USERNAME;
         $userDto->username = self::ADMIN_USERNAME;
         $userDto->password = $password ?? '12345678';
+        $userDto->status = UserStatus::APPROVED;
         $user = Loader::users()->createWithoutPerson($userDto);
         Loader::users()->approve($user);
         $this->assignAdminRole($user);
