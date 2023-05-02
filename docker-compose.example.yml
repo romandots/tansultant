@@ -29,7 +29,7 @@ services:
       - /app/vendor
       - ./docker/logs/laravel:/app/storage/logs
     env_file:
-      - ./docker/.env
+      - ./docker/.env.example
     environment:
       DB_HOST: db
       DB_PORT: 5432
