@@ -68,10 +68,7 @@ class PasswordResetService extends BaseService
             $this->verificationService->cleanUp($phoneNumber);
 
             // Send SMS with new password
-            Loader::notifications()->notify(
-                $user->person,
-                \trans('password_reset.new_password_text_message', ['new_password' => $updateUserPasswordDto->new_password])
-            );
+            Loader::notifications()->sendPasswordResetNotification($user, $updateUserPasswordDto->new_password);
         });
     }
 

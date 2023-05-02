@@ -9,21 +9,6 @@ use App\Services\Notification\Providers\SmsProvider;
 
 class NotificationService extends BaseService
 {
-    public function sms(Person $person, string $message): void
-    {
-        $this->notifyByChannel($person, NotificationChannel::SMS, $message);
-    }
-
-    public function email(Person $person, string $message): void
-    {
-        $this->notifyByChannel($person, NotificationChannel::EMAIL, $message);
-    }
-
-    public function push(Person $person, string $message): void
-    {
-        $this->notifyByChannel($person, NotificationChannel::PUSH, $message);
-    }
-
     public function notify(Person $person, string $message): void
     {
         $channels = $this->getPersonChannels($person);
@@ -32,7 +17,7 @@ class NotificationService extends BaseService
         }
     }
 
-    protected function notifyByChannel(Person $person, NotificationChannel $channel, string $message): void
+    public function notifyByChannel(Person $person, NotificationChannel $channel, string $message): void
     {
         $this->debug(
             'Sending notification over ' . $channel->value,

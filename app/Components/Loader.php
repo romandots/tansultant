@@ -3,7 +3,7 @@
 namespace App\Components;
 
 use App\Common\Locator;
-use App\Services\Notification\NotificationService;
+use App\Services\Notification\Facade as NotificationFacade;
 use App\Services\SearchService;
 
 class Loader extends Locator
@@ -82,9 +82,9 @@ class Loader extends Locator
         return self::get(LogRecord\Facade::class);
     }
 
-    public static function notifications(): NotificationService
+    public static function notifications(): NotificationFacade
     {
-        return self::get(NotificationService::class);
+        return self::get(NotificationFacade::class);
     }
 
     public static function payments(): Payment\Facade

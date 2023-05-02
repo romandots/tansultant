@@ -146,10 +146,7 @@ class Service extends \App\Common\BaseComponentService
         $this->debug('Sending password "' . (!in_production() ? $password : '***') . '" to user #' . $user->id);
         try {
             //$user->notify(new PasswordResetSmsNotification($password));
-            Loader::notifications()->notify(
-                $user->person,
-                \trans('password_reset.new_password_text_message', ['new_password' => $password])
-            );
+            Loader::notifications()->sendPasswordResetNotification($user, $password);
         } catch (\Throwable $exception) {
             $this->error('Failed to send password to user #' . $user->id . ': ' . $exception->getMessage(), [
                 'user' => $user->toArray(),
