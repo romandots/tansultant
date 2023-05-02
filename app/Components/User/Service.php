@@ -6,12 +6,12 @@ namespace App\Components\User;
 
 use App\Common\Contracts\DtoWithUser;
 use App\Components\Customer\Exceptions\PersonHasNoPhoneException;
+use App\Components\Loader;
 use App\Components\User\Exceptions\OldPasswordInvalidException;
 use App\Events\User\UserCreatedEvent;
 use App\Models\Enum\UserStatus;
 use App\Models\Person;
 use App\Models\User;
-use App\Notifications\TextMessages\PasswordResetSmsNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -145,7 +145,11 @@ class Service extends \App\Common\BaseComponentService
     {
         $this->debug('Sending password "' . (!in_production() ? $password : '***') . '" to user #' . $user->id);
         try {
-            $user->notify(new PasswordResetSmsNotification($password));
+            //$user->notify(new PasswordResetSmsNotification($password));
+            Loader::notifications()->notify(
+                $user->person,
+                \trans('password_reset.new_password_text_message', ['new_password' => $password])
+            );
         } catch (\Throwable $exception) {
             $this->error('Failed to send password to user #' . $user->id . ': ' . $exception->getMessage(), [
                 'user' => $user->toArray(),

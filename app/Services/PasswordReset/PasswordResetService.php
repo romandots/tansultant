@@ -13,7 +13,6 @@ namespace App\Services\PasswordReset;
 use App\Common\BaseService;
 use App\Components\Loader;
 use App\Components\User\UpdateUserPasswordDto;
-use App\Notifications\TextMessages\PasswordResetSmsNotification;
 use App\Services\Verification\VerificationService;
 
 class PasswordResetService extends BaseService
@@ -69,7 +68,10 @@ class PasswordResetService extends BaseService
             $this->verificationService->cleanUp($phoneNumber);
 
             // Send SMS with new password
-            $user->person->notify(new PasswordResetSmsNotification($updateUserPasswordDto->new_password));
+            Loader::notifications()->notify(
+                $user->person,
+                \trans('password_reset.new_password_text_message', ['new_password' => $updateUserPasswordDto->new_password])
+            );
         });
     }
 
