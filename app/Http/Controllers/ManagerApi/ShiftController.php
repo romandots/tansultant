@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
+use App\Common\Requests\ShowRequest;
+use App\Components\Loader;
 use App\Components\Shift as Component;
 use App\Http\Requests\ManagerApi\StoreShiftRequest;
+use App\Services\Permissions\ShiftsPermission;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ShiftController extends AdminController
 {
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct(
             facadeClass: Component\Facade::class,
             resourceClass: Component\Formatter::class,
@@ -26,6 +30,18 @@ class ShiftController extends AdminController
     {
         return $this->_search($request);
     }
+
+    public function show(ShowRequest $request): JsonResource
+    {
+        $user = $request->user();
+        if (!$user->canAny(ShiftsPermission::READ, ShiftsPermission::MANAGE) &&
+            !Loader::shifts()->isShiftBelongToUser($request->getDto()->id, $user->id)) {
+            throw new Component\Exceptions\ShiftDoesNotBelongToUserException();
+        }
+
+        return parent::show($request);
+    }
+
 
     public function store(StoreShiftRequest $request): JsonResource
     {

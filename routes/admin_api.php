@@ -199,7 +199,7 @@ Route::namedGroup('shifts',ManagerApi\ShiftController::class, static function ()
     Route::namedRoute('store', 'post', '/', [ShiftsPermission::MANAGE, ShiftsPermission::CREATE]);
     Route::namedRoute('getActiveShift', 'get', 'my', [ShiftsPermission::MANAGE, ShiftsPermission::READ_OWN]);
     Route::namedRoute('closeActiveShift', 'post', 'my', [ShiftsPermission::MANAGE, ShiftsPermission::READ_OWN]);
-    Route::namedRoute('show', 'get', '{id:uuid}', [ShiftsPermission::MANAGE, ShiftsPermission::READ]);
+    Route::namedRoute('show', 'get', '{id:uuid}', [ShiftsPermission::MANAGE, ShiftsPermission::READ, ShiftsPermission::READ_OWN]);
     Route::namedRoute('getTransactions', 'get', '{id:uuid}/transactions', [ShiftsPermission::MANAGE, ShiftsPermission::READ, ShiftsPermission::READ_OWN]);
     Route::namedRoute('close', 'post', '{id:uuid}/close', [ShiftsPermission::MANAGE, ShiftsPermission::UPDATE]);
 });

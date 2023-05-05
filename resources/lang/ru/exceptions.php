@@ -41,4 +41,5 @@ return [
     'student_has_not_enough_credits' => 'На счёте клиента :customer не хватает :deficient_credits₽',
     'no_holds_available' => 'В подписке нет доступных приостановок',
     'account_cannot_be_selected' => 'Невозможно выбрать счёт',
+    'shift_does_not_belong_to_user' => 'Смена не принадлежит пользователю',
 ];

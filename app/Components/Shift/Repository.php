@@ -76,4 +76,12 @@ class Repository extends \App\Common\BaseComponentRepository
             ->where('status', TransactionStatus::CONFIRMED)
             ->sum('amount');
     }
+
+    public function isShiftBelongToUser(string $shiftId, string $userId): bool
+    {
+        return $this->getQuery()
+            ->where('id', $shiftId)
+            ->where('user_id', $userId)
+            ->exists();
+    }
 }

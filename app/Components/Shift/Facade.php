@@ -52,4 +52,9 @@ class Facade extends BaseComponentFacade
     {
         $this->getService()->updateTotalIncome($shift);
     }
+
+    public function isShiftBelongToUser(string $shiftId, string $userId): bool
+    {
+        return $this->getRepository()->isShiftBelongToUser($shiftId, $userId);
+    }
 }
