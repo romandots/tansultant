@@ -18,6 +18,7 @@ use App\Models\User;
  * @method array getMeta(\App\Common\DTO\SearchDto $searchParams)
  * @method \App\Models\User create(Dto $dto, array $relations = [])
  * @method \App\Models\User find(ShowDto $showDto)
+ * @method \App\Models\User findById(string $id)
  * @method void findAndDelete(string $id)
  * @method \App\Models\User findAndRestore(string $id, array $relations = [])
  * @method \App\Models\User findAndUpdate(string $id, Dto $dto, array $relations = [])
@@ -32,6 +33,11 @@ class Facade extends BaseComponentFacade
     public function updatePassword(User $user, UpdateUserPasswordDto $updateUserPasswordDto): void
     {
         $this->getService()->updatePassword($user, $updateUserPasswordDto);
+    }
+
+    public function resetPassword(User $user, User $author): void
+    {
+        $this->getService()->resetPassword($user, $author);
     }
 
     public function updateSeenAt(User $user): void

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Http\Controllers\ManagerApi;
 
 use App\Common\Controllers\AdminController;
+use App\Components\Loader;
 use App\Components\User as Component;
 use App\Http\Requests\ManagerApi\SearchUsersRequest;
 use App\Http\Requests\ManagerApi\StoreUserRequest;
 use App\Http\Requests\ManagerApi\UpdateUserRequest;
+use Illuminate\Http\Request;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
@@ -56,5 +58,13 @@ class UserController extends AdminController
             $record->load($this->getSingleRecordRelations());
             return $this->makeResource($record);
         });
+    }
+
+    public function reset(string $id, Request $request): void
+    {
+        $users = Loader::users();
+        $author = $request->user();
+        $user = $users->findById($id);
+        $users->resetPassword($user, $author);
     }
 }

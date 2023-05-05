@@ -155,4 +155,8 @@ class Facade extends BaseFacade
     public function logStatus(User $user, Model $record, string $status): void
     {
     }
+
+    public function logPasswordReset(User $user, User $authorOfUpdate): void
+    {
+    }
 }

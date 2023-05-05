@@ -258,6 +258,7 @@ Route::namedGroup('users',ManagerApi\UserController::class, static function () {
     Route::namedRoute('show', 'get', '{id:uuid}', [UsersPermission::MANAGE, UsersPermission::READ]);
     Route::namedRoute('update', 'put', '{id:uuid}', [UsersPermission::MANAGE, UsersPermission::UPDATE]);
     Route::namedRoute('destroy', 'delete', '{id:uuid}', [UsersPermission::MANAGE, UsersPermission::DELETE]);
+    Route::namedRoute('reset', 'post', '{id:uuid}/reset-password', [UsersPermission::MANAGE, UsersPermission::UPDATE]);
 });
 
 // VISITS

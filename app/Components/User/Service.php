@@ -12,6 +12,7 @@ use App\Events\User\UserCreatedEvent;
 use App\Models\Enum\UserStatus;
 use App\Models\Person;
 use App\Models\User;
+use App\Support\Shared;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -94,7 +95,7 @@ class Service extends \App\Common\BaseComponentService
 
         $dto->person_id = $person->id;
         $dto->status = UserStatus::APPROVED;
-        $dto->password = \Str::random(8);
+        $dto->password = Shared::generatePassword();
 
         return $this->create($dto);
     }
@@ -129,6 +130,16 @@ class Service extends \App\Common\BaseComponentService
         $this->getRepository()->updatePassword($user, $dto->new_password);
     }
 
+    public function resetPassword(User $user, User $authorOfUpdate): void
+    {
+        $newPassword = Shared::generatePassword();
+        $this->getRepository()->updatePassword($user, $newPassword);
+        $this->history->logPasswordReset($user, $authorOfUpdate);
+        if (!Shared::inProduction())  {
+            $this->debug("Set new password to: '{$newPassword}' for user #{$user->id}");
+        }
+    }
+
     public function approve(User $user): void
     {
         $this->debug('Approving user #' . $user->id . ': setting status to `approved`');
@@ -154,5 +165,13 @@ class Service extends \App\Common\BaseComponentService
             ]);
             throw $exception;
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function generatePassword()
+    {
+        return \Str::random(8);
     }
 }
