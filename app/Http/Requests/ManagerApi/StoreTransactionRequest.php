@@ -3,12 +3,16 @@
 namespace App\Http\Requests\ManagerApi;
 
 use App\Common\Requests\StoreRequest;
+use App\Components\Loader;
 use App\Components\Transaction\Dto;
+use App\Components\Transaction\Exceptions\AccountCannotBeSelectedException;
 use App\Models\Account;
 use App\Models\Customer;
 use App\Models\Enum\TransactionStatus;
 use App\Models\Enum\TransactionTransferType;
 use App\Models\Enum\TransactionType;
+use App\Models\User;
+use App\Services\Permissions\AccountsPermission;
 use Illuminate\Validation\Rule;
 
 class StoreTransactionRequest extends StoreRequest
@@ -24,7 +28,7 @@ class StoreTransactionRequest extends StoreRequest
                 'string',
             ],
             'account_id' => [
-                'required',
+                'nullable',
                 'string',
                 'uuid',
                 Rule::exists(Account::TABLE, 'id'),
@@ -47,13 +51,19 @@ class StoreTransactionRequest extends StoreRequest
         ]);
     }
 
+    /**
+     * @return Dto
+     * @throws AccountCannotBeSelectedException
+     */
     public function getDto(): Dto
     {
         $validated = $this->validated();
-        $dto = new Dto($this->user());
+        /** @var User $user */
+        $user = $this->user();
+        $dto = new Dto($user);
 
         $dto->name = $validated['name'] ?? null;
-        $dto->account_id = $validated['account_id'];
+        $dto->account_id = $this->getAccountId($user, $validated);
         $dto->customer_id = $validated['customer_id'] ?? null;
         $dto->amount = (int)$validated['amount'];
         $dto->transfer_type = TransactionTransferType::tryFrom($validated['transfer_type']);
@@ -65,4 +75,34 @@ class StoreTransactionRequest extends StoreRequest
         return $dto;
     }
 
+    /**
+     * @param User $user
+     * @param array $validated
+     * @return string
+     * @throws AccountCannotBeSelectedException
+     */
+    protected function getAccountId(User $user, array $validated): string
+    {
+        return match (true) {
+            $user->canAny([AccountsPermission::MANAGE, AccountsPermission::READ]) => $validated['account_id'],
+            $user->active_shift_id !== null =>
+            $this->getAccountIdByTransferTypeForBranch(
+                TransactionTransferType::tryFrom($validated['transfer_type']),
+                $user->active_shift->branch
+            ),
+            default => throw new AccountCannotBeSelectedException(),
+        };
+    }
+
+    protected function getAccountIdByTransferTypeForBranch(
+        TransactionTransferType $transferType,
+        \App\Models\Branch $branch
+    ): string {
+        $account = Loader::accounts()->getDefaultBranchAccount($branch, $transferType);
+        if ($account !== null) {
+            return $account->id;
+        }
+
+        throw new AccountCannotBeSelectedException();
+    }
 }

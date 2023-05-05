@@ -40,4 +40,5 @@ return [
     'user_already_has_active_shift' => 'У вас уже есть активная смена',
     'student_has_not_enough_credits' => 'На счёте клиента :customer не хватает :deficient_credits₽',
     'no_holds_available' => 'В подписке нет доступных приостановок',
+    'account_cannot_be_selected' => 'Невозможно выбрать счёт',
 ];

@@ -7,6 +7,7 @@ class TransactionsPermission extends Permission
 
     public const MANAGE = 'manage_transactions';
     public const CREATE = 'create_transactions';
+    public const CREATE_DEPOSIT = 'create_deposit_transactions';
     public const READ = 'read_transactions';
     public const UPDATE = 'update_transactions';
     public const DELETE = 'delete_transactions';
@@ -32,12 +33,13 @@ class TransactionsPermission extends Permission
     public static function getInitialDescriptions(): array
     {
         return [
-            self::MANAGE => 'Управлять тарифами',
-            self::CREATE => 'Создавать тарифы',
-            self::READ => 'Просматривать тарифы',
-            self::UPDATE => 'Обновлять тарифы',
-            self::DELETE => 'Удалять тарифы',
-            self::RESTORE => 'Восстанавливать удаленные тарифы',
+            self::MANAGE => 'Управлять транзакциями',
+            self::CREATE => 'Создавать транзакции',
+            self::CREATE_DEPOSIT => 'Пополнять баланс клиентов',
+            self::READ => 'Просматривать транзакции',
+            self::UPDATE => 'Обновлять транзакции',
+            self::DELETE => 'Удалять транзакции',
+            self::RESTORE => 'Восстанавливать удаленные транзакции',
             self::CREATE_WITHOUT_SHIFT => 'Создавать транзакции без смены',
         ];
     }

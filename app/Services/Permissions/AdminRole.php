@@ -168,6 +168,7 @@ class AdminRole extends Permission
 
         TransactionsPermission::MANAGE,
         TransactionsPermission::CREATE,
+        TransactionsPermission::CREATE_DEPOSIT,
         TransactionsPermission::READ,
         TransactionsPermission::UPDATE,
         TransactionsPermission::DELETE,

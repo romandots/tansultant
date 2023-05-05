@@ -20,13 +20,6 @@ class ManagerRole extends Permission
     public const PERMISSIONS = [
         SystemPermission::ACCESS_PANEL,
 
-        AccountsPermission::MANAGE,
-        AccountsPermission::CREATE,
-        AccountsPermission::READ,
-        AccountsPermission::UPDATE,
-        AccountsPermission::DELETE,
-        AccountsPermission::RESTORE,
-
         BonusesPermission::MANAGE,
         BonusesPermission::CREATE,
         BonusesPermission::READ,
@@ -63,6 +56,9 @@ class ManagerRole extends Permission
         CustomersPermission::RESTORE,
         CustomersPermission::SIGN_CONTRACTS,
         CustomersPermission::TERMINATE_CONTRACTS,
+
+        TransactionsPermission::CREATE,
+        TransactionsPermission::CREATE_DEPOSIT,
 
         InstructorsPermission::MANAGE,
         InstructorsPermission::CREATE,
@@ -102,6 +98,10 @@ class ManagerRole extends Permission
         SchedulesPermission::UPDATE,
         SchedulesPermission::DELETE,
         SchedulesPermission::RESTORE,
+
+        ShiftsPermission::CREATE,
+        ShiftsPermission::READ_OWN,
+        ShiftsPermission::UPDATE,
 
         StudentsPermission::MANAGE,
         StudentsPermission::CREATE,

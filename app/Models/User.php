@@ -48,7 +48,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read \App\Models\Instructor $instructor
  * @property-read \App\Models\Customer $customer
  * @property-read \App\Models\Student $student
- * @property-read BelongsTo<Shift> $active_shift
+ * @property-read BelongsTo|Shift $active_shift
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User permission($permissions)
