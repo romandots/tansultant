@@ -172,9 +172,9 @@ class Repository extends \App\Common\BaseComponentRepository
         $visits = Visit::TABLE;
         $subscriptions = Subscription::TABLE;
         $query = $this->getQuery()
-            ->leftJoin($visits, "{$visits}.subscription_id", '=', "{$subscriptions}.id")
-            ->where("{$subscriptions}.status", '=', SubscriptionStatus::PENDING)
-            ->where("COUNT({$visits}.id)", '>', 0);
+            ->join($visits, "{$visits}.subscription_id", '=', "{$subscriptions}.id")
+            ->where("{$subscriptions}.status", SubscriptionStatus::PENDING)
+            ->groupBy("{$subscriptions}.id", "{$visits}.id");
         $collection = $query->get();
         $query->update(["{$subscriptions}.status" => SubscriptionStatus::ACTIVE]);
         return $collection;
