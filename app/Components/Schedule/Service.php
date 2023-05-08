@@ -52,7 +52,10 @@ class Service extends \App\Common\BaseComponentService
      */
     public function update(Model $record, Contracts\DtoWithUser $dto): void
     {
-        $dto->weekday = $dto->weekdays[0] ?? null;
+        if ($dto->cycle === ScheduleCycle::EVERY_WEEK && !$dto->weekday) {
+            throw new \Exception('Schedule was not created. Check arguments.');
+        }
+
         parent::update($record, $dto);
     }
 
