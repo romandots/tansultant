@@ -23,6 +23,9 @@ class Dto extends \App\Common\DTO\DtoWithUser
 
     public ?Weekday $weekday;
 
+    /** @property Weekday[]  */
+    public array $weekdays = [];
+
     public ?\Carbon\Carbon $from_date;
 
     public ?\Carbon\Carbon $to_date;

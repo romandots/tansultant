@@ -75,9 +75,14 @@ class StoreScheduleRequest extends StoreRequest
                 'string',
                 Rule::in(enum_strings(ScheduleCycle::class)),
             ],
-            'weekday' => [
+            'weekdays' => [
                 'nullable',
+                'array',
                 'required_if:cycle,' . ScheduleCycle::EVERY_WEEK->value,
+            ],
+            'weekdays.*' => [
+                'nullable',
+                'required_if:weekdays',
                 'int',
                 Rule::in(enum_strings(Weekday::class)),
             ],
@@ -107,7 +112,9 @@ class StoreScheduleRequest extends StoreRequest
         $dto->course_id = $validated['course_id'];
         $dto->price_id = $validated['price_id'] ?? null;
         $dto->cycle = ScheduleCycle::from($validated['cycle']);
-        $dto->weekday = isset($validated['weekday']) ? Weekday::from((int)$validated['weekday']) : null;
+        $dto->weekdays = isset($validated['weekday'])
+            ? static fn ($weekdayRaw) => Weekday::from((int)$weekdayRaw)
+            : [];
         $dto->from_date = isset($validated['from_date']) ? Carbon::parse($validated['from_date']) : null;
         $dto->to_date = isset($validated['to_date']) ? Carbon::parse($validated['to_date']) : null;
         $dto->starts_at = Carbon::parse($validated['starts_at']);
