@@ -82,7 +82,7 @@ class StoreScheduleRequest extends StoreRequest
             ],
             'weekdays.*' => [
                 'nullable',
-                'required_if:weekdays',
+                'required_with:weekdays',
                 'int',
                 Rule::in(enum_strings(Weekday::class)),
             ],

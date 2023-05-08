@@ -24,7 +24,7 @@ class StoreTransactionRequest extends StoreRequest
     {
         return \array_merge(parent::rules(), [
             'name' => [
-                'required_if_null:customer_id',
+                'required_without:customer_id',
                 'string',
             ],
             'account_id' => [
