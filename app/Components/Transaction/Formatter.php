@@ -27,6 +27,7 @@ class Formatter extends BaseFormatter
             'transfer_type_label' => \translate('transaction.transfer_type', $this->transfer_type),
             'status' => $this->status,
             'status_label' => \translate('transaction.status', $this->status),
+            'account_id' => $this->account_id,
             'account' => $this->whenLoaded('account', function () {
                 return new \App\Components\Account\Formatter($this->account);
             }),

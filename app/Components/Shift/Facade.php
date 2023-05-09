@@ -40,6 +40,13 @@ class Facade extends BaseComponentFacade
         return new Formatter($shift->load($relations));
     }
 
+    public function closeShift(string $shiftId, User $user, array $relations = []): Formatter
+    {
+        $shift = $this->getRepository()->find($shiftId);
+        $this->getService()->closeShift($shift, $user);
+        return new Formatter($shift->load($relations));
+    }
+
     public function getShiftTransactions(string $shiftId, User $user): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $shift = $this->getRepository()->find($shiftId);

@@ -62,6 +62,15 @@ class ShiftController extends AdminController
         return $this->getFacade()->closeActiveShift($request->user(), $this->getSingleRecordRelations());
     }
 
+    public function close(Request $request, string $id): JsonResource
+    {
+        if (null === $request->user()) {
+            throw new \LogicException('user_is_not_defined');
+        }
+
+        return $this->getFacade()->closeShift($id, $request->user(), $this->getSingleRecordRelations());
+    }
+
     public function getTransactions(Request $request, string $id): JsonResource
     {
         return $this->getFacade()->getShiftTransactions($id, $request->user());

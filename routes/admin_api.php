@@ -199,9 +199,9 @@ Route::namedGroup('shifts',ManagerApi\ShiftController::class, static function ()
     Route::namedRoute('store', 'post', '/', [ShiftsPermission::MANAGE, ShiftsPermission::CREATE]);
     Route::namedRoute('getActiveShift', 'get', 'my', [ShiftsPermission::MANAGE, ShiftsPermission::READ_OWN]);
     Route::namedRoute('closeActiveShift', 'post', 'my', [ShiftsPermission::MANAGE, ShiftsPermission::READ_OWN]);
+    Route::namedRoute('close', 'post', '{id:uuid}/close', [ShiftsPermission::MANAGE, ShiftsPermission::UPDATE]);
     Route::namedRoute('show', 'get', '{id:uuid}', [ShiftsPermission::MANAGE, ShiftsPermission::READ, ShiftsPermission::READ_OWN]);
     Route::namedRoute('getTransactions', 'get', '{id:uuid}/transactions', [ShiftsPermission::MANAGE, ShiftsPermission::READ, ShiftsPermission::READ_OWN]);
-    Route::namedRoute('close', 'post', '{id:uuid}/close', [ShiftsPermission::MANAGE, ShiftsPermission::UPDATE]);
 });
 
 // STUDENTS
@@ -246,9 +246,9 @@ Route::namedGroup('transactions',ManagerApi\TransactionController::class, static
     Route::namedRoute('search', 'get', '/', [TransactionsPermission::MANAGE, TransactionsPermission::READ]);
     Route::namedRoute('store', 'post', '/', [TransactionsPermission::MANAGE, TransactionsPermission::CREATE]);
     Route::namedRoute('show', 'get', '{id:uuid}', [TransactionsPermission::MANAGE, TransactionsPermission::READ]);
-    Route::namedRoute('update', 'put', '{id:uuid}', [TransactionsPermission::MANAGE, TransactionsPermission::UPDATE]);
-    Route::namedRoute('destroy', 'delete', '{id:uuid}', [TransactionsPermission::MANAGE, TransactionsPermission::DELETE]);
-    Route::namedRoute('restore', 'post', '{id:uuid}/restore', [TransactionsPermission::MANAGE, TransactionsPermission::RESTORE]);
+    //Route::namedRoute('update', 'put', '{id:uuid}', [TransactionsPermission::MANAGE, TransactionsPermission::UPDATE]);
+    //Route::namedRoute('destroy', 'delete', '{id:uuid}', [TransactionsPermission::MANAGE, TransactionsPermission::DELETE]);
+    //Route::namedRoute('restore', 'post', '{id:uuid}/restore', [TransactionsPermission::MANAGE, TransactionsPermission::RESTORE]);
 });
 
 // USERS

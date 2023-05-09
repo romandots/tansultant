@@ -87,13 +87,8 @@ class Service extends BaseComponentService
         return $user->active_shift()->with('branch')->first();
     }
 
-    public function closeUserActiveShift(\App\Models\User $user): Shift
+    public function closeShift(Shift $shift, \App\Models\User $user): void
     {
-        $shift = $user->active_shift;
-        if (null === $shift) {
-            throw new Exceptions\UserHasNoActiveShift($user);
-        }
-
         try {
             \DB::transaction(function () use ($user, $shift) {
                 $this->getRepository()->updateTotalIncomeAndClose($shift);
@@ -107,9 +102,20 @@ class Service extends BaseComponentService
 
         try {
             $this->history->logClose($user, $shift);
-        } catch (\Throwable) { }
+        } catch (\Throwable) {
+        }
 
         $this->dispatchClosedEvent($shift);
+    }
+
+    public function closeUserActiveShift(\App\Models\User $user): Shift
+    {
+        $shift = $user->active_shift;
+        if (null === $shift) {
+            throw new Exceptions\UserHasNoActiveShift($user);
+        }
+
+        $this->closeShift($shift, $user);
 
         return $shift;
     }
