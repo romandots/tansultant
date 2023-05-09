@@ -11,6 +11,7 @@ use App\Models\Enum\Gender;
 use App\Models\Instructor;
 use App\Models\Person;
 use App\Models\Student;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -55,6 +56,7 @@ class Repository extends \App\Common\BaseComponentRepository
         $students = Student::TABLE;
         $instructors = Instructor::TABLE;
         $customers = Customer::TABLE;
+        $users = User::TABLE;
 
         $sql = <<<SQL
 WITH search_results AS (
@@ -68,12 +70,14 @@ WITH search_results AS (
         p.note,
         c.id AS customer_id,
         s.id AS student_id,
-        i.id AS instructor_id
+        i.id AS instructor_id,
+        u.id AS user_id
     FROM
         {$people} p
             LEFT JOIN {$customers} c ON p.id = c.person_id AND c.deleted_at IS NULL
             LEFT JOIN {$students} s ON p.id = s.person_id AND s.deleted_at IS NULL
             LEFT JOIN {$instructors} i ON p.id = i.person_id AND i.deleted_at IS NULL
+            LEFT JOIN {$users} u ON p.id = u.person_id AND u.deleted_at IS NULL
     WHERE
           p.deleted_at IS NULL AND
        (p.last_name ILIKE '%' || ? || '%'
