@@ -8,6 +8,7 @@ use App\Common\Contracts;
 use App\Components\Loader;
 use App\Models\Enum\ScheduleCycle;
 use App\Models\Schedule;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -76,7 +77,7 @@ class Service extends \App\Common\BaseComponentService
         parent::update($record, $dto);
     }
 
-    protected function generateLessons(\Illuminate\Support\Carbon $date): void
+    protected function generateLessons(Carbon $date): void
     {
         Loader::lessons()->generateLessonsOnDate($date);
     }
