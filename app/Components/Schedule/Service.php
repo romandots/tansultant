@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Components\Schedule;
 
 use App\Common\Contracts;
+use App\Components\Loader;
 use App\Models\Enum\ScheduleCycle;
 use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Model;
@@ -34,8 +35,10 @@ class Service extends \App\Common\BaseComponentService
         if ($dto->cycle === ScheduleCycle::EVERY_WEEK) {
             foreach ($dto->weekdays as $weekday) {
                 $dto->weekday = $weekday;
-                $lastOne = parent::create($dto);
+                $lastOne = $this->_createOne($dto);
             }
+        } else {
+            $lastOne = $this->_createOne($dto);
         }
 
         if (!isset($lastOne)) {
@@ -43,6 +46,17 @@ class Service extends \App\Common\BaseComponentService
         }
 
         return $lastOne;
+    }
+
+    protected function _createOne($dto): Schedule
+    {
+        /** @var Schedule $record */
+        $record = parent::create($dto);
+
+        // Regenerate lessons for starting date of newly created schedule
+        $this->generateLessons($record->from_date);
+
+        return $record;
     }
 
     /**
@@ -56,8 +70,14 @@ class Service extends \App\Common\BaseComponentService
             throw new \Exception('Schedule was not created. Check arguments.');
         }
 
+        // Regenerate lessons for starting date of updated schedule
+        $this->generateLessons($record->refresh()->from_date);
+
         parent::update($record, $dto);
     }
 
-
+    protected function generateLessons(\Illuminate\Support\Carbon $date): void
+    {
+        Loader::lessons()->generateLessonsOnDate($date);
+    }
 }
