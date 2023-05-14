@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @package App\Models
@@ -20,6 +22,7 @@ use Illuminate\Support\Collection;
  * @property string $branch_id
  * @property string $instructor_id
  * @property string|null $transaction_id
+ * @property string|null $report_link
  * @property int $lessons_count
  * @property \Carbon\Carbon $period_from
  * @property \Carbon\Carbon $period_to
@@ -31,12 +34,14 @@ use Illuminate\Support\Collection;
  * @property-read \Illuminate\Database\Eloquent\Relations\BelongsToMany|Collection|Lesson[]|null $lessons
  * @mixin \Eloquent
  */
-class Payout extends Model
+class Payout extends Model implements HasMedia
 {
     use UsesUuid;
     use HasFactory;
+    use InteractsWithMedia;
 
     public const TABLE = 'payouts';
+    public const MEDIA_COLLECTION = 'documents';
 
     protected $table = self::TABLE;
 
@@ -72,5 +77,10 @@ class Payout extends Model
             ->withPivot([
                 'amount', 'equation', 'formula_id',
             ]);
+    }
+
+    public function getReportLinkAttribute(): ?string
+    {
+        return $this->getMedia(self::MEDIA_COLLECTION)->first()?->getUrl();
     }
 }

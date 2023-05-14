@@ -8,6 +8,7 @@ use App\Common\BaseComponentService;
 use App\Common\Contracts;
 use App\Components\Loader;
 use App\Exceptions\InvalidStatusException;
+use App\Jobs\GeneratePayoutReportJob;
 use App\Models\Account;
 use App\Models\Enum\LessonStatus;
 use App\Models\Enum\PayoutStatus;
@@ -168,6 +169,8 @@ class Service extends BaseComponentService
             DB::rollBack();
             throw $e;
         }
+
+        $this->runGenerateReportBackgroundJob($payout, $user);
     }
 
     public function setPrepared(Payout $payout, User $user): void
@@ -177,7 +180,7 @@ class Service extends BaseComponentService
         $this->debug('Payout ' . (string)$payout . ' status is set to PREPARED');
     }
 
-    public function setPaid(Payout $payout, User $user): void
+    protected function setPaid(Payout $payout, User $user): void
     {
         $this->getRepository()->setPaid($payout);
         $this->history->logStatus($user, $payout, PayoutStatus::PAID->value);
@@ -243,5 +246,17 @@ class Service extends BaseComponentService
         $this->getRepository()->updateTotalAmount($payout);
         $this->history->logDetach($user, $payout, $lesson);
         $this->debug('Lesson ' . (string)$lesson . ' is detached from payment #' . $payout->id);
+    }
+
+    protected function runGenerateReportBackgroundJob(Payout $payout, User $user): void
+    {
+        $job = new GeneratePayoutReportJob($payout, $user);
+        dispatch($job);
+    }
+
+    public function generatePayoutReport(\App\Models\Payout $payout): void
+    {
+        $stream = Loader::pdfGenerator()->generatePdf('payouts.report', compact('payout'));
+        $this->getRepository()->addDocument($payout, $stream,Payout::MEDIA_COLLECTION);
     }
 }

@@ -37,6 +37,7 @@ class Formatter extends BaseFormatter
                 return \App\Components\Lesson\Formatter::collection($this->lessons);
             }),
             'lessons_count' => $this->lessons_count,
+            'report_link' => $this->report_link,
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
         ];

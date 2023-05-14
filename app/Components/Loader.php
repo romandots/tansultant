@@ -4,6 +4,7 @@ namespace App\Components;
 
 use App\Common\Locator;
 use App\Services\Notification\Facade as NotificationFacade;
+use App\Services\PdfGenerator;
 use App\Services\SearchService;
 
 class Loader extends Locator
@@ -153,5 +154,10 @@ class Loader extends Locator
     public static function visits(): Visit\Facade
     {
         return self::get(Visit\Facade::class);
+    }
+
+    public static function pdfGenerator(): PdfGenerator
+    {
+        return self::get(PdfGenerator::class);
     }
 }

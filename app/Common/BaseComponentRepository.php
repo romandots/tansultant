@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
 use Ramsey\Uuid\Uuid;
+use Spatie\MediaLibrary\HasMedia;
 
 abstract class BaseComponentRepository extends BaseRepository
 {
@@ -270,5 +271,13 @@ abstract class BaseComponentRepository extends BaseRepository
     {
         $this->setStatus($record, $status, $datesToUpdate);
         $this->save($record);
+    }
+
+    public function addDocument(HasMedia $record, string $stream, string $collection = 'default'): void
+    {
+        $record
+            ->clearMediaCollection($collection)
+            ->addMediaFromStream($stream)
+            ->toMediaCollection($collection);
     }
 }

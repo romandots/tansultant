@@ -43,4 +43,9 @@ class Facade extends BaseComponentFacade
     {
         $this->getService()->checkoutBatch($getDto);
     }
+
+    public function generatePayoutReport(\App\Models\Payout $payout): void
+    {
+        $this->getService()->generatePayoutReport($payout);
+    }
 }
