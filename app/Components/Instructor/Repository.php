@@ -59,7 +59,7 @@ SELECT DISTINCT instructor_id AS id
 FROM {$table}
 WHERE {$table}.branch_id = ? 
     AND {$table}.starts_at >= ?
-    AND {$table}.starts_at <= ?
+    AND {$table}.starts_at < ?
     AND {$table}.status = ?
     AND {$table}.id NOT IN (
         SELECT lesson_id FROM payout_has_lessons
@@ -70,7 +70,7 @@ SQL;
         $results = \DB::select($sql, [
             $branchId,
             $from,
-            $to->setTime(23, 59, 59),
+            $to,
             LessonStatus::CLOSED->value,
         ]);
 

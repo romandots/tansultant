@@ -110,15 +110,27 @@ class Repository extends \App\Common\BaseComponentRepository
         }
 
         if (null !== $filter->course_id) {
-            $query = $query->where('course_id', $filter->course_id);
+            $query->where('course_id', $filter->course_id);
         }
 
         if (null !== $filter->branch_id) {
-            $query = $query->where('branch_id', $filter->branch_id);
+            $query->where('branch_id', $filter->branch_id);
         }
 
         if (null !== $filter->classroom_id) {
-            $query = $query->where('classroom_id', $filter->classroom_id);
+            $query->where('classroom_id', $filter->classroom_id);
+        }
+
+        if (null !== $filter->instructor_id) {
+            $query->where('instructor_id', $filter->instructor_id);
+        }
+
+        if (null !== $filter->starts_from) {
+            $query->where('starts_at', '>=', $filter->starts_from);
+        }
+
+        if (null !== $filter->starts_to) {
+            $query->where('starts_at', '<=', $filter->starts_to);
         }
 
         return $query

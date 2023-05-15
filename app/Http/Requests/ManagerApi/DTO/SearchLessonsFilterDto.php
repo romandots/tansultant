@@ -21,4 +21,9 @@ class SearchLessonsFilterDto extends SearchFilterDto
     public ?string $classroom_id = null;
 
     public ?string $course_id = null;
+
+    public ?string $instructor_id = null;
+
+    public ?\Carbon\Carbon $starts_from = null;
+    public ?\Carbon\Carbon $starts_to = null;
 }
