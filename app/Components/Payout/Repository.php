@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Components\Payout;
 
+use App\Common\DTO\SearchFilterDto;
 use App\Components\Loader;
+use App\Http\Requests\ManagerApi\DTO\SearchPayoutsFilterDto;
 use App\Models\Enum\PayoutStatus;
 use App\Models\Formula;
 use App\Models\Lesson;
@@ -51,6 +53,21 @@ class Repository extends \App\Common\BaseComponentRepository
         $record->period_from = $dto->period_from;
         $record->period_to = $dto->period_to;
     }
+
+    public function getFilterQuery(
+        SearchFilterDto $filter,
+        array $relations = [],
+        array $countRelations = []
+    ): \Illuminate\Database\Eloquent\Builder {
+        assert($filter instanceof SearchPayoutsFilterDto);
+        $query = parent::getFilterQuery($filter, $relations, $countRelations);
+        if ($filter->ids) {
+            $query->whereIn('id', $filter->ids);
+        }
+
+        return $query;
+    }
+
 
     public function setPrepared(Payout $payout): void
     {

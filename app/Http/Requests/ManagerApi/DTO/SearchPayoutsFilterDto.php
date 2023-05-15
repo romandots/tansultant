@@ -12,4 +12,8 @@ use App\Common\DTO\SearchFilterDto;
 
 class SearchPayoutsFilterDto extends SearchFilterDto
 {
+    /**
+     * @var string[]|null
+     */
+    public ?array $ids = null;
 }
