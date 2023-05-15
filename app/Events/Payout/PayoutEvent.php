@@ -22,4 +22,9 @@ class PayoutEvent extends \App\Events\BaseEvent
     {
         PayoutCheckedOutEvent::dispatch($payout, $user);
     }
+
+    public static function reportGenerated(Payout $payout, User $user): void
+    {
+        PayoutReportGeneratedEvent::dispatch($payout, $user);
+    }
 }

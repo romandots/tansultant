@@ -44,6 +44,7 @@ class Payout extends Model implements HasMedia
     public const MEDIA_COLLECTION = 'documents';
 
     protected $table = self::TABLE;
+    public $defaultMorphKeyType = 'uuid';
 
     protected $casts = [
         'period_from' => 'date',

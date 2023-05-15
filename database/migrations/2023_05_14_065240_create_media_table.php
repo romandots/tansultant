@@ -8,6 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
+        \Illuminate\Database\Schema\Builder::$defaultMorphKeyType = 'uuid';
         Schema::create('media', function (Blueprint $table) {
             $table->bigIncrements('id');
 
@@ -28,5 +29,10 @@ return new class extends Migration
 
             $table->nullableTimestamps();
         });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('media');
     }
 };

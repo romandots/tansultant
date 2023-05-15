@@ -7,6 +7,7 @@ namespace App\Components\Payout;
 use App\Common\BaseComponentService;
 use App\Common\Contracts;
 use App\Components\Loader;
+use App\Events\Payout\PayoutEvent;
 use App\Exceptions\InvalidStatusException;
 use App\Jobs\GeneratePayoutReportJob;
 use App\Models\Account;
@@ -171,6 +172,18 @@ class Service extends BaseComponentService
         }
 
         $this->runGenerateReportBackgroundJob($payout, $user);
+        $this->dispatchCheckedOutEvent($payout, $user);
+    }
+
+    protected function runGenerateReportBackgroundJob(Payout $payout, User $user): void
+    {
+        $job = new GeneratePayoutReportJob($payout, $user);
+        dispatch($job);
+    }
+
+    protected function dispatchCheckedOutEvent(Payout $payout, User $user): void
+    {
+        PayoutEvent::checkedOut($payout, $user);
     }
 
     public function setPrepared(Payout $payout, User $user): void
@@ -246,12 +259,6 @@ class Service extends BaseComponentService
         $this->getRepository()->updateTotalAmount($payout);
         $this->history->logDetach($user, $payout, $lesson);
         $this->debug('Lesson ' . (string)$lesson . ' is detached from payment #' . $payout->id);
-    }
-
-    protected function runGenerateReportBackgroundJob(Payout $payout, User $user): void
-    {
-        $job = new GeneratePayoutReportJob($payout, $user);
-        dispatch($job);
     }
 
     public function generatePayoutReport(\App\Models\Payout $payout): void

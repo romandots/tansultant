@@ -27,6 +27,6 @@ class GeneratePayoutReportJob implements ShouldQueue, ShouldBeUnique
     {
         $this->debug('Handling GeneratePayoutReportJob job for payout #' . $this->payout->id);
         Loader::payouts()->generatePayoutReport($this->payout);
-        PayoutEvent::checkedOut($this->payout, $this->user);
+        PayoutEvent::reportGenerated($this->payout, $this->user);
     }
 }
