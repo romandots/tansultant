@@ -5,30 +5,18 @@ declare(strict_types=1);
 namespace App\Components\Formula;
 
 use App\Common\BaseComponentService;
+use App\Common\Contracts\DtoWithUser;
+use App\Components\Formula\Entity\ConditionedEquation;
+use App\Models\Enum\FormulaVar;
 use App\Models\Formula;
 use App\Models\Lesson;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @method Repository getRepository()
  */
 class Service extends BaseComponentService
 {
-    protected const ALIAS_MAP = [
-        'П' => 'V',
-        'А' => 'S',
-        'Б' => 'F',
-        'Ч' => 'H',
-        'М' => 'M',
-    ];
-
-    protected const DESCRIPTIONS = [
-        'V' => 'посещения урока',
-        'S' => 'активные подписки на курс',
-        'F' => 'бесплатные посещения урока',
-        'H' => 'часы',
-        'M' => 'минуты',
-    ];
-
     public function __construct()
     {
         parent::__construct(
@@ -39,53 +27,108 @@ class Service extends BaseComponentService
         );
     }
 
-    protected function prepareEquation(string $equation): string
+    /**
+     * @param Dto $dto
+     * @return Formula
+     * @throws \Throwable
+     */
+    public function create(DtoWithUser $dto): Model
     {
-        $trimmed = preg_replace('/\s/', '', mb_strtoupper(trim($equation)));
-        return str_replace(array_keys(self::ALIAS_MAP), array_values(self::ALIAS_MAP), $trimmed);
+        $this->checkFormulaEquation($dto->equation);
+        return parent::create($dto);
     }
 
-    public function describeEquation(?string $equation): string
+    /**
+     * @param Formula $record
+     * @param Dto $dto
+     * @return void
+     * @throws \Throwable
+     */
+    public function update(Model $record, DtoWithUser $dto): void
+    {
+        $this->checkFormulaEquation($dto->equation);
+        parent::update($record, $dto);
+    }
+
+
+    public function checkFormulaEquation(string $equations): void
+    {
+        $conditionedEquations = $this->getConditionedEquations($equations);
+        foreach ($conditionedEquations as $conditionedEquation) {
+            $conditionedEquation->checkEquation();
+        }
+    }
+
+    public function describeFormulaEquation(?string $equation): string
     {
         if (null === $equation) {
             return '';
         }
 
-        $equation = $this->prepareEquation($equation);
-        $equation = preg_replace('/([+\-*\/])/', " \\1 ", $equation);
+        $conditionedEquations = $this->getConditionedEquations($equation);
 
-        return str_replace(
-            array('*', ...array_keys(self::DESCRIPTIONS)),
-            array('×', ...array_values(self::DESCRIPTIONS)),
-            $equation
-        );
+        if (count($conditionedEquations) === 1 && empty($conditionedEquations[0]->condition)) {
+            return $conditionedEquations[0]->describeEquation();
+        }
+
+        $descriptions = [];
+        foreach ($conditionedEquations as $conditionedEquation) {
+            $descriptions[] = (
+                $conditionedEquation->condition
+                    ? 'Если ' . $conditionedEquation->describeCondition() . ', то '
+                    : 'Иначе '
+                ) . $conditionedEquation->describeEquation();
+        }
+        return implode("; \n", $descriptions);
     }
 
     public function calculateLessonPayoutAmount(Lesson $lesson, Formula $formula): float
     {
-        $substitutions = $this->getSubstitutionsForLesson($lesson);
-        $equation = str_replace(
-            \array_keys($substitutions),
-            \array_values($substitutions),
-            $this->prepareEquation($formula->equation)
-        );
-
-        return round($this->calculate($equation), 2);
+        $values = $this->getEquationValuesForLesson($lesson);
+        $conditionedEquations = $this->getConditionedEquations($formula->equation, $values);
+        $result = $this->evaluateAppropriateEquation($conditionedEquations);
+        return round($result, 2);
     }
 
-    protected function calculate(string $equation): float
+    /**
+     * @param string $equationsWithConditionsString
+     * @param array $values
+     * @return ConditionedEquation[]
+     */
+    protected function getConditionedEquations(string $equationsWithConditionsString, array $values = []): array
     {
-        return (float)eval("return {$equation};");
+        $sets = explode('|', $equationsWithConditionsString);
+        return array_map(
+            static fn (string $conditionedEquation) => ConditionedEquation::create($conditionedEquation, $values), $sets
+        );
     }
 
-    protected function getSubstitutionsForLesson(Lesson $lesson): array
+    /**
+     * @param ConditionedEquation[] $formulaEquations
+     * @return float
+     */
+    protected function evaluateAppropriateEquation(array $formulaEquations): float
+    {
+        foreach ($formulaEquations as $formulaEquation) {
+            if ($formulaEquation->evaluateCondition()) {
+                return $formulaEquation->evaluateEquation();
+            }
+        }
+
+        return 0;
+    }
+
+    protected function getEquationValuesForLesson(Lesson $lesson): array
     {
         return [
-            'V' => (int)$lesson->visits_count,
-            'S' => (int)$lesson->course->subscriptions_count,
-            'F' => (int)0,
-            'H' => (int)$lesson->getPeriodInHours(),
-            'M' => (int)$lesson->getPeriodInMinutes(),
+            FormulaVar::VISIT->value => (int)$lesson->visits_count,
+            FormulaVar::FREE_VISIT->value => (int)0,
+            FormulaVar::SUBSCRIPTION->value => (int)$lesson->course->subscriptions_count,
+            FormulaVar::ACTIVE_SUBSCRIPTION->value => (int)$lesson->course->active_subscriptions_count,
+            FormulaVar::STUDENT->value => (int)$lesson->getStudentsCount(),
+            FormulaVar::ACTIVE_STUDENT->value => (int)$lesson->getActiveStudentsCount(),
+            FormulaVar::HOUR->value => (float)$lesson->getPeriodInHours(),
+            FormulaVar::MINUTE->value => (int)$lesson->getPeriodInMinutes(),
         ];
     }
 }

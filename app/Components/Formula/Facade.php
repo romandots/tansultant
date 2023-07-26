@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Components\Formula;
 
 use App\Common\BaseComponentFacade;
+use App\Models\Formula;
 
 class Facade extends BaseComponentFacade
 {
@@ -13,12 +14,12 @@ class Facade extends BaseComponentFacade
         parent::__construct(Service::class);
     }
 
-    public function describeEquation(?string $equation): string
+    public function describeFormulaEquation(?string $formulaEquation): string
     {
-        return $this->getService()->describeEquation($equation);
+        return $this->getService()->describeFormulaEquation($formulaEquation);
     }
 
-    public function calculateLessonPayoutAmount(\App\Models\Lesson $lesson, \App\Models\Formula $formula): int
+    public function calculateLessonPayoutAmount(\App\Models\Lesson $lesson, Formula $formula): int
     {
         return (int)$this->getService()->calculateLessonPayoutAmount($lesson, $formula);
     }

@@ -12,12 +12,14 @@ namespace App\Models;
 
 use App\Models\Enum\LessonStatus;
 use App\Models\Enum\LessonType;
+use App\Models\Enum\StudentStatus;
 use App\Models\Enum\VisitEventType;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 /**
  * Class Lesson
@@ -184,13 +186,35 @@ class Lesson extends Model
         return $this->belongsToMany(Payout::class, 'payout_has_lessons');
     }
 
-    public function getPeriodInHours(): int
+    public function getPeriodInHours(): float
     {
-        return $this->ends_at->diffInHours($this->starts_at);
+        return round($this->ends_at->diffInMinutes($this->starts_at) / 60, 1);
     }
 
     public function getPeriodInMinutes(): int
     {
         return $this->ends_at->diffInMinutes($this->starts_at);
+    }
+
+    /**
+     * @return Collection|Student[]
+     */
+    public function getStudents(): Collection
+    {
+        return $this->visits
+            ->filter(fn (Visit $visit) => $visit->student_id !== null)
+            ->map(fn (Visit $visit) => $visit->student);
+    }
+
+    public function getStudentsCount(): int
+    {
+        return $this->getStudents()->count();
+    }
+
+    public function getActiveStudentsCount(): int
+    {
+        return $this->getStudents()
+            ->filter(fn (Student $student) => $student->status === StudentStatus::ACTIVE)
+            ->count();
     }
 }

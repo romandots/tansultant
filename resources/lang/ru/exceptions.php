@@ -42,4 +42,6 @@ return [
     'no_holds_available' => 'В подписке нет доступных приостановок',
     'account_cannot_be_selected' => 'Невозможно выбрать счёт',
     'shift_does_not_belong_to_user' => 'Смена не принадлежит пользователю',
+    'invalid_formula_equation' => 'Ошибка в формуле',
+    'invalid_variable_in_formula_equation' => 'Ошибка в формуле: неизвестная переменная :invalid_variable',
 ];

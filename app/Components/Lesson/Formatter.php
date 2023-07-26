@@ -65,7 +65,7 @@ class Formatter extends BaseFormatter
                     'formula_id' => $this->pivot?->formula_id,
                     'amount' => $this->pivot?->amount,
                     'equation' => $this->pivot?->equation,
-                    'equation_description' => Loader::formulas()->describeEquation($this->pivot?->equation),
+                    'equation_description' => Loader::formulas()->describeFormulaEquation($this->pivot?->equation),
                 ]
                 : [],
         ];

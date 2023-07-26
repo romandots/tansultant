@@ -41,7 +41,7 @@ class StoreFormulaRequest extends StoreRequest
         $dto = new Dto($this->user());
 
         $dto->name = $validated['name'];
-        $dto->equation = $validated['equation'];
+        $dto->equation = mb_strtoupper($validated['equation']);
 
         return $dto;
     }

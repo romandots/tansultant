@@ -22,7 +22,7 @@ class Formatter extends BaseFormatter
             'id' => $this->id,
             'name' => $this->name,
             'equation' => $this->equation,
-            'equation_description' => Loader::formulas()->describeEquation($this->equation),
+            'equation_description' => Loader::formulas()->describeFormulaEquation($this->equation),
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
             'deleted_at' => $this->deleted_at?->toDateTimeString(),
