@@ -21,6 +21,7 @@ class Formatter extends BaseFormatter
             'id' => $this->id,
             'name' => $this->name,
             'price' => $this->price,
+            'special_price' => $this->special_price,
         ];
     }
 }
