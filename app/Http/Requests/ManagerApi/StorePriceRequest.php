@@ -27,6 +27,11 @@ class StorePriceRequest extends StoreRequest
                 'int',
                 'min:0',
             ],
+            'special_price' => [
+                'nullable',
+                'int',
+                'min:0',
+            ],
         ]);
     }
 
@@ -37,6 +42,7 @@ class StorePriceRequest extends StoreRequest
 
         $dto->name = $validated['name'];
         $dto->price = $validated['price'];
+        $dto->special_price = $validated['special_price'];
 
         return $dto;
     }

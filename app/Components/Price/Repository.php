@@ -41,5 +41,6 @@ class Repository extends \App\Common\BaseComponentRepository
     {
         $record->name = $dto->name;
         $record->price = $dto->price;
+        $record->special_price = $dto->special_price;
     }
 }
