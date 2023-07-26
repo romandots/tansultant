@@ -2,6 +2,7 @@
 
 namespace App\Services\Price\Policy;
 
+use App\Models\Enum\StudentStatus;
 use App\Models\Lesson;
 use App\Models\Student;
 
@@ -18,7 +19,10 @@ class VisitPricePolicy implements Contract\PricePolicyInterface
 
     public function getPrice(): float
     {
-        $lessonVisitPrice = $this->lesson?->course?->price?->price;
+        $lessonVisitPrice = match ($this->student->status) {
+            StudentStatus::ACTIVE => $this->lesson?->course?->price?->special_price ?? $this->lesson?->course?->price?->price,
+            default => $this->lesson?->course?->price?->price,
+        };
 
         if (null === $lessonVisitPrice) {
             return 0;
