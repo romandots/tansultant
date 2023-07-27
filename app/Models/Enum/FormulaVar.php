@@ -13,6 +13,21 @@ enum FormulaVar: string
     case HOUR = 'Ч';
     case MINUTE = 'М';
 
+    public function getDescription(): string
+    {
+        return match ($this) {
+            self::ALL_VISITS => 'Все посещения',
+            self::VISITS_BY_SUBSCRIPTION => 'Посещения по подписке',
+            self::VISITS_BY_PAYMENT => 'Посещения без подписки',
+            self::ACTIVE_STUDENTS => '«Активные» студенты',
+            self::INACTIVE_STUDENTS => 'Не «Активные» студенты',
+            self::ACTIVE_SUBSCRIPTIONS => '«Активные» подписки',
+            self::HOUR => 'Часы',
+            self::MINUTE => 'Минуты',
+            default => '',
+        };
+    }
+
     public static function names(): array
     {
         return array_map(static fn(self $case) => $case->name, self::cases());
@@ -26,19 +41,5 @@ enum FormulaVar: string
     public static function descriptions(): array
     {
         return array_map(static fn (self $case) => $case->getDescription(), self::cases());
-    }
-
-    public function getDescription(): string
-    {
-        return match ($this) {
-            self::ALL_VISITS => 'Все студенты',
-            self::VISITS_BY_SUBSCRIPTION => 'Студенты с подпиской',
-            self::VISITS_BY_PAYMENT => 'Студенты без подписки',
-            self::ACTIVE_STUDENTS => '«Активные» студенты',
-            self::INACTIVE_STUDENTS => 'Не «Активные» студенты',
-            self::HOUR => 'Часы',
-            self::MINUTE => 'Минуты',
-            default => '',
-        };
     }
 }
