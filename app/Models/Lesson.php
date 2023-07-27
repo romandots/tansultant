@@ -14,6 +14,7 @@ use App\Models\Enum\LessonStatus;
 use App\Models\Enum\LessonType;
 use App\Models\Enum\StudentStatus;
 use App\Models\Enum\VisitEventType;
+use App\Models\Enum\VisitPaymentType;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -196,6 +197,28 @@ class Lesson extends Model
         return $this->ends_at->diffInMinutes($this->starts_at);
     }
 
+    public function getVisitsBySubscription(): Collection
+    {
+        return $this->visits
+            ->filter(fn (Visit $visit) => $visit->payment_type === VisitPaymentType::SUBSCRIPTION);
+    }
+
+    public function getVisitsByPayment(): Collection
+    {
+        return $this->visits
+            ->filter(fn (Visit $visit) => $visit->payment_type === VisitPaymentType::PAYMENT);
+    }
+
+    public function getVisitsBySubscriptionCount(): int
+    {
+        return $this->getVisitsBySubscription()->count();
+    }
+
+    public function getVisitsByPaymentCount(): int
+    {
+        return $this->getVisitsByPayment()->count();
+    }
+
     /**
      * @return Collection|Student[]
      */
@@ -206,15 +229,17 @@ class Lesson extends Model
             ->map(fn (Visit $visit) => $visit->student);
     }
 
-    public function getStudentsCount(): int
-    {
-        return $this->getStudents()->count();
-    }
-
     public function getActiveStudentsCount(): int
     {
         return $this->getStudents()
             ->filter(fn (Student $student) => $student->status === StudentStatus::ACTIVE)
+            ->count();
+    }
+
+    public function getInactiveStudentsCount(): int
+    {
+        return $this->getStudents()
+            ->filter(fn (Student $student) => $student->status !== StudentStatus::ACTIVE)
             ->count();
     }
 }

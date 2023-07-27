@@ -121,12 +121,12 @@ class Service extends BaseComponentService
     protected function getEquationValuesForLesson(Lesson $lesson): array
     {
         return [
-            FormulaVar::VISIT->value => (int)$lesson->visits_count,
-            FormulaVar::FREE_VISIT->value => (int)0,
-            FormulaVar::SUBSCRIPTION->value => (int)$lesson->course->subscriptions_count,
-            FormulaVar::ACTIVE_SUBSCRIPTION->value => (int)$lesson->course->active_subscriptions_count,
-            FormulaVar::STUDENT->value => (int)$lesson->getStudentsCount(),
-            FormulaVar::ACTIVE_STUDENT->value => (int)$lesson->getActiveStudentsCount(),
+            FormulaVar::ALL_VISITS->value => (int)$lesson->visits_count,
+            FormulaVar::VISITS_BY_SUBSCRIPTION->value => (int)$lesson->getVisitsBySubscriptionCount(),
+            FormulaVar::VISITS_BY_PAYMENT->value => (int)$lesson->getVisitsByPaymentCount(),
+            FormulaVar::ACTIVE_STUDENTS->value => (int)$lesson->getActiveStudentsCount(),
+            FormulaVar::INACTIVE_STUDENTS->value => (int)$lesson->getInactiveStudentsCount(),
+            FormulaVar::ACTIVE_SUBSCRIPTIONS->value => (int)$lesson->course->active_subscriptions_count,
             FormulaVar::HOUR->value => (float)$lesson->getPeriodInHours(),
             FormulaVar::MINUTE->value => (int)$lesson->getPeriodInMinutes(),
         ];

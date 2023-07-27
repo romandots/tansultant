@@ -4,13 +4,12 @@ namespace App\Models\Enum;
 
 enum FormulaVar: string
 {
-    case STUDENT = 'С';
-    case ACTIVE_STUDENT = 'АС';
-    case SUBSCRIPTION = 'П';
-    case ACTIVE_SUBSCRIPTION = 'АП';
-    case VISIT = 'ВП';
-    case PAID_VISIT = 'ПП';
-    case FREE_VISIT = 'БП';
+    case ALL_VISITS = 'ВП';
+    case VISITS_BY_SUBSCRIPTION = 'ПП';
+    case VISITS_BY_PAYMENT = 'БП';
+    case ACTIVE_STUDENTS = 'АС';
+    case INACTIVE_STUDENTS = 'НС';
+    case ACTIVE_SUBSCRIPTIONS = 'АП';
     case HOUR = 'Ч';
     case MINUTE = 'М';
 
@@ -32,13 +31,11 @@ enum FormulaVar: string
     public function getDescription(): string
     {
         return match ($this) {
-            self::STUDENT => 'Студенты',
-            self::ACTIVE_STUDENT => 'Активные студенты',
-            self::SUBSCRIPTION => 'Подписки',
-            self::ACTIVE_SUBSCRIPTION => 'Активные подписки',
-            self::VISIT => 'Все посещения',
-            self::PAID_VISIT => 'Платные посещения',
-            self::FREE_VISIT => 'Бесплатные посещения',
+            self::ALL_VISITS => 'Все студенты',
+            self::VISITS_BY_SUBSCRIPTION => 'Студенты с подпиской',
+            self::VISITS_BY_PAYMENT => 'Студенты без подписки',
+            self::ACTIVE_STUDENTS => '«Активные» студенты',
+            self::INACTIVE_STUDENTS => 'Не «Активные» студенты',
             self::HOUR => 'Часы',
             self::MINUTE => 'Минуты',
             default => '',
