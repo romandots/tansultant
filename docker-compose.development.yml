@@ -65,6 +65,7 @@ services:
       POSTGRES_PASSWORD: test
     volumes:
       - ../data/test:/var/lib/postgresql/data
+      - ./docker/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
   db:
     image: postgres:14.2
     ports:
@@ -75,6 +76,7 @@ services:
       POSTGRES_PASSWORD: tansultant
     volumes:
       - ../data/real:/var/lib/postgresql/data
+      - ./docker/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
   redis:
     image: "redis:alpine"
     expose:
