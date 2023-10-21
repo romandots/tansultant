@@ -57,7 +57,9 @@ class Service extends \App\Common\BaseComponentService
         $this->debug('Fired UserCreatedEvent for user #' . $record->id);
 
         // Send password
-        $this->sendUserHisPassword($record, $dto->password);
+        if ($record->person) {
+            $this->sendUserHisPassword($record, $dto->password);
+        }
 
         return $record;
     }

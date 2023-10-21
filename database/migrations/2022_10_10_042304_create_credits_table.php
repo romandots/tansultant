@@ -97,7 +97,7 @@ return new class extends Migration
         });
 
         Schema::table('credits', static function (Blueprint $table) {
-            $table->dropForeign('credits_transactions_id_foreign');
+            $table->dropForeign('credits_transaction_id_foreign');
         });
 
         Schema::table('payments', static function (Blueprint $table) {

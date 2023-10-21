@@ -43,14 +43,15 @@ RUN chmod 777 /tmp/entrypoint.sh
 
 RUN mv /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
     && sed -i 's|;error_log = .*|error_log = /proc/self/fd/2|' /usr/local/etc/php/php.ini \
-    && sed -i 's|;error_log = .*|error_log = /proc/self/fd/2|' /usr/local/etc/php-fpm.conf
+    && sed -i 's|;error_log = .*|error_log = /proc/self/fd/2|' /usr/local/etc/php-fpm.conf \
+    && echo "pm.max_children = 20" >> /usr/local/etc/php-fpm.d/www.conf
 
 ADD ./ /app
 WORKDIR /app
 
 # Install Composer and dependencies
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 ENV PATH="/usr/local/bin:$PATH"
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer install
 
 # Export last git commit as patch version
