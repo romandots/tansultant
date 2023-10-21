@@ -24,13 +24,15 @@ services:
     ports:
       - "8080:80"
       - "6001:6001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./:/app
-      - /app/vendor
       - ./docker/logs/laravel:/app/storage/logs
     env_file:
-      - ./docker/.env.example
+      - ./docker/.env
     environment:
+      PHP_IDE_CONFIG: "serverName=docker-server"
       DB_HOST: db
       DB_PORT: 5432
       DB_DATABASE: tansultant
@@ -43,15 +45,26 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: null
       REDIS_PORT: 6379
+    networks:
+      - tansultant_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 1m30s
+      timeout: 10s
   scheduler:
     image: api
     volumes:
       - ./:/app
-      - /app/vendor
       - ./docker/logs/laravel:/app/storage/logs
     entrypoint: sh -c "while true; do php artisan schedule:run --verbose & sleep 60; done"
     depends_on:
       - api
+    networks:
+      - tansultant_network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      interval: 1m30s
+      timeout: 10s
   db_test:
     image: postgres:14.2
     ports:
@@ -60,8 +73,12 @@ services:
       POSTGRES_DB: test
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
-    volumes:
-      - ../data/test:/var/lib/postgresql/data
+    networks:
+      - tansultant_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test"]
+      interval: 30s
+      timeout: 10s
   db:
     image: postgres:14.2
     ports:
@@ -70,9 +87,30 @@ services:
       POSTGRES_DB: tansultant
       POSTGRES_USER: tansultant
       POSTGRES_PASSWORD: tansultant
+      PGDATA: /var/lib/postgresql/data/production/
     volumes:
-      - ../data/real:/var/lib/postgresql/data
+      - database_data:/var/lib/postgresql/data
+      - ./docker/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+    networks:
+      - tansultant_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tansultant"]
+      interval: 30s
+      timeout: 10s
   redis:
     image: "redis:alpine"
     expose:
       - 6379
+    networks:
+      - tansultant_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+
+volumes:
+  database_data:
+
+networks:
+  tansultant_network:
+    driver: bridge
