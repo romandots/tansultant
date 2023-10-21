@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => 'Tansultant.Manager',
+    'name' => env('APP_NAME', 'TansultantServerApi'),
 
     /*
     |--------------------------------------------------------------------------

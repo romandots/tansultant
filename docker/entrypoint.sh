@@ -5,10 +5,8 @@ touch /var/log/nginx_error.log
 chmod 777 /var/log/nginx_access.log
 chmod 777 /var/log/nginx_error.log
 chmod -R 0777 /app/storage/logs
-
-#composer install
+chmod -R 0777 /app/storage/framework
 
 service nginx start
 
-cat /tmp/.env
 supervisord -n

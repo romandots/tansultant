@@ -45,13 +45,17 @@ RUN mv /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
     && sed -i 's|;error_log = .*|error_log = /proc/self/fd/2|' /usr/local/etc/php/php.ini \
     && sed -i 's|;error_log = .*|error_log = /proc/self/fd/2|' /usr/local/etc/php-fpm.conf
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 ADD ./ /app
-
 WORKDIR /app
 
+# Install Composer and dependencies
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ENV PATH="/usr/local/bin:$PATH"
 RUN composer install
+
+# Export last git commit as patch version
+COPY .git /.git
+RUN bash -l -c 'echo $(git log -1 --format="%at" | TZ=Europe/Moscow xargs -I{} date -d @{} +%Y%m%d.%H%M) >> /git_last_commit'
+RUN echo "export GIT_LAST_COMMIT=$(cat /git_last_commit)" >> /etc/bash.bashrc
 
 ENTRYPOINT /tmp/entrypoint.sh
