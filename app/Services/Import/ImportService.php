@@ -19,11 +19,22 @@ abstract class ImportService extends \App\Common\BaseService
         public readonly \Illuminate\Console\Command $cli
     ) { }
 
-    abstract public function handleImportCommand(): void;
+    abstract protected function askDetails(): void;
     abstract protected function importRecord(\stdClass $record): void;
     abstract protected function prepareImportQuery(): \Illuminate\Database\Query\Builder;
 
-    public function import(): void
+    public function handleImportCommand(): void
+    {
+        $this->connectToDatabase();
+        $this->askDetails();
+
+        $this->cli->newLine();
+        $this->cli->info('Importing...');
+
+        $this->import();
+    }
+
+    protected function import(): void
     {
         $defaultLoggerChannel = Config::get('logging.default');
         Config::set('logging.default', 'gelf');
@@ -52,7 +63,10 @@ abstract class ImportService extends \App\Common\BaseService
         }
         $this->cli->newLine();
         $this->cli->info('Import complete.');
-        $this->cli->table(['Imported records', 'Skipped  records'], [[$this->countImported(), $this->countSkipped()]]);
+        $this->cli->table(
+            ['Imported records', 'Skipped  records', 'Total records'],
+            [[$this->countImported(), $this->countSkipped(), $totalRecords]]
+        );
 
         Config::set('logging.default', $defaultLoggerChannel);
     }

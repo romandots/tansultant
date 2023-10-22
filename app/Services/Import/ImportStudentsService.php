@@ -18,12 +18,8 @@ class ImportStudentsService extends ImportService
     protected ?int $limit = null;
     protected ?Carbon $startLastSeenDate = null;
 
-    public function handleImportCommand(): void
+    protected function askDetails(): void
     {
-        $this->connectToDatabase();
-
-        $this->cli->info('Importing students...');
-
         $this->fromId = $this->cli->ask('Start from ID (leave empty to start from the first record)', $this->fromId);
         $this->toId = $this->cli->ask('End before ID (leave empty to import till the last record)', $this->fromId);
         $this->limit = $this->cli->ask('Limit (leave empty to import all records)', $this->limit);
@@ -32,8 +28,6 @@ class ImportStudentsService extends ImportService
             $this->startLastSeenDate
         );
         $this->startLastSeenDate = $startLastSeen ? Carbon::parse($startLastSeen) : null;
-
-        $this->import();
     }
 
     protected function prepareImportQuery(): \Illuminate\Database\Query\Builder
@@ -56,19 +50,25 @@ class ImportStudentsService extends ImportService
             return;
         }
 
-        $person = $this->mapPerson($record);
-        if ($this->checkIfPersonExists($person)) {
-            $this->skipped($tag, 'Student already exists');
+        try {
+            $person = $this->mapPerson($record);
+            if ($this->checkIfPersonExists($person)) {
+                $this->skipped($tag, 'Student already exists');
+                return;
+            }
+        } catch (\Throwable $e) {
+            $this->skipped($tag, "Failed to import student: {$e->getMessage()}");
             return;
         }
 
+        DB::beginTransaction();
         try {
-            DB::transaction(function () use ($person) {
-                Loader::people()->getRepository()->save($person);
-                $student = $this->createStudent($person);
-                $this->imported($student->id);
-            });
+            Loader::people()->getRepository()->save($person);
+            $student = $this->createStudent($person);
+            DB::commit();
+            $this->imported($student->id);
         } catch (\Throwable $e) {
+            DB::rollBack();
             $this->skipped($tag, "Failed to import student: {$e->getMessage()}");
         }
     }
