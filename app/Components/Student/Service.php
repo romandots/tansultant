@@ -63,9 +63,11 @@ class Service extends \App\Common\BaseComponentService
     {
         $this->validatePerson($person, null);
 
-        $customer = $dto->student_is_customer
-            ? $this->findOrCreateNewCustomerFromPerson($person, $dto->getUser())
-            : Loader::customers()->find($dto->customer_id);
+        $customer = match(true) {
+            $dto->student_is_customer => $this->findOrCreateNewCustomerFromPerson($person, $dto->getUser()),
+            $dto->customer_id !== null => Loader::customers()->find($dto->customer_id),
+            default => null,
+        };
 
         $dto->name = $this->getNameFromPerson($dto, $person);
         $dto->person_id = $person->id;
@@ -94,7 +96,7 @@ class Service extends \App\Common\BaseComponentService
         parent::update($record, $dto);
     }
 
-    private function findOrCreateNewCustomerFromPerson(Person $person, User $user): Customer
+    private function findOrCreateNewCustomerFromPerson(Person $person, ?User $user): Customer
     {
         try {
             return Loader::customers()->createFromPerson(new \App\Components\Customer\Dto($user), $person);

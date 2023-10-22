@@ -35,6 +35,7 @@ class Facade extends BaseComponentFacade
      * @param Dto $dto
      * @param Person $person
      * @return Student
+     * @throws \Throwable
      */
     public function createFromPerson(Dto $dto, Person $person): Student
     {

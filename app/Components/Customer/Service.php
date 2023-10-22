@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Service extends \App\Common\BaseComponentService
 {
-    public const LEGAL_AGE = 18;
 
     public function __construct()
     {
@@ -91,7 +90,7 @@ class Service extends \App\Common\BaseComponentService
      */
     private function validatePersonForBeingCustomer(Person $person, ?Customer $customer): void
     {
-        if ($person->birth_date?->age < self::LEGAL_AGE) {
+        if ($person->isLegalAge() === false) {
             throw new Exceptions\IllegalAgeException();
         }
 

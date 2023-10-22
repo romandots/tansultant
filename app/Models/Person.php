@@ -89,6 +89,7 @@ class Person extends Model
     use SoftDeletes;
 
     public const TABLE = 'people';
+    public const LEGAL_AGE = 18;
 
     protected $table = self::TABLE;
 
@@ -172,5 +173,10 @@ class Person extends Model
     public function getNameAttribute(): string
     {
         return \trans('person.name_attribute', $this->compactName());
+    }
+
+    public function isLegalAge(): bool
+    {
+        return $this->birth_date?->age >= self::LEGAL_AGE;
     }
 }
