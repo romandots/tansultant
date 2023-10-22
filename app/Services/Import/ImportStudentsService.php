@@ -13,16 +13,19 @@ class ImportStudentsService extends ImportService
 {
 
     protected string $table = 'clients';
-    protected ?int $startId = null;
+    protected ?int $fromId = null;
+    protected ?int $toId = null;
     protected ?int $limit = null;
     protected ?Carbon $startLastSeenDate = null;
 
     public function handleImportCommand(): void
     {
-        $this->cli->info('Importing students...');
         $this->connectToDatabase();
 
-        $this->startId = $this->cli->ask('Start ID (leave empty to start from the first record)', $this->startId);
+        $this->cli->info('Importing students...');
+
+        $this->fromId = $this->cli->ask('Start from ID (leave empty to start from the first record)', $this->fromId);
+        $this->toId = $this->cli->ask('End before ID (leave empty to import till the last record)', $this->fromId);
         $this->limit = $this->cli->ask('Limit (leave empty to import all records)', $this->limit);
         $startLastSeen = $this->cli->ask(
             'Start last seen date (YYYY-MM-DD; leave empty to import all records)',
@@ -38,7 +41,8 @@ class ImportStudentsService extends ImportService
         return $this->dbConnection
             ->table($this->table)
             ->orderBy('id', 'desc')
-            ->when($this->startId, fn($query) => $query->where('id', '>=', $this->startId))
+            ->when($this->fromId, fn($query) => $query->where('id', '>=', $this->fromId))
+            ->when($this->toId, fn($query) => $query->where('id', '<', $this->toId))
             ->when($this->limit, fn($query) => $query->limit($this->limit))
             ->when($this->startLastSeenDate, fn($query) => $query->where('last_visit', '>=', $this->startLastSeenDate));
     }
@@ -46,7 +50,8 @@ class ImportStudentsService extends ImportService
     protected function importRecord(\stdClass $record): void
     {
         $tag = '#' . $record->id . ' (' . $record->lastname . ' ' . $record->name . ')';
-        if (empty($record->lastname) || empty($record->name) || empty($record->phone) || empty($record->birthdate)) {
+        if (empty($record->lastname) || empty($record->name) || empty($record->phone) ||
+            empty($record->birthdate) || empty($record->sex) || !in_array(strtolower($record->sex), ['f', 'm'], true)) {
             $this->skipped($tag, 'Student has empty required fields');
             return;
         }
