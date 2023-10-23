@@ -83,6 +83,8 @@ class Branch extends Model
 
     protected $table = self::TABLE;
 
+    protected $guarded = [];
+
     public function classrooms(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Classroom::class);

@@ -11,6 +11,7 @@ abstract class ImportService extends \App\Common\BaseService
 {
     protected \Illuminate\Database\Connection $dbConnection;
     protected ProgressBar $bar;
+    protected ?int $limit = null;
     protected int $batchSize = 100;
     protected array $imported = [];
     protected array $skipped = [];
@@ -26,6 +27,7 @@ abstract class ImportService extends \App\Common\BaseService
     public function handleImportCommand(): void
     {
         $this->connectToDatabase();
+        $this->fetchMapsKeys();
         $this->askDetails();
 
         $this->cli->newLine();
@@ -33,6 +35,8 @@ abstract class ImportService extends \App\Common\BaseService
 
         $this->import();
     }
+
+    protected function fetchMapsKeys(): void { }
 
     protected function import(): void
     {
