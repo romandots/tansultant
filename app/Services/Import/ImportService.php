@@ -27,7 +27,6 @@ abstract class ImportService extends \App\Common\BaseService
     public function handleImportCommand(): void
     {
         $this->connectToDatabase();
-        $this->fetchMapsKeys();
         $this->askDetails();
 
         $this->cli->newLine();
@@ -35,8 +34,6 @@ abstract class ImportService extends \App\Common\BaseService
 
         $this->import();
     }
-
-    protected function fetchMapsKeys(): void { }
 
     protected function import(): void
     {
@@ -59,13 +56,16 @@ abstract class ImportService extends \App\Common\BaseService
         }
 
         $this->bar->finish();
-
         $this->cli->newLine(2);
-        $this->cli->error('Skipped records:');
-        foreach ($this->skipped as $tag => $reason) {
-            $this->cli->comment($tag . ': ' . $reason);
+
+        if ($this->countSkipped()) {
+            $this->cli->error('Skipped records:');
+            foreach ($this->skipped as $tag => $reason) {
+                $this->cli->comment($tag . ': ' . $reason);
+            }
+            $this->cli->newLine();
         }
-        $this->cli->newLine();
+
         $this->cli->info('Import complete.');
         $this->cli->table(
             ['Imported records', 'Skipped  records', 'Total records'],

@@ -57,6 +57,8 @@ class Classroom extends Model
         'deleted_at' => 'datetime',
     ];
 
+    protected $guarded = [];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Branch
      */
