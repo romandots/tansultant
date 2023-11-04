@@ -11,13 +11,11 @@ use Illuminate\Database\Eloquent\Model;
 class ImportBranchesService extends ImportService
 {
     protected string $table = 'studios';
-    protected int $currentNumber = 0;
     protected string $mapClass = BranchesMap::class;
 
     protected function askDetails(): void
     {
         $this->buildMap();
-        $this->currentNumber = count($this->getMapper()->getMap());
     }
 
     protected function prepareImportQuery(): \Illuminate\Database\Query\Builder
@@ -42,18 +40,16 @@ class ImportBranchesService extends ImportService
 
     protected function createBranch(\stdClass $record): Branch
     {
-        $branch = new Branch([
+        return new Branch([
             'id' => \uuid(),
             'name' => $record->studio_title,
             'summary' => null,
             'description' => $record->description,
             'phone' => $record->phone,
             'email' =>  null,
-            'number' => $this->currentNumber++,
+            'number' => $this->nextNumber(),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
-
-        return $branch;
     }
 }
