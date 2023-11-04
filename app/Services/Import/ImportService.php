@@ -2,6 +2,8 @@
 
 namespace App\Services\Import;
 
+use App\Services\Import\Maps\ObjectsMap;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -15,24 +17,110 @@ abstract class ImportService extends \App\Common\BaseService
     protected int $batchSize = 100;
     protected array $imported = [];
     protected array $skipped = [];
+    protected string $mapClass;
+    protected ObjectsMap $mapper;
 
     public function __construct(
         public readonly \Illuminate\Console\Command $cli
-    ) { }
+    ) {
+        $this->connectToDatabase();
+    }
 
+    abstract protected function getTag(\stdClass $record): string;
     abstract protected function askDetails(): void;
-    abstract protected function importRecord(\stdClass $record): void;
+    abstract protected function processImportRecord(\stdClass $record): Model;
     abstract protected function prepareImportQuery(): \Illuminate\Database\Query\Builder;
+
+    protected function prepareDatabaseConfig(): void
+    {
+        $cachedConfig = Cache::get('db_config', []);
+        $dbConfig = [
+            'driver' => 'mysql',
+            'host' => $this->cli->ask('Database host', $cachedConfig['host'] ?? 'localhost'),
+            'port' => $this->cli->ask('Database port', $cachedConfig['port'] ?? '3306'),
+            'database' => $this->cli->ask('Database name', $cachedConfig['database'] ?? 'my_database'),
+            'username' => $this->cli->ask('Database username', $cachedConfig['username'] ?? 'root'),
+            'password' => $this->cli->ask('Database password', $cachedConfig['password'] ?? 'root'),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+        ];
+
+        Config::set('database.connections.old_database', $dbConfig);
+        Cache::set('db_config', $dbConfig);
+    }
+
+    protected function connectToDatabase(): void
+    {
+        $this->prepareDatabaseConfig();
+
+        $this->cli->info('Connecting to database...');
+        try {
+            $this->dbConnection = DB::connection('old_database');
+        } catch (\Exception $e) {
+            $this->cli->error('Could not connect to database');
+            exit;
+        }
+        $this->cli->info('New connection to old database established');
+    }
 
     public function handleImportCommand(): void
     {
-        $this->connectToDatabase();
         $this->askDetails();
 
         $this->cli->newLine();
         $this->cli->info('Importing...');
 
         $this->import();
+    }
+
+    protected function validateImport(\stdClass $record): void
+    {
+        $mappedId = $this->mapped($record->id);
+        if ($mappedId) {
+
+            $recordExists = $this->getMapper()->getNewObjects()->where('id', $mappedId)->first() !== null;
+            if ($recordExists) {
+                throw new Exceptions\ImportServiceException('Already exists and mapped');
+            }
+
+            $this->removeMapped($record->id);
+        }
+    }
+
+    protected function importRecord(\stdClass $record): void
+    {
+        $tag = $this->getTag($record);
+
+        try {
+            $this->validateImport($record);
+        } catch (Exceptions\ImportServiceException $e) {
+            $this->skipped($tag, $e->getMessage());
+            return;
+        }
+
+        try {
+            $importedRecord = $this->processImportRecord($record);
+        } catch (\Throwable $e) {
+            if (isset($importedRecord) && $importedRecord instanceof Model) {
+                $this->map($record->id, $importedRecord->id);
+            }
+            $this->skipped($tag, $e->getMessage());
+            return;
+        }
+
+        $this->map($record->id, $importedRecord->id);
+        $this->imported($importedRecord->id);
+    }
+
+    protected function batchImport(iterable $records): void
+    {
+        foreach ($records as $record) {
+            $this->importRecord($record);
+            $this->bar->advance(1);
+        }
     }
 
     protected function import(): void
@@ -75,50 +163,36 @@ abstract class ImportService extends \App\Common\BaseService
         Config::set('logging.default', $defaultLoggerChannel);
     }
 
-    protected function batchImport(iterable $records): void
+    public function getMapper(): ObjectsMap
     {
-        foreach ($records as $record) {
-            $this->importRecord($record);
-            $this->bar->advance(1);
+        if (!isset($this->mapper)) {
+            if (!isset($this->mapClass)) {
+                throw new \Exception('Map class is not set');
+            }
+            $this->mapper = new $this->mapClass($this->cli, $this->dbConnection);
         }
+
+        return $this->mapper;
     }
 
-    protected function connectToDatabase(): void
+    protected function buildMap(): void
     {
-        $this->prepareDatabaseConfig();
-
-        $this->cli->info('Connecting to database...');
-        try {
-            $this->dbConnection = DB::connection('old_database');
-        } catch (\Exception $e) {
-            $this->cli->error('Could not connect to database');
-            exit;
-        }
-        $this->cli->info('New connection to old database established');
+        $this->getMapper()->buildMap();
     }
 
-    /**
-     * @return void
-     */
-    protected function prepareDatabaseConfig(): void
+    protected function mapped(int $oldId): ?string
     {
-        $cachedConfig = Cache::get('db_config', []);
-        $dbConfig = [
-            'driver' => 'mysql',
-            'host' => $this->cli->ask('Database host', $cachedConfig['host'] ?? 'localhost'),
-            'port' => $this->cli->ask('Database port', $cachedConfig['port'] ?? '3306'),
-            'database' => $this->cli->ask('Database name', $cachedConfig['database'] ?? 'my_database'),
-            'username' => $this->cli->ask('Database username', $cachedConfig['username'] ?? 'root'),
-            'password' => $this->cli->ask('Database password', $cachedConfig['password'] ?? 'root'),
-            'charset' => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix' => '',
-            'strict' => false,
-            'engine' => null,
-        ];
+        return $this->getMapper()->mapped($oldId);
+    }
 
-        Config::set('database.connections.old_database', $dbConfig);
-        Cache::set('db_config', $dbConfig);
+    protected function map(int $oldId, string $newId): void
+    {
+        $this->getMapper()->map($oldId, $newId);
+    }
+
+    private function removeMapped(int $oldId): void
+    {
+        $this->getMapper()->removeMapped($oldId);
     }
 
     protected function startProgressBar(int $totalRecords): void
@@ -145,5 +219,10 @@ abstract class ImportService extends \App\Common\BaseService
     protected function imported(string $id): void
     {
         $this->imported[] = $id;
+    }
+
+    protected function nextNumber(): int
+    {
+        return $this->getMapper()->nextNumber();
     }
 }

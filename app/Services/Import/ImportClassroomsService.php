@@ -4,19 +4,34 @@ namespace App\Services\Import;
 
 use App\Components\Loader;
 use App\Models\Classroom;
+use App\Services\Import\Maps\BranchesMap;
+use App\Services\Import\Maps\ClassroomsMap;
+use App\Services\Import\Maps\ObjectsMap;
+use Illuminate\Database\Eloquent\Model;
 
 class ImportClassroomsService extends ImportService
 {
-    use Traits\ClassroomsMapTrait;
-
     protected string $table = 'dancefloors';
-    /** @var array<int> */
-    protected array $currentNumbers = [];
+    protected ObjectsMap $branchesMapper;
+    protected string $mapClass = ClassroomsMap::class;
+
+    public function __construct(\Illuminate\Console\Command $cli)
+    {
+        parent::__construct($cli);
+        $this->branchesMapper = new BranchesMap($this->cli, $this->dbConnection);
+        if ($this->branchesMapper->isMapEmpty()) {
+            $this->branchesMapper->buildMap();
+        }
+    }
+
+    protected function getTag(\stdClass $record): string
+    {
+        return '#' . $record->id . ' (' . $record->name . ', ' . $record->studio_title . ')';
+    }
 
     protected function askDetails(): void
     {
-        $this->buildBranchesMap();
-        $this->buildClassroomsMap();
+        $this->buildMap();
     }
 
     protected function prepareImportQuery(): \Illuminate\Database\Query\Builder
@@ -28,42 +43,34 @@ class ImportClassroomsService extends ImportService
             ->orderBy('id', 'asc');
     }
 
-    protected function importRecord(\stdClass $record): void
+    protected function validateImport(\stdClass $record): void
     {
-        $tag = '#' . $record->id . ' (' . $record->name . ', ' . $record->studio_title . ')';
-        $branchId = $this->mappedToBranch($record->studio_id);
-
-        if ($branchId === null) {
-            $this->skipped($tag, 'Branch not mapped');
-            return;
+        $isBranchMapped = (bool)$this->getMapper()->getBranchesMapper()->mapped($record->studio_id);
+        if ($isBranchMapped === false) {
+            throw new Exceptions\ImportServiceException('Branch is not mapped');
         }
 
-        if ($this->mappedToClassroom($record->id)) {
-            $this->skipped($tag, 'Already exists and mapped');
-            return;
-        }
-
-        $classroom = $this->createClassroom($record, $branchId);
-        $this->imported($classroom->id);
+        parent::validateImport($record);
     }
 
-    protected function createClassroom(\stdClass $record, string $branchId): Classroom
+    protected function processImportRecord(\stdClass $record): Model
     {
-        if (!isset($this->currentNumbers[$branchId])) {
-            $this->currentNumbers[$branchId] = 0;
-        }
-        $classroom = new Classroom([
-            'id' => \uuid(),
-            'name' => $record->name,
-            'branch_id' => $branchId,
-            'color' => $record->color,
-            'capacity' => null,
-            'number' => $this->currentNumbers[$branchId]++,
-        ]);
-
+        $branchId =  $this->getMapper()->getBranchesMapper()->mapped($record->studio_id);
+        $classroom = $this->createClassroom($record, $branchId);
         Loader::classrooms()->getRepository()->save($classroom);
 
         return $classroom;
     }
 
+    private function createClassroom(\stdClass $record, string $branchId): Classroom
+    {
+        return new Classroom([
+            'id' => \uuid(),
+            'name' => $record->name,
+            'branch_id' => $branchId,
+            'color' => $record->color,
+            'capacity' => null,
+            'number' => $this->nextNumber(),
+        ]);
+    }
 }

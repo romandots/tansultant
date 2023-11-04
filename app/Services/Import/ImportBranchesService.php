@@ -4,19 +4,20 @@ namespace App\Services\Import;
 
 use App\Components\Loader;
 use App\Models\Branch;
+use App\Services\Import\Maps\BranchesMap;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class ImportBranchesService extends ImportService
 {
-    use Traits\BranchesMapTrait;
-
     protected string $table = 'studios';
     protected int $currentNumber = 0;
+    protected string $mapClass = BranchesMap::class;
 
     protected function askDetails(): void
     {
-        $this->buildBranchesMap();
-        $this->currentNumber = count($this->branchesMap);
+        $this->buildMap();
+        $this->currentNumber = count($this->getMapper()->getMap());
     }
 
     protected function prepareImportQuery(): \Illuminate\Database\Query\Builder
@@ -26,18 +27,18 @@ class ImportBranchesService extends ImportService
             ->orderBy('id', 'asc');
     }
 
-    protected function importRecord(\stdClass $record): void
+    protected function getTag(\stdClass $record): string
     {
-        $tag = '#' . $record->id . ' (' . $record->studio_title . ')';
-        if ($this->mappedToBranch($record->id)) {
-            $this->skipped($tag, 'Already exists and mapped');
-            return;
-        }
-
-        $branch = $this->createBranch($record);
-        $this->imported($branch->id);
+        return '#' . $record->id . ' (' . $record->studio_title . ')';
     }
 
+    protected function processImportRecord(\stdClass $record): Model
+    {
+        $branch = $this->createBranch($record);
+        Loader::branches()->getRepository()->save($branch);
+
+        return $branch;
+    }
 
     protected function createBranch(\stdClass $record): Branch
     {
@@ -52,7 +53,6 @@ class ImportBranchesService extends ImportService
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
-        Loader::branches()->getRepository()->save($branch);
 
         return $branch;
     }
