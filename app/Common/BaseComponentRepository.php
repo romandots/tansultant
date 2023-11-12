@@ -4,6 +4,7 @@ namespace App\Common;
 
 use App\Common\DTO\SearchDto;
 use App\Common\DTO\SearchFilterDto;
+use App\Models\Contracts\HasUniqueFields;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -48,9 +49,9 @@ abstract class BaseComponentRepository extends BaseRepository
         return $query;
     }
 
-    final public function make(): Model
+    final public function make(array $data = []): Model
     {
-        return new $this->modelClass();
+        return new $this->modelClass($data);
     }
 
     public function getFilterQuery(
@@ -104,25 +105,43 @@ abstract class BaseComponentRepository extends BaseRepository
     }
 
     /**
-     * @param string $id
+     * @param string $column
+     * @param mixed $value
      * @param array $relations
      * @param array $countRelations
      * @return Model
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
+     */
+    public function findBy(string $column, mixed $value, array $relations = [], array $countRelations = []): Model
+    {
+        $query = $this->getQuery();
+        if ($this->withSoftDeletes()) {
+            $query->whereNull('deleted_at');
+        }
+        return $query
+            ->where($column, $value)
+            ->with($relations)
+            ->withCount($countRelations)
+            ->firstOrFail();
+    }
+
+    /**
+     * @param string $id
+     * @param array $relations
+     * @param array $countRelations
+     * @param string $columnName
+     * @return Model
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
      * @throws \BadMethodCallException
      */
-    final public function find(string $id, array $relations = [], array $countRelations = []): Model
+    final public function find(string $id, array $relations = [], array $countRelations = [], string $columnName = 'id'): Model
     {
         $this->validateUuid($id);
         $query = $this->getQuery();
         if ($this->withSoftDeletes()) {
             $query->whereNull('deleted_at');
         }
-        return $query
-            ->where('id', $id)
-            ->with($relations)
-            ->withCount($countRelations)
-            ->firstOrFail();
+        return $this->findBy($columnName, $id, $relations, $countRelations);
     }
 
     final public function findTrashed(string $id): Model
@@ -137,11 +156,13 @@ abstract class BaseComponentRepository extends BaseRepository
             ->firstOrFail();
     }
 
-    public function create(Contracts\DtoWithUser $dto): Model
+    public function create(Contracts\DtoWithUser|array $dto): Model
     {
-        $record = $this->make();
+        $record = $this->make(is_array($dto) ? $dto : []);
         $record->id = \uuid();
-        $this->fill($record, $dto);
+        if ($dto instanceof Contracts\DtoWithUser) {
+            $this->fill($record, $dto);
+        }
         $this->fillDate($record, 'created_at');
         $this->save($record);
         return $record;
@@ -227,6 +248,31 @@ abstract class BaseComponentRepository extends BaseRepository
     protected function fillDate(Model $record, string $attribute, ?\Carbon\Carbon $date = null): void
     {
         $record->{$attribute} = $date ?? \Carbon\Carbon::now();
+    }
+
+    public function findDuplicates(Model $record, array $uniqueAttributes = []): Collection
+    {
+        $uniqueFields = $uniqueAttributes === [] ? $this->getUniqueFields() : $uniqueAttributes;
+        $query = $this->getQuery();
+        foreach ($uniqueFields as $attribute) {
+            if (isset($record->$attribute)) {
+                $query->where($attribute, $record->$attribute);
+            }
+        }
+        $query->where('id', '!=', $record->id);
+
+        return $query->get();
+    }
+
+    public function getUniqueFields(): array
+    {
+        $newObject = $this->make();
+        $fields = ($newObject instanceof HasUniqueFields)
+            ? $newObject->uniqueFields()
+            : [];
+        unset($newObject);
+
+        return $fields;
     }
 
     protected function attachRelations(Model $model, string $relation, iterable $relatedObjects, array $additional = []): void

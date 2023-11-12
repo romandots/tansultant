@@ -26,6 +26,11 @@ abstract class BaseComponentFacade extends BaseFacade
         return $this->getService()->getRepository();
     }
 
+    public function make(array $attributes): Model
+    {
+        return $this->getRepository()->make($attributes);
+    }
+
     /**
      * Search by query
      * Method only return index of elements with
@@ -129,6 +134,19 @@ abstract class BaseComponentFacade extends BaseFacade
     }
 
     /**
+     * @param string $column
+     * @param mixed $value
+     * @param array $relations
+     * @param array $countRelations
+     * @return Model
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
+     */
+    public function findBy(string $column, mixed $value, array $relations = [], array $countRelations = []): Model
+    {
+        return $this->getRepository()->findBy($column, $value, $relations, $countRelations);
+    }
+
+    /**
      * @param string $id
      * @param array $relations
      * @param array $countRelations
@@ -216,5 +234,10 @@ abstract class BaseComponentFacade extends BaseFacade
     {
         return ($collection instanceof \Illuminate\Support\Collection ? $collection : collect($collection))
             ->map(fn(Model $record) => $this->format($record, $formatterClass));
+    }
+
+    public function findOrSave(Model $record, array $uniqueAttributes = []): void
+    {
+        $this->getService()->findOrSave($record, $uniqueAttributes);
     }
 }

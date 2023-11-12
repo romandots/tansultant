@@ -70,6 +70,8 @@ class Schedule extends Model
 
     protected $with = ['price'];
 
+    protected $guarded = [];
+
     protected $casts = [
         'cycle' => ScheduleCycle::class,
         'weekday' => Weekday::class,

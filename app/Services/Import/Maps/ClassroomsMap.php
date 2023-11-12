@@ -14,6 +14,7 @@ class ClassroomsMap extends ObjectsMap
         protected readonly \Illuminate\Database\Connection $dbConnection,
     )
     {
+        $this->loadMap();
         $this->branchesMapper = new BranchesMap(cli: $this->cli, dbConnection: $this->dbConnection);
     }
 

@@ -18,7 +18,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -104,6 +103,8 @@ class Course extends Model
         'deleted_at',
     ];
 
+    protected $guarded = [];
+
     /**
      * @return BelongsTo<Price>
      */
@@ -186,12 +187,9 @@ class Course extends Model
         return $this->belongsToMany(Subscription::class, Subscription::COURSES_PIVOT_TABLE);
     }
 
-
     public function active_subscriptions(): BelongsToMany
     {
         return $this->belongsToMany(Subscription::class, Subscription::COURSES_PIVOT_TABLE)
             ->where('status', SubscriptionStatus::ACTIVE);
     }
-
-
 }

@@ -6,6 +6,7 @@ namespace App\Components\Price;
 
 use App\Common\BaseComponentFacade;
 use App\Common\DTO\ShowDto;
+use App\Models\Price;
 
 /**
  * @method Service getService()
@@ -25,5 +26,15 @@ class Facade extends BaseComponentFacade
     public function __construct()
     {
         parent::__construct(Service::class);
+    }
+
+    public function findByName(string|int $name): Price
+    {
+        return $this->getRepository()->findBy('name', (string)$name);
+    }
+
+    public function findByPriceValue(int $price): Price
+    {
+        return $this->getRepository()->findBy('price', $price);
     }
 }

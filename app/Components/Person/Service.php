@@ -67,7 +67,7 @@ class Service extends \App\Common\BaseComponentService
         $existingRecord = Loader::people()->getByNameGenderAndBirthDate(
             $dto->last_name,
             $dto->first_name,
-            $dto->patronymic_name,
+            $dto->patronymic_name ?? '',
             $dto->gender,
             $dto->birth_date
         );

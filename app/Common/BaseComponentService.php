@@ -199,6 +199,21 @@ abstract class BaseComponentService extends BaseService
         return $this->modelClass;
     }
 
+    public function findOrSave(Model $record, array $uniqueAttributes = []): void
+    {
+        $duplicates = $this->getRepository()->findDuplicates($record, $uniqueAttributes);
+
+        if ($duplicates->count() > 0) {
+            $firstDuplicate = $duplicates->first();
+            $this->debug('Not created. Using duplicate record #' . $firstDuplicate->id . ' of model ' . $this->modelClass);
+            $record->id = $firstDuplicate->id;
+            $record->refresh();
+            return;
+        }
+
+        $this->getRepository()->save($record);
+    }
+
     protected function getLoggerPrefix(): string
     {
         return \base_classname($this->getModelClassName());

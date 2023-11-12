@@ -2,16 +2,12 @@
 
 namespace App\Components\Person\Exceptions;
 
-use App\Components\Loader;
-use App\Components\Person\Formatter;
-use App\Exceptions\AlreadyExistsException;
 use App\Models\Person;
 
-class PersonAlreadyRegistered extends AlreadyExistsException
+class PersonAlreadyRegistered extends PersonAlreadyExist
 {
-    public function __construct(Person $existingOptions)
+    public function __construct(Person $person)
     {
-        $formattedRecord = Loader::people()->format($existingOptions, Formatter::class);
-        parent::__construct($formattedRecord, 'person_with_such_bio_already_exists');
+        parent::__construct($person, 'person_with_such_bio_already_exists');
     }
 }

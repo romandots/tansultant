@@ -22,5 +22,7 @@ class Price extends Model
 
     public const TABLE = 'prices';
 
+    protected $guarded = [];
+
     public $table = self::TABLE;
 }

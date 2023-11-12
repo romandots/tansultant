@@ -102,7 +102,7 @@ class Loader extends Locator
         return self::get(Person\Facade::class);
     }
 
-    public static function price(): Price\Facade {
+    public static function prices(): Price\Facade {
         return self::get(Price\Facade::class);
     }
 

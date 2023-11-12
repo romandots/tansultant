@@ -21,7 +21,7 @@ abstract class ImportService extends \App\Common\BaseService
     protected ObjectsMap $mapper;
 
     public function __construct(
-        public readonly \Illuminate\Console\Command $cli
+        public readonly \Illuminate\Console\Command $cli,
     ) {
         $this->connectToDatabase();
     }
@@ -52,9 +52,9 @@ abstract class ImportService extends \App\Common\BaseService
         Cache::set('db_config', $dbConfig);
     }
 
-    protected function connectToDatabase(): void
+    protected function connectToDatabase(bool $useCached = false): void
     {
-        $this->prepareDatabaseConfig();
+        $this->prepareDatabaseConfig($useCached);
 
         $this->cli->info('Connecting to database...');
         try {

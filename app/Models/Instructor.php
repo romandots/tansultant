@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Contracts\HasUniqueFields;
 use App\Models\Enum\InstructorStatus;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -57,7 +58,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\Instructor withoutTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Instructor whereDeletedAt($value)
  */
-class Instructor extends Model
+class Instructor extends Model implements HasUniqueFields
 {
     use HasRoles;
     use UsesUuid;
@@ -90,5 +91,12 @@ class Instructor extends Model
     public function person(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Person::class);
+    }
+
+    public function uniqueFields(): array
+    {
+        return [
+            'name',
+        ];
     }
 }
