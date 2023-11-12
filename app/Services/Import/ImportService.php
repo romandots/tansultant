@@ -180,17 +180,17 @@ abstract class ImportService extends \App\Common\BaseService
         $this->getMapper()->buildMap();
     }
 
-    protected function mapped(int $oldId): ?string
+    protected function mapped(int|string $oldId): ?string
     {
         return $this->getMapper()->mapped($oldId);
     }
 
-    protected function map(int $oldId, string $newId): void
+    protected function map(int|string $oldId, string $newId): void
     {
         $this->getMapper()->map($oldId, $newId);
     }
 
-    private function removeMapped(int $oldId): void
+    private function removeMapped(int|string $oldId): void
     {
         $this->getMapper()->removeMapped($oldId);
     }
