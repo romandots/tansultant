@@ -11,12 +11,12 @@ abstract class ObjectsMap
     protected array $map;
     protected Collection $oldObjects;
     protected Collection $newObjects;
+    protected \Illuminate\Console\Command $cli;
+    protected \Illuminate\Database\Connection $dbConnection;
 
     public function __construct(
-        protected readonly \Illuminate\Console\Command $cli,
-        protected readonly \Illuminate\Database\Connection $dbConnection,
     ) {
-        $this->loadMap();
+        //$this->loadMap();
     }
 
     public function buildMap(): void
@@ -46,7 +46,7 @@ abstract class ObjectsMap
 
     public function getMap(): array
     {
-        $this->loadMapFromCache();
+        $this->loadMap();
         return $this->map;
     }
 
@@ -124,10 +124,40 @@ abstract class ObjectsMap
         return $this->newObjects->firstWhere('id', $newId);
     }
 
-    protected function loadMap(): void
+    public function loadMap(): void
     {
-        $this->loadMapFromCache();
-        $this->oldObjects = $this->getOldObjects();
-        $this->newObjects = $this->getNewObjects();
+        if (!isset($this->map)) {
+            $this->loadMapFromCache();
+        }
+
+        try {
+            if (!isset($this->oldObjects)) {
+                $this->oldObjects = $this->getOldObjects();
+            }
+        } catch (\LogicException) {
+        } catch (\Throwable $e) {
+            throw $e;
+        }
+
+        try {
+            if (!isset($this->newObjects)) {
+                $this->newObjects = $this->getNewObjects();
+            }
+        } catch (\LogicException) {
+        } catch (\Throwable $e) {
+            throw $e;
+        }
+    }
+
+    public function setCli(\Illuminate\Console\Command $cli): ObjectsMap
+    {
+        $this->cli = $cli;
+        return $this;
+    }
+
+    public function setDbConnection(\Illuminate\Database\Connection $dbConnection): ObjectsMap
+    {
+        $this->dbConnection = $dbConnection;
+        return $this;
     }
 }

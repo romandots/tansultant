@@ -18,7 +18,7 @@ abstract class ImportService extends \App\Common\BaseService
     protected array $imported = [];
     protected array $skipped = [];
     protected string $mapClass;
-    protected ObjectsMap $mapper;
+    protected array $mappers = [];
 
     public function __construct(
         public readonly \Illuminate\Console\Command $cli,
@@ -80,8 +80,13 @@ abstract class ImportService extends \App\Common\BaseService
     {
         $mappedId = $this->mapped($record->id);
         if ($mappedId) {
+            try {
+                $collection = $this->getMapper()->getNewObjects();
+                $recordExists = $collection->where('id', $mappedId)->first() !== null;
+            } catch (\LogicException) {
+                $recordExists = false;
+            }
 
-            $recordExists = $this->getMapper()->getNewObjects()->where('id', $mappedId)->first() !== null;
             if ($recordExists) {
                 throw new Exceptions\ImportServiceException('Already exists and mapped');
             }
@@ -113,6 +118,7 @@ abstract class ImportService extends \App\Common\BaseService
 
         $this->map($record->id, $importedRecord->id);
         $this->imported($importedRecord->id);
+        gc_collect_cycles();
     }
 
     protected function batchImport(iterable $records): void
@@ -163,16 +169,24 @@ abstract class ImportService extends \App\Common\BaseService
         Config::set('logging.default', $defaultLoggerChannel);
     }
 
-    public function getMapper(): ObjectsMap
+    public function getMapper(?string $mapperClass = null): ObjectsMap
     {
-        if (!isset($this->mapper)) {
-            if (!isset($this->mapClass)) {
+        $mapperClass ??= $this->mapClass;
+        if (!isset($this->mappers[$mapperClass])) {
+            if (!isset($mapperClass)) {
                 throw new \Exception('Map class is not set');
             }
-            $this->mapper = new $this->mapClass($this->cli, $this->dbConnection);
+
+            $this->mappers[$mapperClass] = app()->get($mapperClass);
+            if ($this->mappers[$mapperClass] instanceof ObjectsMap) {
+                $this->mappers[$mapperClass]
+                    ->setCli($this->cli)
+                    ->setDbConnection($this->dbConnection)
+                    ->loadMap();
+            }
         }
 
-        return $this->mapper;
+        return $this->mappers[$mapperClass];
     }
 
     protected function buildMap(): void

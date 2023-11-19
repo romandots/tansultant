@@ -37,14 +37,9 @@ class ImportCoursesService extends ImportService
     private InstructorsMap $instructorsMap;
     protected string $mapClass = CoursesMap::class;
 
-
     private function getClassroomsMap(): ClassroomsMap
     {
-        if (!isset($this->classroomsMap)) {
-            $this->classroomsMap = new ClassroomsMap(cli: $this->cli, dbConnection: $this->dbConnection);
-        }
-
-        return $this->classroomsMap;
+        return $this->getMapper(ClassroomsMap::class);
     }
 
     protected function getTag(\stdClass $record): string

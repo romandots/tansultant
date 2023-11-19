@@ -18,7 +18,7 @@ class ImportClassroomsService extends ImportService
     public function __construct(\Illuminate\Console\Command $cli)
     {
         parent::__construct($cli);
-        $this->branchesMapper = new BranchesMap($this->cli, $this->dbConnection);
+        $this->branchesMapper = $this->getMapper(BranchesMap::class);
         if ($this->branchesMapper->isMapEmpty()) {
             $this->branchesMapper->buildMap();
         }

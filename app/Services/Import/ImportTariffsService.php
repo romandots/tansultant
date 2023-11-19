@@ -66,7 +66,7 @@ class ImportTariffsService extends ImportService
             'name' => $record->ticket_type_name,
             'price' => $record->default_price,
             'prolongation_price' => $prolongationPrice,
-            'courses_limit' => null,
+            'courses_limit' => $this->parseCoursesLimit($record),
             'visits_limit' => $record->default_periods ? $record->default_periods / 2 : 1,
             'days_limit' => $record->default_period,
             'holds_limit' => $record->default_frosts,
@@ -98,5 +98,29 @@ class ImportTariffsService extends ImportService
         Loader::tariffs()->getRepository()->save($tariff);
 
         return $tariff;
+    }
+
+    private function parseCoursesLimit(\stdClass $record): ?int
+    {
+        if ($record->default_multiclass === 0) {
+            return 1;
+        }
+
+        if ($record->default_classes_included === 'all') {
+            return null;
+        }
+
+        try {
+            $defaultClassesIncluded = unserialize($record->default_classes_included, ['allowed_classes' => false]);
+
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        if ($defaultClassesIncluded === false || count($defaultClassesIncluded) <= 1) {
+            return null;
+        }
+
+        return count($defaultClassesIncluded);
     }
 }

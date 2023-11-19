@@ -74,7 +74,7 @@ class Facade extends BaseComponentFacade
         /** @var Subscription $subscription */
         $subscription = $this->getRepository()->find($dto->id);
         $courses = Loader::courses()->getMany($dto->relations_ids);
-        $this->getManager()->attachCourses($subscription, $courses, $dto->user);
+        $this->attachCourses($subscription, $courses, $dto->user);
 
         return $subscription
             ->load($dto->with)
@@ -83,7 +83,12 @@ class Facade extends BaseComponentFacade
 
     public function attachCourse(Subscription $subscription, Course $course, User $user): void
     {
-        $this->getManager()->attachCourses($subscription, [$course], $user);
+        $this->attachCourses($subscription, [$course], $user);
+    }
+
+    public function attachCourses(Subscription $subscription, iterable $courses, User $user): void
+    {
+        $this->getManager()->attachCourses($subscription, $courses, $user);
     }
 
     /**

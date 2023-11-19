@@ -4,15 +4,20 @@ namespace App\Services\Import;
 
 use App\Components\Loader;
 use App\Components\Student\Dto as StudentDto;
+use App\Components\Student\Exceptions\StudentAlreadyExists;
+use App\Models\Enum\StudentStatus;
 use App\Models\Person;
 use App\Models\Student;
+use App\Services\Import\Maps\StudentsMap;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class ImportStudentsService extends ImportService
 {
 
     protected string $table = 'clients';
+    protected string $mapClass = StudentsMap::class;
     protected ?int $fromId = null;
     protected ?int $toId = null;
     protected ?int $limit = null;
@@ -41,39 +46,7 @@ class ImportStudentsService extends ImportService
             ->when($this->startLastSeenDate, fn($query) => $query->where('last_visit', '>=', $this->startLastSeenDate));
     }
 
-    protected function importRecord(\stdClass $record): void
-    {
-        $tag = '#' . $record->id . ' (' . $record->lastname . ' ' . $record->name . ')';
-        if (empty($record->lastname) || empty($record->name) || empty($record->phone) ||
-            empty($record->birthdate) || empty($record->sex) || !in_array(strtolower($record->sex), ['f', 'm'], true)) {
-            $this->skipped($tag, 'Student has empty required fields');
-            return;
-        }
-
-        try {
-            $person = $this->mapPerson($record);
-            if ($this->checkIfPersonExists($person)) {
-                $this->skipped($tag, 'Student already exists');
-                return;
-            }
-        } catch (\Throwable $e) {
-            $this->skipped($tag, "Failed to import student: {$e->getMessage()}");
-            return;
-        }
-
-        DB::beginTransaction();
-        try {
-            Loader::people()->getRepository()->save($person);
-            $student = $this->createStudent($person);
-            DB::commit();
-            $this->imported($student->id);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            $this->skipped($tag, "Failed to import student: {$e->getMessage()}");
-        }
-    }
-
-    protected function mapPerson(\stdClass $record): Person
+    protected function makePerson(\stdClass $record): Person
     {
         return new Person([
             'id' => \uuid(),
@@ -96,12 +69,11 @@ class ImportStudentsService extends ImportService
         ]);
     }
 
-    protected function checkIfPersonExists(Person $person): bool
+    protected function checkIfPersonExists(Person $person): ?Person
     {
         $people = Loader::people();
-        return
-            $people->getByPhoneNumber($person->phone) ||
-            $people->getByNameGenderAndBirthDate(
+        $person = $people->getByPhoneNumber($person->phone);
+        return $person ?? $people->getByNameGenderAndBirthDate(
                 lastName: $person->last_name,
                 firstName: $person->first_name,
                 patronymicName: $person->patronymic_name ?? '',
@@ -114,7 +86,46 @@ class ImportStudentsService extends ImportService
     {
         $dto = new StudentDto();
         $dto->student_is_customer = $person->isLegalAge();
-        return Loader::students()->createFromPerson($dto, $person);
+        $student = Loader::students()->createFromPerson($dto, $person);
+        $student->status = StudentStatus::ACTIVE;
+        Loader::students()->getRepository()->save($student);
+
+        return $student;
     }
 
+    protected function getTag(\stdClass $record): string
+    {
+        return '#' . $record->id . ' (' . $record->lastname . ' ' . $record->name . ')';
+    }
+
+    protected function processImportRecord(\stdClass $record): Model
+    {
+        if (empty($record->lastname) || empty($record->name) || empty($record->phone) ||
+            empty($record->birthdate) || empty($record->sex) || !in_array(strtolower($record->sex), ['f', 'm'], true)) {
+            throw new \InvalidArgumentException('Student has empty required fields');
+        }
+
+        $person = $this->makePerson($record);
+        $existingPerson = $this->checkIfPersonExists($person);
+        $person = $existingPerson ?? $person;
+
+        DB::beginTransaction();
+        try {
+            if (null === $existingPerson) {
+                Loader::people()->getRepository()->save($person);
+            }
+            $student = $this->createStudent($person);
+        } catch (StudentAlreadyExists $studentAlreadyExists) {
+            $student = $studentAlreadyExists->getStudent();
+            $this->getMapper()->map($record->id, $student->id);
+            throw $studentAlreadyExists;
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        DB::commit();
+
+        return $student;
+    }
 }
