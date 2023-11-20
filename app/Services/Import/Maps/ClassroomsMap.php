@@ -7,20 +7,10 @@ use Illuminate\Support\Collection;
 
 class ClassroomsMap extends ObjectsMap
 {
-    protected BranchesMap $branchesMapper;
-
-    public function __construct(
-        protected readonly \Illuminate\Console\Command $cli,
-        protected readonly \Illuminate\Database\Connection $dbConnection,
-    )
-    {
-        $this->loadMap();
-        $this->branchesMapper = new BranchesMap(cli: $this->cli, dbConnection: $this->dbConnection);
-    }
 
     public function getBranchesMapper(): BranchesMap
     {
-        return $this->branchesMapper;
+        return app()->get(BranchesMap::class)->setCli($this->cli)->setDbConnection($this->dbConnection);
     }
 
     protected function getPromptMessage(object $oldObject, ?string $additionalText = null): string
@@ -52,7 +42,7 @@ class ClassroomsMap extends ObjectsMap
     {
         $this->oldObjects = $this->getOldObjects();
         $this->newObjects = $this->getNewObjects();
-        $branchesMap = $this->branchesMapper->getMap();
+        $branchesMap = $this->getBranchesMapper()->getMap();
 
         foreach ($branchesMap as $studioId => $branchId) {
             $dancefloorsByStudio = $this->oldObjects->where('studio_id', $studioId);
@@ -69,7 +59,7 @@ class ClassroomsMap extends ObjectsMap
             );
             $classroomsValues[] = '--';
 
-            $studio = $this->branchesMapper->getOldObjects()->where('id', $studioId)->first();
+            $studio = $this->getBranchesMapper()->getOldObjects()->where('id', $studioId)->first();
             $studioName = $studio?->studio_title;
 
             foreach ($dancefloorsByStudio as $dancefloor) {
