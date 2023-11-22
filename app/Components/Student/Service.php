@@ -72,7 +72,7 @@ class Service extends \App\Common\BaseComponentService
         $dto->name = $this->getNameFromPerson($dto, $person);
         $dto->person_id = $person->id;
         $dto->customer_id = $customer?->id;
-        $dto->status = StudentStatus::POTENTIAL;
+        $dto->status = !isset($dto->status) ? StudentStatus::POTENTIAL : $dto->status;
 
         return parent::create($dto);
     }

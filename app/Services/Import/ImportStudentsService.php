@@ -72,8 +72,8 @@ class ImportStudentsService extends ImportService
     protected function checkIfPersonExists(Person $person): ?Person
     {
         $people = Loader::people();
-        $person = $people->getByPhoneNumber($person->phone);
-        return $person ?? $people->getByNameGenderAndBirthDate(
+        $existingPerson = $people->getByPhoneNumber($person->phone);
+        return $existingPerson ?? $people->getByNameGenderAndBirthDate(
                 lastName: $person->last_name,
                 firstName: $person->first_name,
                 patronymicName: $person->patronymic_name ?? '',
@@ -86,6 +86,7 @@ class ImportStudentsService extends ImportService
     {
         $dto = new StudentDto();
         $dto->student_is_customer = $person->isLegalAge();
+        $dto->status = StudentStatus::ACTIVE;
         $student = Loader::students()->createFromPerson($dto, $person);
         $student->status = StudentStatus::ACTIVE;
         Loader::students()->getRepository()->save($student);
