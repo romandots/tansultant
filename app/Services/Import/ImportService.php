@@ -232,6 +232,7 @@ abstract class ImportService extends \App\Common\BaseService
 
     protected function imported(string $id): void
     {
+        $this->cli->info('Imported: ' . $id);
         $this->imported[] = $id;
     }
 
