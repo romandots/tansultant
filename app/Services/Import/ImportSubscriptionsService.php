@@ -21,7 +21,7 @@ class ImportSubscriptionsService extends ImportService
     protected string $mapClass = SubscriptionsMap::class;
     protected int $batchSize = 5;
 
-    private function getStudentsImportService(): ImportSubscriptionsService
+    private function getStudentsImportService(): ImportStudentsService
     {
         if (!isset($this->studentsImportService)) {
             $this->studentsImportService = new ImportStudentsService($this->cli, $this->dbConnection);
