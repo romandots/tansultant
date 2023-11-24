@@ -90,7 +90,7 @@ class ImportSubscriptionsService extends ImportService
                 $studentId = $this->getStudentsMap()->mappedRecord($record->client_id);
             }
             if (null === $studentId) {
-                $student = $this->getStudentsImportService()->importRecord($record->client_id);
+                $student = $this->getStudentsImportService()->importRecordById($record->client_id);
                 $studentId = $student?->id;
             }
             if (null === $studentId) {
