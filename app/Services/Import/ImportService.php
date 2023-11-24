@@ -37,6 +37,10 @@ abstract class ImportService extends \App\Common\BaseService
 
     protected function prepareDatabaseConfig(): void
     {
+        if (isset($this->dbConnection)) {
+            return;
+        }
+
         $cachedConfig = Cache::get('db_config', []);
         $dbConfig = [
             'driver' => 'mysql',
