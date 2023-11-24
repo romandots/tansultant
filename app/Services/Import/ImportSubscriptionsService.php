@@ -86,8 +86,15 @@ class ImportSubscriptionsService extends ImportService
     {
         try {
             $studentId = $this->getStudentsMap()->mapped($record->client_id);
+            if (!($studentId instanceof Student)) {
+                $studentId = $this->getStudentsMap()->mappedRecord($record->client_id);
+            }
             if (null === $studentId) {
-                throw new \LogicException('Student (client) is not mapped');
+                $student = $this->getStudentsImportService()->importRecord($record->client_id);
+                $studentId = $student?->id;
+            }
+            if (null === $studentId) {
+                throw new \LogicException('Student (client) is not found');
             }
             return Loader::subscriptions()->getRepository()
                 ->getQuery()
