@@ -58,6 +58,7 @@ RUN composer install
 
 # Export last git commit as patch version
 COPY .git /.git
+RUN git config --global --add safe.directory /app
 RUN bash -l -c 'echo $(git log -1 --format="%at" | TZ=Europe/Moscow xargs -I{} date -d @{} +%Y%m%d.%H%M) >> /git_last_commit'
 RUN echo "export GIT_LAST_COMMIT=$(cat /git_last_commit)" >> /etc/bash.bashrc
 
