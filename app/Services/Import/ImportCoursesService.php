@@ -20,7 +20,6 @@ use App\Models\Schedule;
 use App\Services\Import\Maps\ClassroomsMap;
 use App\Services\Import\Maps\CoursesMap;
 use App\Services\Import\Maps\InstructorsMap;
-use App\Services\Import\Maps\ObjectsMap;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -36,6 +35,11 @@ class ImportCoursesService extends ImportService
     protected ClassroomsMap $classroomsMap;
     private InstructorsMap $instructorsMap;
     protected string $mapClass = CoursesMap::class;
+
+    private function getInstructorsMap(): InstructorsMap
+    {
+        return $this->getMapper(InstructorsMap::class);
+    }
 
     private function getClassroomsMap(): ClassroomsMap
     {
@@ -120,15 +124,6 @@ class ImportCoursesService extends ImportService
         }
 
         return $newInstructor;
-    }
-
-    private function getInstructorsMap(): ObjectsMap
-    {
-        if (!isset($this->instructorsMap)) {
-            $this->instructorsMap = new InstructorsMap(cli: $this->cli, dbConnection: $this->dbConnection);
-        }
-
-        return $this->instructorsMap;
     }
 
     private function getTeacher(int $teacherId): \stdClass

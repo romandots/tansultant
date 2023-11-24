@@ -118,6 +118,7 @@ abstract class ImportService extends \App\Common\BaseService
 
         $this->map($record->id, $importedRecord->id);
         $this->imported($importedRecord->id);
+        $this->cli->info(sprintf("Imported: %d => %s", $record->id, $importedRecord->id));
         gc_collect_cycles();
     }
 
@@ -232,7 +233,6 @@ abstract class ImportService extends \App\Common\BaseService
 
     protected function imported(string $id): void
     {
-        $this->cli->info('Imported: ' . $id);
         $this->imported[] = $id;
     }
 
