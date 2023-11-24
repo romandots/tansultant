@@ -78,7 +78,7 @@ abstract class ImportService extends \App\Common\BaseService
     {
         $this->askDetails();
 
-        $this->cli->newLine();
+        $this->cli->newLine(2);
         $this->cli->info('Importing...');
 
         $this->import();
@@ -147,7 +147,10 @@ abstract class ImportService extends \App\Common\BaseService
     {
         foreach ($records as $record) {
             $this->importRecord($record);
+            $this->cli->newLine();
             $this->bar->advance(1);
+            $this->cli->newLine();
+            $this->cli->line('Memory usage: ' . memory_get_usage(true));
         }
     }
 

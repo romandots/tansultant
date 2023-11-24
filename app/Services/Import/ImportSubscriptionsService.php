@@ -173,7 +173,13 @@ class ImportSubscriptionsService extends ImportService
             //status
         ]);
 
-        Loader::subscriptions()->getRepository()->save($subscription);
+        Loader::subscriptions()->findOrSave($subscription, [
+            'name',
+            'student_id',
+            'tariff_id',
+            'created_at',
+            'expired_at',
+        ]);
 
         return $subscription;
     }
