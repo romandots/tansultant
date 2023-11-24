@@ -22,8 +22,12 @@ abstract class ImportService extends \App\Common\BaseService
 
     public function __construct(
         public readonly \Illuminate\Console\Command $cli,
+        \Illuminate\Database\Connection $dbConnection = null
     ) {
         $this->connectToDatabase();
+        if (null !== $dbConnection) {
+            $this->dbConnection = $dbConnection;
+        }
     }
 
     abstract protected function getTag(\stdClass $record): string;
@@ -95,7 +99,17 @@ abstract class ImportService extends \App\Common\BaseService
         }
     }
 
-    protected function importRecord(\stdClass $record): void
+    public function importRecordById(int $oldRecordId): ?Model
+    {
+        $oldRecord = $this->prepareImportQuery()->where('id', $oldRecordId)->first();
+        if (null === $oldRecord) {
+            return null;
+        }
+
+        return $this->importRecord($oldRecord);
+    }
+
+    protected function importRecord(\stdClass $record): ?Model
     {
         $tag = $this->getTag($record);
 
@@ -103,23 +117,26 @@ abstract class ImportService extends \App\Common\BaseService
             $this->validateImport($record);
         } catch (Exceptions\ImportServiceException $e) {
             $this->skipped($tag, $e->getMessage());
-            return;
+            return null;
         }
 
         try {
             $importedRecord = $this->processImportRecord($record);
         } catch (\Throwable $e) {
+            $this->skipped($tag, $e->getMessage());
             if (isset($importedRecord) && $importedRecord instanceof Model) {
                 $this->map($record->id, $importedRecord->id);
+                return $importedRecord;
             }
-            $this->skipped($tag, $e->getMessage());
-            return;
+            return null;
         }
 
         $this->map($record->id, $importedRecord->id);
         $this->imported($importedRecord->id);
         $this->cli->info(sprintf("Imported: %d => %s", $record->id, $importedRecord->id));
         gc_collect_cycles();
+
+        return $importedRecord;
     }
 
     protected function batchImport(iterable $records): void

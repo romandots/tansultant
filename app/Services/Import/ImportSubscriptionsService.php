@@ -21,6 +21,19 @@ class ImportSubscriptionsService extends ImportService
     protected string $mapClass = SubscriptionsMap::class;
     protected int $batchSize = 5;
 
+    private function getStudentsImportService(): ImportSubscriptionsService
+    {
+        if (!isset($this->studentsImportService)) {
+            $this->studentsImportService = new ImportStudentsService($this->cli, $this->dbConnection);
+        }
+        return $this->studentsImportService;
+    }
+
+    private function getCoursesMap(): CoursesMap
+    {
+        return $this->getMapper(CoursesMap::class);
+    }
+
     private function getStudentsMap(): StudentsMap
     {
         return $this->getMapper(StudentsMap::class);
@@ -89,8 +102,9 @@ class ImportSubscriptionsService extends ImportService
     private function createSubscription(\stdClass $record): Subscription
     {
         $student = $this->getStudentsMap()->mappedRecord($record->client_id);
+        $student ??= $this->createStudent($record->client_id);
         if (!($student instanceof Student)) {
-            throw new NotFoundException('Student not found');
+            throw new Exceptions\ImportServiceException('Failed to create student');
         }
 
         $tariff = $this->getTariffsMap()->mappedRecord($record->ticket_type);
@@ -194,11 +208,6 @@ class ImportSubscriptionsService extends ImportService
         return $coursesIds;
     }
 
-    private function getCoursesMap(): CoursesMap
-    {
-        return $this->getMapper(CoursesMap::class);
-    }
-
     private function attachCoursesToSubscriptionAndTariff(Subscription $subscription, array $courses): void
     {
         if (empty($courses)) {
@@ -207,6 +216,11 @@ class ImportSubscriptionsService extends ImportService
 
         Loader::tariffs()->getRepository()->attachCourses($subscription->tariff, $courses);
         Loader::subscriptions()->getRepository()->attachCourses($subscription, $courses);
+    }
+
+    private function createStudent(int $clientId): ?Student
+    {
+        return $this->getStudentsImportService()->importRecordById($clientId);
     }
 
 }
