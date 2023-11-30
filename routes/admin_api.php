@@ -246,6 +246,7 @@ Route::namedGroup('transactions',ManagerApi\TransactionController::class, static
     Route::namedRoute('search', 'get', '/', [TransactionsPermission::MANAGE, TransactionsPermission::READ]);
     Route::namedRoute('store', 'post', '/', [TransactionsPermission::MANAGE, TransactionsPermission::CREATE]);
     Route::namedRoute('show', 'get', '{id:uuid}', [TransactionsPermission::MANAGE, TransactionsPermission::READ]);
+    Route::namedRoute('qr', 'get', '{id:uuid}/qr', [TransactionsPermission::MANAGE, TransactionsPermission::READ]);
     //Route::namedRoute('update', 'put', '{id:uuid}', [TransactionsPermission::MANAGE, TransactionsPermission::UPDATE]);
     //Route::namedRoute('destroy', 'delete', '{id:uuid}', [TransactionsPermission::MANAGE, TransactionsPermission::DELETE]);
     //Route::namedRoute('restore', 'post', '{id:uuid}/restore', [TransactionsPermission::MANAGE, TransactionsPermission::RESTORE]);

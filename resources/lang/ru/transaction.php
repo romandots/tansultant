@@ -28,5 +28,8 @@ return [
         'online' => 'Онлайн',
         'internal' => 'Внутренний',
         'code' => 'Код'
-    ]
+    ],
+    'messages' => [
+        'qr_code_message' => 'Ваша ссылка для оплаты: :link',
+    ],
 ];

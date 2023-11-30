@@ -30,6 +30,8 @@ class Dto extends \App\Common\DTO\DtoWithUser
 
     public ?string $external_id = null;
 
+    public ?string $external_system = null;
+
     public ?string $user_id;
 
     public ?\Carbon\Carbon $confirmed_at;

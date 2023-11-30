@@ -8,9 +8,7 @@ use App\Components\Transaction\Dto;
 use App\Components\Transaction\Exceptions\AccountCannotBeSelectedException;
 use App\Models\Account;
 use App\Models\Customer;
-use App\Models\Enum\TransactionStatus;
 use App\Models\Enum\TransactionTransferType;
-use App\Models\Enum\TransactionType;
 use App\Models\User;
 use App\Services\Permissions\AccountsPermission;
 use Illuminate\Validation\Rule;
@@ -46,7 +44,7 @@ class StoreTransactionRequest extends StoreRequest
             'transfer_type' => [
                 'required',
                 'string',
-                Rule::in([TransactionTransferType::CARD->value, TransactionTransferType::CASH->value]),
+                Rule::in([TransactionTransferType::CARD->value, TransactionTransferType::CASH->value, TransactionTransferType::CODE->value]),
             ],
         ]);
     }
@@ -67,8 +65,6 @@ class StoreTransactionRequest extends StoreRequest
         $dto->customer_id = $validated['customer_id'] ?? null;
         $dto->amount = (int)$validated['amount'];
         $dto->transfer_type = TransactionTransferType::tryFrom($validated['transfer_type']);
-        $dto->type = TransactionType::MANUAL;
-        $dto->status = TransactionStatus::CONFIRMED;
         $dto->confirmed_at = now();
         $dto->user_id = $this->user()->id;
 

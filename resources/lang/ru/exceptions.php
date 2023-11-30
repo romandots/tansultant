@@ -44,4 +44,6 @@ return [
     'shift_does_not_belong_to_user' => 'Смена не принадлежит пользователю',
     'invalid_formula_equation' => 'Ошибка в формуле',
     'invalid_variable_in_formula_equation' => 'Ошибка в формуле: неизвестная переменная :invalid_variable',
+    'transaction_is_already_in_requested_status' => 'Транзакция уже в статусе :status',
+    'transaction_is_not_in_requested_status' => 'Транзакция не в статусе :status',
 ];

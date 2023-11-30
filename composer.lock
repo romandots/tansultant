@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "392b3ed5aea248b4b676fd172a7c8a1f",
+    "content-hash": "084af8e3d3cd5debdfe384c1c71c0bbc",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -2640,6 +2640,59 @@
                 }
             ],
             "time": "2023-10-17T14:13:20+00:00"
+        },
+        {
+            "name": "lee-to/php-tochka-api-v2-sdk",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lee-to/php-tochka-api-v2-sdk.git",
+                "reference": "fded604b7256d22a7c93823264f3063ce0b9e4f5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lee-to/php-tochka-api-v2-sdk/zipball/fded604b7256d22a7c93823264f3063ce0b9e4f5",
+                "reference": "fded604b7256d22a7c93823264f3063ce0b9e4f5",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.0",
+                "phpunit/phpunit": "^4.8.35 || ^5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TochkaApi\\": "src/TochkaApi/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Danil Shutsky",
+                    "email": "leetodev@ya.ru",
+                    "homepage": "https://github.com/lee-to"
+                }
+            ],
+            "description": "Tochka bank API v2 client for PHP",
+            "homepage": "https://github.com/lee-to/php-tochka-api-v2-sdk",
+            "keywords": [
+                "Tochka",
+                "api",
+                "v2"
+            ],
+            "support": {
+                "issues": "https://github.com/lee-to/php-tochka-api-v2-sdk/issues",
+                "source": "https://github.com/lee-to/php-tochka-api-v2-sdk/tree/1.0"
+            },
+            "time": "2021-06-30T14:18:32+00:00"
         },
         {
             "name": "maennchen/zipstream-php",

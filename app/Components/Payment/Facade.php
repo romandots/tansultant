@@ -68,9 +68,4 @@ class Facade extends BaseComponentFacade
 
         return $this->getService()->createPayment($price, $name, $subscription->student, $bonus, $user);
     }
-
-    public function createPayoutPayment()
-    {
-        
-    }
 }

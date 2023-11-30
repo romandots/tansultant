@@ -32,6 +32,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $customer_id
  * @property string|null $related_id
  * @property string|null $external_id
+ * @property string|null $external_system
  * @property string $user_id
  * @property \Carbon\Carbon|null $confirmed_at
  * @property \Carbon\Carbon|null $canceled_at

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Components\Transaction;
 
+use App\Adapters\Banks\Contracts\QrCode;
 use App\Common\BaseComponentFacade;
 use App\Common\DTO\ShowDto;
 use App\Models\Account;
@@ -34,5 +35,10 @@ class Facade extends BaseComponentFacade
     public function createPayoutTransaction(Payout $payout, Account $account, User $user): Transaction
     {
         return $this->getService()->createPayoutTransaction($payout, $account, $user);
+    }
+
+    public function getQrCode(Transaction $transaction): QrCode
+    {
+        return $this->getService()->getQrCode($transaction);
     }
 }
