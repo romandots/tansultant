@@ -27,9 +27,10 @@ return [
         'card' => 'По карте',
         'online' => 'Онлайн',
         'internal' => 'Внутренний',
-        'code' => 'Код'
+        'code' => 'СБП',
     ],
     'messages' => [
         'qr_code_message' => 'Ваша ссылка для оплаты: :link',
+        'qr_code_sent_message' => 'Ссылка для оплаты отправлена клиенту :customer',
     ],
 ];

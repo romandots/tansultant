@@ -8,8 +8,8 @@ return [
         'redirect_uri' => env('TOCHKA_AUTH_REDIRECT_URI'),
     ],
     'account' => [
-        'id' => env('TOCHKA_ACCOUNT_ID'),
-        'currency' => env('TOCHKA_ACCOUNT_CURRENCY'),
+        'legal_id' => env('TOCHKA_LEGAL_ID', '123'), // Уникальный и неизменный идентификатор счёта юрлица
+        'merchant_id' => env('TOCHKA_MERCHANT_ID', '123'), // Идентификатор ТСП в СБП
         'scopes' => 'sbp',
         'permissions' => [
             'ReadAccountsBasic',
@@ -28,8 +28,6 @@ return [
             'CreatePaymentOrder',
             'ReadSpecialAccounts',
         ],
-        'legal_id' => env('TOCHKA_LEGAL_ID'), // Уникальный и неизменный идентификатор счёта юрлица
-        'merchant_id' => env('TOCHKA_MERCHANT_ID'), // Идентификатор ТСП в СБП
     ],
     'qr' => [
         'width' => 200,

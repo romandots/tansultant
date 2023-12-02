@@ -41,4 +41,19 @@ class Facade extends BaseComponentFacade
     {
         return $this->getService()->getQrCode($transaction);
     }
+
+    public function checkPendingTransactions(): int
+    {
+        return $this->getService()->checkPendingTransactions();
+    }
+
+    public function checkPendingTransaction(Transaction $transaction): void
+    {
+        $this->getService()->checkPendingTransaction($transaction);
+    }
+
+    public function sendPaymentLink(Transaction $transaction): QrCode
+    {
+        return $this->getService()->getQrCodeAndSendLinkToCustomer($transaction);
+    }
 }

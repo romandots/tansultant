@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Components\Transaction;
 
 use App\Models\Account;
+use App\Models\Enum\TransactionStatus;
 use App\Models\Enum\TransactionTransferType;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
  * @method array getSearchableAttributes()
@@ -114,6 +116,13 @@ class Repository extends \App\Common\BaseComponentRepository
             parent::delete($related);
             parent::delete($record);
         });
+    }
+
+    public function getPendingTransactions(): Collection
+    {
+        return $this->getQuery()
+            ->where('status', TransactionStatus::PENDING)
+            ->get();
     }
 
 }

@@ -70,4 +70,29 @@ class QrCode implements \App\Adapters\Banks\Contracts\QrCode
     {
         return $this->image;
     }
+
+    public function isPaid(): bool
+    {
+        return QrStatus::ACCEPTED === $this->status;
+    }
+
+    public function isRejected(): bool
+    {
+        return QrStatus::REJECTED === $this->status;
+    }
+
+    public function isReceived(): bool
+    {
+        return QrStatus::RECEIVED === $this->status;
+    }
+
+    public function isInProgress(): bool
+    {
+        return QrStatus::IN_PROGRESS === $this->status;
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->createdAt->addMinutes($this->ttl)->isPast();
+    }
 }

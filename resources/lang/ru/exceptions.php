@@ -46,4 +46,5 @@ return [
     'invalid_variable_in_formula_equation' => 'Ошибка в формуле: неизвестная переменная :invalid_variable',
     'transaction_is_already_in_requested_status' => 'Транзакция уже в статусе :status',
     'transaction_is_not_in_requested_status' => 'Транзакция не в статусе :status',
+    'setup_the_client_config' => 'Установите конфигурацию клиента: :config',
 ];

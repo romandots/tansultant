@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Components\Transaction;
 
 use App\Adapters\Banks\Contracts\QrCode;
+use App\Adapters\Banks\TochkaBank\Exceptions\TochkaBankAdapterException;
 use App\Adapters\Banks\TochkaBank\TochkaBankSbpAdapter;
 use App\Common\Contracts;
 use App\Components\Loader;
 use App\Components\Shift\Exceptions\UserHasNoActiveShift;
 use App\Events\Account\AccountEvent;
 use App\Events\Shift\ShiftEvent;
+use App\Jobs\CheckPendingTransactionJob;
 use App\Models\Credit;
 use App\Models\Customer;
 use App\Models\Enum\TransactionStatus;
@@ -61,6 +63,8 @@ class Service extends \App\Common\BaseComponentService
         $dto->type = TransactionType::MANUAL;
         $dto->status = TransactionStatus::PENDING;
 
+        DB::beginTransaction();
+
         /** @var Transaction $transaction */
         $transaction = parent::create($dto);
 
@@ -68,20 +72,53 @@ class Service extends \App\Common\BaseComponentService
             TransactionTransferType::CARD,
             TransactionTransferType::CASH,
             TransactionTransferType::INTERNAL => $this->setTransactionConfirmed($transaction),
-            TransactionTransferType::CODE => $this->getQrCodeAndSendLinkToCustomer($transaction),
+            TransactionTransferType::CODE => $this->handleCodeTransaction($transaction),
             TransactionTransferType::ONLINE => throw new \LogicException('Not implemented yet'),
         };
+
+        DB::commit();
 
         $this->dispatchEventsUponCreatingNewTransaction($transaction);
 
         return $transaction;
     }
 
+    protected function handleCodeTransaction(Transaction $transaction): void
+    {
+        try {
+            $this->getQrCodeAndSendLinkToCustomer($transaction);
+        } catch (\Throwable $e) {
+            $this->error('Ошибка при создании или отправке QR-кода транзакции', [
+                'error_message' => $e->getMessage(),
+                'transaction_id' => $transaction->id,
+                'exception' => $e
+            ]);
+            throw $e;
+        }
+
+        try {
+            $this->dispatchCheckPendingTransactionJob($transaction);
+        } catch (\Throwable $e) {
+            $this->error('Ошибка при создании задачи проверки транзакции', [
+                'error_message' => $e->getMessage(),
+                'transaction_id' => $transaction->id,
+                'exception' => $e
+            ]);
+            throw $e;
+        }
+    }
+
     public function setTransactionConfirmed(Transaction $transaction): void
     {
+        $this->debug('Подтверждаем транзакцию', [
+            'transaction_id' => $transaction->id,
+            'transaction_status' => $transaction->status,
+        ]);
+
+        $fromStatus = TransactionStatus::PENDING;
         $toStatus = TransactionStatus::CONFIRMED;
-        if ($transaction->status === $toStatus) {
-            throw new Exceptions\AlreadyInStatusExceptions($toStatus);
+        if ($transaction->status !== $fromStatus) {
+            throw new Exceptions\NotInStatusExceptions($fromStatus);
         }
 
         DB::beginTransaction();
@@ -103,22 +140,36 @@ class Service extends \App\Common\BaseComponentService
 
     public function setTransactionCanceled(Transaction $transaction): void
     {
+        $this->debug('Отменяем транзакцию', [
+            'transaction_id' => $transaction->id,
+            'transaction_status' => $transaction->status,
+        ]);
+
+        $fromStatus = TransactionStatus::PENDING;
         $toStatus = TransactionStatus::CANCELED;
-        if ($transaction->status === $toStatus) {
-            throw new Exceptions\AlreadyInStatusExceptions($toStatus);
+        if ($transaction->status !== $fromStatus) {
+            throw new Exceptions\NotInStatusExceptions($fromStatus);
         }
 
         $this->getRepository()->setStatus($transaction, $toStatus, ['canceled_at']);
+        $this->dispatchEventsUponCancelingTransaction($transaction);
     }
 
     public function setTransactionExpired(Transaction $transaction): void
     {
+        $this->debug('Отмечаем транзакцию как просроченную', [
+            'transaction_id' => $transaction->id,
+            'transaction_status' => $transaction->status,
+        ]);
+
+        $fromStatus = TransactionStatus::PENDING;
         $toStatus = TransactionStatus::EXPIRED;
-        if ($transaction->status === $toStatus) {
-            throw new Exceptions\AlreadyInStatusExceptions($toStatus);
+        if ($transaction->status !== $fromStatus) {
+            throw new Exceptions\NotInStatusExceptions($fromStatus);
         }
 
         $this->getRepository()->setStatus($transaction, $toStatus);
+        $this->dispatchEventsUponExpiringTransaction($transaction);
     }
 
     protected function createCredit(Transaction $transaction): Credit
@@ -152,22 +203,6 @@ class Service extends \App\Common\BaseComponentService
         return parent::create($dto);
     }
 
-    protected function dispatchEventsUponCreatingNewTransaction(Transaction $transaction): void
-    {
-        AccountEvent::transactionsUpdated($transaction->account);
-        if ($transaction->shift) {
-            ShiftEvent::transactionsUpdated($transaction->shift);
-        }
-    }
-
-    protected function dispatchEventsUponConfirmingTransaction(Transaction $transaction): void
-    {
-        AccountEvent::transactionsUpdated($transaction->account);
-        if ($transaction->shift) {
-            ShiftEvent::transactionsUpdated($transaction->shift);
-        }
-    }
-
     protected function getUserShift(\App\Models\User $user): ?Shift
     {
         /** @var Shift $shift */
@@ -184,7 +219,7 @@ class Service extends \App\Common\BaseComponentService
         return $shift;
     }
 
-    protected function getQrCodeAndSendLinkToCustomer(Transaction $transaction): QrCode
+    public function getQrCodeAndSendLinkToCustomer(Transaction $transaction): QrCode
     {
         $qrCode = $this->generateQrCode($transaction);
         $this->sendLinkToCustomer($transaction, $qrCode);
@@ -211,10 +246,18 @@ class Service extends \App\Common\BaseComponentService
 
         $this->checkValidityForQrCodeOperations($transaction);
 
-        $qrCode = $this->getBankClient()->registerQrCode(
-            amount: $transaction->amount,
-            comment: $transaction->name,
-        );
+        try {
+            $qrCode = $this->getBankClient()->registerQrCode(
+                amount: $transaction->amount,
+                comment: $transaction->name,
+            );
+        } catch (TochkaBankAdapterException $e) {
+            $this->error('Не удалось зарегистрировать QR-код', [
+                'transaction_id' => $transaction->id,
+                'error_message' => $e->getMessage(),
+            ]);
+            throw Exceptions\QrCodeException::becauseOfTochkaBankAdapterException($e);
+        }
 
         $transaction->external_id = $qrCode->id;
         $transaction->external_system = $qrCode->getSystem();
@@ -232,7 +275,7 @@ class Service extends \App\Common\BaseComponentService
     public function getQrCode(Transaction $transaction): QrCode
     {
         $this->debug('Запрашиваем у банка QR-код по ID', [
-            'id' => $transaction->id,
+            'transaction_id' => $transaction->id,
             'external_id' => $transaction->external_id,
             'external_system' => $transaction->external_system,
         ]);
@@ -259,4 +302,115 @@ class Service extends \App\Common\BaseComponentService
         Loader::notifications()->notify($transaction->customer->person, $message);
     }
 
+    protected function dispatchCheckPendingTransactionJob(Transaction $transaction): void
+    {
+        if ($transaction->status !== TransactionStatus::PENDING) {
+            $this->debug('Транзакция не в статусе "Ожидает подтверждения"', [
+                'transaction_id' => $transaction->id,
+                'status' => $transaction->status,
+            ]);
+
+            throw new Exceptions\NotInStatusExceptions(TransactionStatus::PENDING);
+        }
+
+        $this->debug('Запускаем мониторинг статуса транзакции', [
+            'transaction_id' => $transaction->id,
+            'external_id' => $transaction->external_id,
+            'external_system' => $transaction->external_system,
+        ]);
+
+        dispatch(new CheckPendingTransactionJob($transaction->id));
+    }
+
+    public function checkPendingTransactions(): int
+    {
+        return $this->getRepository()
+            ->getPendingTransactions()
+            ->each(function (Transaction $transaction) {
+                $this->checkPendingTransaction($transaction);
+            })
+            ->count();
+    }
+
+    public function checkPendingTransaction(Transaction $transaction): void
+    {
+        if ($transaction->status !== TransactionStatus::PENDING) {
+            $this->debug('Транзакция не в статусе "Ожидает подтверждения"', [
+                'transaction_id' => $transaction->id,
+                'status' => $transaction->status,
+            ]);
+
+            throw new Exceptions\NotInStatusExceptions(TransactionStatus::PENDING);
+        }
+
+        match ($transaction->transfer_type) {
+            TransactionTransferType::CODE => $this->checkPendingQrCodeTransaction($transaction),
+            default => throw new Exceptions\Exception('Transaction type is unsupported'),
+        };
+    }
+
+    protected function checkPendingQrCodeTransaction(Transaction $transaction): void
+    {
+        $this->debug('Проверяем статус транзакции', [
+            'transaction_id' => $transaction->id,
+            'external_id' => $transaction->external_id,
+            'external_system' => $transaction->external_system,
+        ]);
+
+        try {
+            $qrCode = $this->getBankClient()->getQrCode($transaction->external_id);
+        } catch (TochkaBankAdapterException $e) {
+            $this->error('Ошибка при запросе статуса транзакции', [
+                'transaction_id' => $transaction->id,
+                'external_id' => $transaction->external_id,
+                'external_system' => $transaction->external_system,
+                'message' => $e->getMessage(),
+            ]);
+
+            throw $e;
+        }
+
+        match (true) {
+            $qrCode->isExpired() => $this->setTransactionExpired($transaction),
+            $qrCode->isPaid() => $this->setTransactionConfirmed($transaction),
+            default => $this->debug('Транзакция не изменилась', [
+                'transaction_id' => $transaction->id,
+                'external_id' => $transaction->external_id,
+                'external_system' => $transaction->external_system,
+                'transaction_status' => $transaction->status->value,
+            ]),
+        };
+    }
+
+    protected function dispatchEventsUponCancelingTransaction(Transaction $transaction): void
+    {
+        AccountEvent::transactionsUpdated($transaction->account);
+        if ($transaction->shift) {
+            ShiftEvent::transactionsUpdated($transaction->shift);
+        }
+    }
+
+    protected function dispatchEventsUponExpiringTransaction(Transaction $transaction): void
+    {
+        AccountEvent::transactionsUpdated($transaction->account);
+        if ($transaction->shift) {
+            ShiftEvent::transactionsUpdated($transaction->shift);
+        }
+    }
+
+    protected function dispatchEventsUponCreatingNewTransaction(Transaction $transaction): void
+    {
+        AccountEvent::transactionsUpdated($transaction->account);
+        if ($transaction->shift) {
+            ShiftEvent::transactionsUpdated($transaction->shift);
+        }
+    }
+
+    protected function dispatchEventsUponConfirmingTransaction(Transaction $transaction): void
+    {
+        AccountEvent::transactionsUpdated($transaction->account);
+        if ($transaction->shift) {
+            ShiftEvent::transactionsUpdated($transaction->shift);
+        }
+    }
 }

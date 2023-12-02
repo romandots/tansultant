@@ -63,16 +63,28 @@ class TochkaBankClient extends \App\Adapters\Client
 
     protected function getBaseHost(): string
     {
-        return $this->getConfig('api.host');
+        $configValue = $this->getConfig('api.host');
+        if (empty($configValue)) {
+            throw new Exceptions\TochkaBankAdapterException('setup_the_client_config', ['config' => 'api.host']);
+        }
+        return $configValue;
     }
 
     protected function getMerchantId(): string
     {
-        return $this->getConfig('account.merchant_id');
+        $configValue = $this->getConfig('account.merchant_id');
+        if (empty($configValue)) {
+            throw new Exceptions\TochkaBankAdapterException('setup_the_client_config', ['config' => 'account.merchant_id']);
+        }
+        return $configValue;
     }
 
     protected function getAccountId(): string
     {
-        return $this->getConfig('account.account_id');
+        $configValue = $this->getConfig('account.legal_id');
+        if (empty($configValue)) {
+            throw new Exceptions\TochkaBankAdapterException('setup_the_client_config', ['config' => 'account.legal_id']);
+        }
+        return $configValue;
     }
 }

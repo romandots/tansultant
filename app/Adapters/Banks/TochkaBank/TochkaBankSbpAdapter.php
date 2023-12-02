@@ -18,15 +18,13 @@ class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
         $ids = implode(',', $qrCodesIds);
         $url = sprintf('%s/qr-codes/%s/payment-status', $baseHost, $ids);
 
-        $result = $this->api->custom()->request('GET', $url);
-
-        if (!array_key_exists('Data', $result) || !array_key_exists('paymentList', $result['Data'])) {
-            throw new Exceptions\TochkaBankAdapterException('Invalid response');
-        }
+        $resultData = $this->customRequest(
+            fn () => $this->api->custom()->request('GET', $url)
+        );
 
         return array_map(
             static fn (array $datum) => new Entity\Payment($datum),
-            $result['Data']['paymentList']
+            $resultData['paymentList']
         );
     }
 
@@ -41,7 +39,7 @@ class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
                 'amount' => $amount,
                 'paymentPurpose' => $comment,
                 'currency' => self::CURRENCY,
-                'qrcType' => QrType::DYNAMIC,
+                'qrcType' => QrType::DYNAMIC->value,
                 'imageParams' => [
                     'width' => $this->getConfig('qr.width'),
                     'height' => $this->getConfig('qr.height'),
@@ -53,13 +51,11 @@ class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
             ],
         ];
 
-        $result = $this->api->custom()->request('POST', $url, $data);
+        $resultData = $this->customRequest(
+            fn () => $this->api->custom()->request('POST', $url, $data)
+        );
 
-        if (!array_key_exists('Data', $result)) {
-            throw new Exceptions\TochkaBankAdapterException('Invalid response');
-        }
-
-        return new Entity\QrCode($result['Data']);
+        return new Entity\QrCode($resultData);
     }
 
     public function getQrCode(?string $id): QrCode
@@ -67,12 +63,38 @@ class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
         $baseHost = $this->getBaseHost();
         $url = sprintf('%s/qr-code/%s', $baseHost, $id);
 
-        $result = $this->api->custom()->request('GET', $url, );
+        $resultData = $this->customRequest(
+            fn () => $this->api->custom()->request('GET', $url)
+        );
+
+        return new Entity\QrCode($resultData);
+    }
+
+    protected function customRequest(callable $request): array
+    {
+        try {
+            $result = $request();
+        } catch (\Exception $e) {
+            try {
+                $jsonMessage = json_decode($e->getMessage(), true, 512, JSON_THROW_ON_ERROR);
+                throw new Exceptions\TochkaBankAdapterException(
+                    is_array($jsonMessage) ? $jsonMessage['message'] : $e->getMessage(),
+                    is_array($jsonMessage) ? $jsonMessage : [],
+                    $e->getCode()
+                );
+            } catch (\JsonException $jsonException) {
+                throw new Exceptions\TochkaBankAdapterException($e->getMessage(), [], $e->getCode());
+            }
+        }
+
+        if ($result === null) {
+            throw new Exceptions\TochkaBankAdapterException('Empty response');
+        }
 
         if (!array_key_exists('Data', $result)) {
             throw new Exceptions\TochkaBankAdapterException('Invalid response');
         }
 
-        return new Entity\QrCode($result['Data']);
+        return $result['Data'];
     }
 }

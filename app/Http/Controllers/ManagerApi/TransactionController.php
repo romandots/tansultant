@@ -62,6 +62,27 @@ class TransactionController extends AdminController
             'comment' => $transaction->name,
             'image' => $qrCode->getImage()->content,
             'image_type' => $qrCode->getImage()->mediaType,
+            'status' => $transaction->status,
         ]);
+    }
+
+    public function sendPaymentLink(string $id): JsonResponse
+    {
+        $transaction = $this->getFacade()->find($id);
+
+        try {
+            Loader::transactions()->sendPaymentLink($transaction);
+        } catch (Component\Exceptions\Exception) {
+            return new JsonResponse(
+                'Не удалось отправить ссылку на оплату. Попробуйте позже.',
+                500
+            );
+        }
+
+        return new JsonResponse([
+            'message' => trans('transaction.messages.qr_code_sent_message', [
+                'customer' => $transaction->customer->name,
+            ])
+        ], 200);
     }
 }
