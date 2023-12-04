@@ -9,4 +9,6 @@ class Dto extends \App\Common\DTO\DtoWithUser
     public ?string $id = null;
     public ?string $name = null;
     public string $branch_id;
+    public ?string $external_id = null;
+    public ?string $external_system = null;
 }

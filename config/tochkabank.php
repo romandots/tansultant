@@ -1,15 +1,15 @@
 <?php
 
 return [
+    'enable_mock' => (bool)env('TOCHKA_ENABLE_MOCK', false),
     'api' => [
-        'host' => 'https://enter.tochka.com/sandbox/v2/sbp/v1.0',
+        'host' => env('TOCHKA_SBP_API_HOST', 'https://enter.tochka.com/sandbox/v2/sbp/v1.0'),
         'client_id' => env('TOCHKA_CLIENT_ID'),
         'client_secret' => env('TOCHKA_CLIENT_SECRET'),
         'redirect_uri' => env('TOCHKA_AUTH_REDIRECT_URI'),
     ],
     'account' => [
-        'legal_id' => env('TOCHKA_LEGAL_ID', '123'), // Уникальный и неизменный идентификатор счёта юрлица
-        'merchant_id' => env('TOCHKA_MERCHANT_ID', '123'), // Идентификатор ТСП в СБП
+        'account_id' => env('TOCHKA_ACCOUNT_ID'), // Уникальный и неизменный идентификатор счёта юрлица
         'scopes' => 'sbp',
         'permissions' => [
             'ReadAccountsBasic',

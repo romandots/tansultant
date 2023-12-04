@@ -5,6 +5,7 @@ namespace App\Adapters\Banks\TochkaBank;
 use App\Adapters\Banks\Contracts\QrCode;
 use App\Adapters\Banks\Contracts\SbpAdapter;
 use App\Adapters\Banks\TochkaBank\Enum\QrType;
+use App\Models\Transaction;
 
 class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
 {
@@ -14,9 +15,8 @@ class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
      */
     public function checkQrCodesPaymentStatus(array $qrCodesIds): array
     {
-        $baseHost = $this->getBaseHost();
         $ids = implode(',', $qrCodesIds);
-        $url = sprintf('%s/qr-codes/%s/payment-status', $baseHost, $ids);
+        $url = sprintf('%s/qr-codes/%s/payment-status', $this->getBaseHost(), $ids);
 
         $resultData = $this->customRequest(
             fn () => $this->api->custom()->request('GET', $url)
@@ -28,16 +28,23 @@ class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
         );
     }
 
-    public function registerQrCode(int $amount, string $comment): QrCode
+    public function registerQrCode(Transaction $transaction): QrCode
     {
-        $baseHost = $this->getBaseHost();
-        $merchantId = $this->getMerchantId();
+        if ($transaction->external_system !== $this->externalSystemName()) {
+            throw new Exceptions\TochkaBankAdapterException('Transaction external system is not ' . $this->externalSystemName());
+        }
+
+        $merchantId = $transaction->account->external_id;
+        if (null === $merchantId) {
+            throw new Exceptions\TochkaBankAdapterException('Merchant id is not set for account #' . $transaction->account?->id);
+        }
+
         $accountId = $this->getAccountId();
-        $url = sprintf('%s/qr-code/merchant/%s/%s', $baseHost, $merchantId, $accountId);
+        $url = sprintf('%s/qr-code/merchant/%s/%s', $this->getBaseHost(), $merchantId, $accountId);
         $data = [
             'Data' => [
-                'amount' => $amount,
-                'paymentPurpose' => $comment,
+                'amount' => $transaction->amount,
+                'paymentPurpose' => $transaction->comment,
                 'currency' => self::CURRENCY,
                 'qrcType' => QrType::DYNAMIC->value,
                 'imageParams' => [
@@ -60,8 +67,7 @@ class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
 
     public function getQrCode(?string $id): QrCode
     {
-        $baseHost = $this->getBaseHost();
-        $url = sprintf('%s/qr-code/%s', $baseHost, $id);
+        $url = sprintf('%s/qr-code/%s', $this->getBaseHost(), $id);
 
         $resultData = $this->customRequest(
             fn () => $this->api->custom()->request('GET', $url)

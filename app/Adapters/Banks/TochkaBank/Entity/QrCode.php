@@ -56,11 +56,6 @@ class QrCode implements \App\Adapters\Banks\Contracts\QrCode
         }
     }
 
-    public function getSystem(): string
-    {
-        return 'tochkabank';
-    }
-
     public function getLink(): string
     {
         return $this->payload;

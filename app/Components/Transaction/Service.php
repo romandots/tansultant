@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Components\Transaction;
 
 use App\Adapters\Banks\Contracts\QrCode;
+use App\Adapters\Banks\Contracts\SbpAdapter;
 use App\Adapters\Banks\TochkaBank\Exceptions\TochkaBankAdapterException;
-use App\Adapters\Banks\TochkaBank\TochkaBankSbpAdapter;
 use App\Common\Contracts;
 use App\Components\Loader;
 use App\Components\Shift\Exceptions\UserHasNoActiveShift;
+use App\Components\Transaction\Exceptions\Exception;
 use App\Events\Account\AccountEvent;
 use App\Events\Shift\ShiftEvent;
 use App\Jobs\CheckPendingTransactionJob;
@@ -246,11 +247,10 @@ class Service extends \App\Common\BaseComponentService
 
         $this->checkValidityForQrCodeOperations($transaction);
 
+        $sbpAdapter = $this->getSbpClient();
+
         try {
-            $qrCode = $this->getBankClient()->registerQrCode(
-                amount: $transaction->amount,
-                comment: $transaction->name,
-            );
+            $qrCode = $sbpAdapter->registerQrCode($transaction);
         } catch (TochkaBankAdapterException $e) {
             $this->error('Не удалось зарегистрировать QR-код', [
                 'transaction_id' => $transaction->id,
@@ -260,7 +260,7 @@ class Service extends \App\Common\BaseComponentService
         }
 
         $transaction->external_id = $qrCode->id;
-        $transaction->external_system = $qrCode->getSystem();
+        $transaction->external_system = $sbpAdapter->externalSystemName();
         $this->getRepository()->save($transaction);
 
         $this->debug('Сохранили внешний ID и внешнюю систему в транзакции', [
@@ -282,12 +282,19 @@ class Service extends \App\Common\BaseComponentService
 
         $this->checkValidityForQrCodeOperations($transaction);
 
-        return $this->getBankClient()->getQrCode($transaction->external_id);
+        return $this->getSbpClient()->getQrCode($transaction->external_id);
     }
 
-    protected function getBankClient(): TochkaBankSbpAdapter
+    protected function getSbpClient(): SbpAdapter
     {
-        return app()->get(TochkaBankSbpAdapter::class);
+        $sbpClientClass = config('transactions.sbp_client');
+        $client = app()->get($sbpClientClass);
+
+        if (!($client instanceof SbpAdapter)) {
+            throw new Exceptions\Exception($sbpClientClass . 'is not implemented');
+        }
+
+        return $client;
     }
 
     protected function sendLinkToCustomer(Transaction $transaction, QrCode $qrCode): void
@@ -358,7 +365,9 @@ class Service extends \App\Common\BaseComponentService
         ]);
 
         try {
-            $qrCode = $this->getBankClient()->getQrCode($transaction->external_id);
+            $qrCode = $this->getSbpClient(
+                config('')
+            )->getQrCode($transaction->external_id);
         } catch (TochkaBankAdapterException $e) {
             $this->error('Ошибка при запросе статуса транзакции', [
                 'transaction_id' => $transaction->id,

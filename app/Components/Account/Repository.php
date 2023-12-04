@@ -44,6 +44,8 @@ class Repository extends \App\Common\BaseComponentRepository
     {
         $record->name = $dto->name;
         $record->branch_id = $dto->branch_id;
+        $record->external_id = $dto->external_id;
+        $record->external_system = $dto->external_system;
     }
 
     /**

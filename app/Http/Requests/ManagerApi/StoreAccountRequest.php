@@ -25,6 +25,14 @@ class StoreAccountRequest extends StoreRequest
                 'uuid',
                 Rule::exists(Branch::TABLE, 'id'),
             ],
+            'external_id' => [
+                'nullable',
+                'string',
+            ],
+            'external_system' => [
+                'nullable',
+                'string',
+            ],
         ]);
     }
 
@@ -35,6 +43,8 @@ class StoreAccountRequest extends StoreRequest
 
         $dto->name = $validated['name'] ?? null;
         $dto->branch_id = $validated['branch_id'];
+        $dto->external_id = $validated['external_id'] ?? null;
+        $dto->external_system = $validated['external_system'] ?? null;
 
         return $dto;
     }

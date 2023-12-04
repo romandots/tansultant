@@ -53,12 +53,7 @@ class TochkaBankClient extends \App\Adapters\Client
 
     protected function getConfig(string $string): mixed
     {
-        return config($this->getConfigName() . '.' . $string);
-    }
-
-    protected function getConfigName(): string
-    {
-        return 'tochka';
+        return config($this->externalSystemName() . '.' . $string);
     }
 
     protected function getBaseHost(): string
@@ -81,10 +76,15 @@ class TochkaBankClient extends \App\Adapters\Client
 
     protected function getAccountId(): string
     {
-        $configValue = $this->getConfig('account.legal_id');
+        $configValue = $this->getConfig('account.account_id');
         if (empty($configValue)) {
             throw new Exceptions\TochkaBankAdapterException('setup_the_client_config', ['config' => 'account.legal_id']);
         }
         return $configValue;
+    }
+
+    public function externalSystemName(): string
+    {
+        return 'tochkabank';
     }
 }
