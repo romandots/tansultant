@@ -36,7 +36,4 @@ return [
         'ttl' => 60,
         'redirect_url' => env('TOCHKA_PAYMENT_REDIRECT_URL'), // URL, на который будет перенаправлен пользователь после завершения оплаты
     ],
-    'webhook' => [
-        'secret' => env('TOCHKA_WEBHOOK_SECRET'),
-    ],
 ];

@@ -22,6 +22,8 @@ class Formatter extends BaseFormatter
             'id' => $this->id,
             'name' => $this->name,
             'branch_id' => $this->branch_id,
+            'external_id' => $this->external_id,
+            'external_system' => $this->external_system,
             'branch' => $this->whenLoaded('branch', function () {
                 return new \App\Components\Branch\Formatter($this->branch);
             }),

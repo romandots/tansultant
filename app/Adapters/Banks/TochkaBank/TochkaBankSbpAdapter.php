@@ -30,7 +30,7 @@ class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
 
     public function registerQrCode(Transaction $transaction): QrCode
     {
-        if ($transaction->external_system !== $this->externalSystemName()) {
+        if ($transaction->account->external_system !== $this->externalSystemName()) {
             throw new Exceptions\TochkaBankAdapterException('Transaction external system is not ' . $this->externalSystemName());
         }
 
