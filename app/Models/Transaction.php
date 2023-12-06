@@ -129,4 +129,19 @@ class Transaction extends Model
     {
         return $this->belongsTo(Shift::class, 'shift_id');
     }
+
+    public function assert(TransactionStatus|TransactionTransferType|TransactionType $value): bool
+    {
+        if ($value instanceof TransactionType) {
+            return $this->type === $value;
+        }
+
+        if ($value instanceof TransactionTransferType) {
+            return $this->transfer_type === $value;
+        }
+
+        if ($value instanceof TransactionStatus) {
+            return $this->status === $value;
+        }
+    }
 }

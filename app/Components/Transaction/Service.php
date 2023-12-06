@@ -228,14 +228,14 @@ class Service extends \App\Common\BaseComponentService
         return $qrCode;
     }
 
-    protected function checkValidityForQrCodeOperations(Transaction $transaction): void
+    protected function assertTransactionIsCodeTypeAndPending(Transaction $transaction): void
     {
-        if ($transaction->transfer_type !== TransactionTransferType::CODE) {
+        if (!$transaction->assert(TransactionTransferType::CODE)) {
             $this->error('Транзакция не в типе "Код"');
             throw new Exceptions\NotInTransferTypeException(TransactionTransferType::CODE);
         }
 
-        if ($transaction->status !== TransactionStatus::PENDING) {
+        if (!$transaction->assert(TransactionStatus::PENDING)) {
             $this->error('Транзакция не в статусе "Ожидает подтверждения"');
             throw new Exceptions\NotInStatusExceptions(TransactionStatus::PENDING);
         }
@@ -245,7 +245,7 @@ class Service extends \App\Common\BaseComponentService
     {
         $this->debug('Генерируем QR-код для оплаты');
 
-        $this->checkValidityForQrCodeOperations($transaction);
+        $this->assertTransactionIsCodeTypeAndPending($transaction);
 
         $sbpAdapter = $this->getSbpClient();
 
@@ -280,7 +280,7 @@ class Service extends \App\Common\BaseComponentService
             'external_system' => $transaction->external_system,
         ]);
 
-        $this->checkValidityForQrCodeOperations($transaction);
+        $this->assertTransactionIsCodeTypeAndPending($transaction);
 
         return $this->getSbpClient()->getQrCode($transaction->external_id);
     }
