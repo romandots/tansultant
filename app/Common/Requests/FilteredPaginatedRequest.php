@@ -41,7 +41,7 @@ abstract class FilteredPaginatedRequest extends BaseRequest
         return $dto;
     }
 
-    final protected function getSearchFilterDto(): SearchFilterDto
+    protected function getSearchFilterDto(): SearchFilterDto
     {
         $validated = $this->validated();
         $dto = $this->makeSearchFilterDto();

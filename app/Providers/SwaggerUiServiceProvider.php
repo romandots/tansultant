@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use NextApps\SwaggerUi\SwaggerUiServiceProvider as SwaggerUiServiceProviderOriginal;
 
-class SwaggerUiServiceProvider extends ServiceProvider
+class SwaggerUiServiceProvider extends SwaggerUiServiceProviderOriginal
 {
     public function boot() : void
     {

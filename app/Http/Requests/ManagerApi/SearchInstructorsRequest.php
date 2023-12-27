@@ -10,13 +10,13 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\ManagerApi;
 
-use App\Common\Contracts\SearchFilterDtoContract;
-use App\Common\Requests\FilteredPaginatedRequest;
+use App\Common\DTO\SearchFilterDto;
+use App\Common\Requests\SearchRequest;
 use App\Http\Requests\ManagerApi\DTO\SearchInstructorsFilterDto;
 use App\Models\Enum\InstructorStatus;
 use Illuminate\Validation\Rule;
 
-class SearchInstructorsRequest extends FilteredPaginatedRequest
+class SearchInstructorsRequest extends SearchRequest
 {
     public function __construct()
     {
@@ -48,7 +48,7 @@ class SearchInstructorsRequest extends FilteredPaginatedRequest
         );
     }
 
-    protected function getSearchFilterDto(): SearchFilterDtoContract
+    protected function getSearchFilterDto(): SearchFilterDto
     {
         $filter = parent::getSearchFilterDto();
         if (!$filter instanceof SearchInstructorsFilterDto) {

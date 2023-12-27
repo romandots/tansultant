@@ -50,12 +50,12 @@ class ProlongSubscriptionStatusRequest extends StoreRequest
         return $dto;
     }
 
-    private function getId(): string
+    protected function getId(): string
     {
         return $this->route()->parameter('id');
     }
 
-    private function getBonusId(): ?string
+    protected function getBonusId(): ?string
     {
         return $this->route()?->parameter('bonus_id');
     }
