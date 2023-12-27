@@ -15,10 +15,6 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('ping', function () {
-    return 'OK';
-});
-
 Route::group(['middleware' => 'api'], function () {
     //
 });

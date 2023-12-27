@@ -13,7 +13,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Info(title="Tansulant Admin API", version="0.1")
+ */
 abstract class AdminController extends Controller
 {
     protected BaseFacade $facade;
