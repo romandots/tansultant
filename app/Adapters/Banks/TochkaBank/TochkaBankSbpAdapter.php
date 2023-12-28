@@ -39,12 +39,12 @@ class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
             throw new Exceptions\TochkaBankAdapterException('Merchant id is not set for account #' . $transaction->account?->id);
         }
 
-        $accountId = $this->getAccountId();
+        $accountId = urlencode($this->getAccountId());
         $url = sprintf('%s/qr-code/merchant/%s/%s', $this->getBaseHost(), $merchantId, $accountId);
         $data = [
             'Data' => [
                 'amount' => $transaction->amount,
-                'paymentPurpose' => $transaction->comment,
+                'paymentPurpose' => $transaction->name,
                 'currency' => self::CURRENCY,
                 'qrcType' => QrType::DYNAMIC->value,
                 'imageParams' => [
