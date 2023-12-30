@@ -54,6 +54,8 @@ WORKDIR /app
 # Install Composer and dependencies
 ENV PATH="/usr/local/bin:$PATH"
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ARG COMPOSER_IGNORE_PLATFORM_REQS
+ENV COMPOSER_IGNORE_PLATFORM_REQS=1
 RUN composer install
 
 # Export last git commit as patch version
