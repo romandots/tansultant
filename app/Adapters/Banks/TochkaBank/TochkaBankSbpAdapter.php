@@ -18,9 +18,7 @@ class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
         $ids = implode(',', $qrCodesIds);
         $url = sprintf('%s/qr-codes/%s/payment-status', $this->getBaseHost(), $ids);
 
-        $resultData = $this->customRequest(
-            fn () => $this->api->custom()->request('GET', $url)
-        );
+        $resultData = $this->customRequest('GET', $url);
 
         return array_map(
             static fn (array $datum) => new Entity\Payment($datum),
@@ -58,9 +56,7 @@ class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
             ],
         ];
 
-        $resultData = $this->customRequest(
-            fn () => $this->api->custom()->request('POST', $url, $data)
-        );
+        $resultData = $this->customRequest('POST', $url, $data);
 
         return new Entity\QrCode($resultData);
     }
@@ -69,38 +65,8 @@ class TochkaBankSbpAdapter extends TochkaBankClient implements SbpAdapter
     {
         $url = sprintf('%s/qr-code/%s', $this->getBaseHost(), $id);
 
-        $resultData = $this->customRequest(
-            fn () => $this->api->custom()->request('GET', $url)
-        );
+        $resultData = $this->customRequest('GET', $url);
 
         return new Entity\QrCode($resultData);
-    }
-
-    protected function customRequest(callable $request): array
-    {
-        try {
-            $result = $request();
-        } catch (\Exception $e) {
-            try {
-                $jsonMessage = json_decode($e->getMessage(), true, 512, JSON_THROW_ON_ERROR);
-                throw new Exceptions\TochkaBankAdapterException(
-                    is_array($jsonMessage) ? $jsonMessage['message'] : $e->getMessage(),
-                    is_array($jsonMessage) ? $jsonMessage : [],
-                    $e->getCode()
-                );
-            } catch (\JsonException $jsonException) {
-                throw new Exceptions\TochkaBankAdapterException($e->getMessage(), [], $e->getCode());
-            }
-        }
-
-        if ($result === null) {
-            throw new Exceptions\TochkaBankAdapterException('Empty response');
-        }
-
-        if (!array_key_exists('Data', $result)) {
-            throw new Exceptions\TochkaBankAdapterException('Invalid response');
-        }
-
-        return $result['Data'];
     }
 }

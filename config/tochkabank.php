@@ -7,8 +7,10 @@ return [
         'client_id' => env('TOCHKA_CLIENT_ID'),
         'client_secret' => env('TOCHKA_CLIENT_SECRET'),
         'redirect_uri' => env('TOCHKA_AUTH_REDIRECT_URI'),
+        'max_retries' => 15,
     ],
     'account' => [
+        'jwt' => env('TOCHKA_JWT', null),
         'account_id' => env('TOCHKA_ACCOUNT_ID'), // Уникальный и неизменный идентификатор счёта юрлица
         'scopes' => 'sbp',
         'permissions' => [

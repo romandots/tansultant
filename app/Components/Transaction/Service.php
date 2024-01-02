@@ -287,7 +287,8 @@ class Service extends \App\Common\BaseComponentService
 
     protected function getSbpClient(): SbpAdapter
     {
-        $sbpClientClass = config('transactions.sbp_client');
+        $isMockEnabled = config('tochkabank.enable_mock');
+        $sbpClientClass = config($isMockEnabled ? 'transactions.sbp_client_mock' : 'transactions.sbp_client');
         $client = app()->get($sbpClientClass);
 
         if (!($client instanceof SbpAdapter)) {

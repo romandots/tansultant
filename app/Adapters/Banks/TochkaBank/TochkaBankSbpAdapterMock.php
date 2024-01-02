@@ -3,11 +3,9 @@
 namespace App\Adapters\Banks\TochkaBank;
 
 use App\Adapters\Banks\Contracts\QrCode;
-use App\Adapters\Banks\Contracts\SbpAdapter;
-use App\Adapters\Banks\TochkaBank\Entity\Payment;
 use App\Models\Transaction;
 
-class TochkaBankSbpAdapterMock implements SbpAdapter
+class TochkaBankSbpAdapterMock extends TochkaBankSbpAdapter
 {
 
     /**
@@ -15,60 +13,117 @@ class TochkaBankSbpAdapterMock implements SbpAdapter
      */
     public function checkQrCodesPaymentStatus(array $qrCodesIds): array
     {
-        return [
-            new Payment([
-                "qrcId" => "AS000000000000000000000000000001",
-                "code" => "RQ00000",
-                "status" => "InProgress",
-                "message" => "Запрос обработан успешно",
-                "trxId" => "X1A2S3D5F6G7H8J9K0C4S5C6D7V5D1K2"
-            ])
-        ];
+        $resultData = json_decode(
+            '{
+    "Data": {
+        "paymentList": [
+            {
+                "qrcId": "AS1000670LSS7DN18SJQDNP4B05KLJL2",
+                "code": "RQ00000",
+                "status": "NotStarted",
+                "message": "Запрос обработан успешно",
+                "trxId": "X1A2S3D5F6G7H8J9K0C4S5C6D7V5D1K2"
+            },
+            {
+                "qrcId": "AS1000670LSS7DN18SJQDNP4B05KLJL3",
+                "code": "RQ00000",
+                "status": "InProgress",
+                "message": "Запрос обработан успешно",
+                "trxId": "X1A2S3D5F6G7H8J9K0C4S5C6D7V5D1K3"
+            },
+            {
+                "qrcId": "AS1000670LSS7DN18SJQDNP4B05KLJL4",
+                "code": "RQ05014",
+                "message": "QR с указанным идентификатором не найден"
+            }
+        ]
+    },
+    "Links": {
+        "self": "http://enter.tochka.com/sbp/v1.0/qr-codes/AS000000000000000000000000000001/payment-status"
+    },
+    "Meta": {
+        "totalPages": 1
+    }
+}',
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        return array_map(
+            static fn (array $datum) => new Entity\Payment($datum),
+            $resultData['Data']['paymentList']
+        );
     }
 
     public function registerQrCode(Transaction $transaction): QrCode
     {
-        return new Entity\QrCode([
-            "qrcId" => "AS000000000000000000000000000001",
-            "payload" => "https =>//qr.nspk.ru/AS1000670LSS7DN18SJQDNP4B05KLJL2?type=01&bank=100000000001&sum=10000&cur=RUB&crc=C08B",
-            "image" => [
-                "width" => 0,
-                "height" => 0,
-                "mediaType" => "image/png",
-                "content" => "iVBORw0KGgoAAAANSUhEUgAAASwAAAEs..."
-            ],
-        ]);
+        $resultData = json_decode(
+            '{
+    "Data": {
+        "qrcId": "AD10001B38T99KA99CD8S37FMTH8CFQ7",
+        "payload": "https://qr.nspk.ru/AD10001B38T99KA99CD8S37FMTH8CFQ7?type=02&bank=100000000065&sum=10000&cur=RUB&crc=43B6",
+        "image": {
+            "width": 300,
+            "height": 300,
+            "mediaType": "image/png",
+            "content": "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"
+        }
+    },
+    "Links": {
+        "self": "http://enter.tochka.com/sbp/v1.0/qr-code/merchant/MA0002520143/40802810320000176128/044525104"
+    },
+    "Meta": {
+        "totalPages": 1
+    }
+}',
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        return new Entity\QrCode($resultData['Data']);
     }
 
     public function getQrCode(?string $id): QrCode
     {
-        return new Entity\QrCode([
-            "accountId" => "40817810802000000008/044525104",
-            "status" => "Active",
-            "createdAt" => "2019-01-01T06 =>06 =>06.364+00 =>00",
-            "qrcId" => "AS000000000000000000000000000001",
-            "legalId" => "LF0000000001",
-            "merchantId" => "MF0000000001",
-            "amount" => 0,
-            "commissionPercent" => 0,
-            "currency" => "RUB",
-            "paymentPurpose" => "?",
-            "qrcType" => "01",
-            "templateVersion" => "01",
-            "payload" => "\"https =>//qr.nspk.ru/AS1000670LSS7DN18SJQDNP4B05KLJL2?type=01&bank=100000000001&sum=10000&cur=RUB&crc=C08B\"",
-            "sourceName" => "tochka.com",
-            "ttl" => "60",
-            "image" => [
-                "width" => 0,
-                "height" => 0,
-                "mediaType" => "image/png",
-                "content" => "iVBORw0KGgoAAAANSUhEUgAAASwAAAEs..."
-            ],
-        ]);
+        $resultData = json_decode(
+            '{
+    "Data": {
+        "accountId": "11111111111111111111/044525999",
+        "status": "Active",
+        "createdAt": "2020-02-20T09:54:59.090000+00:00",
+        "qrcId": "AD10001B38T99KA99CD8S37FMTH8CFQ7",
+        "legalId": "LA0000008089",
+        "merchantId": "MA0000086825",
+        "amount": 10000,
+        "commissionPercent": 0.7,
+        "currency": "RUB",
+        "paymentPurpose": "Назначение",
+        "qrcType": "01",
+        "templateVersion": "01",
+        "payload": "https://qr.nspk.ru/AD10001B38T99KA99CD8S37FMTH8CFQ7?type=01&bank=100000000001&sum=10000&cur=RUB&crc=C08B",
+        "sourceName": "tochka.com",
+        "ttl": "60",
+        "image": {
+            "width": 300,
+            "height": 300,
+            "mediaType": "image/png",
+            "content": "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"
+        }
+    },
+    "Links": {
+        "self": "http://enter.tochka.com/sbp/v1.0/qr-code/AS000000000000000000000000000001"
+    },
+    "Meta": {
+        "totalPages": 1
     }
+}',
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
 
-    public function externalSystemName(): string
-    {
-        return 'tochkabank';
+        return new Entity\QrCode($resultData['Data']);
     }
 }
