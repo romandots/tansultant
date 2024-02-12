@@ -42,7 +42,8 @@ class UserCreateCommand extends UserCommand
             return;
         }
 
-        $user = $this->users->createFromPerson($userDto, $person);
+        $userDto->person_id = $person->id;
+        $user = $this->users->createFromPerson($userDto);
 
         $this->info(
             "User #{$user->id} <{$user->name}> with password '{$userDto->password}' created in status [{$user->status->value}]"
