@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Components\Loader;
+use App\Components\Person\Exceptions\PersonAlreadyExist;
 use App\Models\Enum\Gender;
 
 class UserCreateCommand extends UserCommand
@@ -30,7 +31,12 @@ class UserCreateCommand extends UserCommand
         $birthDate = $this->ask('Birth date');
         $personDto->birth_date = $birthDate ? \Carbon\Carbon::parse($birthDate) : null;
 
-        $person = Loader::people()->create($personDto);
+        try {
+            $person = Loader::people()->create($personDto);
+        } catch (PersonAlreadyExist $e) {
+            $person = $e->getPerson();
+        }
+
         if (null === $person) {
             $this->error('Person was not created');
             return;
