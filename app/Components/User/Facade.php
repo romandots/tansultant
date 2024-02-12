@@ -52,6 +52,9 @@ class Facade extends BaseComponentFacade
 
     public function createFromPerson(Dto $dto): User
     {
+        if (!isset($dto->person_id)) {
+            throw new \InvalidArgumentException('Person id is required');
+        }
         $person = Loader::people()->findById($dto->person_id);
         return $this->getService()->createFromPerson($dto, $person);
     }

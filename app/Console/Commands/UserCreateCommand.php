@@ -31,6 +31,11 @@ class UserCreateCommand extends UserCommand
         $personDto->birth_date = $birthDate ? \Carbon\Carbon::parse($birthDate) : null;
 
         $person = Loader::people()->create($personDto);
+        if (null === $person) {
+            $this->error('Person was not created');
+            return;
+        }
+
         $user = $this->users->createFromPerson($userDto, $person);
 
         $this->info(
