@@ -18,9 +18,9 @@ class UserCreateCommand extends UserCommand
         $userDto->username = $this->argument('username');
         $userDto->password = $this->argument('password');
 
-        $personDto->last_name = $this->ask('Last name');
-        $personDto->first_name = $this->ask('First name');
-        $personDto->patronymic_name = $this->ask('Patronymic name');
+        $personDto->last_name = utf8_encode($this->ask('Last name'));
+        $personDto->first_name = utf8_encode($this->ask('First name'));
+        $personDto->patronymic_name = utf8_encode($this->ask('Patronymic name'));
         $personDto->phone = $this->ask('Phone number');
         $personDto->email = $this->ask('Email');
         $personDto->gender = Gender::tryFrom(
