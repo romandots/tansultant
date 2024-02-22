@@ -17,6 +17,7 @@
     "doctrine/annotations": "^2.0",
     "hedii/laravel-gelf-logger": "^8.0",
     "itsgoingd/clockwork": "^5.1",
+    "laravel/horizon": "^5.23",
     "laravel/laravel": "^10.28.0",
     "laravel/sanctum": "^3.2",
     "lee-to/php-tochka-api-v2-sdk": "^1.0",
