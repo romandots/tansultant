@@ -129,7 +129,7 @@ class Schedule extends Model
             return $timestamp;
         }
 
-        return \sprintf('%s — %s', $timestamp, $this->classroom->name);
+        return \sprintf('%s — %s', $timestamp, $this->classroom?->name ?? '');
     }
 
 }
