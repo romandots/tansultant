@@ -62,11 +62,13 @@ abstract class AdminController extends Controller
         SuggestRequest $request,
         string|\Closure $labelField = 'name',
         string|\Closure $valueField = 'id',
-        array $extraFields = []
+        array $extraFields = [],
+        int $limit = 10
     ): array {
         return \clock()->event('Serving SUGGEST action')
-            ->run(function () use ($extraFields, $valueField, $labelField, $request) {
+            ->run(function () use ($limit, $extraFields, $valueField, $labelField, $request) {
                 $suggestDto = $request->getDto();
+                $suggestDto->limit = $limit;
                 $data = $this->getFacade()->suggest($suggestDto, $labelField, $valueField, $extraFields);
                 return  $this->formatList($data);
 

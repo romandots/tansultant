@@ -66,6 +66,6 @@ class ClassroomController extends AdminController
             'branch_id' => 'branch_id',
         ];
 
-        return $this->_suggest($request, $labelField, 'id', $extraFields);
+        return $this->_suggest($request, $labelField, 'id', $extraFields, 100);
     }
 }
