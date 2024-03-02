@@ -12,6 +12,7 @@ class SearchFilterDto
 {
     public ?string $query = null;
     public bool $with_deleted = false;
+    public int $limit = 20;
 
     public function getQuery(): ?string
     {

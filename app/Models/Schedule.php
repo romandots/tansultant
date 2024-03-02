@@ -15,6 +15,7 @@ use App\Models\Enum\Weekday;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Schedule
@@ -63,6 +64,7 @@ class Schedule extends Model
 {
     use UsesUuid;
     use HasFactory;
+    use SoftDeletes;
 
     public const TABLE = 'schedules';
 
@@ -129,7 +131,7 @@ class Schedule extends Model
             return $timestamp;
         }
 
-        return \sprintf('%s — %s', $timestamp, $this->classroom->name);
+        return \sprintf('%s — %s', $timestamp, $this->classroom?->name ?? '');
     }
 
 }

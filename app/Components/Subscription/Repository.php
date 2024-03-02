@@ -91,6 +91,20 @@ class Repository extends \App\Common\BaseComponentRepository
             ->orderBy("{$table}.created_at", 'asc');
     }
 
+    public function getStudentSubscriptions(
+        string $studentId,
+        array $subscriptionStatuses = []
+    ): Collection {
+        $subscriptionStatuses = [] === $subscriptionStatuses
+            ? $subscriptionStatuses : [SubscriptionStatus::ACTIVE->value, SubscriptionStatus::PENDING->value];
+        $subscriptions = Subscription::TABLE;
+        $pivot = Subscription::COURSES_PIVOT_TABLE;
+        return $this->getQuery()
+            ->join($pivot, "{$pivot}.subscription_id", '=', "{$subscriptions}.id")
+            ->whereIn("{$subscriptions}.status", $subscriptionStatuses)
+            ->where("{$subscriptions}.student_id", '=', $studentId)
+            ->get();
+    }
 
     public function getStudentSubscriptionsForCourse(
         string $studentId,

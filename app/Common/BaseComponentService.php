@@ -43,10 +43,11 @@ abstract class BaseComponentService extends BaseService
         $dto = new SearchFilterDto();
         $dto->query = $suggestDto->query;
         $dto->with_deleted = false;
+        $dto->limit = $suggestDto->limit;
 
         $result = $this->getRepository()
             ->getFilterQuery($dto)
-            ->limit(10)
+            ->limit($dto->limit)
             ->get()
             ->map(function (Model $record) use ($additionalFields, $labelField, $valueField) {
                 assert(is_a($record, $this->getModelClassName()));

@@ -8,10 +8,12 @@ use App\Common\Controllers\AdminController;
 use App\Common\Requests\ManageRelationsRequest;
 use App\Components\Loader;
 use App\Components\Subscription as Component;
+use App\Http\Requests\ManagerApi\CheckSubscriptionsRequest;
 use App\Http\Requests\ManagerApi\ProlongSubscriptionStatusRequest;
 use App\Http\Requests\ManagerApi\SearchSubscriptionsRequest;
 use App\Http\Requests\ManagerApi\StoreSubscriptionRequest;
 use App\Http\Requests\ManagerApi\UpdateSubscriptionStatusRequest;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @method \Illuminate\Http\Resources\Json\AnonymousResourceCollection index()
@@ -76,5 +78,15 @@ class SubscriptionController extends AdminController
         $prolongDto = $request->getDto();
         $subscription = $this->getFacade()->findAndProlong($prolongDto);
         return new \App\Components\Subscription\Formatter($subscription);
+    }
+
+    public function checkSubscriptions(CheckSubscriptionsRequest $request): \Illuminate\Http\Resources\Json\JsonResource
+    {
+        $checkSubscriptions = $request->getDto();
+        $subscriptionsIdsByCourses = $this->getFacade()->getStudentsSubscriptionsIdsForCourses($checkSubscriptions);
+
+        return new JsonResource([
+            'data' => $subscriptionsIdsByCourses,
+        ]);
     }
 }
