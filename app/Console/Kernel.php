@@ -10,6 +10,7 @@ use App\Console\Commands\UserCreateCommand;
 use App\Console\Commands\UserStatusUpdateCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -40,6 +41,12 @@ class Kernel extends ConsoleKernel
             ->everyMinute();
         $schedule
             ->command(SubscriptionUpdateCommand::class)
+            ->everyMinute();
+        $schedule
+            ->command(\Spatie\Health\Commands\RunHealthChecksCommand::class)
+            ->everyMinute();
+        $schedule
+            ->command(ScheduleCheckHeartbeatCommand::class)
             ->everyMinute();
     }
 

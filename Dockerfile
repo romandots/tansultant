@@ -35,7 +35,9 @@ RUN pecl install xdebug redis \
     && docker-php-ext-install pdo_pgsql \
     && docker-php-ext-install exif \
     && docker-php-ext-install pdo_mysql \
-    && docker-php-ext-install mysqli
+    && docker-php-ext-install mysqli \
+    && docker-php-ext-install pcntl \
+    && docker-php-ext-install sockets
 
 ADD docker/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 ADD docker/nginx.conf /etc/nginx/sites-enabled/default
