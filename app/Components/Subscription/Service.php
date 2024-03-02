@@ -146,6 +146,28 @@ class Service extends BaseComponentService
         return $this->filterSubscriptionsNotYetSubscribedOnCourse($subscriptions, $courseId);
     }
 
+    public function getStudentActiveSubscriptions(string $studentId): Collection
+    {
+        return $this->getRepository()->getStudentSubscriptions(
+            $studentId,
+            [SubscriptionStatus::ACTIVE->value, SubscriptionStatus::PENDING->value]
+        );
+    }
+
+    public function getStudentsSubscriptionsIdsForCourses(string $studentId, array $coursesIds): array
+    {
+        $subscriptions = $this->getStudentActiveSubscriptions($studentId);
+        $groupedByCourse = [];
+        foreach ($coursesIds as $courseId) {
+            $groupedByCourse[$courseId] = $this
+                ->filterSubscriptionsSubscribedOnCourse($subscriptions, $courseId)
+                ->pluck('id')
+                ->toArray();
+        }
+
+        return $groupedByCourse;
+    }
+
     public function getStudentSubscriptionsSubscribedOnCourse(
         string $studentId,
         string $courseId

@@ -42,7 +42,7 @@ class StorePriceRequest extends StoreRequest
 
         $dto->name = $validated['name'];
         $dto->price = $validated['price'];
-        $dto->special_price = $validated['special_price'];
+        $dto->special_price = $validated['special_price'] ?? null;
 
         return $dto;
     }

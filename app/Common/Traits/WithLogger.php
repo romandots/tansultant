@@ -26,7 +26,9 @@ trait WithLogger
     {
         $prefix = $this->getLoggerPrefix();
         $message = $prefix ? $prefix . ': ' . $message : $message;
-        $this->getLogger()->debug($message, $context);
+        try {
+            $this->getLogger()->debug($message, $context);
+        } catch(\Throwable) {}
     }
 
     protected function error(string $message, array|\Throwable $context = []): void
