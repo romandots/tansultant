@@ -44,6 +44,7 @@ class ImportTariffsService extends ImportService
     {
         return $this->dbConnection
             ->table($this->table)
+            ->where('ticket_type_active', 1)
             ->orderBy('id', 'asc');
     }
 

@@ -13,7 +13,6 @@ use App\Services\Import\Maps\SubscriptionsMap;
 use App\Services\Import\Maps\TariffsMap;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Intervention\Image\Exception\NotFoundException;
 
 class ImportSubscriptionsService extends ImportService
 {
@@ -87,18 +86,15 @@ class ImportSubscriptionsService extends ImportService
         try {
             $studentId = $this->getStudentsMap()->mapped($record->client_id);
             if (!($studentId instanceof Student)) {
-                $studentId = $this->getStudentsMap()->mappedRecord($record->client_id);
-            }
-            if (null === $studentId) {
-                $student = $this->getStudentsImportService()->importRecordById($record->client_id);
-                $studentId = $student?->id;
+                $student = $this->getStudentsMap()->mappedRecord($record->client_id);
+                $studentId = $student instanceof Student ? $student->id : null;
             }
             if (null === $studentId) {
                 throw new \LogicException('Student (client) is not found');
             }
             return Loader::subscriptions()->getRepository()
                 ->getQuery()
-                ->where('name', $record->ticket_name)
+                ->where('name', $record->ticket_name ?? '')
                 ->where('student_id', $studentId)
                 ->firstOrFail();
         } catch (ModelNotFoundException $exception) {
@@ -115,9 +111,9 @@ class ImportSubscriptionsService extends ImportService
         }
 
         $tariff = $this->getTariffsMap()->mappedRecord($record->ticket_type);
-        $tariff ??= Loader::tariffs()->findBy('name', $record->ticket_type);
+        $tariff ??= Loader::tariffs()->findBy('name', $record->ticket_name);
         if (!($tariff instanceof Tariff)) {
-            throw new NotFoundException('Tariff not found');
+            throw new \LogicException('Tariff not found');
         }
 
         $visitsLimit = (int)round(((int)$record->periods - (int)$record->periods_used) / 2);
@@ -197,7 +193,7 @@ class ImportSubscriptionsService extends ImportService
             $coursesIds = $this->getVisitedCoursesIds($record->id);
             $this->attachCoursesToSubscriptionAndTariff($subscription, $coursesIds);
         } catch (\Exception $e) {
-            throw new \Exception('Failed to attach courses to subscription', 0, $e);
+            throw new \Exception('Failed to attach courses to subscription: ' . $e->getMessage(), 0, $e);
         }
     }
 

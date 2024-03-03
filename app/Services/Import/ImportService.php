@@ -137,7 +137,7 @@ abstract class ImportService extends \App\Common\BaseService
 
         $this->map($record->id, $importedRecord->id);
         $this->imported($importedRecord->id);
-        $this->cli->info(sprintf("Imported: %d => %s", $record->id, $importedRecord->id));
+        //$this->cli->info(sprintf("Imported: %d => %s", $record->id, $importedRecord->id));
         gc_collect_cycles();
 
         return $importedRecord;
@@ -147,10 +147,7 @@ abstract class ImportService extends \App\Common\BaseService
     {
         foreach ($records as $record) {
             $this->importRecord($record);
-            $this->cli->newLine();
             $this->bar->advance(1);
-            $this->cli->newLine();
-            $this->cli->line('Memory usage: ' . memory_get_usage(true));
         }
     }
 
