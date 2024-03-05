@@ -61,7 +61,7 @@ class Manager extends \App\Common\BaseComponentService
 
         $bonuses = Loader::bonuses()->getStudentAvailableBonuses($student);
 
-        $price = (int)($lesson->price?->price ?? 0);
+        $price = (int)Loader::prices()->calculateLessonVisitPrice($lesson, $student);
         $priceOptions = new Entity\PriceOptions($price, $bonuses);
 
         if ($dto->pay_from_balance) {

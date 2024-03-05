@@ -21,4 +21,9 @@ class Service extends BaseComponentService
             null
         );
     }
+
+    public function calculateLessonVisitPrice(\App\Models\Lesson $lesson, ?\App\Models\Student $student): float
+    {
+        return (new Policy\VisitPricePolicy($lesson, $student))->getPrice();
+    }
 }
