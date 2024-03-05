@@ -168,14 +168,11 @@ class Service extends BaseComponentService
                 continue;
             }
 
-            /** @var Lesson $lesson */
-            $filteredSubscriptions = $lesson?->course_id
-                ? $this->filterSubscriptionsSubscribedOnCourse($subscriptions, $lesson->course_id)
-                : new Collection();
-
             $visitPrice = Loader::prices()->calculateLessonVisitPrice($lesson, $student);
-
             $existingVisit = Loader::visits()->getVisitByStudentIdAndLessonId($studentId, $lesson->id);
+            $filteredSubscriptions = $lesson?->course_id !== null
+                ? $this->filterSubscriptionsAvailableForCourse($subscriptions, $lesson->course_id)
+                : new Collection();
 
             $grouped[$lesson->id] = [
                 'visit_price' => $visitPrice,
@@ -216,14 +213,24 @@ class Service extends BaseComponentService
         );
     }
 
+    public function filterSubscriptionsAvailableForCourse(Collection $subscriptions, string $courseId): Collection
+    {
+        return $subscriptions->filter(fn (Subscription $subscription) =>
+            (
+                $this->subscriptionTariffIncludesCourse($subscription, $courseId) ||
+                $this->subscriptionCoursesIncludesCourse($subscription, $courseId)
+            ) && $this->subscriptionHasVisits($subscription)
+        );
+    }
+
     private function subscriptionTariffIncludesCourse(Subscription $subscription, string $courseId): bool
     {
-        return (bool)$subscription->load('tariff')->tariff->courses->where('id', $courseId)->count();
+        return $subscription->load('tariff')->tariff->courses->where('id', $courseId)->isNotEmpty();
     }
 
     private function subscriptionCoursesIncludesCourse(Subscription $subscription, string $courseId): bool
     {
-        return (bool)$subscription->load('courses')->courses->where('id', $courseId)->count();
+        return (bool)$subscription->load('courses')->courses->where('id', $courseId)->isNotEmpty();
     }
 
     private function subscriptionHasVisits(Subscription $subscription): bool
