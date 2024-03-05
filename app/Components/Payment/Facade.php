@@ -6,6 +6,7 @@ namespace App\Components\Payment;
 
 use App\Common\BaseComponentFacade;
 use App\Common\DTO\ShowDto;
+use App\Components\Loader;
 use App\Models\Bonus;
 use App\Models\Payment;
 use App\Models\Student;
@@ -34,7 +35,7 @@ class Facade extends BaseComponentFacade
 
     public function createVisitPayment(Visit $visit, Student $student, ?Bonus $bonus, User $user): Payment
     {
-        $price = (int)$visit->price;
+        $price = (int)Loader::prices()->calculateLessonVisitPrice($visit->event, $student);
         $name = trans('credit.withdrawals.visit', ['visit' => $visit->name]);
 
         return $this->getService()->createPayment($price, $name, $student, $bonus, $user);
