@@ -10,6 +10,7 @@ use App\Common\Contracts\DtoWithUser;
 use App\Components\Loader;
 use App\Events\Subscription\SubscriptionUpdatedEvent;
 use App\Models\Enum\SubscriptionStatus;
+use App\Models\Lesson;
 use App\Models\Subscription;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -154,18 +155,27 @@ class Service extends BaseComponentService
         );
     }
 
-    public function getStudentsSubscriptionsIdsForCourses(string $studentId, array $coursesIds): array
+    public function getVisitOptionsForStudentOnLessons(string $studentId, array $lessonsIds): array
     {
+        $student = Loader::students()->find($studentId);
+        $lessons = Loader::lessons()->getMany($lessonsIds);
         $subscriptions = $this->getStudentActiveSubscriptions($studentId);
-        $groupedByCourse = [];
-        foreach ($coursesIds as $courseId) {
-            $groupedByCourse[$courseId] = $this
-                ->filterSubscriptionsSubscribedOnCourse($subscriptions, $courseId)
-                ->pluck('id')
-                ->toArray();
+        $grouped = [];
+        foreach ($lessons as $lesson) {
+            /** @var Lesson $lesson */
+            $filteredSubscriptions = $lesson?->course_id
+                ? $this->filterSubscriptionsSubscribedOnCourse($subscriptions, $lesson->course_id)
+                : new Collection();
+
+            $visitPrice = Loader::prices()->calculateLessonVisitPrice($lesson, $student);
+
+            $grouped[$lesson->id] = [
+                'visit_price' => $visitPrice,
+                'course_subscriptions' => $filteredSubscriptions->pluck('id')->toArray(),
+            ];
         }
 
-        return $groupedByCourse;
+        return $grouped;
     }
 
     public function getStudentSubscriptionsSubscribedOnCourse(

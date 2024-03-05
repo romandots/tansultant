@@ -226,7 +226,7 @@ Route::namedGroup('subscriptions',ManagerApi\SubscriptionController::class, stat
     Route::namedRoute('detachCourses', 'delete', '{id:uuid}/courses', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
     Route::namedRoute('setStatus', 'post', '{id:uuid}/status/{status}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
     Route::namedRoute('prolong', 'post', '{id:uuid}/prolong/{bonus_id:uuid?}', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::UPDATE]);
-    Route::namedRoute('checkSubscriptions', 'get', 'check', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::READ]);
+    Route::namedRoute('checkSubscriptions', 'post', 'check', [SubscriptionsPermission::MANAGE, SubscriptionsPermission::READ]);
 });
 
 // TARIFFS

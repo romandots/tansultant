@@ -55,11 +55,11 @@ class Facade extends BaseComponentFacade
         return $this->getService()->getStudentSubscriptionsSubscribedOnCourse($studentId, $courseId);
     }
 
-    public function getStudentsSubscriptionsIdsForCourses(CheckSubscriptionsDto $checkSubscriptions): array
+    public function getVisitOptionsForStudentOnLessons(CheckSubscriptionsDto $checkSubscriptions): array
     {
         return $this
             ->getService()
-            ->getStudentsSubscriptionsIdsForCourses($checkSubscriptions->student_id, $checkSubscriptions->courses_ids);
+            ->getVisitOptionsForStudentOnLessons($checkSubscriptions->student_id, $checkSubscriptions->lessons_ids);
     }
 
     public function getStudentPotentialSubscriptionsForCourse(string $studentId, string $courseId): Collection

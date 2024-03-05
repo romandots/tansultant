@@ -24,13 +24,13 @@ class CheckSubscriptionsRequest extends StoreRequest
                 'required',
                 'string',
                 'uuid',
-                Rule::exists(Student::TABLE),
+                Rule::exists(Student::TABLE, 'id'),
             ],
-            'courses_ids' => [
+            'lessons_ids' => [
                 'required',
                 'array',
             ],
-            'courses_ids.*' => [
+            'lessons_ids.*' => [
                 'string',
                 'uuid',
             ],
@@ -45,7 +45,7 @@ class CheckSubscriptionsRequest extends StoreRequest
         $validated = $this->validated();
         $dto = new CheckSubscriptionsDto($this->user());
         $dto->student_id = $validated['student_id'];
-        $dto->courses_ids = $validated['courses_ids'] ?? [];
+        $dto->lessons_ids = $validated['lessons_ids'] ?? [];
 
         return $dto;
     }

@@ -35,10 +35,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Course>|null $course
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Branch>|null $branch
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Classroom>|null $classroom
- * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Price>|null $price
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Course>|Course|null $course
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Branch>|Branch|null $branch
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Classroom>|Classroom|null $classroom
+ * @property-read \Illuminate\Database\Eloquent\Relations\BelongsTo<Price>|Price|null $price
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Schedule newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Schedule newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Schedule query()

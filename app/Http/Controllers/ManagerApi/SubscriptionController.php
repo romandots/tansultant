@@ -83,7 +83,7 @@ class SubscriptionController extends AdminController
     public function checkSubscriptions(CheckSubscriptionsRequest $request): \Illuminate\Http\Resources\Json\JsonResource
     {
         $checkSubscriptions = $request->getDto();
-        $subscriptionsIdsByCourses = $this->getFacade()->getStudentsSubscriptionsIdsForCourses($checkSubscriptions);
+        $subscriptionsIdsByCourses = $this->getFacade()->getVisitOptionsForStudentOnLessons($checkSubscriptions);
 
         return new JsonResource([
             'data' => $subscriptionsIdsByCourses,

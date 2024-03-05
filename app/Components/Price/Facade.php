@@ -6,7 +6,9 @@ namespace App\Components\Price;
 
 use App\Common\BaseComponentFacade;
 use App\Common\DTO\ShowDto;
+use App\Models\Lesson;
 use App\Models\Price;
+use App\Models\Student;
 
 /**
  * @method Service getService()
@@ -36,5 +38,10 @@ class Facade extends BaseComponentFacade
     public function findByPriceValue(int $price): Price
     {
         return $this->getRepository()->findBy('price', $price);
+    }
+
+    public function calculateLessonVisitPrice(Lesson $lesson, Student $student): float
+    {
+        return $this->getService()->calculateLessonVisitPrice($lesson, $student);
     }
 }

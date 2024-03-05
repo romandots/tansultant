@@ -8,5 +8,5 @@ class CheckSubscriptionsDto extends \App\Common\DTO\DtoWithUser
 {
     public string $student_id;
     /** @var string[] */
-    public array $courses_ids = [];
+    public array $lessons_ids = [];
 }

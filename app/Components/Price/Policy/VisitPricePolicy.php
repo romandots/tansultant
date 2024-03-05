@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Price\Policy;
+namespace App\Components\Price\Policy;
 
 use App\Models\Enum\StudentStatus;
 use App\Models\Lesson;
@@ -20,18 +20,20 @@ class VisitPricePolicy implements Contract\PricePolicyInterface
     public function getPrice(): float
     {
         $lessonVisitPrice = match ($this->student->status) {
-            StudentStatus::ACTIVE => $this->lesson?->course?->price?->special_price ?? $this->lesson?->course?->price?->price,
-            default => $this->lesson?->course?->price?->price,
+            StudentStatus::ACTIVE => $this->lesson?->schedule?->price?->special_price ?? $this->lesson?->schedule?->price?->price,
+            default => $this->lesson?->schedule?->price?->price,
         };
 
         if (null === $lessonVisitPrice) {
             return 0;
         }
 
-        if (null === $this->student->personal_discount || 0 > $lessonVisitPrice || 100 < $lessonVisitPrice) {
-            return $lessonVisitPrice;
-        }
+        return (float)$lessonVisitPrice;
 
-        return (float)($lessonVisitPrice / 100 * $this->student->personal_discount);
+        //if (null === $this->student->personal_discount || 0 > $lessonVisitPrice || 100 < $lessonVisitPrice) {
+        //    return $lessonVisitPrice;
+        //}
+        //
+        //return (float)($lessonVisitPrice / 100 * $this->student->personal_discount);
     }
 }
