@@ -47,4 +47,13 @@ class Facade extends BaseComponentFacade
     {
         return $this->getRepository()->getLastVisitByStudentId($student->id);
     }
+
+    public function getVisitByStudentIdAndLessonId(string $studentId, string $lessonId): ?Visit
+    {
+        try {
+            return $this->getRepository()->findByStudentIdAndEventId($studentId, $lessonId);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
 }

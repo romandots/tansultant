@@ -175,9 +175,12 @@ class Service extends BaseComponentService
 
             $visitPrice = Loader::prices()->calculateLessonVisitPrice($lesson, $student);
 
+            $existingVisit = Loader::visits()->getVisitByStudentIdAndLessonId($studentId, $lesson->id);
+
             $grouped[$lesson->id] = [
                 'visit_price' => $visitPrice,
                 'course_subscriptions' => $filteredSubscriptions->pluck('id')->toArray(),
+                'current_payment_type' => $existingVisit?->payment_type?->value ?? null,
             ];
         }
 
