@@ -32,7 +32,7 @@ use Spatie\Tags\HasTags;
  * @property string|null $summary
  * @property string|null $description
  * @property boolean $display
- * @property int[] $age_restrictions ['from' => (int|null), 'to' => (int|null)]
+ * @property array<string, int> $age_restrictions ['from' => (int|null), 'to' => (int|null)]
  * @property string|null $picture
  * @property string|null $picture_thumb
  * @property int|null $subscriptions_count
@@ -191,5 +191,13 @@ class Course extends Model
     {
         return $this->belongsToMany(Subscription::class, Subscription::COURSES_PIVOT_TABLE)
             ->where('status', SubscriptionStatus::ACTIVE);
+    }
+
+    public function isAllowedByAgeRestrictions(int $age): bool
+    {
+        $from = $this->age_restrictions['from'] ?? null;
+        $to = $this->age_restrictions['to'] ?? null;
+
+        return (null === $from || $age >= $from) && (null === $to || $age <= $to);
     }
 }

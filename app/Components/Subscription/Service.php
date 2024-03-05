@@ -158,10 +158,16 @@ class Service extends BaseComponentService
     public function getVisitOptionsForStudentOnLessons(string $studentId, array $lessonsIds): array
     {
         $student = Loader::students()->find($studentId);
+        /** @var Lesson[] $lessons */
         $lessons = Loader::lessons()->getMany($lessonsIds);
         $subscriptions = $this->getStudentActiveSubscriptions($studentId);
         $grouped = [];
         foreach ($lessons as $lesson) {
+
+            if ($lesson?->course->isAllowedByAgeRestrictions($student->person->birth_date?->age) === false) {
+                continue;
+            }
+
             /** @var Lesson $lesson */
             $filteredSubscriptions = $lesson?->course_id
                 ? $this->filterSubscriptionsSubscribedOnCourse($subscriptions, $lesson->course_id)
