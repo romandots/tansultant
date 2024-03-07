@@ -120,7 +120,7 @@ class Service extends \App\Common\BaseComponentService
     private function validatePerson(Person $person, ?Student $student): void
     {
         $person->load('students');
-        if ($person->student && (null === $student || $person->student->id === $student->id)) {
+        if ($student !== null && $person->student && $person->id !== $student?->person_id) {
             throw new Exceptions\StudentAlreadyExists($person->student);
         }
     }
