@@ -134,7 +134,7 @@ class Service extends \App\Common\BaseComponentService
         }
     }
 
-    public function dectivateStudent(Student $student, User $user): void
+    public function deactivateStudent(Student $student, User $user): void
     {
         if ($student->status !== StudentStatus::POTENTIAL && $student->loadCount('visits')->visits_count === 0) {
             $this->debug("Deactivating student {$student->name}");

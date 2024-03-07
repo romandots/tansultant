@@ -103,6 +103,7 @@ class Repository extends \App\Common\BaseComponentRepository
             ->join($pivot, "{$pivot}.subscription_id", '=', "{$subscriptions}.id")
             ->whereIn("{$subscriptions}.status", $subscriptionStatuses)
             ->where("{$subscriptions}.student_id", '=', $studentId)
+            ->groupBy("{$subscriptions}.id", "{$pivot}.subscription_id", "{$pivot}.course_id")
             ->get();
     }
 

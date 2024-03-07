@@ -127,7 +127,7 @@ class ImportSubscriptionsService extends ImportService
         $subscription = Loader::subscriptions()->make([
             'id' => \uuid(),
             'name' => $record->ticket_name ?? $tariff->name,
-            'courses_limit' => null,
+            'courses_limit' => $tariff->courses_limit,
             'visits_limit' => $visitsLimit,
             'days_limit' => $record->period,
             'holds_limit' => $holdsLimit,

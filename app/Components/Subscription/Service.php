@@ -177,7 +177,9 @@ class Service extends BaseComponentService
             $grouped[$lesson->id] = [
                 'visit_price' => $visitPrice,
                 'course_subscriptions' => $filteredSubscriptions->pluck('id')->toArray(),
-                'current_payment_type' => $existingVisit?->payment_type?->value ?? null,
+                'current_visit_payment_type' => $existingVisit?->payment_type?->value ?? null,
+                'current_visit_id' => $existingVisit?->id,
+                'current_visit_subscription_id' => $existingVisit?->subscription_id,
             ];
         }
 
@@ -220,7 +222,7 @@ class Service extends BaseComponentService
                 $this->subscriptionTariffIncludesCourse($subscription, $courseId) ||
                 $this->subscriptionCoursesIncludesCourse($subscription, $courseId)
             ) && $this->subscriptionHasVisits($subscription)
-        );
+        )->unique('id');
     }
 
     private function subscriptionTariffIncludesCourse(Subscription $subscription, string $courseId): bool
