@@ -49,7 +49,7 @@ class Facade extends BaseComponentFacade
 
     public function dectivateStudent(Student $student, User $user): void
     {
-        $this->getService()->dectivateStudent($student, $user);
+        $this->getService()->deactivateStudent($student, $user);
     }
 
     public function updateLastSeen(Student $student): void

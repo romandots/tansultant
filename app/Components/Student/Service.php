@@ -120,7 +120,7 @@ class Service extends \App\Common\BaseComponentService
     private function validatePerson(Person $person, ?Student $student): void
     {
         $person->load('students');
-        if ($person->student && (null === $student || $person->student->id === $student->id)) {
+        if ($student !== null && $person->student && $person->id !== $student?->person_id) {
             throw new Exceptions\StudentAlreadyExists($person->student);
         }
     }
@@ -134,7 +134,7 @@ class Service extends \App\Common\BaseComponentService
         }
     }
 
-    public function dectivateStudent(Student $student, User $user): void
+    public function deactivateStudent(Student $student, User $user): void
     {
         if ($student->status !== StudentStatus::POTENTIAL && $student->loadCount('visits')->visits_count === 0) {
             $this->debug("Deactivating student {$student->name}");

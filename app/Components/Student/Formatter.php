@@ -31,6 +31,14 @@ class Formatter extends BaseFormatter
             'card_number' => $this->card_number,
             'visits_count' => $this->visits_count,
             'subscriptions_count' => $this->subscriptions_count,
+            //'subscriptions' => $this->whenLoaded(
+            //    'subscriptions',
+            //    fn () => \App\Components\Subscription\Formatter::collection($this->subscriptions)
+            //),
+            'subscriptions' => $this->whenLoaded(
+                'subscriptions',
+                fn () => \App\Components\Subscription\Formatter::collection($this->active_subscriptions)
+            ),
             'status' => $this->status,
             'status_label' => \translate('student.status', $this->status),
             'seen_at' => $this->seen_at?->toDateTimeString(),

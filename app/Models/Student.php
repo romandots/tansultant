@@ -10,12 +10,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Components\Loader;
 use App\Models\Enum\StudentStatus;
 use App\Models\Traits\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -36,7 +38,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read \App\Models\Customer $customer
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
  * @property-read \App\Models\Person $person
- * @property-read HasMany<Subscription>|null $subscriptions
+ * @property-read HasMany<Subscription>|Subscription[]|null $subscriptions
+ * @property-read Collection<Subscription>|Subscription[]|null $active_subscriptions
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Student newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Student newQuery()
@@ -95,6 +98,11 @@ class Student extends Model
     public function subscriptions(): HasMany
     {
         return $this->hasMany(Subscription::class)->orderBy('created_at', 'desc');
+    }
+
+    public function getActiveSubscriptionsAttribute(): Collection
+    {
+        return Loader::subscriptions()->getStudentActiveSubscriptions($this->id);
     }
 
     public function visits(): HasMany
