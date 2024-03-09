@@ -13,7 +13,7 @@ services:
       - ../manager-app/:/manager-app
       - /manager-app/node_modules
     ports:
-      - "80:8080"
+      - "80:80"
     tty: true
     stdin_open: true
   api:
@@ -21,7 +21,7 @@ services:
       context: ./
     image: api
     ports:
-      - "8080:80"
+      - "8080:8080"
       - "6001:6001"
     extra_hosts:
       - "host.docker.internal:host-gateway"

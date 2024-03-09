@@ -15,7 +15,7 @@ services:
       - db
       - redis
     ports:
-      - "8080:80"
+      - "8080:8080"
   db:
     restart: always
   redis:
@@ -27,6 +27,3 @@ services:
       - ./docker/nginx/certs:/etc/nginx/certs/
       - ./docker/logs/nginx:/var/log/nginx
     restart: always
-    expose:
-      - 8080
-      - 80
