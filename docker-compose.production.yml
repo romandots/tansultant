@@ -3,7 +3,7 @@ services:
   app:
     build:
       context: ../manager-app
-      dockerfile: DockerfileProduction
+      dockerfile: Dockerfile.production
     restart: always
     ports:
       - "80:80"

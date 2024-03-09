@@ -8,7 +8,7 @@ services:
       VUE_APP_PUBLIC_API_URL: http://localhost:8080
     build:
       context: ../manager-app/
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.development
     volumes:
       - ../manager-app/:/manager-app
       - /manager-app/node_modules
