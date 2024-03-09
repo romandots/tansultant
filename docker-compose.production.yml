@@ -16,8 +16,6 @@ services:
       - redis
     ports:
       - "8080:80"
-  scheduler:
-    restart: always
   db:
     restart: always
   redis:
