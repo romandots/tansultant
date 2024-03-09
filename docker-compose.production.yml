@@ -6,7 +6,7 @@ services:
       dockerfile: DockerfileProduction
     restart: always
     ports:
-      - "${APP_PORT}:80"
+      - "80:80"
     depends_on:
       - api
   api:
@@ -15,7 +15,7 @@ services:
       - db
       - redis
     ports:
-      - "${API_PORT}:80"
+      - "8080:80"
   scheduler:
     restart: always
   db:
