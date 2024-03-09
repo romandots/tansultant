@@ -1,7 +1,7 @@
 FROM php:8.1.4-fpm-buster
 
 EXPOSE 9009
-#EXPOSE ${WEBSOCKETS_PORT}
+EXPOSE 6001
 
 RUN apt-get update -y \
     && apt-get install -y \
