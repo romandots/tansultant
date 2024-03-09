@@ -30,5 +30,5 @@ services:
       - ./docker/logs/nginx:/var/log/nginx
     restart: always
     expose:
-      - ${API_PORT}
-      - ${APP_PORT}
+      - 8080
+      - 80
