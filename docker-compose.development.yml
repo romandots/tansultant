@@ -2,10 +2,8 @@ version: '3'
 services:
   app:
     environment:
-      VITE_NAME: "ШТБП"
-      VITE_URL: http://localhost
-      VITE_MEMBER_API_URL: http://localhost:8080/admin
-      VITE_PUBLIC_API_URL: http://localhost:8080
+      VITE_APP_NAME: "ШТБП - Разработка"
+      VITE_APP_HOST: localhost
     build:
       context: ../manager-app/
       dockerfile: Dockerfile.development
@@ -19,7 +17,6 @@ services:
   api:
     build:
       context: ./
-    image: api
     ports:
       - "8080:8080"
       - "6001:6001"
