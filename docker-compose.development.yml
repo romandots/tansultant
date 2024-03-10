@@ -2,10 +2,10 @@ version: '3'
 services:
   app:
     environment:
-      VUE_APP_NAME: "ШТБП"
-      VUE_APP_URL: http://localhost
-      VUE_APP_MEMBER_API_URL: http://localhost:8080/admin
-      VUE_APP_PUBLIC_API_URL: http://localhost:8080
+      VITE_NAME: "ШТБП"
+      VITE_URL: http://localhost
+      VITE_MEMBER_API_URL: http://localhost:8080/admin
+      VITE_PUBLIC_API_URL: http://localhost:8080
     build:
       context: ../manager-app/
       dockerfile: Dockerfile.development
