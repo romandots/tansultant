@@ -2,9 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\User;
 use App\Services\Permissions\UserRoles;
-use Illuminate\Support\Facades\Gate;
+use Laravel\Horizon\Horizon;
 use Laravel\Horizon\HorizonApplicationServiceProvider;
 
 class HorizonServiceProvider extends HorizonApplicationServiceProvider
@@ -21,17 +20,10 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
         // Horizon::routeSlackNotificationsTo('slack-webhook-url', '#channel');
     }
 
-    /**
-     * Register the Horizon gate.
-     *
-     * This gate determines who can access Horizon in non-local environments.
-     */
-    protected function gate(): void
+    protected function authorization()
     {
-        Gate::define('viewHorizon', function (User $user) {
-            $guardName = \config('permission.guard_name', 'api');
-            $roleModel = \Spatie\Permission\Models\Role::findByName(UserRoles::ADMIN, $guardName);
-            return $user->hasRole($roleModel);
+        Horizon::auth(function ($request) {
+            return \auth('web')->user()->hasRole(UserRoles::ADMIN) || app()->environment('local');
         });
     }
 }
