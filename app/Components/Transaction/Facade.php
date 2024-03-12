@@ -56,4 +56,9 @@ class Facade extends BaseComponentFacade
     {
         return $this->getService()->getQrCodeAndSendLinkToCustomer($transaction);
     }
+
+    public function cancelAllPendingShiftTransactions(\App\Models\Shift $shift): void
+    {
+        $this->getService()->cancelAllPendingShiftTransactions($shift);
+    }
 }

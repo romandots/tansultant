@@ -423,4 +423,12 @@ class Service extends \App\Common\BaseComponentService
             ShiftEvent::transactionsUpdated($transaction->shift);
         }
     }
+
+    public function cancelAllPendingShiftTransactions(Shift $shift): void
+    {
+        $transactions = $this->getRepository()->getPendingShiftTransactions($shift);
+        foreach ($transactions as $transaction) {
+            $this->setTransactionCanceled($transaction);
+        }
+    }
 }

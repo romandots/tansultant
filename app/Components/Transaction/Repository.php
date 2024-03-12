@@ -125,4 +125,12 @@ class Repository extends \App\Common\BaseComponentRepository
             ->get();
     }
 
+    public function getPendingShiftTransactions(\App\Models\Shift $shift): Collection
+    {
+        return $this->getQuery()
+            ->where('status', TransactionStatus::PENDING)
+            ->where('shift_id', $shift->id)
+            ->get();
+    }
+
 }

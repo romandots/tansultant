@@ -91,6 +91,8 @@ class Service extends BaseComponentService
     {
         try {
             \DB::transaction(function () use ($user, $shift) {
+
+                Loader::transactions()->cancelAllPendingShiftTransactions($shift);
                 $this->getRepository()->updateTotalIncomeAndClose($shift);
                 Loader::users()->getRepository()->detachActiveShift($user);
                 $this->debug('Shift ' . $shift . ' closed');
