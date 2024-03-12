@@ -132,7 +132,7 @@ class Service extends \App\Common\BaseComponentService
             Loader::shifts()->updateTotalIncome($transaction->shift);
         }
 
-        $this->getRepository()->setStatus($transaction, $toStatus, ['confirmed_at']);
+        $this->getRepository()->updateStatus($transaction, $toStatus, ['confirmed_at']);
 
         DB::commit();
 
@@ -152,7 +152,7 @@ class Service extends \App\Common\BaseComponentService
             throw new Exceptions\NotInStatusExceptions($fromStatus);
         }
 
-        $this->getRepository()->setStatus($transaction, $toStatus, ['canceled_at']);
+        $this->getRepository()->updateStatus($transaction, $toStatus, ['canceled_at']);
         $this->dispatchEventsUponCancelingTransaction($transaction);
     }
 
@@ -169,7 +169,7 @@ class Service extends \App\Common\BaseComponentService
             throw new Exceptions\NotInStatusExceptions($fromStatus);
         }
 
-        $this->getRepository()->setStatus($transaction, $toStatus);
+        $this->getRepository()->updateStatus($transaction, $toStatus);
         $this->dispatchEventsUponExpiringTransaction($transaction);
     }
 
