@@ -8,7 +8,7 @@ use App\Models\Enum\Gender;
 
 class UserCreateCommand extends UserCommand
 {
-    protected $signature = 'user:create {username} {password}';
+    protected $signature = 'user:create {username} {password} {person_id?}';
     protected $description = 'Creates user with password';
 
     public function handle(): void
@@ -18,7 +18,22 @@ class UserCreateCommand extends UserCommand
 
         $userDto->username = $this->argument('username');
         $userDto->password = $this->argument('password');
+        $personId = $this->argument('person_id');
 
+        $person = (null !== $personId)
+            ? Loader::people()->findById($personId)
+            : $this->createPerson($personDto);
+        $userDto->person_id = $person->id;
+
+        $user = $this->users->createFromPerson($userDto);
+
+        $this->info(
+            "User #{$user->id} <{$user->name}> with password '{$userDto->password}' created in status [{$user->status->value}]"
+        );
+    }
+
+    private function createPerson(\App\Components\Person\Dto $personDto): \App\Models\Person
+    {
         $personDto->last_name = utf8_encode($this->ask('Last name'));
         $personDto->first_name = utf8_encode($this->ask('First name'));
         $personDto->patronymic_name = utf8_encode($this->ask('Patronymic name'));
@@ -37,16 +52,6 @@ class UserCreateCommand extends UserCommand
             $person = $e->getPerson();
         }
 
-        if (null === $person) {
-            $this->error('Person was not created');
-            return;
-        }
-
-        $userDto->person_id = $person->id;
-        $user = $this->users->createFromPerson($userDto);
-
-        $this->info(
-            "User #{$user->id} <{$user->name}> with password '{$userDto->password}' created in status [{$user->status->value}]"
-        );
+        return $person;
     }
 }

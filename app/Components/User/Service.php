@@ -89,15 +89,15 @@ class Service extends \App\Common\BaseComponentService
      */
     public function createFromPerson(Dto $dto, Person $person): User
     {
-        $dto->name = $dto->name ?? \trans('person.user_name', $person->compactName());
-        $dto->username = $dto->username ?? $person->email ?? $person->phone;
+        $dto->name ??= \trans('person.user_name', $person->compactName());
+        $dto->username ??= $person->email ?? $person->phone;
         if (null === $dto->username) {
             throw new PersonHasNoPhoneException();
         }
 
         $dto->person_id = $person->id;
         $dto->status = UserStatus::APPROVED;
-        $dto->password = Shared::generatePassword();
+        $dto->password ??= Shared::generatePassword();
 
         return $this->create($dto);
     }
