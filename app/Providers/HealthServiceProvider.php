@@ -41,6 +41,7 @@ class HealthServiceProvider extends ServiceProvider
             QueueSizeCheck::new(),
             ScheduleCheck::new(),
             PingCheck::new()->url(config('app.url'))->name('Front App'),
+            PingCheck::new()->url(config('telegram.api_host') . config('telegram.endpoints.ping'))->name('Telegram Server'),
             UsedDiskSpaceCheck::new(),
             RedisMemoryUsageCheck::new(),
             EnvironmentCheck::new(),
