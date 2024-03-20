@@ -3,9 +3,11 @@
 namespace App\Services\Notification;
 
 use App\Common\BaseService;
+use App\Jobs\Notifications\NotificationJob;
 use App\Models\Person;
 use App\Services\Notification\Providers\Provider;
 use App\Services\Notification\Providers\SmsProvider;
+use App\Services\Notification\Providers\TelegramProvider;
 
 class NotificationService extends BaseService
 {
@@ -13,7 +15,12 @@ class NotificationService extends BaseService
     {
         $channels = $this->getPersonChannels($person);
         foreach ($channels as $channel) {
-            $this->notifyByChannel($person, $channel, $message);
+            match ($channel) {
+                NotificationChannel::SMS => NotificationJob::sms($person, $message),
+                NotificationChannel::TELEGRAM => NotificationJob::telegram($person, $message),
+                NotificationChannel::EMAIL => throw new \Exception('Email provider is not implemented'),
+                NotificationChannel::PUSH => throw new \Exception('Push provider is not implemented'),
+            };
         }
     }
 
@@ -31,6 +38,7 @@ class NotificationService extends BaseService
     protected function getRecipientByChannel(Person $person, NotificationChannel $channel): string
     {
         $recipient = match ($channel) {
+            NotificationChannel::TELEGRAM => $person->telegram_username ?? $person->phone,
             NotificationChannel::SMS => $person->phone,
             NotificationChannel::EMAIL => $person->email,
             NotificationChannel::PUSH => null,//$person->push_token,
@@ -47,6 +55,7 @@ class NotificationService extends BaseService
     {
         return match ($channel) {
             NotificationChannel::SMS => app(SmsProvider::class),
+            NotificationChannel::TELEGRAM => app(TelegramProvider::class),
             NotificationChannel::EMAIL => throw new \Exception('Email provider is not implemented'),
             NotificationChannel::PUSH => throw new \Exception('Push provider is not implemented'),
         };
@@ -55,6 +64,7 @@ class NotificationService extends BaseService
     protected function getPersonChannels(Person $person): array
     {
         return [
+            NotificationChannel::TELEGRAM,
             NotificationChannel::SMS,
         ];
     }

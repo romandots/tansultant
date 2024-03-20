@@ -31,6 +31,11 @@ class Facade
         $this->getService()->notifyByChannel($person, NotificationChannel::PUSH, $message);
     }
 
+    public function telegram(Person $person, string $message): void
+    {
+        $this->getService()->notifyByChannel($person, NotificationChannel::TELEGRAM, $message);
+    }
+
     public function sendPasswordResetNotification(\App\Models\User $user, string $password): void
     {
         $this->notify(
