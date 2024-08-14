@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http;
 
+use App\Http\Middleware\AuthApiKeyHeader;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 /**
@@ -32,6 +33,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'auth.api_key' => AuthApiKeyHeader::class,
 //        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
 //        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
@@ -67,6 +69,10 @@ class Kernel extends HttpKernel
     protected $middlewareGroups = [
         'web' => [
             'auth.basic:web,username',
+        ],
+
+        'webhooks' => [
+            'auth.api_key',
         ],
 
         'api' => [

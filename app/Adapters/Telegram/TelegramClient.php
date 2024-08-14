@@ -3,27 +3,28 @@
 namespace App\Adapters\Telegram;
 
 use App\Adapters\Client;
+use App\Common\Locator;
 use Illuminate\Support\Facades\Http;
 
 class TelegramClient extends Client
 {
 
-    protected \Illuminate\Http\Client\PendingRequest $http;
+    protected Transport\TelegramAdapterTransport $transport;
 
-    public function __construct()
+    public function __construct(\App\Adapters\Telegram\Transport\TelegramAdapterTransport $transport)
     {
-        $apiHost = config('telegram.api_host');
-        $apiToken = config('telegram.api_key');
+        $this->transport = $transport;
+    }
 
-        if (!$apiHost || !$apiToken) {
-            throw new \Exception('Telegram API host or token is not set');
-        }
+    public static function withTransport(string $transportType): self
+    {
+        $transport = match ($transportType) {
+            'http' => \App\Adapters\Telegram\Transport\TelegramAdapterHttp::class,
+            'queue' => \App\Adapters\Telegram\Transport\TelegramAdapterQueue::class,
+            default => throw new TelegramClientException("Invalid transport")
+        };
 
-        $this->http = Http::baseUrl($apiHost)
-            ->withHeaders([
-                'API_KEY' => $apiToken,
-                'Content-Type' => 'application/json',
-            ]);
+        return new self(new $transport());
     }
 
     public function externalSystemName(): string
@@ -34,23 +35,16 @@ class TelegramClient extends Client
     public function ping(): bool
     {
         try {
-            return $this->http->get(config('telegram.endpoints.ping', '/ping'))->ok();
+            return $this->transport->ping();
         } catch (\Exception $e) {
             throw new TelegramClientException('Telegram server is not responding: ' .$e->getMessage(), [], 500);
         }
     }
 
-    public function sendMessage(string $phone, string $message): bool
+    public function sendMessage(string $phone, string $message): void
     {
         try {
-            $response = $this->http
-                ->post(config('telegram.endpoints.send_message', '/message'), [
-                    'phone' => $phone,
-                    'message' => $message,
-                ])
-                ->throwIfStatus(401);
-
-            return $response->ok();
+            $this->transport->sendMessage($phone, $message);
         } catch (\Exception $e) {
             throw new TelegramClientException('Message not sent: '. $e->getMessage(), [], 500);
         }

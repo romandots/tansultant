@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\UsesUuid;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -32,6 +33,7 @@ use Illuminate\Support\Collection;
  * @property-read BelongsTo<Tariff>|Tariff|null $tariff
  * @property-read BelongsTo<Student>|Student|null $student
  * @property-read BelongsToMany|Collection<Course>|null $courses
+ * @property-read array<int, string> $courses_list
  * @property-read BelongsToMany|Collection<Payment>|null $payments
  * @property-read HasMany<Hold>|Hold|null $holds
  * @property-read BelongsTo<Hold>|Hold|null $active_hold
@@ -167,5 +169,10 @@ class Subscription extends Model
 
         $prolongationPeriod = \config('subscriptions.prolongation_extra_period', 0);
         return $this->expired_at->clone()->addDays($prolongationPeriod)->greaterThanOrEqualTo(Carbon::now());
+    }
+
+    public function getCoursesListAttribute(): array
+    {
+        return $this->courses->pluck('name', 'id')->toArray();
     }
 }

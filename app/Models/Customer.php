@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -33,8 +34,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int|null $bonuses_sum
  * @property int|null $pending_bonuses_sum
  * @property-read \App\Models\Contract $contract
- * @property-read BelongsTo<Person> $person
- * @property-read HasMany<Student> $students
+ * @property-read BelongsTo|Person|null $person
+ * @property-read HasMany|Student[]|Collection|null $students
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
  * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
  * @mixin \Eloquent
@@ -76,7 +77,7 @@ class Customer extends Model
     }
 
     /**
-     * @return HasMany<Student>
+     * @return HasMany|Student[]|Collection|null
      */
     public function students(): HasMany
     {

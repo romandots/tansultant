@@ -6,5 +6,6 @@ return [
     'endpoints' => [
         'ping' => '/ping',
         'send_message' => '/message',
-    ]
+    ],
+    'queue' => env('TELEGRAM_QUEUE', 'tansultant_to_telegram'),
 ];

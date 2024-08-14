@@ -20,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
 
             return new TextMessagingService($sender);
         });
+        $this->app->bind(\App\Adapters\Telegram\Transport\TelegramAdapterTransport::class, static function (Application $app) {
+            return new \App\Adapters\Telegram\Transport\TelegramAdapterHttp();
+        });
     }
 
     public function boot(): void

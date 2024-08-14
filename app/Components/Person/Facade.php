@@ -35,6 +35,11 @@ class Facade extends BaseComponentFacade
         return $this->getRepository()->getByPhoneNumber($phoneNumber);
     }
 
+    public function getByTelegramUsername(string $username): ?Person
+    {
+        return $this->getRepository()->getByTelegramUsername($username);
+    }
+
     public function getByNameGenderAndBirthDate(
         string $lastName,
         string $firstName,
