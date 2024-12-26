@@ -1,4 +1,4 @@
-FROM php:8.1.4-fpm-buster
+FROM php:8.3-fpm
 
 EXPOSE 9009
 EXPOSE 6001
@@ -45,10 +45,11 @@ ADD docker/entrypoint.sh /tmp/entrypoint.sh
 ADD docker/supervisor.conf /etc/supervisor/conf.d
 RUN chmod 777 /tmp/entrypoint.sh
 
-RUN mv /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
-    && sed -i 's|;error_log = .*|error_log = /proc/self/fd/2|' /usr/local/etc/php/php.ini \
-    && sed -i 's|;error_log = .*|error_log = /proc/self/fd/2|' /usr/local/etc/php-fpm.conf \
-    && echo "pm.max_children = 20" >> /usr/local/etc/php-fpm.d/www.conf
+RUN mv /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini
+#    && sed -i 's|;error_log = .*|error_log = /proc/self/fd/2|' /usr/local/etc/php/php.ini \
+#    && sed -i 's|;error_log = .*|error_log = /proc/self/fd/2|' /usr/local/etc/php-fpm.conf \
+#    && sed -i 's|;error_log = .*|error_log = /proc/self/fd/2|' /usr/local/etc/php-fpm.d/www.conf
+#    && echo "pm.max_children = 20" >> /usr/local/etc/php-fpm.d/www.conf
 
 ADD ./ /app
 WORKDIR /app
@@ -56,6 +57,7 @@ WORKDIR /app
 # Install Composer and dependencies
 ENV PATH="/usr/local/bin:$PATH"
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Disable platform requirements for Tochka Bank SDK
 ARG COMPOSER_IGNORE_PLATFORM_REQS
 ENV COMPOSER_IGNORE_PLATFORM_REQS=1
 RUN composer install
