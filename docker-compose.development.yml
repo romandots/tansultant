@@ -38,6 +38,11 @@ services:
       DB_DATABASE_TEST: test
       DB_USERNAME_TEST: test
       DB_PASSWORD_TEST: test
+      OLD_DB_HOST: localhost
+      OLD_DB_PORT: 5432
+      OLD_DB_DATABASE: tansultant
+      OLD_DB_USERNAME: tansultant
+      OLD_DB_PASSWORD: tansultant
       REDIS_HOST: redis
       REDIS_PASSWORD: null
       REDIS_PORT: 6379

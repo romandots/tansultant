@@ -1,0 +1,130 @@
+<?php
+
+namespace App\Services\Import;
+
+use App\Models\IdMap;
+use App\Services\Import\Contracts\ImporterInterface;
+use App\Services\Import\Exceptions\ImportException;
+use Illuminate\Support\Facades\DB;
+use Psr\Log\LoggerInterface;
+
+class ImportManager
+{
+
+    /**
+     * Маппинг старых таблиц, новых моделей и импортёров
+     * @var array<string, array{table?: string, model?: class-string<\Illuminate\Database\Eloquent\Model>, importer?: class-string}>
+     */
+    protected readonly array $map;
+
+    /**
+     * Защита от циклов
+     * @var array<string, array<int,bool>>
+     */
+    protected array $inProgress = [];
+
+    /**
+     * Рантайм кэш
+     * @var array $resolved
+     */
+    protected array $resolved = [];
+
+    public function __construct(
+        protected readonly \Illuminate\Database\Connection $oldDatabase,
+        protected LoggerInterface $logger,
+    ) {
+        $this->map = config('import.map');
+    }
+
+    /**
+     * @param string $entity
+     * @param int|string $oldId
+     * @return string
+     * @throws ImportException
+     */
+    public function ensureImported(string $entity, int|string $oldId): string
+    {
+        // 1) если уже в кеше — сразу отдать
+        if (isset($this->resolved[$entity][$oldId])) {
+            return $this->resolved[$entity][$oldId];
+        }
+
+        // 2) если уже в БД — закэшировать и вернуть
+        $existingUuid = IdMap::query()
+            ->where('entity', $entity)
+            ->where('old_id', (string)$oldId)
+            ->value('new_id');
+        if ($existingUuid) {
+            return $this->resolved[$entity][$oldId] = $existingUuid;
+        }
+
+        // 3) защита от циклов
+        if (!empty($this->inProgress[$entity][$oldId])) {
+            throw new ImportException("Циклическая зависимость при импорте {$entity}#{$oldId}");
+        }
+        $this->inProgress[$entity][$oldId] = true;
+
+        // 4) достать старую модель
+        $table = $this->mapKeyToOldDatabaseTable($entity);
+        $old = $this->oldDatabase
+            ->table($table)
+            ->where('id', $oldId)
+            ->first();
+
+        if (!$old) {
+            throw new ImportException(
+                "Старая запись не найдена: таблица {$table}, ID={$oldId}"
+            );
+        }
+
+        // 5) Готовим контекст и запускаем импорт в транзакции
+        $ctx = new ImportContext($entity, $old, $this, $this->logger);
+
+        DB::transaction(function () use ($entity, $old, $ctx) {
+            // Блокируем строку в id_maps на случай параллельных upsert
+            $ctx->lock();
+
+            // Вызываем Importer, который внутри Context будет
+            // делать $ctx->mapNewId($newUuid)
+            $this->importer($entity)->import($ctx);
+        });
+
+        // 6) После транзакции newId уже записан в контекст
+        if (empty($ctx->newId)) {
+            throw new ImportException(
+                "После импорта не получилось получить newId для {$entity}#{$oldId}"
+            );
+        }
+
+        // 7) кешируем, сбрасываем inProgress и возвращаем
+        $this->resolved[$entity][$oldId] = $ctx->newId;
+        unset($this->inProgress[$entity][$oldId]);
+
+        return $ctx->newId;
+    }
+
+    protected function mapKeyToOldDatabaseTable(string $key): string
+    {
+        return $this->map[$key]['table']
+            ?? throw new ImportException("Неизвестна таблица для сущности {$key}");
+    }
+
+    public function mapKeyToModel(string $key): string
+    {
+        $modelClass = $this->map[$key]['model']
+            ?? throw new ImportException("Неизвестна модель для сущности {$key}");
+
+        if (!is_subclass_of($modelClass, \Illuminate\Database\Eloquent\Model::class)) {
+            throw new ImportException("Класс {$modelClass} не является Eloquent-моделью");
+        }
+
+        return $modelClass;
+    }
+
+    protected function importer(string $key): ImporterInterface
+    {
+        return $this->map[$key]['importer']
+            ?? throw new ImportException("Импортёр для сущности {$key} не определён");
+    }
+
+}
