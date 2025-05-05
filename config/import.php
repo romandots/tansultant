@@ -1,17 +1,22 @@
 <?php
 
+use App\Components;
 use App\Models;
 use App\Services\Import\Importers;
 
 return [
     'map' => [
-        'accounts' => [
-            'model' => Models\Account::class,
+        'branch' => [
+            'table' => 'studios',
+            'model' => Models\Branch::class,
+            'importer' => Importers\BranchImporter::class,
+            'service' => Components\Branch\Service::class,
         ],
-        'students' => [
+        'student' => [
             'table' => 'clients',
             'model' => Models\Student::class,
-            'importer' => Importers\StudentImporter::class
+            'importer' => Importers\StudentImporter::class,
+            'service' => Components\Student\Service::class,
         ],
     ],
 ];

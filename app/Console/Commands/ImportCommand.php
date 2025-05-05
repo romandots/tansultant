@@ -41,7 +41,11 @@ class ImportCommand extends Command
         $importManager = app(ImportManager::class);
 
         $mapEntry = config("import.map.{$entity}");
-        $table = $mapEntry['table'];
+        $table = $mapEntry['table'] ?? null;
+        if (!$table) {
+            return;
+        }
+
         $chunkSize = $mapEntry['chunk'] ?? 500;
 
         // Берём подключение к старой БД явно, чтобы chunkById работал корректно

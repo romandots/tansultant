@@ -2,7 +2,6 @@
 
 namespace App\Services\Import\Pipes;
 
-use App\Models\Model;
 use App\Services\Import\Contracts\PipeInterface;
 use App\Services\Import\Exceptions\ImportException;
 use App\Services\Import\ImportContext;
@@ -20,12 +19,17 @@ class PersistEntity implements PipeInterface
     {
         /** @var class-string<\Illuminate\Database\Eloquent\Model> $modelClass */
         $modelClass = $ctx->manager->mapKeyToModel($ctx->entity);
+        $service = $ctx->manager->service($ctx->entity);
         try {
-            /** @var Model $new */
-            $new = $modelClass::create($ctx->data);
+            $new = $service->create($ctx->dto);
         } catch (\Throwable $throwable) {
             throw new ImportException("Возникла ошибка при сохранении записи", $ctx->getErrorContext());
         }
+
+        if (!assert($new instanceof $modelClass)) {
+            throw new ImportException("Модель {$ctx->entity} не является экземпляром {$modelClass}", $ctx->getErrorContext());
+        }
+
         $ctx->mapNewId($new->id);
 
         $ctx->logger->debug("Сохранили новую запись сущности {$ctx->entity} с ID #{$ctx->newId}");

@@ -2,6 +2,7 @@
 
 namespace App\Services\Import;
 
+use App\Common\BaseComponentService;
 use App\Models\IdMap;
 use App\Services\Import\Contracts\ImporterInterface;
 use App\Services\Import\Exceptions\ImportException;
@@ -46,6 +47,7 @@ class ImportManager
     {
         // 1) если уже в кеше — сразу отдать
         if (isset($this->resolved[$entity][$oldId])) {
+            $this->logger->debug("{$entity}#{$oldId} уже импортирован - берем из кеша");
             return $this->resolved[$entity][$oldId];
         }
 
@@ -55,6 +57,7 @@ class ImportManager
             ->where('old_id', (string)$oldId)
             ->value('new_id');
         if ($existingUuid) {
+            $this->logger->debug("{$entity}#{$oldId} уже импортирован - берем из БД");
             return $this->resolved[$entity][$oldId] = $existingUuid;
         }
 
@@ -100,6 +103,8 @@ class ImportManager
         $this->resolved[$entity][$oldId] = $ctx->newId;
         unset($this->inProgress[$entity][$oldId]);
 
+        $this->logger->debug("{$entity}#{$oldId} импорт завершен");
+
         return $ctx->newId;
     }
 
@@ -123,8 +128,27 @@ class ImportManager
 
     protected function importer(string $key): ImporterInterface
     {
-        return $this->map[$key]['importer']
+        $importerClass = $this->map[$key]['importer']
             ?? throw new ImportException("Импортёр для сущности {$key} не определён");
+
+        if (!is_subclass_of($importerClass, ImporterInterface::class)) {
+            throw new ImportException("Класс {$importerClass} не является импортёром");
+        }
+
+        return app($importerClass);
+    }
+
+
+    public function service(string $key): BaseComponentService
+    {
+        $serviceClass = $this->map[$key]['service']
+            ?? throw new ImportException("Сервис для сущности {$key} не определён");
+
+        if (!is_subclass_of($serviceClass, BaseComponentService::class)) {
+            throw new ImportException("Класс {$serviceClass} не является сервисом компонента");
+        }
+
+        return app($serviceClass);
     }
 
 }

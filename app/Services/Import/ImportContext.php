@@ -2,6 +2,7 @@
 
 namespace App\Services\Import;
 
+use App\Common\Contracts\DtoWithUser;
 use App\Models\IdMap;
 use Illuminate\Support\Facades\DB;
 use Psr\Log\LoggerInterface;
@@ -10,9 +11,9 @@ class ImportContext
 {
     /**
      * Данные новой модели
-     * @var array
+     * @var DtoWithUser|null $dto
      */
-    public array $data = [];
+    public ?DtoWithUser $dto = null;
     public ?string $newId = null;
 
     public function __construct(
