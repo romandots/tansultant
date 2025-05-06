@@ -10,21 +10,25 @@ use Illuminate\Support\Facades\DB;
 
 class ImportCommand extends Command
 {
-    protected $signature = 'import {entity : Ключ сущности из config(\'import.map\') или "all"}';
+    protected $signature = 'import {entity : Ключ сущности из config(\'import.map\') или "all"} {--retry : Перезапускать только записи с ошибками}';
     protected $description = 'Импорт записей из старой базы';
     protected ImportManager $importManager;
 
     public function handle(): int
     {
         $entity = $this->argument('entity');
+        $retry  = $this->option('retry');
+
         $map = config('import.map', []);
         $this->importManager = app(ImportManager::class);
         $this->importManager->setLogger(new CliLogger($this));
 
+        $this->info($retry ? 'Перезапуск импорта неуспешных записей' : 'Импорт всех записей не ипортированных раннее');
+
         if ($entity === 'all') {
             foreach (array_keys($map) as $key) {
                 $this->info("=== Импорт сущности «{$key}» ===");
-                $this->importEntity($key);
+                $this->importEntity($key, $retry);
             }
         } else {
             if (!isset($map[$entity])) {
@@ -32,7 +36,7 @@ class ImportCommand extends Command
                 return 1;
             }
             $this->info("=== Импорт сущности «{$entity}» ===");
-            $this->importEntity($entity);
+            $this->importEntity($entity, $retry);
         }
 
         $this->info('Импорт завершён. Добавлено записей: ' . $this->importManager->getImportTotalCount());
@@ -40,7 +44,7 @@ class ImportCommand extends Command
         return 0;
     }
 
-    protected function importEntity(string $entity): void
+    protected function importEntity(string $entity, bool $retry): void
     {
         $mapEntry = config("import.map.{$entity}");
         $table = $mapEntry['table'] ?? null;
@@ -48,14 +52,40 @@ class ImportCommand extends Command
             return;
         }
 
-        $chunkSize = $mapEntry['chunk'] ?? 500;
+        if ($retry) {
+            $ids = \App\Models\IdMap::query()
+                ->where('entity', $entity)
+                ->whereNotNull('error')
+                ->pluck('old_id')
+                ->map(fn($i) => (string)$i)
+                ->all();
 
-        // Берём подключение к старой БД явно, чтобы chunkById работал корректно
-        $connection = DB::connection('old_database');
+            if (empty($ids)) {
+                $this->info("Нет записей с ошибками для повторного импорта «{$entity}»");
+                return;
+            }
+        } else {
+            $ids = \App\Models\IdMap::query()
+                ->where('entity', $entity)
+                ->pluck('old_id')
+                ->map(fn($i) => (string)$i)
+                ->all();
+        }
 
-        $connection
+        $query = DB::connection('old_database')
             ->table($table)
-            ->orderBy('id')
+            ->orderBy('id');
+
+        if ($retry) {
+            // только те, что упали
+            $query->whereIn('id', $ids);
+        } elseif (! empty($ids)) {
+            // все, что уже импортировали (успешно или с ошибкой) — пропускаем
+            $query->whereNotIn('id', $ids);
+        }
+
+        $chunkSize = $mapEntry['chunk'] ?? 500;
+        $query
             ->chunkById($chunkSize, function ($rows) use ($entity) {
                 foreach ($rows as $old) {
                     $id = $old->id;

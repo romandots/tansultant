@@ -25,12 +25,12 @@ class MapInstructorPersonEntity implements PipeInterface
         $personDto->gender = match($ctx->old->sex) {
             'm' => Gender::MALE,
             'f' => Gender::FEMALE,
-            default => throw new ImportException("Не указан пол {$ctx->entity}#{$ctx->old?->id} ({$ctx->old?->name})"),
+            default => throw new ImportException("Не указан пол ({$ctx->old?->name})"),
         };
         try {
             $personDto->birth_date = Carbon::createFromFormat('Y-m-d', $ctx->old->birthdate);
         } catch (\Carbon\Exceptions\InvalidFormatException) {
-            throw new ImportException("Ошибка импорта даты рождения {$ctx->entity}#{$ctx->old?->id} ({$ctx->old?->name})");
+            throw new ImportException("Невалидная дата рождения ({$ctx->old?->name})");
         }
 
         try {

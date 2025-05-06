@@ -3,7 +3,6 @@
 namespace App\Services\Import;
 
 use App\Common\Contracts\DtoWithUser;
-use App\Models\IdMap;
 use Illuminate\Support\Facades\DB;
 use Psr\Log\LoggerInterface;
 
@@ -39,17 +38,8 @@ class ImportContext
 
     public function mapNewId(string $newId): void
     {
-        $this->manager->increaseCounter($this->entity);
         $this->newId = $newId;
-        IdMap::updateOrInsert(
-            [
-                'entity' => $this->entity,
-                'old_id' => (string)$this->old->id,
-            ],
-            [
-                'new_id' => $this->newId,
-            ]
-        );
+        $this->manager->saveNewId($this->entity, $this->old->id, $newId);
     }
 
     public function getErrorContext(): array

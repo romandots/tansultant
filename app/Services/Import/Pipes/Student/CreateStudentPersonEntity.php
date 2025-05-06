@@ -6,6 +6,7 @@ use App\Components\Loader;
 use App\Components\Person\Dto as PersonDto;
 use App\Components\Person\Exceptions\PersonAlreadyExist;
 use App\Components\Student\Dto as StudentDto;
+use App\Exceptions\SimpleValidationException;
 use App\Models\Enum\Gender;
 use App\Services\Import\Contracts\PipeInterface;
 use App\Services\Import\Exceptions\ImportException;
@@ -28,13 +29,13 @@ class CreateStudentPersonEntity implements PipeInterface
         $personDto->gender = match(strtolower($ctx->old->sex)) {
             'm' => Gender::MALE,
             'f' => Gender::FEMALE,
-            default => throw new ImportException("Не указан пол {$ctx->entity}#{$ctx->old?->id} ({{$ctx->old?->lastname} {$ctx->old?->name})"),
+            default => throw new ImportException("Не указан пол ({$ctx->old?->lastname} {$ctx->old?->name})"),
         };
 
         try {
             $personDto->birth_date = Carbon::createFromFormat('Y-m-d', $ctx->old->birthdate);
         } catch (\Carbon\Exceptions\InvalidFormatException) {
-            throw new ImportException("Ошибка импорта даты рождения {$ctx->entity}#{$ctx->old?->id} ({{$ctx->old?->lastname} {$ctx->old?->name})");
+            throw new ImportException("Невалидная дата рождения ({$ctx->old?->lastname} {$ctx->old?->name})");
         }
 
         try {
@@ -42,17 +43,17 @@ class CreateStudentPersonEntity implements PipeInterface
             $ctx->manager->increaseCounter('person');
         } catch (PersonAlreadyExist $alreadyExist) {
             $person = $alreadyExist->getPerson();
+        } catch (SimpleValidationException $validationException) {
+            throw new ImportException("Ошибка валидации профиля ({$ctx->old?->lastname} {$ctx->old?->name}): {$validationException->field} {$validationException->rule}", $ctx->getErrorContext());
         } catch (\Throwable $throwable) {
-            throw new ImportException("Ошибка сохранения профиля {$ctx->entity}#{$ctx->old?->id} ({{$ctx->old?->lastname} {$ctx->old?->name}): {$throwable->getMessage()}", $ctx->getErrorContext());
-        } catch (\Throwable $throwable) {
-            throw new ImportException("Ошибка сохранения профиля {$ctx->entity}#{$ctx->old?->id} ({{$ctx->old?->lastname} {$ctx->old?->name}): {$throwable->getMessage()}", $ctx->getErrorContext());
+            throw new ImportException("Ошибка сохранения профиля ({$ctx->old?->lastname} {$ctx->old?->name}): {$throwable->getMessage()}", $ctx->getErrorContext());
         }
 
         try {
             $person->created_at = Carbon::createFromFormat('Y-m-d H:i:s', $ctx->old->registered);
             Loader::people()->getRepository()->save($person);
         } catch (\Carbon\Exceptions\InvalidFormatException) {
-            throw new ImportException("Ошибка импорта даты регистрации {$ctx->entity}#{$ctx->old?->id} ({{$ctx->old?->lastname} {$ctx->old?->name})");
+            throw new ImportException("Невалидная дата регистрации ({$ctx->old?->lastname} {$ctx->old?->name})");
         }
 
         $ctx->dto = new StudentDto();

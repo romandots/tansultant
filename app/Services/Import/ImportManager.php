@@ -72,46 +72,48 @@ class ImportManager
             return $this->resolved[$entity][$oldId] = $existingUuid;
         }
 
-        // 3) защита от циклов
-        if (!empty($this->inProgress[$entity][$oldId])) {
-            throw new ImportException("Циклическая зависимость при импорте {$entity}#{$oldId}", [
-                'in_progress' => $this->inProgress,
-            ]);
-        }
-        $this->inProgress[$entity][$oldId] = true;
+        try {
+            // 3) защита от циклов
+            if (!empty($this->inProgress[$entity][$oldId])) {
+                throw new ImportException("Циклическая зависимость при импорте {$entity}#{$oldId}", [
+                    'in_progress' => $this->inProgress,
+                ]);
+            }
+            $this->inProgress[$entity][$oldId] = true;
 
-        // 4) достать старую модель
-        $table = $this->mapKeyToOldDatabaseTable($entity);
-        $old = $this->oldDatabase
-            ->table($table)
-            ->where('id', $oldId)
-            ->first();
+            // 4) достать старую модель
+            $table = $this->mapKeyToOldDatabaseTable($entity);
+            $old = $this->oldDatabase
+                ->table($table)
+                ->where('id', $oldId)
+                ->first();
 
-        if (!$old) {
+            if (!$old) {
+                unset($this->inProgress[$entity][$oldId]);
+                throw new ImportException(
+                    "Старая запись {$entity}#{$oldId} не найдена а таблице {$table}"
+                );
+            }
+
+            // 5) Готовим контекст и запускаем импорт в транзакции
+            $ctx = new ImportContext($entity, $old, $this, $this->logger);
+            DB::transaction(function () use ($entity, $old, $ctx) {
+                // Блокируем строку в id_maps на случай параллельных upsert
+                $ctx->lock();
+
+                // Вызываем Importer, который внутри Context будет
+                // делать $ctx->mapNewId($newUuid)
+                $this->importer($entity)->import($ctx);
+            });
+
+            // 6) После транзакции newId уже записан в контекст
+            if (empty($ctx->newId)) {
+                throw new ImportException("Новый ID не сохранился");
+            }
+        } catch (ImportException $importException) {
             unset($this->inProgress[$entity][$oldId]);
-            throw new ImportException(
-                "Старая запись {$entity}#{$oldId} не найдена а таблице {$table}"
-            );
-        }
-
-        // 5) Готовим контекст и запускаем импорт в транзакции
-        $ctx = new ImportContext($entity, $old, $this, $this->logger);
-
-        DB::transaction(function () use ($entity, $old, $ctx) {
-            // Блокируем строку в id_maps на случай параллельных upsert
-            $ctx->lock();
-
-            // Вызываем Importer, который внутри Context будет
-            // делать $ctx->mapNewId($newUuid)
-            $this->importer($entity)->import($ctx);
-        });
-
-        // 6) После транзакции newId уже записан в контекст
-        if (empty($ctx->newId)) {
-            unset($this->inProgress[$entity][$oldId]);
-            throw new ImportException(
-                "После импорта не получилось получить newId для {$entity}#{$oldId}"
-            );
+            $this->saveError($entity, $oldId, $importException->getMessage());
+            throw $importException;
         }
 
         // 7) кешируем, сбрасываем inProgress и возвращаем
@@ -119,7 +121,6 @@ class ImportManager
         unset($this->inProgress[$entity][$oldId]);
 
         $this->logger->info("{$entity}#{$oldId} импорт завершен");
-
         return $ctx->newId;
     }
 
@@ -183,5 +184,41 @@ class ImportManager
             $lines[] = "* {$entity}: {$count}";
         }
         return implode("\n", $lines);
+    }
+
+
+    public function saveNewId(string $entity, string|int $oldId, string $newId): void
+    {
+        $this->increaseCounter($entity);
+        IdMap::query()->updateOrInsert(
+            [
+                'entity' => $entity,
+                'old_id' => (string)$oldId,
+            ],
+            [
+                'new_id' => $newId,
+                'error' => null,
+            ]
+        );
+    }
+
+    public function saveError(string $entity, string|int $oldId, string $error): void
+    {
+        DB::statement(
+            <<<'SQL'
+        INSERT INTO id_maps (entity, old_id, new_id, error, attempts)
+        VALUES (:entity, :old_id, NULL, :error, 1)
+        ON CONFLICT (entity, old_id)
+        DO UPDATE SET
+            new_id   = NULL,
+            error    = :error,
+            attempts = id_maps.attempts + 1
+    SQL,
+            [
+                'entity' => $entity,
+                'old_id' => (string)$oldId,
+                'error' => $error,
+            ]
+        );
     }
 }

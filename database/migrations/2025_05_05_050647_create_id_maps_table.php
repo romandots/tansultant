@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('id_maps', static function (Blueprint $table) {
             $table->string('entity');
             $table->string('old_id');
-            $table->uuid('new_id');
+            $table->uuid('new_id')->nullable();
+            $table->text('error')->nullable();
+            $table->unsignedInteger('attempts')->default(0);
+
             $table->primary(['entity', 'old_id']);
+            $table->index(['entity', 'error']);
         });
     }
 

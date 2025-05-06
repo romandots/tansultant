@@ -35,13 +35,13 @@ class CreateStudentCustomerEntity implements PipeInterface
         } catch (CustomerAlreadyExists $alreadyExists) {
             $customer = $alreadyExists->getCustomer();
         } catch (\Throwable $throwable) {
-            throw new ImportException("Ошибка сохранения клиента {$ctx->entity}#{$ctx->old?->id} ({$ctx->old?->lastname} {$ctx->old?->name}): {$throwable->getMessage()}", $ctx->getErrorContext());
+            throw new ImportException("Ошибка сохранения клиента ({$ctx->old?->lastname} {$ctx->old?->name}): {$throwable->getMessage()}", $ctx->getErrorContext());
         }
 
         try {
             $customer->created_at = Carbon::createFromFormat('Y-m-d H:i:s', $ctx->old->registered);
         } catch (\Carbon\Exceptions\InvalidFormatException) {
-            throw new ImportException("Ошибка импорта даты регистрации {$ctx->entity}#{$ctx->old?->id} ({$ctx->old?->lastname} {$ctx->old?->name})");
+            throw new ImportException("Невалидная дата регистрации ({$ctx->old?->lastname} {$ctx->old?->name})");
         }
         try {
             $customer->seen_at = Carbon::createFromFormat('Y-m-d H:i:s', $ctx->old->last_visit);

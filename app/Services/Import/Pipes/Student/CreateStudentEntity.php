@@ -29,13 +29,13 @@ class CreateStudentEntity implements PipeInterface
         try {
             $student = Loader::students()->createFromPerson($dto, $person);
         } catch (\Throwable $throwable) {
-            throw new ImportException("Возникла ошибка при сохранении записи", $ctx->getErrorContext());
+            throw new ImportException("Ошибка сохранения записи: {$throwable->getMessage()}", $ctx->getErrorContext());
         }
 
         try {
             $student->created_at = Carbon::createFromFormat('Y-m-d H:i:s', $ctx->old->registered);
         } catch (\Carbon\Exceptions\InvalidFormatException) {
-            throw new ImportException("Ошибка импорта даты регистрации {$ctx->entity}#{$ctx->old?->id} ({$ctx->old?->lastname} {$ctx->old?->name})");
+            throw new ImportException("Невалидная дата регистрации ({$ctx->old?->lastname} {$ctx->old?->name})");
         }
 
         try {
