@@ -18,6 +18,12 @@ return [
             'importer' => Importers\ClassroomImporter::class,
             'service' => Components\Classroom\Service::class,
         ],
+        'instructor' => [
+            'table' => 'teachers',
+            'model' => Models\Instructor::class,
+            'importer' => Importers\InstructorImporter::class,
+            'service' => Components\Instructor\Service::class,
+        ],
         'student' => [
             'table' => 'clients',
             'model' => Models\Student::class,
