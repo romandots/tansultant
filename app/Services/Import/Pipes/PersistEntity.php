@@ -23,7 +23,7 @@ class PersistEntity implements PipeInterface
         try {
             $new = $service->create($ctx->dto);
         } catch (\Throwable $throwable) {
-            throw new ImportException("Возникла ошибка при сохранении записи", $ctx->getErrorContext());
+            throw new ImportException("Возникла ошибка при сохранении записи: {$throwable->getMessage()}", $ctx->getErrorContext());
         }
 
         if (!assert($new instanceof $modelClass)) {

@@ -2,11 +2,17 @@
 
 namespace App\Services\Import\Importers;
 
+use App\Services\Import\Pipes\Student;
+
 class StudentImporter extends ModelImporter
 {
 
     protected function pipes(): array
     {
-        // TODO: Implement pipes() method.
+        return [
+            Student\CreateStudentPersonEntity::class,
+            Student\CreateStudentCustomerEntity::class,
+            Student\CreateStudentEntity::class, // final pipe - will trigger circuit breaker
+        ];
     }
 }

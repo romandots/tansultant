@@ -11,9 +11,14 @@ use Illuminate\Pipeline\Pipeline;
 abstract class ModelImporter implements ImporterInterface
 {
 
+    /**
+     * @param ImportContext $ctx
+     * @return void
+     * @trhrows ImportException
+     */
     public function import(ImportContext $ctx): void
     {
-        $ctx->logger->debug("Запускаем импорт сущности {$ctx->entity}#{$ctx->old?->id}");
+        $ctx->logger->info("Импорт сущности {$ctx->entity}#{$ctx->old?->id}");
 
         /** @var Pipeline $pipeline */
         $pipeline = app(Pipeline::class);

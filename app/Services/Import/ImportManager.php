@@ -118,7 +118,7 @@ class ImportManager
         $this->resolved[$entity][$oldId] = $ctx->newId;
         unset($this->inProgress[$entity][$oldId]);
 
-        $this->logger->debug("{$entity}#{$oldId} импорт завершен");
+        $this->logger->info("{$entity}#{$oldId} импорт завершен");
 
         return $ctx->newId;
     }

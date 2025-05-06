@@ -63,7 +63,7 @@ class ImportCommand extends Command
                     try {
                         $this->importManager->ensureImported($entity, $id);
                     } catch (ImportException $e) {
-                        $this->error("Ошибка импорта {$entity} #{$id}: {$e->getMessage()}");
+                        $this->error("Ошибка импорта {$entity}#{$id}: {$e->getMessage()}");
                     }
                 }
             });
