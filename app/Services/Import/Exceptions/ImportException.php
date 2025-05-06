@@ -2,7 +2,9 @@
 
 namespace App\Services\Import\Exceptions;
 
-class ImportException extends \Exception
+use App\Exceptions\BaseException;
+
+class ImportException extends BaseException
 {
 
 }

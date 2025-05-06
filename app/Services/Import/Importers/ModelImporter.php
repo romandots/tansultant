@@ -13,7 +13,7 @@ abstract class ModelImporter implements ImporterInterface
 
     public function import(ImportContext $ctx): void
     {
-        $ctx->logger->debug("Запускаем импорт сущности {$ctx->entity} со старым ID #{$ctx->old?->id}");
+        $ctx->logger->debug("Запускаем импорт сущности {$ctx->entity}#{$ctx->old?->id}");
 
         /** @var Pipeline $pipeline */
         $pipeline = app(Pipeline::class);
@@ -27,7 +27,7 @@ abstract class ModelImporter implements ImporterInterface
                 ])
                 ->thenReturn();
         } catch (ImportException $importException) {
-            $ctx->logger->error('Ошибка импорта: ' . $importException->getMessage(), $ctx->getErrorContext());
+            $ctx->logger->error("Ошибка импорта {$ctx->entity}#{$ctx->old?->id}: " . $importException->getMessage(), $importException->getData() ?? [] + $ctx->getErrorContext());
             throw $importException;
         }
     }

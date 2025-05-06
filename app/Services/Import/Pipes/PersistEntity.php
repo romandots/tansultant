@@ -32,6 +32,7 @@ class PersistEntity implements PipeInterface
 
         $ctx->mapNewId($new->id);
 
+
         $ctx->logger->debug("Сохранили новую запись сущности {$ctx->entity} с ID #{$ctx->newId}");
         return $next($ctx);
     }

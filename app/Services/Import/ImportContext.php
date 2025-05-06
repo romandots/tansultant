@@ -39,6 +39,7 @@ class ImportContext
 
     public function mapNewId(string $newId): void
     {
+        $this->manager->increaseCounter($this->entity);
         $this->newId = $newId;
         IdMap::updateOrInsert(
             [
@@ -56,7 +57,7 @@ class ImportContext
         return [
             'entity' => $this->entity,
             'old_record' => (array)$this->old,
-            'data' => $this->data,
+            'data' => (array)$this->dto,
             'new_id' => $this->newId,
         ];
     }

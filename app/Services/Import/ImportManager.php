@@ -30,11 +30,22 @@ class ImportManager
      */
     protected array $resolved = [];
 
+    /**
+     * Счетчик импортированных моделей
+     * @var array<string, int>
+     */
+    protected array $importCount = [];
+
     public function __construct(
         protected readonly \Illuminate\Database\Connection $oldDatabase,
         protected LoggerInterface $logger,
     ) {
         $this->map = config('import.map');
+    }
+
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -47,7 +58,7 @@ class ImportManager
     {
         // 1) если уже в кеше — сразу отдать
         if (isset($this->resolved[$entity][$oldId])) {
-            $this->logger->debug("{$entity}#{$oldId} уже импортирован - берем из кеша");
+            $this->logger->debug("{$entity}#{$oldId} уже импортирован - берем из кэша");
             return $this->resolved[$entity][$oldId];
         }
 
@@ -63,7 +74,9 @@ class ImportManager
 
         // 3) защита от циклов
         if (!empty($this->inProgress[$entity][$oldId])) {
-            throw new ImportException("Циклическая зависимость при импорте {$entity}#{$oldId}");
+            throw new ImportException("Циклическая зависимость при импорте {$entity}#{$oldId}", [
+                'in_progress' => $this->inProgress,
+            ]);
         }
         $this->inProgress[$entity][$oldId] = true;
 
@@ -75,8 +88,9 @@ class ImportManager
             ->first();
 
         if (!$old) {
+            unset($this->inProgress[$entity][$oldId]);
             throw new ImportException(
-                "Старая запись не найдена: таблица {$table}, ID={$oldId}"
+                "Старая запись {$entity}#{$oldId} не найдена а таблице {$table}"
             );
         }
 
@@ -94,6 +108,7 @@ class ImportManager
 
         // 6) После транзакции newId уже записан в контекст
         if (empty($ctx->newId)) {
+            unset($this->inProgress[$entity][$oldId]);
             throw new ImportException(
                 "После импорта не получилось получить newId для {$entity}#{$oldId}"
             );
@@ -126,6 +141,7 @@ class ImportManager
         return $modelClass;
     }
 
+
     protected function importer(string $key): ImporterInterface
     {
         $importerClass = $this->map[$key]['importer']
@@ -137,7 +153,6 @@ class ImportManager
 
         return app($importerClass);
     }
-
 
     public function service(string $key): BaseComponentService
     {
@@ -151,4 +166,22 @@ class ImportManager
         return app($serviceClass);
     }
 
+    public function increaseCounter(string $entity): void
+    {
+        $this->importCount[$entity] = ($this->importCount[$entity] ?? 0) + 1;
+    }
+
+    public function getImportTotalCount(): int
+    {
+        return array_sum($this->importCount);
+    }
+
+    public function getImportCount(): string
+    {
+        $lines = [];
+        foreach ($this->importCount as $entity => $count) {
+            $lines[] = "* {$entity}: {$count}";
+        }
+        return implode("\n", $lines);
+    }
 }
