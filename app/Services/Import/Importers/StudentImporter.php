@@ -12,7 +12,7 @@ class StudentImporter extends ModelImporter
         return [
             Student\CreateStudentPersonEntity::class,
             Student\CreateStudentCustomerEntity::class,
-            Student\CreateStudentEntity::class, // final pipe - will trigger circuit breaker
+            Student\CreateStudentEntity::class,
         ];
     }
 }

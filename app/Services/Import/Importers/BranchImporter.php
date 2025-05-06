@@ -3,6 +3,7 @@
 namespace App\Services\Import\Importers;
 
 use App\Services\Import\Pipes\Branch;
+use App\Services\Import\Pipes\PersistEntity;
 
 class BranchImporter extends ModelImporter
 {
@@ -11,6 +12,7 @@ class BranchImporter extends ModelImporter
     {
         return [
             Branch\MapBranchEntity::class,
+            PersistEntity::class,
         ];
     }
 }

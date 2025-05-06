@@ -59,6 +59,6 @@ class CreateStudentEntity implements PipeInterface
 
         $ctx->logger->debug("Сохранили новую запись сущности {$ctx->entity} с ID #{$ctx->newId}");
 
-        return $ctx;
+        return $next($ctx);
     }
 }
