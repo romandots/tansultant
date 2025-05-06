@@ -14,7 +14,7 @@ class MapBranchEntity implements PipeInterface
     {
         $old = $ctx->old;
         $ctx->dto = new Dto();
-        $ctx->dto->name = $old->studio_name;
+        $ctx->dto->name = $old->studio_title;
         $ctx->dto->phone = $old->phone;
         $ctx->dto->description = $old->description;
 

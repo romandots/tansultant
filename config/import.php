@@ -12,6 +12,12 @@ return [
             'importer' => Importers\BranchImporter::class,
             'service' => Components\Branch\Service::class,
         ],
+        'classroom' => [
+            'table' => 'dancefloors',
+            'model' => Models\Classroom::class,
+            'importer' => Importers\ClassroomImporter::class,
+            'service' => Components\Classroom\Service::class,
+        ],
         'student' => [
             'table' => 'clients',
             'model' => Models\Student::class,
