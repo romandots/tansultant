@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Import\Pipes\Branches;
+namespace App\Services\Import\Pipes\Branch;
 
 use App\Components\Branch\Dto;
 use App\Services\Import\Contracts\PipeInterface;

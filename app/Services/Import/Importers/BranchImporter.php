@@ -2,7 +2,7 @@
 
 namespace App\Services\Import\Importers;
 
-use App\Services\Import\Pipes\Branches;
+use App\Services\Import\Pipes\Branch;
 
 class BranchImporter extends ModelImporter
 {
@@ -10,7 +10,7 @@ class BranchImporter extends ModelImporter
     protected function pipes(): array
     {
         return [
-            Branches\MapBranchEntity::class,
+            Branch\MapBranchEntity::class,
         ];
     }
 }
