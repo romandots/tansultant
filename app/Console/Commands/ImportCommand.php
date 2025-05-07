@@ -52,6 +52,8 @@ class ImportCommand extends Command
     {
         $mapEntry = config("import.map.{$entity}");
         $table = $mapEntry['table'] ?? null;
+        $additionalWhereClause = $mapEntry['where'] ?? null;
+
         if (!$table) {
             return;
         }
@@ -79,6 +81,10 @@ class ImportCommand extends Command
         $query = DB::connection('old_database')
             ->table($table)
             ->orderBy('id');
+
+        if ($additionalWhereClause) {
+            $query->whereRaw($additionalWhereClause);
+        }
 
         if ($retry) {
             // только те, что упали

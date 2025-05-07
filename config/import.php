@@ -26,12 +26,14 @@ return [
         ],
         'student' => [
             'table' => 'clients',
+            'where' => "DATE(last_visit) >= '2023-01-01'",
             'model' => Models\Student::class,
             'importer' => Importers\StudentImporter::class,
             'service' => Components\Student\Service::class,
         ],
         'course' => [
             'table' => 'classes',
+            'where' => '(deleted IS NULL OR deleted = 0) AND (end_date IS NULL OR end_date > NOW()) AND teacher_id IS NOT NULL',
             'model' => Models\Course::class,
             'importer' => Importers\CourseImporter::class,
             'service' => Components\Course\Service::class,

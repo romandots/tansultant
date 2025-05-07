@@ -29,7 +29,7 @@ class CreateStudentPersonEntity implements PipeInterface
         $personDto->gender = match(strtolower($ctx->old->sex)) {
             'm' => Gender::MALE,
             'f' => Gender::FEMALE,
-            default => throw new ImportException("Не указан пол ({$ctx->old?->lastname} {$ctx->old?->name})"),
+            default => throw new ImportException("Не указан пол ({$ctx->old?->lastname} {$ctx->old?->name}): $ctx->old->sex"),
         };
 
         try {
