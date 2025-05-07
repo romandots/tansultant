@@ -17,6 +17,9 @@ class ImportCommand extends Command
 
     public function handle(): int
     {
+        // temporary switch global logger to file
+        config(['logging.default' => 'single']);
+
         $entity = $this->argument('entity');
         $retry  = $this->option('retry');
 
@@ -89,17 +92,23 @@ class ImportCommand extends Command
         $query
             ->chunkById($chunkSize, function ($rows) use ($entity) {
                 foreach ($rows as $old) {
-                    $id = $old->id;
-                    $this->info("Импорт {$entity} #{$id}");
                     try {
-                        $this->importManager->ensureImported($entity, $id);
+                        $this->importManager->ensureImported($entity, $old->id);
                     } catch (ImportSkippedException $e) {
-                        $this->info("Пропускаем {$entity}#{$id}: {$e->getMessage()}");
+                        $prefix = $this->getLogPrefix($e->getData()['level'] ?? 0, $entity, $old->id);
+                        $this->info("{$prefix}: Пропускаем импорт: {$e->getMessage()}");
                         continue;
                     } catch (ImportException $e) {
-                        $this->error("Ошибка импорта {$entity}#{$id}: {$e->getMessage()}");
+                        $prefix = $this->getLogPrefix($e->getData()['level'] ?? 0, $entity, $old->id);
+                        $this->error("{$prefix}: Ошибка импорта: {$e->getMessage()}");
                     }
                 }
             });
+    }
+
+    protected function getLogPrefix(int $level, string $entity, string|int $oldId): string
+    {
+        return sprintf('%s%s#%s', str_repeat("\t", $level), $entity, (string)$oldId);
+
     }
 }

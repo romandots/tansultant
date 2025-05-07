@@ -29,7 +29,7 @@ class CreateStudentEntity implements PipeInterface
         try {
             $student = Loader::students()->createFromPerson($dto, $person);
         } catch (\Throwable $throwable) {
-            throw new ImportException("Ошибка сохранения записи: {$throwable->getMessage()}", $ctx->getErrorContext());
+            throw new ImportException("Ошибка сохранения записи: {$throwable->getMessage()}", $ctx->toArray());
         }
 
         try {
@@ -52,12 +52,12 @@ class CreateStudentEntity implements PipeInterface
         Loader::students()->getRepository()->save($student);
 
         if (!assert($student instanceof $modelClass)) {
-            throw new ImportException("Модель {$ctx->entity} не является экземпляром {$modelClass}", $ctx->getErrorContext());
+            throw new ImportException("Модель {$ctx->entity} не является экземпляром {$modelClass}", $ctx->toArray());
         }
 
         $ctx->mapNewId($student->id);
 
-        $ctx->logger->debug("Сохранили новую запись сущности {$ctx->entity} с ID #{$ctx->newId}");
+        $ctx->debug("Импорт успешно завершён → #{$ctx->newId}");
 
         return $next($ctx);
     }

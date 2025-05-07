@@ -30,12 +30,13 @@ class MapInstructorPersonEntity implements PipeInterface
         try {
             $personDto->birth_date = Carbon::createFromFormat('Y-m-d', $ctx->old->birthdate);
         } catch (\Carbon\Exceptions\InvalidFormatException) {
-            throw new ImportException("Невалидная дата рождения ({$ctx->old?->name})");
+            throw new ImportException("Невалидная дата рождения ({$ctx->old?->name}): {$ctx->old->birthdate}");
         }
 
         try {
             $person = Loader::people()->create($personDto);
             $ctx->manager->increaseCounter('person');
+            $ctx->debug("Создали профиль {$person->last_name} {$person->first_name} → #{$person->id}");
         } catch (PersonAlreadyExist $alreadyExist) {
             $person = $alreadyExist->getPerson();
         }

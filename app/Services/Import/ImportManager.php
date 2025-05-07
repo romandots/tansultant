@@ -52,15 +52,18 @@ class ImportManager
     /**
      * @param string $entity
      * @param int|string $oldId
+     * @param int $level
      * @return string
      * @throws ImportException
      * @throws ImportSkippedException
      */
-    public function ensureImported(string $entity, int|string $oldId): string
+    public function ensureImported(string $entity, int|string $oldId, int $level = 0): string
     {
+        $logPrefix = sprintf('%s%s#%s', str_repeat("\t", $level + 1), $entity, (string)$oldId);
+
         // 1) если уже в кеше — сразу отдать
         if (isset($this->resolved[$entity][$oldId])) {
-            $this->logger->debug("{$entity}#{$oldId} уже импортирован - берем из кэша");
+            $this->logger->debug("{$logPrefix}: Уже импортирован - берем из кэша → #{$this->resolved[$entity][$oldId]}");
             return $this->resolved[$entity][$oldId];
         }
 
@@ -70,14 +73,14 @@ class ImportManager
             ->where('old_id', (string)$oldId)
             ->value('new_id');
         if ($existingUuid) {
-            $this->logger->debug("{$entity}#{$oldId} уже импортирован - берем из БД");
+            $this->logger->debug("{$logPrefix}: Уже импортирован - берем из БД → #{$existingUuid}");
             return $this->resolved[$entity][$oldId] = $existingUuid;
         }
 
         try {
             // 3) защита от циклов
             if (!empty($this->inProgress[$entity][$oldId])) {
-                throw new ImportException("Циклическая зависимость при импорте {$entity}#{$oldId}", [
+                throw new ImportException("Обнаружена циклическая зависимость", [
                     'in_progress' => $this->inProgress,
                 ]);
             }
@@ -92,25 +95,12 @@ class ImportManager
 
             if (!$old) {
                 unset($this->inProgress[$entity][$oldId]);
-                throw new ImportException(
-                    "Старая запись {$entity}#{$oldId} не найдена а таблице {$table}"
-                );
+                throw new ImportException("Старая запись не найдена а таблице {$table}");
             }
 
-            // 5) Готовим контекст и запускаем импорт в транзакции
-            $ctx = new ImportContext($entity, $old, $this, $this->logger);
-            DB::transaction(function () use ($entity, $old, $ctx) {
-                // Блокируем строку в id_maps на случай параллельных upsert
-                $ctx->lock();
-
-                // Вызываем Importer, который внутри Context будет
-                // делать $ctx->mapNewId($newUuid)
-                $this->importer($entity)->import($ctx);
-            });
-        } catch (ImportSkippedException $importException) {
-            unset($this->inProgress[$entity][$oldId]);
-            $this->saveError($entity, $oldId, $importException->getMessage());
-            throw $importException;
+            // 5) Готовим контекст и запускаем импор
+            $ctx = new ImportContext($entity, $old, ++$level, $this, $this->logger);
+            $this->importer($ctx->entity)->import($ctx);
         } catch (ImportException $importException) {
             unset($this->inProgress[$entity][$oldId]);
             $this->saveError($entity, $oldId, $importException->getMessage());
@@ -120,11 +110,10 @@ class ImportManager
         // 6) кешируем, сбрасываем inProgress и возвращаем
         unset($this->inProgress[$entity][$oldId]);
         if (empty($ctx->newId)) {
-            throw new ImportException("Не удалось получить новый ID для {$entity}#{$oldId}");
+            throw new ImportException("Не удалось получить новый ID");
         }
 
         $this->resolved[$entity][$oldId] = $ctx->newId;
-        $this->logger->info("{$entity}#{$oldId} импорт завершен");
         return $ctx->newId;
     }
 

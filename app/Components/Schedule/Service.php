@@ -6,6 +6,7 @@ namespace App\Components\Schedule;
 
 use App\Common\Contracts;
 use App\Components\Loader;
+use App\Components\Schedule\Exceptions\Exception;
 use App\Models\Enum\ScheduleCycle;
 use App\Models\Schedule;
 use Carbon\Carbon;
@@ -43,7 +44,7 @@ class Service extends \App\Common\BaseComponentService
         }
 
         if (!isset($lastOne)) {
-            throw new \Exception('Schedule was not created. Check arguments.');
+            throw new Exception('Schedule was not created. Check arguments.', (array)$dto);
         }
 
         return $lastOne;

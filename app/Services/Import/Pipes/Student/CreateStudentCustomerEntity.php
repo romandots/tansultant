@@ -26,16 +26,19 @@ class CreateStudentCustomerEntity implements PipeInterface
         $dto->student_is_customer = $person->isLegalAge();
 
         if (!$dto->student_is_customer) {
+            $ctx->debug("Студент несовершеннолетний -- пропускаем создание клиента");
+
             return $next($ctx);
         }
 
         try {
             $customer = Loader::customers()->createFromPerson(new CustomerDto(), $person);
             $ctx->manager->increaseCounter('customer');
+            $ctx->debug("Создали клиента {$customer->name} → #{$customer->id}");
         } catch (CustomerAlreadyExists $alreadyExists) {
             $customer = $alreadyExists->getCustomer();
         } catch (\Throwable $throwable) {
-            throw new ImportException("Ошибка сохранения клиента ({$ctx->old?->lastname} {$ctx->old?->name}): {$throwable->getMessage()}", $ctx->getErrorContext());
+            throw new ImportException("Ошибка сохранения клиента ({$ctx->old?->lastname} {$ctx->old?->name}): {$throwable->getMessage()}", $ctx->toArray());
         }
 
         try {

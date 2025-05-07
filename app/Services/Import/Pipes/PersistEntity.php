@@ -23,16 +23,16 @@ class PersistEntity implements PipeInterface
         try {
             $new = $service->create($ctx->dto);
         } catch (\Throwable $throwable) {
-            throw new ImportException("Ошибка сохранения записи: {$throwable->getMessage()}", $ctx->getErrorContext());
+            throw new ImportException("Ошибка сохранения записи: {$throwable->getMessage()}", $ctx->toArray());
         }
 
         if (!assert($new instanceof $modelClass)) {
-            throw new ImportException("Модель {$ctx->entity} не является экземпляром {$modelClass}", $ctx->getErrorContext());
+            throw new ImportException("Модель {$ctx->entity} не является экземпляром {$modelClass}", $ctx->toArray());
         }
 
         $ctx->mapNewId($new->id);
 
-        $ctx->logger->debug("Сохранили новую запись сущности {$ctx->entity} с ID #{$ctx->newId}");
+        $ctx->debug("Импорт успешно завершён → #{$ctx->newId}");
         return $next($ctx);
     }
 }

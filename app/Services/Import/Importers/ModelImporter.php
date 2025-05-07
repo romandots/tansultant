@@ -18,20 +18,29 @@ abstract class ModelImporter implements ImporterInterface
      */
     public function import(ImportContext $ctx): void
     {
-        $ctx->logger->info("Импорт сущности {$ctx->entity}#{$ctx->old?->id}");
+        $ctx->info("Импортируем...");
 
-        /** @var Pipeline $pipeline */
-        $pipeline = app(Pipeline::class);
+        // DB::transaction(function () use ($ctx) {
+            // Блокируем строку в id_maps на случай параллельных upsert
+            // $ctx->lock();
 
-        try {
-            $pipeline
-                ->send($ctx)
-                ->through($this->pipes())
-                ->thenReturn();
-        } catch (ImportException $importException) {
-            // Обогощаем исключение контекстом
-            throw new ($importException::class)($importException->getMessage(), $importException->getData() ?? [] + $ctx->getErrorContext());
-        }
+            // Вызываем Importer, который внутри Context будет
+            // делать $ctx->mapNewId($newUuid)
+            /** @var Pipeline $pipeline */
+            $pipeline = app(Pipeline::class);
+            try {
+                $pipeline
+                    ->send($ctx)
+                    ->through($this->pipes())
+                    ->thenReturn();
+            } catch (ImportException $importException) {
+                // Обогощаем исключение контекстом
+                throw new ($importException::class)(
+                    $ctx . ": " . $importException->getMessage(),
+                    $importException->getData() ?? [] + $ctx->toArray()
+                );
+            }
+        // });
     }
 
     /**

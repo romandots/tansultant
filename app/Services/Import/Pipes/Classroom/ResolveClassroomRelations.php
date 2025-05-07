@@ -15,7 +15,7 @@ class ResolveClassroomRelations implements PipeInterface
         if ($ctx->old->studio_id) {
             /** @var Dto $dto */
             $dto = $ctx->dto;
-            $dto->branch_id = $ctx->manager->ensureImported('branch', $ctx->old->studio_id);
+            $dto->branch_id = $ctx->manager->ensureImported('branch', $ctx->old->studio_id, $ctx->level);
         }
 
         return $next($ctx);

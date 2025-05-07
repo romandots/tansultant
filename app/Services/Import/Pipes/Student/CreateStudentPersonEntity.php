@@ -41,12 +41,13 @@ class CreateStudentPersonEntity implements PipeInterface
         try {
             $person = Loader::people()->create($personDto);
             $ctx->manager->increaseCounter('person');
+            $ctx->debug("Создали профиль {$person->last_name} {$person->first_name} → #{$person->id}");
         } catch (PersonAlreadyExist $alreadyExist) {
             $person = $alreadyExist->getPerson();
         } catch (SimpleValidationException $validationException) {
-            throw new ImportException("Ошибка валидации профиля ({$ctx->old?->lastname} {$ctx->old?->name}): {$validationException->field} {$validationException->rule}", $ctx->getErrorContext());
+            throw new ImportException("Ошибка валидации профиля ({$ctx->old?->lastname} {$ctx->old?->name}): {$validationException->field} {$validationException->rule}", $ctx->toArray());
         } catch (\Throwable $throwable) {
-            throw new ImportException("Ошибка сохранения профиля ({$ctx->old?->lastname} {$ctx->old?->name}): {$throwable->getMessage()}", $ctx->getErrorContext());
+            throw new ImportException("Ошибка сохранения профиля ({$ctx->old?->lastname} {$ctx->old?->name}): {$throwable->getMessage()}", $ctx->toArray());
         }
 
         try {

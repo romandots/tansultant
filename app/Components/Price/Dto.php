@@ -9,5 +9,5 @@ class Dto extends \App\Common\DTO\DtoWithUser
     public ?string $id;
     public string $name;
     public int $price;
-    public ?int $special_price;
+    public ?int $special_price = null;
 }
