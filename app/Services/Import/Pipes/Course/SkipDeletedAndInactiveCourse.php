@@ -14,13 +14,19 @@ class SkipDeletedAndInactiveCourse implements PipeInterface
     {
         if ($ctx->old->deleted) {
             throw new ImportSkippedException(
-                "Класс {$ctx->old->class_title} ({$ctx->entity}#{$ctx->old->id}) удалён"
+                "Класс {$ctx->old->class_title} удалён"
             );
         }
 
         if ($ctx->old->end_date !== null && strtotime($ctx->old->end_date) < time()) {
             throw new ImportSkippedException(
-                "Класс {$ctx->old->class_title} ({$ctx->entity}#{$ctx->old->id}) уже не работает"
+                "Класс {$ctx->old->class_title} уже не работает"
+            );
+        }
+
+        if (empty($ctx->old->teacher_id)) {
+            throw new ImportSkippedException(
+                "Класс {$ctx->old->class_title} не имеет преподавателя"
             );
         }
 

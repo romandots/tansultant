@@ -17,8 +17,8 @@ class Dto extends \App\Common\DTO\DtoWithUser
     #[ArrayShape(['from' => "int", 'to' => "int"])] public array $age_restrictions;
     public ?\Illuminate\Http\UploadedFile $picture = null;
     public CourseStatus $status;
-    public ?string $instructor_id;
-    public ?string $formula_id;
+    public ?string $instructor_id = null;
+    public ?string $formula_id = null;
     public ?\Carbon\Carbon $starts_at = null;
     public ?\Carbon\Carbon $ends_at = null;
     public array $genres = [];

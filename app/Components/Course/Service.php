@@ -39,9 +39,10 @@ class Service extends \App\Common\BaseComponentService
         $this->debug('Assigned genres with course #' . $record->id, $dto->genres);
 
         // fire event
-        //\event(new CourseCreatedEvent($record, $dto->getUser()));
-        CourseEvent::created($record, $dto->getUser());
-        $this->debug('Fired CourseCreatedEvent for course #' . $record->id);
+        if ($dto->user) {
+            CourseEvent::created($record, $dto->getUser());
+            $this->debug('Fired CourseCreatedEvent for course #' . $record->id);
+        }
 
         return $record;
     }
