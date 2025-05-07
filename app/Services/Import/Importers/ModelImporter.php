@@ -29,8 +29,8 @@ abstract class ModelImporter implements ImporterInterface
                 ->through($this->pipes())
                 ->thenReturn();
         } catch (ImportException $importException) {
-            $ctx->logger->error("Ошибка импорта {$ctx->entity}#{$ctx->old?->id}: " . $importException->getMessage(), $importException->getData() ?? [] + $ctx->getErrorContext());
-            throw $importException;
+            // Обогощаем исключение контекстом
+            throw new ($importException::class)($importException->getMessage(), $importException->getData() ?? [] + $ctx->getErrorContext());
         }
     }
 

@@ -6,6 +6,7 @@ use App\Common\BaseComponentService;
 use App\Models\IdMap;
 use App\Services\Import\Contracts\ImporterInterface;
 use App\Services\Import\Exceptions\ImportException;
+use App\Services\Import\Exceptions\ImportSkippedException;
 use Illuminate\Support\Facades\DB;
 use Psr\Log\LoggerInterface;
 
@@ -53,6 +54,7 @@ class ImportManager
      * @param int|string $oldId
      * @return string
      * @throws ImportException
+     * @throws ImportSkippedException
      */
     public function ensureImported(string $entity, int|string $oldId): string
     {
@@ -105,21 +107,23 @@ class ImportManager
                 // делать $ctx->mapNewId($newUuid)
                 $this->importer($entity)->import($ctx);
             });
-
-            // 6) После транзакции newId уже записан в контекст
-            if (empty($ctx->newId)) {
-                throw new ImportException("Новый ID не сохранился");
-            }
+        } catch (ImportSkippedException $importException) {
+            unset($this->inProgress[$entity][$oldId]);
+            $this->saveError($entity, $oldId, $importException->getMessage());
+            throw $importException;
         } catch (ImportException $importException) {
             unset($this->inProgress[$entity][$oldId]);
             $this->saveError($entity, $oldId, $importException->getMessage());
             throw $importException;
         }
 
-        // 7) кешируем, сбрасываем inProgress и возвращаем
-        $this->resolved[$entity][$oldId] = $ctx->newId;
+        // 6) кешируем, сбрасываем inProgress и возвращаем
         unset($this->inProgress[$entity][$oldId]);
+        if (empty($ctx->newId)) {
+            throw new ImportException("Не удалось получить новый ID для {$entity}#{$oldId}");
+        }
 
+        $this->resolved[$entity][$oldId] = $ctx->newId;
         $this->logger->info("{$entity}#{$oldId} импорт завершен");
         return $ctx->newId;
     }

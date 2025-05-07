@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Services\Import\CliLogger;
 use App\Services\Import\Exceptions\ImportException;
+use App\Services\Import\Exceptions\ImportSkippedException;
 use App\Services\Import\ImportManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -92,6 +93,9 @@ class ImportCommand extends Command
                     $this->info("Импорт {$entity} #{$id}");
                     try {
                         $this->importManager->ensureImported($entity, $id);
+                    } catch (ImportSkippedException $e) {
+                        $this->info("Пропускаем {$entity}#{$id}: {$e->getMessage()}");
+                        continue;
                     } catch (ImportException $e) {
                         $this->error("Ошибка импорта {$entity}#{$id}: {$e->getMessage()}");
                     }

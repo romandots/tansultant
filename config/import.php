@@ -30,5 +30,11 @@ return [
             'importer' => Importers\StudentImporter::class,
             'service' => Components\Student\Service::class,
         ],
+        'course' => [
+            'table' => 'classes',
+            'model' => Models\Course::class,
+            'importer' => Importers\CourseImporter::class,
+            'service' => Components\Course\Service::class,
+        ],
     ],
 ];
