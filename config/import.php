@@ -38,5 +38,12 @@ return [
             'importer' => Importers\CourseImporter::class,
             'service' => Components\Course\Service::class,
         ],
+        'tariff' => [
+            'table' => 'ticket_types',
+            'where' => 'ticket_type_active = 1',
+            'model' => Models\Tariff::class,
+            'importer' => Importers\TariffImporter::class,
+            'service' => Components\Tariff\Service::class,
+        ]
     ],
 ];

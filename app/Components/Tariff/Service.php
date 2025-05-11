@@ -66,12 +66,12 @@ class Service extends BaseComponentService
     /**
      * @param Tariff $tariff
      * @param iterable<Course> $courses
-     * @param User $user
+     * @param User|null $user
      * @return void
      * @throws \Exception
      * @throws Exceptions\CannotAttachDisabledCourse
      */
-    public function attachCourses(Tariff $tariff, iterable $courses, User $user): void
+    public function attachCourses(Tariff $tariff, iterable $courses, ?User $user): void
     {
         if ($tariff->status !== TariffStatus::ACTIVE) {
             throw new Exceptions\CannotAttachArchivedTariff($tariff);
@@ -86,7 +86,9 @@ class Service extends BaseComponentService
         $originalRecord = clone $tariff;
         $this->getRepository()->attachCourses($tariff, $courses);
         $this->debug("Attach courses to tariff {$tariff->name}", (array)$courses);
-        $this->history->logUpdate($user, $tariff, $originalRecord);
+        if ($user) {
+            $this->history->logUpdate($user, $tariff, $originalRecord);
+        }
     }
 
     /**
