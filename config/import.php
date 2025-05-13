@@ -44,6 +44,13 @@ return [
             'model' => Models\Tariff::class,
             'importer' => Importers\TariffImporter::class,
             'service' => Components\Tariff\Service::class,
-        ]
+        ],
+        'subscription' => [
+            'table' => 'tickets',
+            'where' => "expired > NOW() OR status NOT IN ('expired', 'null')",
+            'model' => Models\Subscription::class,
+            'importer' => Importers\SubscriptionImporter::class,
+            'service' => Components\Subscription\Service::class,
+        ],
     ],
 ];
