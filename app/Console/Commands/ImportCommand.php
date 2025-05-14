@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class ImportCommand extends Command
 {
-    protected $signature = 'import {entity : Ключ сущности из config(\'import.map\') или "all"} {--retry : Перезапускать только записи с ошибками}';
+    protected $signature = 'import {entity : Ключ сущности из config(\'import.map\') или "all"} {--retry : Перезапускать только записи с ошибками} {--force : Перезапустить импорт всех записей}';
     protected $description = 'Импорт записей из старой базы';
     protected ImportManager $importManager;
 
@@ -22,17 +22,18 @@ class ImportCommand extends Command
 
         $entity = $this->argument('entity');
         $retry  = $this->option('retry');
+        $force = $this->option('force');
 
         $map = config('import.map', []);
         $this->importManager = app(ImportManager::class);
         $this->importManager->setLogger(new CliLogger($this));
 
-        $this->info($retry ? 'Перезапуск импорта неуспешных записей' : 'Импорт всех записей не ипортированных раннее');
+        $this->info($retry ? 'Перезапуск импорта неуспешных записей' : 'Импорт всех записей не импортированных раннее');
 
         if ($entity === 'all') {
             foreach (array_keys($map) as $key) {
                 $this->info("=== Импорт сущности «{$key}» ===");
-                $this->importEntity($key, $retry);
+                $this->importEntity($key, $retry, $force);
             }
         } else {
             if (!isset($map[$entity])) {
@@ -40,7 +41,7 @@ class ImportCommand extends Command
                 return 1;
             }
             $this->info("=== Импорт сущности «{$entity}» ===");
-            $this->importEntity($entity, $retry);
+            $this->importEntity($entity, $retry, $force);
         }
 
         $this->info('Импорт завершён. Добавлено записей: ' . $this->importManager->getImportTotalCount());
@@ -48,7 +49,7 @@ class ImportCommand extends Command
         return 0;
     }
 
-    protected function importEntity(string $entity, bool $retry): void
+    protected function importEntity(string $entity, bool $retry, bool $force): void
     {
         $mapEntry = config("import.map.{$entity}");
         $table = $mapEntry['table'] ?? null;
@@ -70,12 +71,14 @@ class ImportCommand extends Command
                 $this->info("Нет записей с ошибками для повторного импорта «{$entity}»");
                 return;
             }
-        } else {
+        } elseif (!$force) {
             $ids = \App\Models\IdMap::query()
                 ->where('entity', $entity)
                 ->pluck('old_id')
                 ->map(fn($i) => (string)$i)
                 ->all();
+        } else {
+            $ids = [];
         }
 
         $query = DB::connection('old_database')
