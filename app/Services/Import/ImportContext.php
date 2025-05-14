@@ -5,6 +5,7 @@ namespace App\Services\Import;
 use App\Common\Contracts\DtoWithUser;
 use App\Models\User;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Psr\Log\LoggerInterface;
 
@@ -16,6 +17,7 @@ class ImportContext implements Arrayable, \Stringable
      */
     public ?DtoWithUser $dto = null;
     public ?string $newId = null;
+    public ?Model $newRecord = null;
 
     public function __construct(
         public readonly string $entity,

@@ -223,4 +223,9 @@ class ImportManager
             ]
         );
     }
+
+    public function getOldDatabaseConnection(): \Illuminate\Database\Connection
+    {
+        return $this->oldDatabase;
+    }
 }
