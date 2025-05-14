@@ -48,7 +48,7 @@ return [
         ],
         'subscription' => [
             'table' => 'tickets',
-            'where' => "expired > NOW() OR status NOT IN ('expired', 'null')",
+            'where' => "expired >= DATE(NOW()) AND status NOT IN ('expired', 'null')",
             'model' => Models\Subscription::class,
             'importer' => Importers\SubscriptionImporter::class,
             'service' => Components\Subscription\Service::class,

@@ -12,7 +12,7 @@ class SkipExpiredTickets implements PipeInterface
 
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
-        if ($ctx->old->status === 'expired' || strtotime($ctx->old->expired) < time()) {
+        if ($ctx->old->status === 'expired' || strtotime($ctx->old->expired) < strtotime(date('Y-m-d'))) {
             throw new ImportSkippedException('Абонемент просрочен');
         }
         if ($ctx->old->status === 'null') {

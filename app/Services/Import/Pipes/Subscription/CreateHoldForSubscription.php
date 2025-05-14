@@ -4,6 +4,8 @@ namespace App\Services\Import\Pipes\Subscription;
 
 use App\Components\Hold\Dto;
 use App\Components\Loader;
+use App\Models\Hold;
+use App\Models\Subscription;
 use App\Services\Import\Contracts\PipeInterface;
 use App\Services\Import\Exceptions\ImportException;
 use App\Services\Import\ImportContext;
@@ -30,13 +32,21 @@ class CreateHoldForSubscription implements PipeInterface
         }
 
         try {
+            /** @var Hold $hold */
             $hold = Loader::holds()->create($dto);
+            $ctx->debug('Создали заморозку → #' . $hold->id);
+            $ctx->manager->increaseCounter('hold');
         } catch (\Throwable $e) {
             throw new ImportException('Ошибка создания заморозки: ' . $e->getMessage(), $ctx->toArray());
         }
 
-        $ctx->debug('Создали заморозку → #' . $hold->id);
-        $ctx->manager->increaseCounter('hold');
+        try {
+            /** @var Subscription $subscription */
+            $subscription = $ctx->newRecord;
+            Loader::subscriptions()->hold($subscription, $hold, $ctx->adminUser);
+        } catch (\Throwable $e) {
+            throw new ImportException('Ошибка применения заморозки к абонементу: ' . $e->getMessage(), $ctx->toArray());
+        }
 
         return $next($ctx);
     }

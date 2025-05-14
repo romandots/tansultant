@@ -19,6 +19,7 @@ class SubscriptionImporter extends ModelImporter
             Subscription\MapSubscriptionEntity::class,
             Subscription\ResolveSubscriptionRelations::class,
             PersistEntity::class,
+            Subscription\AttachCoursesToSubscription::class,
             Subscription\CreateHoldForSubscription::class,
         ];
     }

@@ -17,7 +17,7 @@ class MapSubscriptionEntity implements PipeInterface
         $lessonsCount = (int)round($ctx->old->periods / 2);
 
         $ctx->dto = new Dto($ctx->adminUser);
-        $ctx->dto->name = $ctx->old->ticket_name;
+        $ctx->dto->name = $ctx->old->ticket_name ?? "";
         $ctx->dto->status = match($ctx->old->status) {
             'active' => SubscriptionStatus::ACTIVE,
             'expired' => SubscriptionStatus::EXPIRED,

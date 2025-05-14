@@ -41,9 +41,10 @@ class Service extends BaseComponentService
         $student = Loader::students()->find($dto->student_id);
         $bonus = $dto->bonus_id ? Loader::bonuses()->find($dto->bonus_id) : null;
 
-        $this->getValidator()->validateTariff($tariff);
-        $this->getValidator()->validateStudent($student);
-        $this->getValidator()->validateBonus($bonus);
+        $validator = $this->getValidator();
+        $validator->validateTariff($tariff);
+        $validator->validateStudent($student);
+        $validator->validateBonus($bonus);
 
         $dto->name = $tariff->name;
         $dto->status = SubscriptionStatus::NOT_PAID;
@@ -57,6 +58,17 @@ class Service extends BaseComponentService
 
             return $subscription;
         });
+    }
+
+    /**
+     * For import purposes only
+     * @param DtoWithUser $dto
+     * @return Subscription
+     * @throws \Throwable
+     */
+    public function createRaw(Contracts\DtoWithUser $dto): Subscription
+    {
+        return parent::create($dto);
     }
 
     /**
