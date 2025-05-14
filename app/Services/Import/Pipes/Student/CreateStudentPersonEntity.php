@@ -19,7 +19,7 @@ class CreateStudentPersonEntity implements PipeInterface
 
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
-        $personDto = new PersonDto();
+        $personDto = new PersonDto($ctx->adminUser);
         $personDto->last_name = $ctx->old->lastname;
         $personDto->first_name = $ctx->old->name;
         $personDto->patronymic_name = $ctx->old->middlename;
@@ -57,7 +57,7 @@ class CreateStudentPersonEntity implements PipeInterface
             throw new ImportException("Невалидная дата регистрации ({$ctx->old?->lastname} {$ctx->old?->name})");
         }
 
-        $ctx->dto = new StudentDto();
+        $ctx->dto = new StudentDto($ctx->adminUser);
         $ctx->dto->person_id = $person->id;
 
         return $next($ctx);

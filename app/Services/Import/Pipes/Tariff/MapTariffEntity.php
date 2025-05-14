@@ -17,7 +17,7 @@ class MapTariffEntity implements PipeInterface
     {
         $lessonsCount = (int)round($ctx->old->default_periods / 2);
 
-        $ctx->dto = new Dto();
+        $ctx->dto = new Dto($ctx->adminUser);
         $ctx->dto->name = $ctx->old->ticket_type_name;
         $ctx->dto->price = (float)$ctx->old->default_price;
         $ctx->dto->prolongation_price = $ctx->old->default_price - (

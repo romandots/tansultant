@@ -13,7 +13,7 @@ class MapCourseEntity implements PipeInterface
 
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
-        $ctx->dto = new Dto();
+        $ctx->dto = new Dto($ctx->adminUser);
         $ctx->dto->name = $ctx->old->class_title;
         $ctx->dto->description = $ctx->old->description;
         $ctx->dto->summary = $ctx->old->description;

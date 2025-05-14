@@ -2,7 +2,7 @@
 
 namespace App\Services\Import\Pipes\Instructor;
 
-use App\Components\Instructor\Dto as InstructorDto;
+use App\Components\Instructor\Dto;
 use App\Components\Loader;
 use App\Components\Person\Dto as PersonDto;
 use App\Components\Person\Exceptions\PersonAlreadyExist;
@@ -18,7 +18,7 @@ class MapInstructorPersonEntity implements PipeInterface
 
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
-        $personDto = new PersonDto();
+        $personDto = new PersonDto($ctx->adminUser);
         $personDto->last_name = $ctx->old->lastname;
         $personDto->first_name = $ctx->old->name;
         $personDto->phone = $ctx->old->phone;
@@ -41,8 +41,9 @@ class MapInstructorPersonEntity implements PipeInterface
             $person = $alreadyExist->getPerson();
         }
 
-        $ctx->dto = new InstructorDto();
-        $ctx->dto->person_id = $person->id;
+        /** @var Dto $dto */
+        $dto = $ctx->dto;
+        $dto->person_id = $person->id;
 
         return $next($ctx);
     }

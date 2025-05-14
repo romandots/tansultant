@@ -14,9 +14,9 @@ class MapSubscriptionEntity implements PipeInterface
 
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
-        $lessonsCount = (int)round($ctx->old->default_periods / 2);
+        $lessonsCount = (int)round($ctx->old->periods / 2);
 
-        $ctx->dto = new Dto();
+        $ctx->dto = new Dto($ctx->adminUser);
         $ctx->dto->name = $ctx->old->ticket_name;
         $ctx->dto->status = match($ctx->old->status) {
             'active' => SubscriptionStatus::ACTIVE,

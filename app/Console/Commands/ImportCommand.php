@@ -99,7 +99,7 @@ class ImportCommand extends Command
             ->chunkById($chunkSize, function ($rows) use ($entity) {
                 foreach ($rows as $old) {
                     try {
-                        $this->importManager->ensureImported($entity, $old->id);
+                        $this->importManager->ensureImported($entity, $old->id, 0);
                     } catch (ImportSkippedException $e) {
                         $prefix = $this->getLogPrefix($e->getData()['level'] ?? 0, $entity, $old->id);
                         $this->info("{$prefix}: Пропускаем импорт: {$e->getMessage()}");

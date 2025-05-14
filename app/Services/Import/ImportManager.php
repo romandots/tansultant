@@ -3,7 +3,9 @@
 namespace App\Services\Import;
 
 use App\Common\BaseComponentService;
+use App\Console\Commands\AppInstall;
 use App\Models\IdMap;
+use App\Models\User;
 use App\Services\Import\Contracts\ImporterInterface;
 use App\Services\Import\Exceptions\ImportException;
 use App\Services\Import\Exceptions\ImportSkippedException;
@@ -49,6 +51,11 @@ class ImportManager
         $this->logger = $logger;
     }
 
+    protected function getAdminUser(): User
+    {
+        return User::query()->where('username', AppInstall::ADMIN_USERNAME)->firstOrFail();
+    }
+
     /**
      * @param string $entity
      * @param int|string $oldId
@@ -57,7 +64,7 @@ class ImportManager
      * @throws ImportException
      * @throws ImportSkippedException
      */
-    public function ensureImported(string $entity, int|string $oldId, int $level = 0): string
+    public function ensureImported(string $entity, int|string $oldId, int $level): string
     {
         $logPrefix = sprintf('%s%s#%s', str_repeat("\t", $level + 1), $entity, (string)$oldId);
 
@@ -99,7 +106,7 @@ class ImportManager
             }
 
             // 5) Готовим контекст и запускаем импор
-            $ctx = new ImportContext($entity, $old, ++$level, $this, $this->logger);
+            $ctx = new ImportContext($entity, $old, ++$level, $this, $this->logger, $this->getAdminUser());
             $this->importer($ctx->entity)->import($ctx);
         } catch (ImportException $importException) {
             unset($this->inProgress[$entity][$oldId]);

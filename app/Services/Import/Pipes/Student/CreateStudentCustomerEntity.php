@@ -32,7 +32,7 @@ class CreateStudentCustomerEntity implements PipeInterface
         }
 
         try {
-            $customer = Loader::customers()->createFromPerson(new CustomerDto(), $person);
+            $customer = Loader::customers()->createFromPerson(new CustomerDto($ctx->adminUser), $person);
             $ctx->manager->increaseCounter('customer');
             $ctx->debug("Создали клиента {$customer->name} → #{$customer->id}");
         } catch (CustomerAlreadyExists $alreadyExists) {

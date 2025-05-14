@@ -3,6 +3,7 @@
 namespace App\Services\Import;
 
 use App\Common\Contracts\DtoWithUser;
+use App\Models\User;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\DB;
 use Psr\Log\LoggerInterface;
@@ -22,6 +23,7 @@ class ImportContext implements Arrayable, \Stringable
         public readonly int $level,
         public readonly ImportManager $manager,
         public readonly LoggerInterface $logger,
+        public readonly User $adminUser,
     ) {
     }
 

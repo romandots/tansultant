@@ -16,7 +16,7 @@ class CreateCourseFormula implements PipeInterface
 
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
-        $formulaDto = new Dto();
+        $formulaDto = new Dto($ctx->adminUser);
 
         switch ($ctx->old->pay_type) {
             case 'tickets':

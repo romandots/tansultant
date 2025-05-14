@@ -12,7 +12,7 @@ class MapClassroomEntity implements PipeInterface
 
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
-        $ctx->dto = new Dto();
+        $ctx->dto = new Dto($ctx->adminUser);
         $ctx->dto->name = $ctx->old->name;
         $ctx->dto->color = $ctx->old->color;
 

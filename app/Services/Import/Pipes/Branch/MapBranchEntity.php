@@ -13,7 +13,7 @@ class MapBranchEntity implements PipeInterface
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
         $old = $ctx->old;
-        $ctx->dto = new Dto();
+        $ctx->dto = new Dto($ctx->adminUser);
         $ctx->dto->name = $old->studio_title;
         $ctx->dto->phone = $old->phone;
         $ctx->dto->description = $old->description;

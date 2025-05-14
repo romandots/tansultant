@@ -16,8 +16,8 @@ class InstructorImporter extends ModelImporter
     protected function pipes(): array
     {
         return [
-            Instructor\MapInstructorPersonEntity::class,
             Instructor\MapInstructorEntity::class,
+            Instructor\MapInstructorPersonEntity::class,
             PersistEntity::class,
         ];
     }

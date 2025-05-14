@@ -144,7 +144,7 @@ class CreateCourseSlots implements PipeInterface
         string $time,
         object $old
     ): ScheduleDto {
-        $scheduleDto = new ScheduleDto();
+        $scheduleDto = new ScheduleDto($ctx->adminUser);
         $scheduleDto->course_id = $courseId;
         $scheduleDto->branch_id = $branchId;
         $scheduleDto->classroom_id = $classroomId;

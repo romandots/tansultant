@@ -16,11 +16,11 @@ class ResolveSubscriptionRelations implements PipeInterface
         $dto = $ctx->dto;
 
         if ($ctx->old->ticket_type) {
-            $dto->tariff_id = $ctx->manager->ensureImported('tariff', $ctx->old->ticket_type);
+            $dto->tariff_id = $ctx->manager->ensureImported('tariff', $ctx->old->ticket_type, $ctx->level);
         }
 
         if ($ctx->old->client_id) {
-            $dto->student_id = $ctx->manager->ensureImported('student', $ctx->old->client_id);
+            $dto->student_id = $ctx->manager->ensureImported('student', $ctx->old->client_id, $ctx->level);
         }
 
         return $next($ctx);

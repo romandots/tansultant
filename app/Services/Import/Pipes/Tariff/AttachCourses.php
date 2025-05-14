@@ -25,11 +25,11 @@ class AttachCourses implements \App\Services\Import\Contracts\PipeInterface
             return $next($ctx);
         }
 
-        $coursesIds = new IdsDto();
+        $coursesIds = new IdsDto($ctx->adminUser);
         $coursesIds->id = $ctx->newId;
         foreach ($classes as $classId) {
             try {
-                $coursesIds->relations_ids[] = $ctx->manager->ensureImported('course', $classId);
+                $coursesIds->relations_ids[] = $ctx->manager->ensureImported('course', $classId, $ctx->level);
             } catch (ImportSkippedException|ImportException) {
                 continue;
             }

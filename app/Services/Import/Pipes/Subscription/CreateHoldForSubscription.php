@@ -20,7 +20,7 @@ class CreateHoldForSubscription implements PipeInterface
             return $next($ctx);
         }
 
-        $dto = new Dto();
+        $dto = new Dto($ctx->adminUser);
         $dto->subscription_id = $ctx->newId;
 
         try {
