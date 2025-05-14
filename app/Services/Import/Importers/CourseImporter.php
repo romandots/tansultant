@@ -18,9 +18,9 @@ class CourseImporter extends ModelImporter
             Course\SkipDeletedAndInactiveCourse::class,
             Course\MapCourseEntity::class,
             Course\ResolveCourseRelations::class,
+            Course\CreateCourseFormula::class,
             PersistEntity::class,
             Course\CreateCourseSlots::class,
-            Course\CreateCourseFormula::class,
         ];
     }
 }

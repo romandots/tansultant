@@ -36,85 +36,78 @@ class CreateCourseSlots implements PipeInterface
         $slotsDtos = [];
         if ($ctx->old->mon) {
             $slotsDtos[] = $this->initScheduleDto(
-                $ctx->newId,
+                $ctx,
                 $branchId,
                 $classroomId,
                 $price->id,
                 Weekday::MONDAY,
-                $ctx->old->mon,
-                $ctx->old
+                $ctx->old->mon
             );
         }
 
         if ($ctx->old->tue) {
             $slotsDtos[] = $this->initScheduleDto(
-                $ctx->newId,
+                $ctx,
                 $branchId,
                 $classroomId,
                 $price->id,
                 Weekday::TUESDAY,
                 $ctx->old->tue,
-                $ctx->old
             );
         }
 
         if ($ctx->old->wed) {
             $slotsDtos[] = $this->initScheduleDto(
-                $ctx->newId,
+                $ctx,
                 $branchId,
                 $classroomId,
                 $price->id,
                 Weekday::WEDNESDAY,
                 $ctx->old->wed,
-                $ctx->old
             );
         }
 
         if ($ctx->old->thu) {
             $slotsDtos[] = $this->initScheduleDto(
-                $ctx->newId,
+                $ctx,
                 $branchId,
                 $classroomId,
                 $price->id,
                 Weekday::THURSDAY,
                 $ctx->old->thu,
-                $ctx->old
             );
         }
 
         if ($ctx->old->fri) {
             $slotsDtos[] = $this->initScheduleDto(
-                $ctx->newId,
+                $ctx,
                 $branchId,
                 $classroomId,
                 $price->id,
                 Weekday::FRIDAY,
                 $ctx->old->fri,
-                $ctx->old
             );
         }
 
         if ($ctx->old->sat) {
             $slotsDtos[] = $this->initScheduleDto(
-                $ctx->newId,
+                $ctx,
                 $branchId,
                 $classroomId,
                 $price->id,
                 Weekday::SATURDAY,
                 $ctx->old->sat,
-                $ctx->old
             );
         }
 
         if ($ctx->old->sun) {
             $slotsDtos[] = $this->initScheduleDto(
-                $ctx->newId,
+                $ctx,
                 $branchId,
                 $classroomId,
                 $price->id,
                 Weekday::SUNDAY,
                 $ctx->old->sun,
-                $ctx->old
             );
         }
 
@@ -136,14 +129,16 @@ class CreateCourseSlots implements PipeInterface
     }
 
     protected function initScheduleDto(
-        string $courseId,
+        ImportContext $ctx,
         string $branchId,
         string $classroomId,
         string $priceId,
         Weekday $weekday,
         string $time,
-        object $old
     ): ScheduleDto {
+        $courseId = $ctx->newId;
+        $old = $ctx->old;
+
         $scheduleDto = new ScheduleDto($ctx->adminUser);
         $scheduleDto->course_id = $courseId;
         $scheduleDto->branch_id = $branchId;

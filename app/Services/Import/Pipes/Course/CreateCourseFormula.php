@@ -10,6 +10,7 @@ use App\Services\Import\Contracts\PipeInterface;
 use App\Services\Import\Exceptions\ImportException;
 use App\Services\Import\ImportContext;
 use Closure;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CreateCourseFormula implements PipeInterface
 {
@@ -18,51 +19,42 @@ class CreateCourseFormula implements PipeInterface
     {
         $formulaDto = new Dto($ctx->adminUser);
 
-        switch ($ctx->old->pay_type) {
-            case 'tickets':
-                $rate = $ctx->old->ticket_rate ?? 0;
-                if ($rate < 1) {
-                    throw new ImportException("Неверная ставка за абонемент: {$rate}");
-                }
-                $formulaDto->name = "{$rate} за каждый абонемент";
-                $formulaDto->equation = sprintf("%d * %s", $rate, FormulaVar::ACTIVE_SUBSCRIPTIONS->value);
-                break;
-            case 'visits':
-                $rate = $ctx->old->visit_rate ?? 0;
-                if ($rate < 1) {
-                    throw new ImportException("Неверная ставка за посещение: {$rate}");
-                }
-                $formulaDto->name = "{$rate} за каждое посещение";
-                $formulaDto->equation = sprintf("%d * %s", $rate, FormulaVar::ALL_VISITS->value);
-                break;
-            case 'time':
-                $rate = $ctx->old->time_rate ?? 0;
-                if ($rate < 1) {
-                    throw new ImportException("Неверная ставка за час: {$rate}");
-                }
-                $formulaDto->name = "{$rate} за каждый час";
-                $formulaDto->equation = sprintf("%d * %s", $rate, FormulaVar::HOUR->value);
-                break;
-            case 'fixed':
-                $rate = $ctx->old->lesson_rate ?? 0;
-                if ($rate < 1) {
-                    throw new ImportException("Неверная ставка за урок: {$rate}");
-                }
-                $formulaDto->name = "{$rate} за урок";
-                $formulaDto->equation = $rate;
-                break;
-            default:
-                throw new ImportException("Неизвестный тип оплаты курса: {$ctx->old->pay_type}");
+        $visitRate = $ctx->old->visit_rate ?? 0;
+        $ticketRate = $ctx->old->ticket_rate ?? 0;
+        $timeRate = $ctx->old->time_rate ?? 0;
+        $lessonRate = $ctx->old->lesson_rate ?? 0;
+
+        if ($visitRate > 0) {
+            $formulaDto->name = "{$visitRate} за каждый абонемент";
+            $formulaDto->equation = sprintf("%d * %s", $visitRate, FormulaVar::ACTIVE_SUBSCRIPTIONS->value);
+        } elseif ($ticketRate > 0) {
+            $formulaDto->name = "{$ticketRate} за каждое посещение";
+            $formulaDto->equation = sprintf("%d * %s", $ticketRate, FormulaVar::ALL_VISITS->value);
+        } elseif ($timeRate > 0) {
+            $formulaDto->name = "{$timeRate} за каждый час";
+            $formulaDto->equation = sprintf("%d * %s", $timeRate, FormulaVar::HOUR->value);
+        } elseif ($lessonRate > 0) {
+            $formulaDto->name = "{$lessonRate} за урок";
+            $formulaDto->equation = $lessonRate;
+        } else {
+            throw new ImportException("Неизвестный тип оплаты курса");
         }
 
+        /** @var Formula $formula */
         try {
-            /** @var Formula $formula */
-            $formula = Loader::formulas()->create($formulaDto);
-            $ctx->manager->increaseCounter('formula');
-            $ctx->debug("Создали формулу {$formula->name} → #{$formula->id}");
-        } catch (\Exception $e) {
-            throw new ImportException("Ошибка сохранения формулы расчёта: {$e->getMessage()}");
+            $formula = Loader::formulas()->findBy('equation', $formulaDto->equation);
+            $ctx->debug("Формула расчёта уже существует: {$formula->name} → #{$formula->id}");
+        } catch (ModelNotFoundException) {
+            try {
+                $formula = Loader::formulas()->create($formulaDto);
+                $ctx->manager->increaseCounter('formula');
+                $ctx->debug("Создали формулу {$formula->name} → #{$formula->id}");
+            } catch (\Exception $e) {
+                throw new ImportException("Ошибка сохранения формулы расчёта: {$e->getMessage()}");
+            }
         }
+
+        $ctx->dto->formula_id = $formula->id;
 
         return $next($ctx);
     }
