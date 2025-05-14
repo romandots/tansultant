@@ -21,6 +21,7 @@ class MapInstructorPersonEntity implements PipeInterface
         $personDto = new PersonDto($ctx->adminUser);
         $personDto->last_name = $ctx->old->lastname;
         $personDto->first_name = $ctx->old->name;
+        $personDto->patronymic_name = $ctx->old->nickname;
         $personDto->phone = $ctx->old->phone;
         $personDto->gender = match($ctx->old->sex) {
             'm' => Gender::MALE,

@@ -20,6 +20,7 @@ return [
         ],
         'instructor' => [
             'table' => 'teachers',
+            'where' => "status IN ('staff', 'exclusive')",
             'model' => Models\Instructor::class,
             'importer' => Importers\InstructorImporter::class,
             'service' => Components\Instructor\Service::class,
