@@ -9,11 +9,13 @@ use App\Models\User;
 use App\Services\Import\Contracts\ImporterInterface;
 use App\Services\Import\Exceptions\ImportException;
 use App\Services\Import\Exceptions\ImportSkippedException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Psr\Log\LoggerInterface;
 
 class ImportManager
 {
+    protected readonly User $adminUser;
 
     /**
      * Маппинг старых таблиц, новых моделей и импортёров
@@ -44,16 +46,16 @@ class ImportManager
         protected LoggerInterface $logger,
     ) {
         $this->map = config('import.map');
+        try {
+            $this->adminUser = User::query()->where('username', AppInstall::ADMIN_USERNAME)->firstOrFail();
+        } catch (ModelNotFoundException) {
+            throw new ImportException('Не найден администратор для импорта');
+        }
     }
 
     public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
-    }
-
-    protected function getAdminUser(): User
-    {
-        return User::query()->where('username', AppInstall::ADMIN_USERNAME)->firstOrFail();
     }
 
     /**
@@ -106,7 +108,7 @@ class ImportManager
             }
 
             // 5) Готовим контекст и запускаем импор
-            $ctx = new ImportContext($entity, $old, ++$level, $this, $this->logger, $this->getAdminUser());
+            $ctx = new ImportContext($entity, $old, ++$level, $this, $this->logger, $this->adminUser);
             $this->importer($ctx->entity)->import($ctx);
         } catch (ImportException $importException) {
             unset($this->inProgress[$entity][$oldId]);
