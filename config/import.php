@@ -53,5 +53,12 @@ return [
             'importer' => Importers\SubscriptionImporter::class,
             'service' => Components\Subscription\Service::class,
         ],
+        'visit' => [
+            'table' => 'visits',
+            'where' => "timestamp >= DATE('2025-01-01')",
+            'model' => Models\Visit::class,
+            'importer' => Importers\VisitImporter::class,
+            'service' => Components\Visit\Service::class,
+        ],
     ],
 ];
