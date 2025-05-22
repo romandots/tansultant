@@ -26,7 +26,7 @@ class ImportCommand extends Command
 
         $offset = config('import.offset',);
         $map = config('import.map', []);
-        $all = config('import.all', array_keys($map));
+        $all = config('import.essential_entities', array_keys($map));
         $this->importManager = app(ImportManager::class);
         $this->importManager->setLogger(new CliLogger($this));
 
@@ -55,10 +55,19 @@ class ImportCommand extends Command
     protected function importEntity(string $entity, bool $retry, bool $force): int
     {
         $lock = cache()->lock('import-' . $entity . '-lock', 30 * 60);
-
         if (!$lock->get()){
             $this->error("Импорт сущности «{$entity}» уже выполняется в другом процессе");
             return 1;
+        }
+
+        // Release lock upon script termination
+        if (function_exists('pcntl_signal')) {
+            pcntl_async_signals(true);
+            pcntl_signal(SIGINT, function () use ($lock) {
+                $this->info('Скрипт завершён. Снимаем блокировку.');
+                optional($lock)->release();
+                exit(1);
+            });
         }
 
         try {

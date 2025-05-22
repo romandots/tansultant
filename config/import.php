@@ -71,11 +71,11 @@ return [
             'service' => Components\Visit\Service::class,
         ],
     ],
-    'all' => [
+    'essential_entities' => [
         'branch',
-        'student',
         'course',
         'tariff',
+        'student',
         'subscription',
     ]
 ];
