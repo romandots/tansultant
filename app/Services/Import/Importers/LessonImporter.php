@@ -14,7 +14,7 @@ class LessonImporter extends ModelImporter
     protected function pipes(): array
     {
         return [
-            Lesson\SkipPendingLessons::class,
+            Lesson\SkipInvalidLessons::class,
             Lesson\MapLessonEntity::class,
             Lesson\ResolveLessonRelations::class,
             PersistEntity::class,

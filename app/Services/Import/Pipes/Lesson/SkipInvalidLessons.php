@@ -8,7 +8,7 @@ use App\Services\Import\ImportContext;
 use App\Services\Import\Traits\DatesTrait;
 use Closure;
 
-class SkipPendingLessons implements PipeInterface
+class SkipInvalidLessons implements PipeInterface
 {
     use DatesTrait;
 
@@ -16,6 +16,11 @@ class SkipPendingLessons implements PipeInterface
     {
         if ($this->getLessonEndTimestamp($ctx->old) > time()) {
             throw new ImportSkippedException("Урок еще не прошёл");
+        }
+
+        $offset = strtotime(config('import.offset'));
+        if ($this->getLessonStartTimestamp($ctx->old) < $offset) {
+            throw new ImportSkippedException("Урок слишком старый");
         }
 
         if (empty($ctx->old->class_id)) {
