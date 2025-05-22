@@ -56,6 +56,13 @@ return [
             'importer' => Importers\SubscriptionImporter::class,
             'service' => Components\Subscription\Service::class,
         ],
+        'lesson' => [
+            'table' => 'lessons',
+            'where' => "class_id IS NOT NULL AND STR_TO_DATE(CONCAT(date, ' ', time), '%Y-%m-%d %H:%i:%s') BETWEEN DATE('{$offsetDate}') AND NOW()",
+            'model' => Models\Lesson::class,
+            'importer' => Importers\LessonImporter::class,
+            'service' => Components\Lesson\Service::class,
+        ],
         'visit' => [
             'table' => 'visits',
             'where' => "timestamp >= DATE('{$offsetDate}')",
