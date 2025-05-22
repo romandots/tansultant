@@ -44,83 +44,95 @@ class ImportCommand extends Command
                 return 1;
             }
             $this->info("=== Импорт сущности «{$entity}» ===");
-            $this->importEntity($entity, $retry, $force);
+            $result = $this->importEntity($entity, $retry, $force);
         }
 
         $this->info('Импорт завершён. Добавлено записей: ' . $this->importManager->getImportTotalCount());
         $this->info($this->importManager->getImportCount());
-        return 0;
+        return $result ?? 0;
     }
 
-    protected function importEntity(string $entity, bool $retry, bool $force): void
+    protected function importEntity(string $entity, bool $retry, bool $force): int
     {
-        $mapEntry = config("import.map.{$entity}");
-        $table = $mapEntry['table'] ?? null;
-        $additionalWhereClause = $mapEntry['where'] ?? null;
+        $lock = cache()->lock('import-' . $entity . '-lock', 30 * 60);
 
-        if (!$table) {
-            return;
+        if (!$lock->get()){
+            $this->error("Импорт сущности «{$entity}» уже выполняется в другом процессе");
+            return 1;
         }
 
-        if ($retry) {
-            $ids = \App\Models\IdMap::query()
-                ->where('entity', $entity)
-                ->whereNotNull('error')
-                ->pluck('old_id')
-                ->map(fn($i) => (string)$i)
-                ->all();
+        try {
+            $mapEntry = config("import.map.{$entity}");
+            $table = $mapEntry['table'] ?? null;
+            $additionalWhereClause = $mapEntry['where'] ?? null;
 
-            if (empty($ids)) {
-                $this->info("Нет записей с ошибками для повторного импорта «{$entity}»");
-                return;
+            if (!$table) {
+                return 1;
             }
-        } elseif (!$force) {
-            $ids = \App\Models\IdMap::query()
-                ->where('entity', $entity)
-                ->pluck('old_id')
-                ->map(fn($i) => (string)$i)
-                ->all();
-        } else {
-            $ids = [];
-        }
 
-        $query = DB::connection('old_database')
-            ->table($table)
-            ->orderBy('id');
+            if ($retry) {
+                $ids = \App\Models\IdMap::query()
+                    ->where('entity', $entity)
+                    ->whereNotNull('error')
+                    ->pluck('old_id')
+                    ->map(fn($i) => (string)$i)
+                    ->all();
 
-        if ($additionalWhereClause) {
-            $query->whereRaw($additionalWhereClause);
-        }
-
-        if ($retry) {
-            // только те, что упали
-            $query->whereIn('id', $ids);
-        } elseif (! empty($ids)) {
-            // все, что уже импортировали (успешно или с ошибкой) — пропускаем
-            $query->whereNotIn('id', $ids);
-        }
-
-        $chunkSize = $mapEntry['chunk'] ?? 500;
-        $query
-            ->chunkById($chunkSize, function ($rows) use ($entity) {
-                foreach ($rows as $old) {
-                    try {
-                        $this->importManager->ensureImported($entity, $old->id, 0);
-                    } catch (ImportSkippedException $e) {
-                        $prefix = $this->getLogPrefix($e->getData()['level'] ?? 0, $entity, $old->id);
-                        $this->info("{$prefix}: Пропускаем импорт: {$e->getMessage()}");
-                        continue;
-                    } catch (ImportException $e) {
-                        $prefix = $this->getLogPrefix($e->getData()['level'] ?? 0, $entity, $old->id);
-                        $this->error("{$prefix}: Ошибка импорта: {$e->getMessage()}");
-                    }
+                if (empty($ids)) {
+                    $this->info("Нет записей с ошибками для повторного импорта «{$entity}»");
+                    return 0;
                 }
-            });
+            } elseif (!$force) {
+                $ids = \App\Models\IdMap::query()
+                    ->where('entity', $entity)
+                    ->pluck('old_id')
+                    ->map(fn($i) => (string)$i)
+                    ->all();
+            } else {
+                $ids = [];
+            }
+
+            $query = DB::connection('old_database')
+                ->table($table)
+                ->orderBy('id');
+
+            if ($additionalWhereClause) {
+                $query->whereRaw($additionalWhereClause);
+            }
+
+            if ($retry) {
+                // только те, что упали
+                $query->whereIn('id', $ids);
+            } elseif (!empty($ids)) {
+                // все, что уже импортировали (успешно или с ошибкой) — пропускаем
+                $query->whereNotIn('id', $ids);
+            }
+
+            $chunkSize = $mapEntry['chunk'] ?? 500;
+            $query
+                ->chunkById($chunkSize, function ($rows) use ($entity) {
+                    foreach ($rows as $old) {
+                        try {
+                            $this->importManager->ensureImported($entity, $old->id, 0);
+                        } catch (ImportSkippedException $e) {
+                            $prefix = $this->getLogPrefix($e->getData()['level'] ?? 0, $entity, $old->id);
+                            $this->info("{$prefix}: Пропускаем импорт: {$e->getMessage()}");
+                            continue;
+                        } catch (ImportException $e) {
+                            $prefix = $this->getLogPrefix($e->getData()['level'] ?? 0, $entity, $old->id);
+                            $this->error("{$prefix}: Ошибка импорта: {$e->getMessage()}");
+                        }
+                    }
+                });
+
+            return 0;
+        } finally {
+            $lock->release();
+        }
     }
 
     protected function getLogPrefix(int $level, string $entity, string|int $oldId): string
     {
         return sprintf('%s%s#%s', str_repeat("\t", $level), $entity, (string)$oldId);
-
     }
 }
