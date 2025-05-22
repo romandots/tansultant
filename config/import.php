@@ -71,4 +71,11 @@ return [
             'service' => Components\Visit\Service::class,
         ],
     ],
+    'all' => [
+        'branch',
+        'student',
+        'course',
+        'tariff',
+        'subscription',
+    ]
 ];

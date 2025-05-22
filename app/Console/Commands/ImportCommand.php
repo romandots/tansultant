@@ -26,6 +26,7 @@ class ImportCommand extends Command
 
         $offset = config('import.offset',);
         $map = config('import.map', []);
+        $all = config('import.all', array_keys($map));
         $this->importManager = app(ImportManager::class);
         $this->importManager->setLogger(new CliLogger($this));
 
@@ -33,7 +34,7 @@ class ImportCommand extends Command
         $this->info("Импортируем данные начиная с {$offset}");
 
         if ($entity === 'all') {
-            foreach (array_keys($map) as $key) {
+            foreach ($all as $key) {
                 $this->info("=== Импорт сущности «{$key}» ===");
                 $this->importEntity($key, $retry, $force);
             }
