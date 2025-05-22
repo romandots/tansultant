@@ -40,6 +40,13 @@ class CreateCourseFormula implements PipeInterface
             throw new ImportException("Неизвестный тип оплаты курса");
         }
 
+        $ctx->dto->formula_id = $this->getFormulaId($formulaDto, $ctx);
+
+        return $next($ctx);
+    }
+
+    protected function getFormulaId(Dto $formulaDto, ImportContext $ctx): string
+    {
         /** @var Formula $formula */
         try {
             $formula = Loader::formulas()->findBy('equation', $formulaDto->equation);
@@ -53,9 +60,6 @@ class CreateCourseFormula implements PipeInterface
                 throw new ImportException("Ошибка сохранения формулы расчёта: {$e->getMessage()}");
             }
         }
-
-        $ctx->dto->formula_id = $formula->id;
-
-        return $next($ctx);
+        return $formula->id;
     }
 }
