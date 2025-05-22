@@ -15,12 +15,12 @@ class SkipInvalidLessons implements PipeInterface
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
         if ($this->getLessonEndTimestamp($ctx->old) > time()) {
-            throw new ImportSkippedException("Урок еще не прошёл");
+            throw new ImportSkippedException("Урок еще не прошёл: {$ctx->old->ends_at}");
         }
 
         $offset = strtotime(config('import.offset'));
         if ($this->getLessonStartTimestamp($ctx->old) < $offset) {
-            throw new ImportSkippedException("Урок слишком старый");
+            throw new ImportSkippedException("Урок слишком старый: {$ctx->old->starts_at}");
         }
 
         if (empty($ctx->old->class_id)) {

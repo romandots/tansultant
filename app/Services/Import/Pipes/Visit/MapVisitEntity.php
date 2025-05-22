@@ -14,11 +14,7 @@ class MapVisitEntity implements PipeInterface
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
         $ctx->dto = new Dto($ctx->adminUser);
-        $ctx->dto->pay_from_balance = false;
         $ctx->dto->event_type = VisitEventType::LESSON;
-        $ctx->dto->manager_id = $ctx->adminUser->id;
-
-
 
         return $next($ctx);
     }

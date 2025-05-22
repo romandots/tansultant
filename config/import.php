@@ -65,7 +65,7 @@ return [
         ],
         'visit' => [
             'table' => 'visits',
-            'where' => "timestamp >= DATE('{$offsetDate}')",
+            'where' => "timestamp >= DATE('{$offsetDate}') AND type IN ('ticket', 'cash')",
             'model' => Models\Visit::class,
             'importer' => Importers\VisitImporter::class,
             'service' => Components\Visit\Service::class,
