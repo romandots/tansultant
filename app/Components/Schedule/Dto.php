@@ -26,11 +26,11 @@ class Dto extends \App\Common\DTO\DtoWithUser
     /** @property Weekday[]  */
     public array $weekdays = [];
 
-    public ?\Carbon\Carbon $from_date;
+    public ?\Carbon\Carbon $from_date = null;
 
-    public ?\Carbon\Carbon $to_date;
+    public ?\Carbon\Carbon $to_date = null;
 
-    public ?\Carbon\Carbon $starts_at;
+    public ?\Carbon\Carbon $starts_at = null;
 
-    public ?\Carbon\Carbon $ends_at;
+    public ?\Carbon\Carbon $ends_at = null;
 }

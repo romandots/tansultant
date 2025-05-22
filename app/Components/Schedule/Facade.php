@@ -30,6 +30,16 @@ class Facade extends BaseComponentFacade
         parent::__construct(Service::class);
     }
 
+    public function findOrCreate(Dto $dto): Schedule
+    {
+        return $this->getService()->findOrCreate($dto);
+    }
+
+    public function findByDto(Dto $dto): Schedule
+    {
+        return $this->getRepository()->findByDto($dto);
+    }
+
     public function getSchedulesForCourseOnDate(string $courseId, \Carbon\Carbon $date): Collection
     {
         return $this->getRepository()->getSchedulesForCourseOnDate($courseId, $date);

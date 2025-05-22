@@ -24,11 +24,13 @@ class ImportCommand extends Command
         $retry  = $this->option('retry');
         $force = $this->option('force');
 
+        $offset = config('import.offset',);
         $map = config('import.map', []);
         $this->importManager = app(ImportManager::class);
         $this->importManager->setLogger(new CliLogger($this));
 
         $this->info($retry ? 'Перезапуск импорта неуспешных записей' : 'Импорт всех записей не импортированных раннее');
+        $this->info("Импортируем данные начиная с {$offset}");
 
         if ($entity === 'all') {
             foreach (array_keys($map) as $key) {

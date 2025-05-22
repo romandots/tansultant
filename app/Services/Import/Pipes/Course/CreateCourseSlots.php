@@ -2,120 +2,56 @@
 
 namespace App\Services\Import\Pipes\Course;
 
-use App\Components\Loader;
-use App\Components\Schedule\Dto as ScheduleDto;
-use App\Models\Enum\ScheduleCycle;
 use App\Models\Enum\Weekday;
 use App\Services\Import\Contracts\PipeInterface;
-use App\Services\Import\Exceptions\ImportException;
 use App\Services\Import\ImportContext;
+use App\Services\Import\Traits\DatesTrait;
+use App\Services\Import\Traits\PriceTrait;
+use App\Services\Import\Traits\ScheduleTrait;
 use Closure;
 
 class CreateCourseSlots implements PipeInterface
 {
+    use DatesTrait, PriceTrait, ScheduleTrait;
 
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
         $branchId = $ctx->manager->ensureImported('branch', $ctx->old->studio_id, $ctx->level);
         $classroomId = $ctx->manager->ensureImported('classroom', $ctx->old->dancefloor_id, $ctx->level);
+        $priceId = $this->getPriceId($ctx->old->price_rate, $ctx);
 
-        try {
-            $price = Loader::prices()->findByPriceValue($ctx->old->price_rate);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
-            try {
-                $priceDto = new \App\Components\Price\Dto();
-                $priceDto->name = $ctx->old->price_rate;
-                $priceDto->price = $ctx->old->price_rate;
-                $price = Loader::prices()->create($priceDto);
-                $ctx->manager->increaseCounter('price');
-            } catch (\Exception $e) {
-                throw new ImportException("Ошибка создания цены: {$e->getMessage()}");
+        $timeMap = [
+            [Weekday::MONDAY, $ctx->old->mon],
+            [Weekday::TUESDAY, $ctx->old->tue],
+            [Weekday::WEDNESDAY, $ctx->old->wed],
+            [Weekday::THURSDAY, $ctx->old->thu],
+            [Weekday::FRIDAY, $ctx->old->fri],
+            [Weekday::SATURDAY, $ctx->old->sat],
+            [Weekday::SUNDAY, $ctx->old->sun],
+        ];
+
+        $slotsDtos = [];
+        foreach ($timeMap as [$weekday, $time]) {
+            if (!empty($time)) {
+                $slotsDtos[] = $this->initScheduleDto(
+                    courseId: $ctx->newId,
+                    branchId: $branchId,
+                    classroomId: $classroomId,
+                    priceId: $priceId,
+                    weekday: $weekday,
+                    time: $time,
+                    startDate: $ctx->old->start_date,
+                    endDate: $ctx->old->end_date,
+                    periods: $ctx->old->periods,
+                    user: $ctx->adminUser,
+                );
             }
         }
 
-        $slotsDtos = [];
-        if ($ctx->old->mon) {
-            $slotsDtos[] = $this->initScheduleDto(
-                $ctx,
-                $branchId,
-                $classroomId,
-                $price->id,
-                Weekday::MONDAY,
-                $ctx->old->mon
-            );
-        }
-
-        if ($ctx->old->tue) {
-            $slotsDtos[] = $this->initScheduleDto(
-                $ctx,
-                $branchId,
-                $classroomId,
-                $price->id,
-                Weekday::TUESDAY,
-                $ctx->old->tue,
-            );
-        }
-
-        if ($ctx->old->wed) {
-            $slotsDtos[] = $this->initScheduleDto(
-                $ctx,
-                $branchId,
-                $classroomId,
-                $price->id,
-                Weekday::WEDNESDAY,
-                $ctx->old->wed,
-            );
-        }
-
-        if ($ctx->old->thu) {
-            $slotsDtos[] = $this->initScheduleDto(
-                $ctx,
-                $branchId,
-                $classroomId,
-                $price->id,
-                Weekday::THURSDAY,
-                $ctx->old->thu,
-            );
-        }
-
-        if ($ctx->old->fri) {
-            $slotsDtos[] = $this->initScheduleDto(
-                $ctx,
-                $branchId,
-                $classroomId,
-                $price->id,
-                Weekday::FRIDAY,
-                $ctx->old->fri,
-            );
-        }
-
-        if ($ctx->old->sat) {
-            $slotsDtos[] = $this->initScheduleDto(
-                $ctx,
-                $branchId,
-                $classroomId,
-                $price->id,
-                Weekday::SATURDAY,
-                $ctx->old->sat,
-            );
-        }
-
-        if ($ctx->old->sun) {
-            $slotsDtos[] = $this->initScheduleDto(
-                $ctx,
-                $branchId,
-                $classroomId,
-                $price->id,
-                Weekday::SUNDAY,
-                $ctx->old->sun,
-            );
-        }
-
         $slotsIds = [];
-        foreach ($slotsDtos as $slotsDto) {
+        foreach ($slotsDtos as $slotDto) {
             try {
-                $slotsIds[] = Loader::schedules()->create($slotsDto)?->id;
-                $ctx->manager->increaseCounter('schedule');
+                $slotsIds[] = $this->getScheduleId($slotDto, $ctx);
             } catch (\Exception $e) {
                 $ctx->error(
                     "Не удалось сохранить слот расписания для курса {$ctx->old->class_title}: {$e->getMessage()}"
@@ -128,47 +64,4 @@ class CreateCourseSlots implements PipeInterface
         return $next($ctx);
     }
 
-    protected function initScheduleDto(
-        ImportContext $ctx,
-        string $branchId,
-        string $classroomId,
-        string $priceId,
-        Weekday $weekday,
-        string $time,
-    ): ScheduleDto {
-        $courseId = $ctx->newId;
-        $old = $ctx->old;
-
-        $scheduleDto = new ScheduleDto($ctx->adminUser);
-        $scheduleDto->course_id = $courseId;
-        $scheduleDto->branch_id = $branchId;
-        $scheduleDto->classroom_id = $classroomId;
-        $scheduleDto->price_id = $priceId;
-        $scheduleDto->cycle = ScheduleCycle::EVERY_WEEK;
-        $scheduleDto->weekdays = [$weekday];
-
-        try {
-            $scheduleDto->starts_at = \Carbon\Carbon::createFromFormat('H:i:s', $time);
-            $scheduleDto->ends_at = \Carbon\Carbon::createFromFormat('H:i:s', $time)->addHours($old->periods / 2);
-        } catch (\Carbon\Exceptions\InvalidFormatException) {
-            throw new ImportException("Неверный формат времени: {$time}");
-        }
-
-        try {
-            $scheduleDto->from_date = $old->start_date ? \Carbon\Carbon::createFromFormat(
-                'Y-m-d',
-                $old->start_date
-            ) : null;
-        } catch (\Carbon\Exceptions\InvalidFormatException) {
-            throw new ImportException("Неверный формат даты начала: {$old->start_date}");
-        }
-
-        try {
-            $scheduleDto->to_date = $old->end_date ? \Carbon\Carbon::createFromFormat('Y-m-d', $old->end_date) : null;
-        } catch (\Carbon\Exceptions\InvalidFormatException) {
-            throw new ImportException("Неверный формат даты окончания: {$old->end_date}");
-        }
-
-        return $scheduleDto;
-    }
 }

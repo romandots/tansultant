@@ -223,4 +223,17 @@ class Repository extends \App\Common\BaseComponentRepository
                     });
             });
     }
+
+    public function findByDto(Dto $dto): Schedule
+    {
+        return $this->getQuery()
+            ->where('course_id', $dto->course_id)
+            ->where('branch_id', $dto->branch_id)
+            ->where('classroom_id', $dto->classroom_id)
+            ->where('starts_at', $dto->starts_at)
+            ->where('ends_at', $dto->ends_at)
+            ->where('cycle', $dto->cycle)
+            ->where('weekday', $dto->weekday)
+            ->firstOrFail();
+    }
 }

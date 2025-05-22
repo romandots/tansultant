@@ -4,7 +4,10 @@ use App\Components;
 use App\Models;
 use App\Services\Import\Importers;
 
+$offsetDate = '2025-01-01';
+
 return [
+    'offset' => $offsetDate,
     'map' => [
         'branch' => [
             'table' => 'studios',
@@ -27,7 +30,7 @@ return [
         ],
         'student' => [
             'table' => 'clients',
-            'where' => "DATE(last_visit) >= '2023-01-01'",
+            'where' => "DATE(last_visit) >= '{$offsetDate}'",
             'model' => Models\Student::class,
             'importer' => Importers\StudentImporter::class,
             'service' => Components\Student\Service::class,
@@ -55,7 +58,7 @@ return [
         ],
         'visit' => [
             'table' => 'visits',
-            'where' => "timestamp >= DATE('2025-01-01')",
+            'where' => "timestamp >= DATE('{$offsetDate}')",
             'model' => Models\Visit::class,
             'importer' => Importers\VisitImporter::class,
             'service' => Components\Visit\Service::class,

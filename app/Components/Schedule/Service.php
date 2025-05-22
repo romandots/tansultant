@@ -11,6 +11,7 @@ use App\Models\Enum\ScheduleCycle;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * @method Repository getRepository()
@@ -48,6 +49,15 @@ class Service extends \App\Common\BaseComponentService
         }
 
         return $lastOne;
+    }
+
+    public function findOrCreate(Dto $dto): Schedule
+    {
+        try {
+            return $this->getRepository()->findByDto($dto);
+        } catch (ModelNotFoundException) {
+            return $this->create($dto);
+        }
     }
 
     protected function _createOne($dto): Schedule
