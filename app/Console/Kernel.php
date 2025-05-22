@@ -48,6 +48,13 @@ class Kernel extends ConsoleKernel
         $schedule
             ->command(ScheduleCheckHeartbeatCommand::class)
             ->everyMinute();
+
+        if (config('import.sync_enabled')) {
+            $schedule
+                ->command('import all')
+                ->everyFiveMinutes()
+                ->withoutOverlapping();
+        }
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Services\Import\Importers;
 $offsetDate = '2025-01-01';
 
 return [
+    'sync_enabled' => env('IMPORT_SYNC_ENABLED', false),
     'offset' => $offsetDate,
     'map' => [
         'branch' => [
