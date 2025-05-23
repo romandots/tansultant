@@ -13,7 +13,7 @@ class MapInstructorEntity implements PipeInterface
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
         $ctx->dto = new InstructorDto($ctx->adminUser);
-        $ctx->dto->name = $ctx->old->name;
+        $ctx->dto->name = $ctx->old->name . ' ' . $ctx->old->lastname;
         $ctx->dto->description = $ctx->old->description;
         $ctx->dto->status = match($ctx->old->status) {
             'exclusive', 'staff' => \App\Models\Enum\InstructorStatus::HIRED,

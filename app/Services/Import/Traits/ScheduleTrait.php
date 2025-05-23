@@ -50,7 +50,7 @@ trait ScheduleTrait
             'H:i:s',
             "Не распознано время начала: {$time}"
         );
-        $scheduleDto->ends_at = $scheduleDto->starts_at->addHours($periods / 2);
+        $scheduleDto->ends_at = $scheduleDto->starts_at->clone()->addHours($periods / 2);
 
         if ($startDate) {
             $scheduleDto->from_date = $startDate instanceof Carbon

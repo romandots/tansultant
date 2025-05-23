@@ -4,18 +4,19 @@ namespace App\Services\Import\Pipes\Student;
 
 use App\Components\Loader;
 use App\Components\Person\Dto as PersonDto;
-use App\Components\Person\Exceptions\PersonAlreadyExist;
 use App\Components\Student\Dto as StudentDto;
 use App\Exceptions\SimpleValidationException;
 use App\Models\Enum\Gender;
 use App\Services\Import\Contracts\PipeInterface;
 use App\Services\Import\Exceptions\ImportException;
 use App\Services\Import\ImportContext;
+use App\Services\Import\Traits\PersonTrait;
 use Carbon\Carbon;
 use Closure;
 
 class CreateStudentPersonEntity implements PipeInterface
 {
+    use PersonTrait;
 
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
@@ -39,11 +40,7 @@ class CreateStudentPersonEntity implements PipeInterface
         }
 
         try {
-            $person = Loader::people()->create($personDto);
-            $ctx->manager->increaseCounter('person');
-            $ctx->debug("Создали профиль {$person->last_name} {$person->first_name} → #{$person->id}");
-        } catch (PersonAlreadyExist $alreadyExist) {
-            $person = $alreadyExist->getPerson();
+            $person = $this->getPerson($personDto, $ctx);
         } catch (SimpleValidationException $validationException) {
             throw new ImportException("Ошибка валидации профиля ({$ctx->old?->lastname} {$ctx->old?->name}): {$validationException->field} {$validationException->rule}", $ctx->toArray());
         } catch (\Throwable $throwable) {

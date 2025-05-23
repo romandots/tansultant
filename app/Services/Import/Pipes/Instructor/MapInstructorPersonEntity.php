@@ -3,18 +3,18 @@
 namespace App\Services\Import\Pipes\Instructor;
 
 use App\Components\Instructor\Dto;
-use App\Components\Loader;
 use App\Components\Person\Dto as PersonDto;
-use App\Components\Person\Exceptions\PersonAlreadyExist;
 use App\Models\Enum\Gender;
 use App\Services\Import\Contracts\PipeInterface;
 use App\Services\Import\Exceptions\ImportException;
 use App\Services\Import\ImportContext;
+use App\Services\Import\Traits\PersonTrait;
 use Carbon\Carbon;
 use Closure;
 
 class MapInstructorPersonEntity implements PipeInterface
 {
+    use PersonTrait;
 
     public function handle(ImportContext $ctx, Closure $next): ImportContext
     {
@@ -34,17 +34,14 @@ class MapInstructorPersonEntity implements PipeInterface
             throw new ImportException("Невалидная дата рождения ({$ctx->old?->name}): {$ctx->old->birthdate}");
         }
 
-        try {
-            $person = Loader::people()->create($personDto);
-            $ctx->manager->increaseCounter('person');
-            $ctx->debug("Создали профиль {$person->last_name} {$person->first_name} → #{$person->id}");
-        } catch (PersonAlreadyExist $alreadyExist) {
-            $person = $alreadyExist->getPerson();
-        }
-
         /** @var Dto $dto */
         $dto = $ctx->dto;
-        $dto->person_id = $person->id;
+
+        try {
+            $dto->person_id = $this->getPerson($personDto, $ctx)->id;
+        } catch (\Throwable $throwable) {
+            throw new ImportException("Ошибка создания профиля: {$throwable->getMessage()}");
+        }
 
         return $next($ctx);
     }
