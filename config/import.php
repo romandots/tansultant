@@ -74,6 +74,7 @@ return [
     ],
     'essential_entities' => [
         'branch',
+        'classroom',
         'course',
         'tariff',
         'student',
