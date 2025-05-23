@@ -101,7 +101,7 @@ class ImportCommand extends Command
                 $ids = [];
             }
 
-            $query = DB::connection('old_database')
+            $query = DB::connection('import_source_database')
                 ->table($table)
                 ->orderBy('id');
 

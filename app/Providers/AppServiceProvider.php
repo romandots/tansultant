@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(ImportManager::class, function(Application $app) {
             return new ImportManager(
-                DB::connection('old_database'),
+                DB::connection('import_source_database'),
                 $app->make(LoggerInterface::class),
             );
         });

@@ -105,7 +105,7 @@ return [
             'prefix_indexes' => true,
         ],
 
-        'old_database' =>  [
+        'import_source_database' =>  [
             'driver' => 'mysql',
             'url' => env('IMPORT_SOURCE_DATABASE_URL'),
             'host' => env('IMPORT_SOURCE_DB_HOST', '127.0.0.1'),
