@@ -26,10 +26,10 @@ class CreateCourseFormula implements PipeInterface
 
         if ($visitRate > 0) {
             $formulaDto->name = "{$visitRate} за каждое посещение";
-            $formulaDto->equation = sprintf("%d * %s", $ticketRate, FormulaVar::ALL_VISITS->value);
+            $formulaDto->equation = sprintf("%d * %s", $visitRate, FormulaVar::ALL_VISITS->value);
         } elseif ($ticketRate > 0) {
             $formulaDto->name = "{$ticketRate} за каждый абонемент";
-            $formulaDto->equation = sprintf("%d * %s", $visitRate, FormulaVar::ACTIVE_SUBSCRIPTIONS->value);
+            $formulaDto->equation = sprintf("%d * %s", $ticketRate, FormulaVar::ACTIVE_SUBSCRIPTIONS->value);
         } elseif ($timeRate > 0) {
             $formulaDto->name = "{$timeRate} за каждый час";
             $formulaDto->equation = sprintf("%d * %s", $timeRate, FormulaVar::HOUR->value);
