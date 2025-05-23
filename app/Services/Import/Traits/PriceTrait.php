@@ -16,7 +16,7 @@ trait PriceTrait
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
             try {
                 $priceDto = new \App\Components\Price\Dto();
-                $priceDto->name = $priceValue;
+                $priceDto->name = $priceValue . '₽';
                 $priceDto->price = $priceValue;
                 $price = Loader::prices()->create($priceDto);
                 $ctx->manager->increaseCounter('price');
