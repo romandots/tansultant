@@ -6,4 +6,3 @@ docker/logs/*
 storage/logs/*
 vendor/*
 node_modules/*
-/docker-compose.yml

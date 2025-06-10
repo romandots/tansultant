@@ -1,0 +1,91 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: ../manager-app
+      dockerfile: Dockerfile.${ENV:-development}
+    volumes:
+      - ../manager-app/:/manager-app
+      - /manager-app/node_modules
+    ports:
+      - "80:80"
+    tty: true
+    stdin_open: true
+    restart: always
+
+  api:
+    build:
+      context: .
+    volumes:
+      - ./src:/app
+      - ./docker/logs/laravel:/app/storage/logs
+      - ./docker/nginx.conf:/etc/nginx/sites-enabled/default
+    env_file:
+      - env/.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8080:8080"
+      - "6001:6001"
+    networks:
+      - tansultant_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 1m30s
+      timeout: 10s
+
+  db:
+    image: postgres:14.2
+    ports:
+      - "5432:5432"
+    volumes:
+      - database_data:/var/lib/postgresql/data
+      - ./docker/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+    networks:
+      - tansultant_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-tansultant}"]
+      interval: 30s
+      timeout: 10s
+
+  db_test:
+    image: postgres:14.2
+    ports:
+      - "5433:5432"
+    networks:
+      - tansultant_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME_TEST:-test}"]
+      interval: 30s
+      timeout: 10s
+
+  redis:
+    image: redis:alpine
+    expose:
+      - 6379
+    networks:
+      - tansultant_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+
+  rabbitmq:
+    container_name: rmq
+    image: rabbitmq:3.8.11-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - tansultant_network
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmqctl status"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  database_data:
+networks:
+  tansultant_network:
+    external: true
