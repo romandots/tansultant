@@ -179,6 +179,14 @@ SQL;
             ->first();
     }
 
+    public function getByTelegramUsername(string $username): ?Person
+    {
+        return $this->getQuery()
+            ->where('telegram_username', $username)
+            ->whereNull('deleted_at')
+            ->first();
+    }
+
     /**
      * @param string $lastName
      * @param string $firstName

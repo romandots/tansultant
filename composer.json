@@ -17,6 +17,7 @@
     "beyondcode/laravel-websockets": "^1.13",
     "clue/socket-raw": "^1.6",
     "doctrine/annotations": "^2.0",
+    "girni/laravel-rabbitmq": "^1.0",
     "hedii/laravel-gelf-logger": "^8.0",
     "itsgoingd/clockwork": "^5.1",
     "laravel/horizon": "^5.23",
@@ -32,6 +33,7 @@
     "spatie/laravel-tags": "^4.3",
     "srwiez/queue-size-health-check": "^1.0",
     "symfony/expression-language": "^6.3",
+    "wapmorgan/morphos": "^3.2",
     "zelenin/smsru": "^5.0",
     "zircote/swagger-php": "^4.8"
   },

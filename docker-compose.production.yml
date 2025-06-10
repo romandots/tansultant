@@ -40,6 +40,11 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: null
       REDIS_PORT: 6379
+      RABBITMQ_HOST: rmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASSWORD: guest
+      RABBITMQ_VHOST: /
     networks:
       - tansultant_network
     healthcheck:
@@ -87,10 +92,8 @@ services:
       - ./docker/nginx/certs:/etc/nginx/certs/
       - ./docker/logs/nginx:/var/log/nginx
     restart: always
-
 volumes:
   database_data:
-
 networks:
   tansultant_network:
-    driver: bridge
+    external: true

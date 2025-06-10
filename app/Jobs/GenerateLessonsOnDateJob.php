@@ -23,6 +23,7 @@ class GenerateLessonsOnDateJob implements ShouldQueue, ShouldBeUnique
     public function __construct(Carbon $date)
     {
         $this->date = $date;
+        $this->debug('Dispatching GenerateLessonsOnDate job for date: ' . $this->date->toDateString());
     }
 
     /**
