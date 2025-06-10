@@ -1,13 +1,7 @@
 <?php
 
-$patch = (int)preg_replace(
-    '/[\D\s]/',
-    '',
-    env(
-        'GIT_LAST_COMMIT',
-        file_get_contents('/git_last_commit') ?? 0
-    )
-);
+$lastCommit = env('GIT_LAST_COMMIT', 'dev');
+$patch = (int)preg_replace('/[\D\s]/', '', $lastCommit);
 $version = [
     'major' => 1,
     'minor' => 0,

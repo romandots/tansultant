@@ -1,17 +1,4 @@
-version: '3.8'
 services:
-  app:
-    build:
-      context: ../manager-app
-      dockerfile: Dockerfile.${ENV:-development}
-    volumes:
-      - ../manager-app/:/manager-app
-      - /manager-app/node_modules
-    ports:
-      - "80:80"
-    tty: true
-    stdin_open: true
-    restart: always
 
   api:
     build:
@@ -21,7 +8,7 @@ services:
       - ./docker/logs/laravel:/app/storage/logs
       - ./docker/nginx.conf:/etc/nginx/sites-enabled/default
     env_file:
-      - env/.env
+      - .env
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
@@ -39,25 +26,21 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - database_data:/var/lib/postgresql/data
-      - ./docker/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+      - persistent_data:/var/lib/postgresql/data
+      - ./docker/pg_hba.conf:/etc/postgresql/pg_hba.conf.template
     networks:
       - tansultant_network
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-tansultant}"]
+      test: ["CMD-SHELL", "pg_isready -U tansultant"]
       interval: 30s
       timeout: 10s
-
-  db_test:
-    image: postgres:14.2
-    ports:
-      - "5433:5432"
-    networks:
-      - tansultant_network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME_TEST:-test}"]
-      interval: 30s
-      timeout: 10s
+    restart: unless-stopped
 
   redis:
     image: redis:alpine
@@ -69,6 +52,7 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
       timeout: 10s
+    restart: unless-stopped
 
   rabbitmq:
     container_name: rmq
@@ -83,9 +67,11 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
 volumes:
-  database_data:
+  persistent_data:
 networks:
   tansultant_network:
-    external: true
+    driver: bridge
+    name: tansultant_network
