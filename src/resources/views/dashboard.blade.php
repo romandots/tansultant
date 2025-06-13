@@ -24,7 +24,7 @@
         <iframe src="{{ route('monitor.healthcheck') }}?fresh"></iframe>
     </div>
     <div id="middle-pane">
-        <iframe src="{{ url(config('websockets.path')) }}"></iframe>
+        <iframe src="{{ url('/pulse') }}"></iframe>
     </div>
     <div id="bottom-pane">
         <iframe src="{{ url(config('horizon.path')) }}"></iframe>
