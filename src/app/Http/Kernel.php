@@ -3,72 +3,54 @@ declare(strict_types=1);
 
 namespace App\Http;
 
+use App\Http\Middleware\AdminOnlyMiddleware;
 use App\Http\Middleware\AuthApiKeyHeader;
+use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\PreferJson;
+use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\TrimStrings;
+use App\Http\Middleware\UserHasPerson;
+use App\Services\Permissions\UserRoles;
+use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
+use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
+use Illuminate\Http\Middleware\HandleCors;
+use Illuminate\Http\Middleware\SetCacheHeaders;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Middleware\ValidateSignature;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 
-/**
- * Class Kernel
- * @package App\Http
- */
 class Kernel extends HttpKernel
 {
     /**
      * The application's global HTTP middleware stack.
-     * These middleware are run during every request to your application.
-     * @var array
+     * These middleware are run during every request.
+     *
+     * @var array<int, class-string>
      */
     protected $middleware = [
-        \Illuminate\Http\Middleware\HandleCors::class,
+        HandleCors::class,
         //\App\Http\Middleware\CheckForMaintenanceMode::class,
-        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-        \App\Http\Middleware\TrimStrings::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        ValidatePostSize::class,
+        TrimStrings::class,
+        ConvertEmptyStringsToNull::class,
     ];
 
     /**
-     * The application's route middleware.
-     * These middleware may be assigned to groups or used individually.
-     * @var array
-     */
-    protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'auth.api_key' => AuthApiKeyHeader::class,
-//        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-//        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'prefer_json' => \App\Http\Middleware\PreferJson::class,
-        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
-        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
-        'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
-        'user_has_person' => \App\Http\Middleware\UserHasPerson::class,
-    ];
-
-    /**
-     * The priority-sorted list of middleware.
-     * This forcphp artisan vendor:publish --tag="cors"es non-global middleware to always be in the given order.
-     * @var array
-     */
-    protected $middlewarePriority = [
-        \Illuminate\Session\Middleware\StartSession::class,
-        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-        \App\Http\Middleware\Authenticate::class,
-//        \Illuminate\Session\Middleware\AuthenticateSession::class,
-//        \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        \Illuminate\Auth\Middleware\Authorize::class,
-    ];
-
-    /**
-     * The application's route middleware groups.
-     * @var array
+     * The application's middleware groups.
+     *
+     * @var array<string, array<int, string>>
      */
     protected $middlewareGroups = [
         'web' => [
             'auth.basic:web,username',
+            'admin_only',
         ],
 
         'webhooks' => [
@@ -86,24 +68,54 @@ class Kernel extends HttpKernel
 
         'manager_api' => [
             'member_api',
-            'role:' . \App\Services\Permissions\UserRoles::ADMIN
-            . '|' . \App\Services\Permissions\UserRoles::MANAGER
-            . '|' . \App\Services\Permissions\UserRoles::OPERATOR
+            'role:' . UserRoles::ADMIN . '|' . UserRoles::MANAGER . '|' . UserRoles::OPERATOR
         ],
+    ];
 
-        'student_api' => [
-            'member_api',
-            'role:' . \App\Services\Permissions\UserRoles::STUDENT
-        ],
+    /**
+     * The application's route middleware.
+     * These middleware may be assigned to groups or used individually.
+     *
+     * @var array<string, class-string>
+     */
+    protected $routeMiddleware = [
+        // Authentication
+        'auth' => Authenticate::class,
+        'auth.basic' => AuthenticateWithBasicAuth::class,
+        'auth.api_key' => AuthApiKeyHeader::class,
+        'guest' => RedirectIfAuthenticated::class,
 
-        'customer_api' => [
-            'member_api',
-            'role:' . \App\Services\Permissions\UserRoles::CUSTOMER
-        ],
+        // Authorization
+        'admin_only' => AdminOnlyMiddleware::class,
+        'can' => Authorize::class,
+        'permission' => PermissionMiddleware::class,
+        'role' => RoleMiddleware::class,
+        'role_or_permission' => RoleOrPermissionMiddleware::class,
+        'user_has_person' => UserHasPerson::class,
 
-        'instructor_api' => [
-            'member_api',
-            'role:' . \App\Services\Permissions\UserRoles::INSTRUCTOR
-        ],
+        // HTTP features
+        'cache.headers' => SetCacheHeaders::class,
+        'signed' => ValidateSignature::class,
+        'throttle' => ThrottleRequests::class,
+        'prefer_json' => PreferJson::class,
+
+        // Disabled middleware
+//        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+//        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+    ];
+
+    /**
+     * The priority-sorted list of middleware.
+     * This forces non-global middleware to always be in the given order.
+     *
+     * @var array<int, class-string>
+     */
+    protected $middlewarePriority = [
+        StartSession::class,
+        ShareErrorsFromSession::class,
+        Authenticate::class,
+//        \Illuminate\Session\Middleware\AuthenticateSession::class,
+//        \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        Authorize::class,
     ];
 }

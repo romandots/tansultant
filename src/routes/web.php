@@ -8,7 +8,7 @@ Route::group(['middleware' => ['web']], function () {
 //    Route::get('swagger.json', 'Swagger@json')->name('swagger.source');
 //    Route::get('swagger', 'Swagger@ui');
 
-
     Route::get('dashboard', 'SystemMonitor@dashboard')->name('monitor.dashboard');
     Route::get('health', [HealthCheckResultsController::class, '__invoke'])->name('monitor.healthcheck');
+    // \Laravel\Pulse\PulseServiceProvider::registerRoutes
 });

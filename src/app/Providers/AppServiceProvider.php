@@ -3,14 +3,15 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Services\Import\ImportManager;
 use App\Services\TextMessaging\TextMessagingService;
 use App\Services\TextMessaging\TextMessagingServiceInterface;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
-use Nutnet\LaravelSms\SmsSender;
 use Psr\Log\LoggerInterface;
 
 class AppServiceProvider extends ServiceProvider
@@ -37,6 +38,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        Gate::define('viewPulse', function (User $user) {
+            return $user->isAdmin();
+        });
     }
 }
