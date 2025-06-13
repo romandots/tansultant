@@ -20,6 +20,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\Sanctum;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -147,5 +148,11 @@ class User extends Authenticatable
     public function active_shift(): BelongsTo
     {
         return $this->belongsTo(Shift::class, 'active_shift_id');
+    }
+
+    public function isAdmin(): bool
+    {
+        $adminRole = Role::findByName(\App\Services\Permissions\UserRoles::ADMIN);
+        return $this->hasRole($adminRole);
     }
 }
