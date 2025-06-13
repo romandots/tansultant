@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Checks\WebsocketCheck;
+use App\Checks\ReverbCheck;
 use Illuminate\Support\ServiceProvider;
 use QueueSizeCheck\QueueSizeCheck;
 use Spatie\Health\Checks\Checks\CacheCheck;
@@ -35,7 +35,7 @@ class HealthServiceProvider extends ServiceProvider
             DatabaseCheck::new(),
             RedisCheck::new(),
             CacheCheck::new(),
-            WebsocketCheck::new((int)config('websockets.dashboard.port', 6001)),
+            ReverbCheck::new((int)config('reverb.servers.reverb.port', 8080)),
             HorizonCheck::new(),
             //QueueCheck::new(),
             QueueSizeCheck::new(),
