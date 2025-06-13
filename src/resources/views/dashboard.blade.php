@@ -23,16 +23,13 @@
     <div id="top-pane">
         <iframe src="{{ route('monitor.healthcheck') }}?fresh"></iframe>
     </div>
-    <div id="middle-pane">
-        <iframe src="{{ url(config('websockets.path')) }}"></iframe>
-    </div>
     <div id="bottom-pane">
         <iframe src="{{ url(config('horizon.path')) }}"></iframe>
     </div>
 </div>
 
 <script>
-  Split(['#top-pane', '#middle-pane', '#bottom-pane'], {
+  Split(['#top-pane', '#bottom-pane'], {
     direction: 'vertical',
     gutterSize: 8,
     cursor: 'row-resize'
