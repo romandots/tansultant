@@ -26,7 +26,6 @@ RUN apt-get update -y \
     supervisor \
     htop \
     && rm -rf /var/lib/apt/lists/* \
-    # Установка PHP расширений
     && pecl install xdebug redis \
     && docker-php-ext-enable xdebug redis \
     && docker-php-ext-install -j$(nproc) \
@@ -48,7 +47,7 @@ COPY ./src/composer.json ./src/composer.lock ./
 
 ARG COMPOSER_IGNORE_PLATFORM_REQS=1
 ENV COMPOSER_IGNORE_PLATFORM_REQS=${COMPOSER_IGNORE_PLATFORM_REQS}
-RUN composer install --no-interaction --no-progress --optimize-autoloader --no-dev --no-scripts
+RUN composer install --no-interaction --no-progress --no-autoloader --no-dev --no-scripts
 
 COPY ./src .
 
